@@ -7,6 +7,7 @@ const logger = require("morgan");
 const path = require("path");
 
 const dbUrl = require('./utils/dbUrls');
+const userRouter = require('./src/routes/user/user');
 let port = process.env.PORT || 3000;
 
 const app = express();
@@ -18,6 +19,8 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "views")));
+
+app.use('/user', userRouter);
 
 mongoose.connect(dbUrl, { useNewUrlParser: true }, (err) => {
     if (err) {
