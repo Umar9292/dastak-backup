@@ -8,6 +8,7 @@ const path = require("path");
 
 const dbUrl = require('./utils/dbUrls');
 const userRouter = require('./src/routes/user/user');
+const martsRouter = require('./src/routes/marts/marts');
 let port = process.env.PORT || 3000;
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "views")));
 
 app.use('/user', userRouter);
+app.use('/marts', martsRouter);
 
 mongoose.connect(dbUrl, { useNewUrlParser: true }, (err) => {
     if (err) {

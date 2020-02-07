@@ -16,8 +16,8 @@ router.post('/signUp', async (req, res) => {
             });
         } else {
             params.password = await bcrypt.hash(password, 10);
-            const newUser = new User(params);
-            await newUser.save();
+            await new User(params)
+                .save();
             res.status(200).json('User Saved Successfully');
         }
     } catch (err) {

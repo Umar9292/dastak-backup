@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const userModel = mongoose.Schema({
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
     firstName: String,
     lastName: String,
     email: String,
