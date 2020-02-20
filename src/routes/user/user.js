@@ -18,10 +18,10 @@ router.post('/signUp', async (req, res) => {
             params.password = await bcrypt.hash(password, 10);
             await new User(params)
                 .save();
-            res.status(200).json('User Saved Successfully');
+            return res.status(200).json('User Saved Successfully');
         }
     } catch (err) {
-        res.status(500).json({
+        return res.status(500).json({
             msg: `Looks like something went wrong on our side. Sorry for the inconvenience`,
             error: err.toString()
         });
