@@ -11,7 +11,7 @@ router.post('/signUp', async (req, res) => {
         let { email, password } = params;
         const user = await User.findOne({ email: email });
         if (user) {
-            return res.status(200).json({
+            return res.status(500).json({
                 msg: `The email you have entered is alrady associated with another account`
             });
         } else {
@@ -34,12 +34,14 @@ router.post('/signIn', async (req, res) => {
         const user = await User.findOne({ email: email });
         if (!user) {
             return res.status(500).json({
+                staus: '404',
                 msg: `The email you have entered is not associated with any account`
             });
         } else {
             const result = await bcrypt.compare(password, user.password);
             if (!result) {
                 return res.status(500).json({
+                    staus: '404',
                     msg: `Email or password is invalid`
                 });
             } else {
