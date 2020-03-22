@@ -117,8 +117,8 @@ router.get('/categoryTitlesAndImages', async (req, res) => {
             personalCare,
             beverages
         });
-
-    } catch (err) {
+    }
+    catch (err) {
         console.log(err);
         return res.json({
             status: '404',
@@ -136,6 +136,25 @@ router.post('/subCategoryProducts', async (req, res) => {
         return res.json({
             status: '200',
             data: subCategoryProducts
+        });
+
+    } catch (err) {
+        return res.json({
+            status: '404',
+            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
+        });
+    }
+});
+
+router.get('/allProducts', async (req, res) => {
+    try {
+        const products = await Products.find()
+            .select('title img price net count quantity categoryTitle')
+            .sort({ title: 1, quantity: 1 });
+
+        return res.json({
+            status: '200',
+            data: products
         });
 
     } catch (err) {
