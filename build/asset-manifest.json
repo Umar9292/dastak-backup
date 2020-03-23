@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.js": "/static/js/main.b9c9d214.chunk.js",
+    "main.js.map": "/static/js/main.b9c9d214.chunk.js.map",
+    "runtime~main.js": "/static/js/runtime~main.a8a9905a.js",
+    "runtime~main.js.map": "/static/js/runtime~main.a8a9905a.js.map",
+    "static/js/2.64cf41a5.chunk.js": "/static/js/2.64cf41a5.chunk.js",
+    "static/js/2.64cf41a5.chunk.js.map": "/static/js/2.64cf41a5.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.95e7ff3bcef5ea27c81a3f7018214493.js": "/precache-manifest.95e7ff3bcef5ea27c81a3f7018214493.js",
+    "service-worker.js": "/service-worker.js",
+    "static/media/dastakLogo.png": "/static/media/dastakLogo.ae69f75b.png",
+    "static/media/google.svg": "/static/media/google.695a3160.svg",
+    "static/media/textLogo.png": "/static/media/textLogo.3083b5f0.png"
+  }
+}
