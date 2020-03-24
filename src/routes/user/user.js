@@ -44,7 +44,7 @@ router.post('/signIn', async (req, res) => {
         const user = await User.findOne({ email: email });
         if (!user) {
             return res.json({
-                staus: '404',
+                status: '404',
                 msg: `The email you have entered is not associated with any account`
             });
         }
@@ -52,7 +52,7 @@ router.post('/signIn', async (req, res) => {
             const result = await bcrypt.compare(password, user.password);
             if (!result) {
                 return res.json({
-                    staus: '404',
+                    status: '404',
                     msg: `Email or password is invalid`
                 });
             }
