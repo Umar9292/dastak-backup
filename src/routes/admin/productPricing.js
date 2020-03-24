@@ -9,7 +9,7 @@ router.post('/updatePrice', async (req, res) => {
 
         return res.json({
             status: '200',
-            msg: 'Price updated'
+            msg: 'Product updated successfully'
         });
     }
     catch (err) {
