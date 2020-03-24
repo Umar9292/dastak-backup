@@ -11,7 +11,7 @@ const userRouter = require('./src/routes/user/user');
 const productsRouter = require('./src/routes/products/products');
 const pricingRouter = require('./src/routes/admin/productPricing');
 
-let port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 
 const app = express();
 
