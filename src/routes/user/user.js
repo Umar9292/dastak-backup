@@ -13,7 +13,7 @@ router.post('/signUp', async (req, res) => {
         if (user) {
             return res.json({
                 status: '404',
-                msg: `The email you have entered is alrady associated with another account`
+                msg: `The email you have entered is already associated with another account`
             });
         }
         else {

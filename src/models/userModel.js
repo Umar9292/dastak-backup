@@ -12,7 +12,10 @@ const userModel = mongoose.Schema({
     password: String,
     address: String,
     image: String,
-    type: String
+    type: {
+        type: String,
+        default: 'user'
+    }
 });
 
 module.exports = mongoose.model('users', userModel);
