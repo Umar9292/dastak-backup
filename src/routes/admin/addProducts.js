@@ -5,7 +5,12 @@ const Products = require("../../models/productsModel");
 
 router.post('/addProduct', async (req, res) => {
     try {
-        await Products.findByIdAndUpdate(req.body._id, { $set: req.body });
+        const params = req.body;
+        const productQuery = {
+            title: params.title,
+
+        };
+        const product = await Products.findOne(req.body._id, { $set: req.body });
 
         return res.json({
             status: '200',
