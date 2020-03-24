@@ -10,6 +10,7 @@ const dbUrl = require('./utils/dbUrls');
 const userRouter = require('./src/routes/user/user');
 const productsRouter = require('./src/routes/products/products');
 const pricingRouter = require('./src/routes/admin/productPricing');
+const adminCategoriesRouter = require('./src/routes/admin/categoriesAndSubCategories');
 
 const port = process.env.PORT || 3000;
 
@@ -24,7 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "views")));
 
 app.use('/user', userRouter);
-app.use('/products', productsRouter, pricingRouter);
+app.use('/products', productsRouter, pricingRouter, adminCategoriesRouter);
 
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
