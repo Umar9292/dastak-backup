@@ -6,15 +6,23 @@ const Products = require("../../models/productsModel");
 router.post('/addProduct', async (req, res) => {
     try {
         const params = req.body;
+
         const productQuery = {
             title: params.title,
-
+            quantity: params.quantity
         };
-        const product = await Products.findOne(req.body._id, { $set: req.body });
+
+        const product = await Products.findOne(productQuery);
+        if (product) return res.json({
+            status: '404',
+            msg: 'product already added'
+        });
+
+        await new Products(params).save();
 
         return res.json({
             status: '200',
-            msg: 'Price updated'
+            msg: 'Product added successfully'
         });
     }
     catch (err) {
