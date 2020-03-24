@@ -8,8 +8,8 @@ const path = require("path");
 
 const dbUrl = require('./utils/dbUrls');
 const userRouter = require('./src/routes/user/user');
-const martsRouter = require('./src/routes/marts/marts');
 const productsRouter = require('./src/routes/products/products');
+const pricingRouter = require('./src/routes/admin/productPricing');
 
 let port = process.env.PORT || 3000;
 
@@ -24,10 +24,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "views")));
 
 app.use('/user', userRouter);
-app.use('/marts', martsRouter);
-app.use('/products', productsRouter);
+app.use('/products', productsRouter, pricingRouter);
 
-mongoose.connect(dbUrl, { useNewUrlParser: true }, (err) => {
+mongoose.connect(dbUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
+}, (err) => {
     if (err) {
         console.log(err);
     } else {
