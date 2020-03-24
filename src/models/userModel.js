@@ -11,7 +11,8 @@ const userModel = mongoose.Schema({
     phone: String,
     password: String,
     address: String,
-    image: String
+    image: String,
+    type: String
 });
 
 module.exports = mongoose.model('users', userModel);
