@@ -5,6 +5,7 @@ const ordersModel = mongoose.Schema({
     name: String,
     phone: String,
     address: String,
+    date: String,
     products: Object,
     status: {
         type: String,

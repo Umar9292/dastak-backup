@@ -48,4 +48,40 @@ router.get('/allOrders', async (req, res) => {
     }
 });
 
+router.post('/orderDetails', async (req, res) => {
+    try {
+        const order = await Orders.findById(req.body.orderId);
+
+        return res.json({
+            status: '200',
+            data: order
+        });
+    }
+    catch (err) {
+        return res.json({
+            status: '404',
+            error: err.toString(),
+            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
+        });
+    }
+});
+
+router.post('/changeOrderStatus', async (req, res) => {
+    try {
+        await Orders.findByIdAndUpdate(req.body.orderId, { $set: req.body });
+
+        return res.json({
+            status: '200',
+            msg: 'Order status updated'
+        });
+    }
+    catch (err) {
+        return res.json({
+            status: '404',
+            error: err.toString(),
+            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
+        });
+    }
+});
+
 module.exports = router;
