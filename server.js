@@ -1,22 +1,22 @@
-const express = require('express');
+const express = require("express");
 require("dotenv").config();
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 const logger = require("morgan");
 const path = require("path");
-const cloudinary = require('cloudinary');
+const cloudinary = require("cloudinary");
 
-const dbUrl = require('./utils/dbUrls');
-const userRouter = require('./src/routes/user/user');
-const productsRouter = require('./src/routes/products/products');
-const pricingRouter = require('./src/routes/admin/productPricing');
-const adminCategoriesRouter = require('./src/routes/admin/categoriesAndSubCategories');
-const addProductsRouter = require('./src/routes/admin/addProducts');
-const productImageRouter = require('./src/routes/admin/productImage');
-const ordersRouter = require('./src/routes/admin/orders');
+const dbUrl = require("./utils/dbUrls");
+const userRouter = require("./src/routes/user/user");
+const productsRouter = require("./src/routes/products/products");
+const pricingRouter = require("./src/routes/admin/productPricing");
+const adminCategoriesRouter = require("./src/routes/admin/categoriesAndSubCategories");
+const addProductsRouter = require("./src/routes/admin/addProducts");
+const productImageRouter = require("./src/routes/admin/productImage");
+const ordersRouter = require("./src/routes/admin/orders");
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 const app = express();
 
@@ -28,32 +28,37 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "views")));
 
-app.use('/user', userRouter);
-app.use('/products',
-    productsRouter,
-    pricingRouter,
-    adminCategoriesRouter,
-    addProductsRouter,
-    productImageRouter,
+app.use("/user", userRouter);
+app.use(
+  "/products",
+  productsRouter,
+  pricingRouter,
+  adminCategoriesRouter,
+  addProductsRouter,
+  productImageRouter
 );
-app.use('/orders', ordersRouter);
+app.use("/orders", ordersRouter);
 
-mongoose.connect(dbUrl, {
+mongoose.connect(
+  dbUrl,
+  {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false
-}, (err) => {
+  },
+  (err) => {
     if (err) {
-        console.log(err);
+      console.log(err);
     } else {
-        console.log('Connected to databse');
+      console.log("Connected to databse");
     }
-});
+  }
+);
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
