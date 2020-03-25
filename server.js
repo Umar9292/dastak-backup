@@ -14,6 +14,7 @@ const pricingRouter = require('./src/routes/admin/productPricing');
 const adminCategoriesRouter = require('./src/routes/admin/categoriesAndSubCategories');
 const addProductsRouter = require('./src/routes/admin/addProducts');
 const productImageRouter = require('./src/routes/admin/productImage');
+const ordersRouter = require('./src/routes/admin/orders');
 
 const port = process.env.PORT || 3000;
 
@@ -33,7 +34,8 @@ app.use('/products',
     pricingRouter,
     adminCategoriesRouter,
     addProductsRouter,
-    productImageRouter
+    productImageRouter,
+    ordersRouter
 );
 
 mongoose.connect(dbUrl, {

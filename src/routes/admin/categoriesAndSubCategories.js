@@ -49,11 +49,11 @@ router.get('/allCategories', async (req, res) => {
         await Promise.all(allGroceryItems);
 
         let allGroceryCategories = groceryArray.map(async title => {
-            const titleAndImage = await Products.findOne({ categoryTitle: title })
+            const subCategory = await Products.findOne({ categoryTitle: title })
                 .select("categoryTitle");
 
             pushTitle = () => {
-                grocery.push(titleAndImage);
+                grocery.push(subCategory.categoryTitle);
             };
             await pushTitle();
         });
@@ -67,11 +67,11 @@ router.get('/allCategories', async (req, res) => {
         await Promise.all(allPersonalCareItems);
 
         let allPersonalCareCategories = personalCareArray.map(async title => {
-            const titleAndImage = await Products.findOne({ categoryTitle: title })
+            const subCategory = await Products.findOne({ categoryTitle: title })
                 .select("categoryTitle");
 
             pushTitle = () => {
-                personalCare.push(titleAndImage);
+                personalCare.push(subCategory.categoryTitle);
             };
             await pushTitle();
         });
@@ -85,11 +85,11 @@ router.get('/allCategories', async (req, res) => {
         await Promise.all(allHomeCareItems);
 
         let allHomeCareCategories = homeCareArray.map(async title => {
-            const titleAndImage = await Products.findOne({ categoryTitle: title })
+            const subCategory = await Products.findOne({ categoryTitle: title })
                 .select("categoryTitle");
 
             pushTitle = () => {
-                homeCare.push(titleAndImage);
+                homeCare.push(subCategory.categoryTitle);
             };
             await pushTitle();
         });
@@ -103,11 +103,11 @@ router.get('/allCategories', async (req, res) => {
         await Promise.all(allBeverageItems);
 
         let allBevarageCategories = beveragesArray.map(async title => {
-            const titleAndImage = await Products.findOne({ categoryTitle: title })
+            const subCategory = await Products.findOne({ categoryTitle: title })
                 .select("categoryTitle");
 
             pushTitle = () => {
-                beverages.push(titleAndImage);
+                beverages.push(subCategory.categoryTitle);
             };
             await pushTitle();
         });
