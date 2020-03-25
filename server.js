@@ -35,8 +35,8 @@ app.use('/products',
     adminCategoriesRouter,
     addProductsRouter,
     productImageRouter,
-    ordersRouter
 );
+app.use('/orders', ordersRouter);
 
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,

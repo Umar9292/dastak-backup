@@ -6,7 +6,6 @@ const Products = require("../../models/productsModel");
 router.get('/allCategories', async (req, res) => {
     try {
         const mainCategories = [];
-        const subCategoriers = [];
         const groceryArray = [];
         const personalCareArray = [];
         const homeCareArray = [];
