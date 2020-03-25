@@ -183,4 +183,21 @@ router.post("/specificProducts", async (req, res) => {
   }
 });
 
+router.delete('/deleteProduct', async (req, res) => {
+  try {
+    await Products.deleteOne({ _id: req.body.productId });
+
+    return res.json({
+      status: '200',
+      msg: 'Product deleted successfully'
+    });
+  }
+  catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
+    });
+  }
+});
 module.exports = router;

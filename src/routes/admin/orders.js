@@ -84,22 +84,4 @@ router.post('/changeOrderStatus', async (req, res) => {
     }
 });
 
-router.delete('/deleteOrder', async (req, res) => {
-    try {
-        await Orders.deleteOne({ _id: req.body.orderId });
-
-        return res.json({
-            status: '200',
-            msg: 'Order deleted successfully'
-        });
-    }
-    catch (err) {
-        return res.json({
-            status: '404',
-            error: err.toString(),
-            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
-        });
-    }
-});
-
 module.exports = router;
