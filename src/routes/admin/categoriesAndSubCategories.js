@@ -113,19 +113,14 @@ router.get('/allCategories', async (req, res) => {
         });
         await Promise.all(allBevarageCategories);
 
-        pushAllCategories = () => {
-            subCategoriers.push({ grocery: grocery });
-            subCategoriers.push({ personalCare: personalCare });
-            subCategoriers.push({ homeCare: homeCare });
-            subCategoriers.push({ beverages: beverages });
-        };
-
-        await pushAllCategories();
-
         return res.json({
             status: '200',
             mainCategories: mainCategories,
-            subCategoriers: subCategoriers
+            grocery: grocery,
+            homeCare: homeCare,
+            personalCare: personalCare,
+            beverages: beverages
+
         });
     }
     catch (err) {
