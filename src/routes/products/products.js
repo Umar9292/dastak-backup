@@ -183,9 +183,9 @@ router.post("/specificProducts", async (req, res) => {
   }
 });
 
-router.delete('/deleteProduct', async (req, res) => {
+router.post('/deleteProduct/', async (req, res) => {
   try {
-    await Products.deleteOne({ _id: req.body.productId });
+    await Products.findByIdAndDelete({ _id: req.body.productId });
 
     return res.json({
       status: '200',
@@ -200,4 +200,5 @@ router.delete('/deleteProduct', async (req, res) => {
     });
   }
 });
+
 module.exports = router;
