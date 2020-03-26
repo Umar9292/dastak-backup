@@ -66,6 +66,24 @@ router.post('/orderDetails', async (req, res) => {
     }
 });
 
+router.post('/specificUserOrders', async (req, res) => {
+    try {
+        const orders = await Orders.find({ userId: req.body.userId });
+
+        return res.json({
+            status: '200',
+            data: orders
+        });
+    }
+    catch (err) {
+        return res.json({
+            status: '404',
+            error: err.toString(),
+            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
+        });
+    }
+});
+
 router.post('/changeOrderStatus', async (req, res) => {
     try {
         await Orders.findByIdAndUpdate(req.body.orderId, { $set: req.body });

@@ -8,7 +8,8 @@ const path = require("path");
 const cloudinary = require('cloudinary');
 
 const dbUrl = require('./utils/dbUrls');
-const userRouter = require('./src/routes/user/user');
+const signUpRouter = require('./src/routes/user/signUp');
+const profileRouter = require('./src/routes/user/profle');
 const productsRouter = require('./src/routes/products/products');
 const pricingRouter = require('./src/routes/admin/productPricing');
 const adminCategoriesRouter = require('./src/routes/admin/categoriesAndSubCategories');
@@ -28,13 +29,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "views")));
 
-app.use('/user', userRouter);
+app.use('/user', signUpRouter, profileRouter);
 app.use('/products',
     productsRouter,
     pricingRouter,
     adminCategoriesRouter,
     addProductsRouter,
-    productImageRouter,
+    productImageRouter
 );
 app.use('/orders', ordersRouter);
 
