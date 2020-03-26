@@ -1,11 +1,11 @@
-const express = require('express');
+const express = require("express");
 require("dotenv").config();
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 const logger = require("morgan");
 const path = require("path");
-const cloudinary = require('cloudinary');
+const cloudinary = require("cloudinary");
 
 const dbUrl = require('./utils/dbUrls');
 const signUpRouter = require('./src/routes/user/signUp');
@@ -17,7 +17,7 @@ const addProductsRouter = require('./src/routes/admin/addProducts');
 const productImageRouter = require('./src/routes/admin/productImage');
 const ordersRouter = require('./src/routes/admin/orders');
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 const app = express();
 
@@ -39,17 +39,19 @@ app.use('/products',
 );
 app.use('/orders', ordersRouter);
 
-mongoose.connect(dbUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
-}, (err) => {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log('Connected to databse');
+mongoose.connect(dbUrl,
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false
+    }, (err) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log("Connected to databse");
+        }
     }
-});
+);
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
