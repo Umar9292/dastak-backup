@@ -9,25 +9,23 @@ router.post('/signUp', async (req, res) => {
     try {
         const params = req.body;
         let { email, password } = params;
+
         const user = await User.findOne({ email: email });
-        if (user) {
-            return res.json({
-                status: '404',
-                msg: `The email you have entered is already associated with another account`
-            });
-        }
-        else {
-            params.password = await bcrypt.hash(password, 10);
+        if (user) return res.json({
+            status: '404',
+            msg: `The email you have entered is already associated with another account`
+        });
 
-            const newUser = await new User(params).save();
+        params.password = await bcrypt.hash(password, 10);
 
-            return res.json({
-                status: '200',
-                data: (_.pick(newUser, [
-                    '_id', 'email', 'phone', 'firstName', 'lastName', 'image', 'address', 'type'
-                ]))
-            });
-        }
+        const newUser = await new User(params).save();
+
+        return res.json({
+            status: '200',
+            data: (_.pick(newUser, [
+                '_id', 'email', 'phone', 'name', 'image', 'address', 'type'
+            ]))
+        });
     }
     catch (err) {
         return res.json({
@@ -41,30 +39,25 @@ router.post('/signUp', async (req, res) => {
 router.post('/signIn', async (req, res) => {
     try {
         let { email, password } = req.body;
+
         const user = await User.findOne({ email: email });
-        if (!user) {
-            return res.json({
-                status: '404',
-                msg: `The email you have entered is not associated with any account`
-            });
-        }
-        else {
-            const result = await bcrypt.compare(password, user.password);
-            if (!result) {
-                return res.json({
-                    status: '404',
-                    msg: `Email or password is invalid`
-                });
-            }
-            else {
-                return res.json({
-                    status: '200',
-                    data: (_.pick(user, [
-                        '_id', 'email', 'phone', 'firstName', 'lastName', 'image', 'address', 'type'
-                    ]))
-                });
-            }
-        }
+        if (!user) return res.json({
+            status: '404',
+            msg: `The email you have entered is not associated with any account`
+        });
+
+        const result = await bcrypt.compare(password, user.password);
+        if (!result) return res.json({
+            status: '404',
+            msg: `Email or password is invalid`
+        });
+
+        return res.json({
+            status: '200',
+            data: (_.pick(user, [
+                '_id', 'email', 'phone', 'name', 'image', 'address', 'type'
+            ]))
+        });
     }
     catch (err) {
         res.json({

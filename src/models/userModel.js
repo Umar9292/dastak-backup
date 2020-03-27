@@ -5,8 +5,7 @@ const userModel = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    firstName: String,
-    lastName: String,
+    name: String,
     email: String,
     phone: String,
     password: String,
