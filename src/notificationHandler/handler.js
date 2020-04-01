@@ -11,7 +11,7 @@ exports.admin = async (whomToSend, toBeSentData) => {
         include_player_ids: [whomToSend],
         data: toBeSentData,
         small_icon: 'ic_stat_onesignal_default',
-        large_icon: 'https://img.onesignal.com/t/edc94b24-7af3-4755-8333-585d40096361.png'
+        large_icon: 'https://res.cloudinary.com/hmwday8rj/image/upload/v1585752843/Dastaak-ico_nt3ymw.png'
     });
 
     const res = await oneSignalClient.sendNotification(notification);
@@ -26,7 +26,7 @@ exports.user = async (msg, whomToSend, toBeSentData) => {
         include_player_ids: [whomToSend],
         data: toBeSentData,
         small_icon: 'ic_stat_onesignal_default',
-        large_icon: 'https://img.onesignal.com/t/edc94b24-7af3-4755-8333-585d40096361.png'
+        large_icon: 'https://res.cloudinary.com/hmwday8rj/image/upload/v1585752843/Dastaak-ico_nt3ymw.png'
     });
 
     const res = await oneSignalClient.sendNotification(notification);

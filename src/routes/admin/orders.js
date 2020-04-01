@@ -98,13 +98,13 @@ router.post('/changeOrderStatus', async (req, res) => {
         const user = await Users.findById(order.userId);
 
         if (req.body.status === 'Cancelled') {
-            const msg = `Dear ${user.name} your order num ${req.body.orderNum} has been cancelled`;
+            const msg = `Dear ${user.name} your order# ${req.body.orderNum} has been cancelled`;
 
             await notify.user(msg, user.playerId, { flag: 'orderCancelled' });
         }
 
         if (req.body.status === 'Shipped') {
-            const msg = `Dear ${user.name} your order num ${req.body.orderNum} has been shipped`;
+            const msg = `Dear ${user.name} your order#  ${req.body.orderNum} has been shipped`;
 
             await notify.user(msg, user.playerId, { flag: 'orderShipped' });
         }
