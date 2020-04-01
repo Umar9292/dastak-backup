@@ -55,7 +55,7 @@ router.post('/signIn', async (req, res) => {
         return res.json({
             status: '200',
             data: (_.pick(user, [
-                '_id', 'email', 'phone', 'name', 'image', 'address', 'type'
+                '_id', 'email', 'phone', 'name', 'image', 'address', 'type', 'playerId'
             ]))
         });
     }
