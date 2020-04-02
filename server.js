@@ -16,6 +16,8 @@ const adminCategoriesRouter = require('./src/routes/admin/categoriesAndSubCatego
 const addProductsRouter = require('./src/routes/admin/addProducts');
 const productImageRouter = require('./src/routes/admin/productImage');
 const ordersRouter = require('./src/routes/admin/orders');
+const playerIdRouter = require('./src/routes/admin/playerId');
+const logoutRouter = require('./src/routes/user/logout');
 
 const port = process.env.PORT || 8080;
 
@@ -29,7 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "views")));
 
-app.use('/user', signUpRouter, profileRouter);
+app.use('/user', signUpRouter, profileRouter, logoutRouter);
 app.use('/products',
     productsRouter,
     pricingRouter,
@@ -38,6 +40,7 @@ app.use('/products',
     productImageRouter
 );
 app.use('/orders', ordersRouter);
+app.use('/admin', playerIdRouter);
 
 mongoose.connect(dbUrl,
     {
@@ -47,7 +50,10 @@ mongoose.connect(dbUrl,
     }, (err) => {
         if (err) {
             console.log(err);
-        } else {
+        }
+        else {
+            app.listen(port, () => console.log(`Listening on port ${port}`));
+
             console.log("Connected to databse");
         }
     }
@@ -58,7 +64,5 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_KEY,
     api_secret: process.env.CLOUDINARY_SECRET
 });
-
-app.listen(port, () => console.log(`Listening on port ${port}`));
 
 module.exports = app;

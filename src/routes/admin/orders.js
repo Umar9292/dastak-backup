@@ -1,13 +1,20 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-const Orders = require("../../models/ordersModel");
+const Orders = require('../../models/ordersModel');
+const Users = require('../../models/userModel');
+
+const notify = require('../../notificationHandler/handler');
 
 router.post('/saveOrder', async (req, res) => {
     try {
         req.body.products = JSON.parse(req.body.products);
 
         await new Orders(req.body).save();
+
+        const admin = await Users.findById('5e79f1df7e7ffd367cb2a8b4').select('playerId');
+
+        await notify.admin(admin.playerId, { flag: 'orderReceived' });
 
         return res.json({
             status: '200',
@@ -25,7 +32,7 @@ router.post('/saveOrder', async (req, res) => {
 
 router.get('/allOrders', async (req, res) => {
     try {
-        const allOrders = await Orders.find();
+        const allOrders = await Orders.find().sort({ createdAt: 1 });
 
         if (allOrders.length === 0) {
             return res.json({
@@ -68,7 +75,7 @@ router.post('/orderDetails', async (req, res) => {
 
 router.post('/specificUserOrders', async (req, res) => {
     try {
-        const orders = await Orders.find({ userId: req.body.userId });
+        const orders = await Orders.find({ userId: req.body.userId }).sort({ createdAt: 1 });
 
         return res.json({
             status: '200',
@@ -86,7 +93,21 @@ router.post('/specificUserOrders', async (req, res) => {
 
 router.post('/changeOrderStatus', async (req, res) => {
     try {
-        await Orders.findByIdAndUpdate(req.body.orderId, { $set: req.body });
+        const order = await Orders.findByIdAndUpdate(req.body.orderId, { $set: req.body });
+
+        const user = await Users.findById(order.userId);
+
+        if (req.body.status === 'Cancelled') {
+            const msg = `Dear ${user.name} your order# ${req.body.orderNum} has been cancelled`;
+
+            await notify.user(msg, user.playerId, { flag: 'orderCancelled' });
+        }
+
+        if (req.body.status === 'Shipped') {
+            const msg = `Dear ${user.name} your order#  ${req.body.orderNum} has been shipped`;
+
+            await notify.user(msg, user.playerId, { flag: 'orderShipped' });
+        }
 
         return res.json({
             status: '200',

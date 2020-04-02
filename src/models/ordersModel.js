@@ -12,7 +12,8 @@ const ordersModel = mongoose.Schema({
         status: 'pending'
     }
 }, {
-    versionKey: false
+    versionKey: false,
+    timestamps: true
 });
 
 module.exports = mongoose.model('orders', ordersModel); 
