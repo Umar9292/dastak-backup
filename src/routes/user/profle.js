@@ -38,13 +38,13 @@ router.post("/changePassword", async (req, res) => {
     const oldPasswordMatch = await bcrypt.compare(oldPassword, user.password);
     if (oldPasswordMatch === false) return res.json({
         status: '404',
-        msg: 'Old password didnot match'
+        msg: 'Invalid Old password'
     });
 
     const newPasswordMatch = await bcrypt.compare(newPassword, user.password);
     if (newPasswordMatch === true) return res.json({
         status: '404',
-        msg: 'You cant set the previous password again'
+        msg: 'You can not set the previous password again'
     });
 
     const hashNewPassword = await bcrypt.hash(newPassword, 10);
