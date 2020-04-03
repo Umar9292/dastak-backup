@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const cloudinary = require('cloudinary');
 const formidable = require('formidable');
+const fs = require('fs');
 
 router.post("/addImage", (req, res) => {
     try {
@@ -22,10 +23,12 @@ router.post("/addImage", (req, res) => {
                     height: 600
                 });
 
-            return res.json({
+            res.json({
                 status: '200',
                 data: img.url
             });
+
+            fs.unlinkSync(imgPath);
         });
     }
     catch (err) {
