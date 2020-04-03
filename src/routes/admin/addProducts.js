@@ -18,6 +18,9 @@ router.post('/addProduct', async (req, res) => {
             msg: 'product already added'
         });
 
+        const category = await Products.findOne({ categoryTitle: params.categoryTitle });
+        params.categoryImg = category.categoryImg;
+
         await new Products(params).save();
 
         return res.json({
