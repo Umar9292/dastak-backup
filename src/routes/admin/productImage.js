@@ -19,8 +19,8 @@ router.post("/addImage", (req, res) => {
                 {
                     quality: 'auto',
                     folder: 'Product Images',
-                    width: 600,
-                    height: 600
+                    width: 550,
+                    height: 550
                 });
 
             res.json({
