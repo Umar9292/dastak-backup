@@ -24,12 +24,12 @@ router.post("/addImage", (req, res) => {
                     height: 550
                 });
 
-            res.json({
+            return res.json({
                 status: '200',
                 data: img.url
             });
 
-            fs.unlinkSync(imgPath);
+            // fs.unlinkSync(imgPath);
         });
     }
     catch (err) {
