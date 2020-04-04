@@ -13,6 +13,7 @@ router.post("/addImage", (req, res) => {
         form.maxFieldsSize = 10 * 1024 * 1024;
 
         form.parse(req, async (_err, _fields, files) => {
+            console.log(files);
             const imgPath = files.avatar.path;
 
             const img = await cloudinary.v2.uploader.upload(imgPath,
