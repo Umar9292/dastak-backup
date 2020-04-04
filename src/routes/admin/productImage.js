@@ -15,23 +15,22 @@ router.post("/addImage", (req, res) => {
         form.maxFieldsSize = 10 * 1024 * 1024;
 
         form.parse(req, async (_err, _fields, files) => {
-            console.log(files);
-            // const imgPath = files.avatar.path;
+            const imgPath = files.avatar.path;
 
-            // const img = await cloudinary.v2.uploader.upload(imgPath,
-            //     {
-            //         quality: 'auto',
-            //         folder: 'Product Images',
-            //         width: 550,
-            //         height: 550
-            //     });
+            const img = await cloudinary.v2.uploader.upload(imgPath,
+                {
+                    quality: 'auto',
+                    folder: 'Product Images',
+                    width: 550,
+                    height: 550
+                });
 
-            // return res.json({
-            //     status: '200',
-            //     data: img.url
-            // });
+            res.json({
+                status: '200',
+                data: img.url
+            });
 
-            // fs.unlinkSync(imgPath);
+            fs.unlinkSync(imgPath);
         });
     }
     catch (err) {
