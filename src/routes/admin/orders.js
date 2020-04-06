@@ -32,7 +32,7 @@ router.post('/saveOrder', async (req, res) => {
 
 router.get('/allOrders', async (req, res) => {
     try {
-        const allOrders = await Orders.find().sort({ createdAt: 1 });
+        const allOrders = await Orders.find().sort({ createdAt: -1 });
 
         if (allOrders.length === 0) {
             return res.json({

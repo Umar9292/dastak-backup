@@ -6,8 +6,6 @@ const fs = require('fs');
 
 router.post("/addImage", (req, res) => {
     try {
-        console.log('I am here');
-        console.log(req.body);
         let form = new formidable.IncomingForm();
 
         form.uploadDir = 'uploads/productImages';
