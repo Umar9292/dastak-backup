@@ -18,6 +18,7 @@ const productImageRouter = require('./src/routes/admin/productImage');
 const ordersRouter = require('./src/routes/admin/orders');
 const playerIdRouter = require('./src/routes/admin/playerId');
 const logoutRouter = require('./src/routes/user/logout');
+const martsRouter = require('./src/routes/marts/marts');
 
 const port = process.env.PORT || 8080;
 
@@ -41,6 +42,7 @@ app.use('/products',
 );
 app.use('/orders', ordersRouter);
 app.use('/admin', playerIdRouter);
+app.use('/marts', martsRouter);
 
 mongoose.connect(dbUrl,
     {

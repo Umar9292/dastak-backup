@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const productsModel = mongoose.Schema({
+    martId: String,
     title: String,
     price: Number,
     category: String,
