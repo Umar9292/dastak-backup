@@ -8,12 +8,12 @@ const User = require('../../models/userModel');
 router.post('/signUp', async (req, res) => {
     try {
         const params = req.body;
-        let { email, password } = params;
+        let {phone, password } = params;
 
-        const user = await User.findOne({ email: email });
+        const user = await User.findOne({ phone:phone});
         if (user) return res.json({
             status: '404',
-            msg: `The email you have entered is already associated with another account`
+            msg: `The number you have entered is already associated with another account`
         });
 
         params.password = await bcrypt.hash(password, 10);
@@ -23,7 +23,7 @@ router.post('/signUp', async (req, res) => {
         return res.json({
             status: '200',
             data: (_.pick(newUser, [
-                '_id', 'email', 'phone', 'name', 'image', 'address', 'type'
+                '_id', 'phone', 'name', 'image', 'address', 'type'
             ]))
         });
     }
@@ -38,24 +38,24 @@ router.post('/signUp', async (req, res) => {
 
 router.post('/signIn', async (req, res) => {
     try {
-        let { email, password } = req.body;
+        let { phone, password } = req.body;
 
-        const user = await User.findOne({ email: email });
+        const user = await User.findOne({ phone:phone });
         if (!user) return res.json({
             status: '404',
-            msg: `The email you have entered is not associated with any account`
+            msg: `The number you have entered is not associated with any account`
         });
 
         const result = await bcrypt.compare(password, user.password);
         if (!result) return res.json({
             status: '404',
-            msg: `Email or password is invalid`
+            msg: `Number or password is invalid`
         });
 
         return res.json({
             status: '200',
             data: (_.pick(user, [
-                '_id', 'email', 'phone', 'name', 'image', 'address', 'type', 'playerId'
+                '_id', 'phone', 'name', 'image', 'address', 'type', 'playerId'
             ]))
         });
     }
