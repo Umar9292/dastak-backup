@@ -8,9 +8,9 @@ const User = require('../../models/userModel');
 router.post('/signUp', async (req, res) => {
     try {
         const params = req.body;
-        let {phone, password } = params;
+        let { phone, password } = params;
 
-        const user = await User.findOne({ phone:phone});
+        const user = await User.findOne({ phone: phone });
         if (user) return res.json({
             status: '404',
             msg: `The number you have entered is already associated with another account`
@@ -40,7 +40,7 @@ router.post('/signIn', async (req, res) => {
     try {
         let { phone, password } = req.body;
 
-        const user = await User.findOne({ phone:phone });
+        const user = await User.findOne({ phone: phone });
         if (!user) return res.json({
             status: '404',
             msg: `The number you have entered is not associated with any account`
