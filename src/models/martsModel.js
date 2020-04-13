@@ -5,7 +5,10 @@ const martsModel = mongoose.Schema({
     name: String,
     phone: String,
     password: String,
-    location: String
+    address: String,
+    openingTime: String,
+    closingTime: String,
+    playerId: String
 }, {
     versionKey: false,
     timestamps: true

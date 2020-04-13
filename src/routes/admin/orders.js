@@ -3,18 +3,25 @@ const router = express.Router();
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
+const Mart = require('../../models/martsModel');
 
 const notify = require('../../notificationHandler/handler');
 
 router.post('/saveOrder', async (req, res) => {
     try {
-        req.body.products = JSON.parse(req.body.products);
+        const params = req.body;
 
-        await new Orders(req.body).save();
+        params.products = JSON.parse(params.products);
 
-        const admin = await Users.findById('5e79f1df7e7ffd367cb2a8b4').select('playerId');
+        const mart = await Mart.findOne({ name: params.martName })
+            .select('name phone address playerId');
 
-        await notify.admin(admin.playerId, { flag: 'orderReceived' });
+        params.martPhone = mart.phone;
+        params.martAddress = mart.address;
+
+        await new Orders(params).save();
+
+        await notify.admin(mart.playerId, { flag: 'orderReceived' });
 
         return res.json({
             status: '200',

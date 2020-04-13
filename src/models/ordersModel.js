@@ -2,11 +2,14 @@ const mongoose = require('mongoose');
 
 const ordersModel = mongoose.Schema({
     userId: String,
+    martName: String,
     name: String,
     phone: String,
     address: String,
     date: String,
     products: Object,
+    martPhone: String,
+    martAddress: String,
     status: {
         type: String,
         status: 'pending'
@@ -16,4 +19,4 @@ const ordersModel = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('orders', ordersModel); 
+module.exports = mongoose.model('orders', ordersModel);
