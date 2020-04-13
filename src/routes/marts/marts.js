@@ -36,7 +36,7 @@ router.post('/addMart', async (req, res) => {
 
 router.get("/allMarts", async (req, res) => {
     try {
-        const allMarts = await Marts.find().sort({ name: 1 });
+        const allMarts = await Marts.find().sort({ name: 1 }).select('-password -__v');
 
         return res.json({
             status: '200',

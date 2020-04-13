@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Products = require("../../models/productsModel");
+const Products = require("../../models/iffyMartModel");
 
 router.post('/addProduct', async (req, res) => {
     try {

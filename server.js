@@ -19,6 +19,8 @@ const ordersRouter = require('./src/routes/admin/orders');
 const playerIdRouter = require('./src/routes/admin/playerId');
 const logoutRouter = require('./src/routes/user/logout');
 const martsRouter = require('./src/routes/marts/marts');
+const mainCategoriesRouter = require('./src/routes/products/mainCategories');
+const subCategoriesRouter = require('./src/routes/products/subCategories');
 
 const port = process.env.PORT || 8080;
 
@@ -38,7 +40,9 @@ app.use('/products',
     pricingRouter,
     adminCategoriesRouter,
     addProductsRouter,
-    productImageRouter
+    productImageRouter,
+    mainCategoriesRouter,
+    subCategoriesRouter
 );
 app.use('/orders', ordersRouter);
 app.use('/admin', playerIdRouter);
