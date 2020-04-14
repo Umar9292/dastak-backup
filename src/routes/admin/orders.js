@@ -11,11 +11,12 @@ router.post('/saveOrder', async (req, res) => {
     try {
         const params = req.body;
 
-        params.products = JSON.parse(params.products);
+        params.products = await JSON.parse(params.products);
 
-        const mart = await Mart.findOne({ name: params.martName })
+        const mart = await Mart.findById({ _id: params.martId })
             .select('name phone address playerId');
 
+        params.martId = mart._id;
         params.martPhone = mart.phone;
         params.martAddress = mart.address;
 
@@ -37,11 +38,12 @@ router.post('/saveOrder', async (req, res) => {
     }
 });
 
-router.get('/allOrders', async (req, res) => {
+router.get('/allOrders/:martId', async (req, res) => {
     try {
-        const allOrders = await Orders.find().sort({ createdAt: -1 });
+        const orders = await Orders.find({ martId: req.params.martId })
+            .sort({ createdAt: -1 });
 
-        if (allOrders.length === 0) {
+        if (orders.length === 0) {
             return res.json({
                 status: '404',
                 msg: 'There are no orders yet'
@@ -50,7 +52,7 @@ router.get('/allOrders', async (req, res) => {
 
         return res.json({
             status: '200',
-            data: allOrders
+            data: orders
         });
     }
     catch (err) {
