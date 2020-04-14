@@ -1,25 +1,24 @@
 const express = require("express");
 const router = express.Router();
 
-const iffyMart = require("../../models/iffyMartModel");
+const Products = require("../../models/productsModel");
 
 router.post("/mainCategories", async (req, res) => {
     try {
         const params = req.body;
         const mainCategories = [];
 
-        if (params.martName === `Iffy's Mart`) {
-            const products = await iffyMart.find().select('mainCategory');
+        const products = await Products.find({ martId: params.martId })
+            .select('mainCategory');
 
-            await Promise.all(products.map(p => {
-                if (!mainCategories.includes(p.mainCategory)) {
-                    mainCategories.push(p.mainCategory);
-                }
-            }));
-        }
+        await Promise.all(products.map(p => {
+            if (!mainCategories.includes(p.mainCategory)) {
+                mainCategories.push(p.mainCategory);
+            }
+        }));
 
         const finalCategories = await Promise.all(mainCategories.map(async m => {
-            const category = await iffyMart.findOne({ mainCategory: m })
+            const category = await Products.findOne({ mainCategory: m })
                 .select('mainCategoryImg');
 
             pushCategory = () => {

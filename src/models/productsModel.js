@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const productsModel = mongoose.Schema(
     {
+        martId: String,
         productName: String,
         price: Number,
         productImg: String,
@@ -18,4 +19,4 @@ const productsModel = mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model('iffy mart', productsModel); 
+module.exports = mongoose.model('products', productsModel); 

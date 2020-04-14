@@ -1,27 +1,30 @@
 const express = require("express");
 const router = express.Router();
 
-const iffyMart = require("../../models/iffyMartModel");
+const Products = require("../../models/productsModel");
 
 router.post('/subCategories', async (req, res) => {
     try {
-        const { martName, mainCategory } = req.body;
+        const { martId, mainCategory } = req.body;
 
         const subCategories = [];
 
-        if (martName === `Iffy's Mart`) {
-            const categories = await iffyMart.find({ mainCategory: mainCategory })
-                .select('subCategory');
+        const query = {
+            martId: martId,
+            mainCategory: mainCategory
+        };
 
-            await Promise.all(categories.map(c => {
-                if (!subCategories.includes(c.subCategory)) {
-                    subCategories.push(c.subCategory)
-                }
-            }));
-        }
+        const categories = await Products.find(query)
+            .select('subCategory');
+
+        await Promise.all(categories.map(c => {
+            if (!subCategories.includes(c.subCategory)) {
+                subCategories.push(c.subCategory)
+            }
+        }));
 
         const response = await Promise.all(subCategories.map(async s => {
-            const subCategory = await iffyMart.findOne({ subCategory: s })
+            const subCategory = await Products.findOne({ subCategory: s })
                 .select('subCategoryImg');
 
             pushData = () => {
@@ -52,14 +55,15 @@ router.post('/subCategories', async (req, res) => {
 
 router.post("/subCategoryProducts", async (req, res) => {
     try {
-        const { martName, subCategory } = req.body;
+        const { martId, subCategory } = req.body;
 
-        let products;;
+        const query = {
+            martId: martId,
+            subCategory: subCategory
+        };
 
-        if (martName === `Iffy's Mart`) {
-            products = await iffyMart.find({ subCategory: subCategory })
-                .sort({ title: 1, quantity: 1 });
-        }
+        const products = await Products.find(query)
+            .sort({ title: 1, quantity: 1 });
 
         return res.json({
             status: "200",

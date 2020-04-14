@@ -5,7 +5,6 @@ const userModel = mongoose.Schema({
     phone: String,
     password: String,
     address: String,
-    image: String,
     playerId: String,
     type: {
         type: String,
