@@ -118,9 +118,9 @@ router.get("/categoryTitlesAndImages", async (req, res) => {
   }
 });
 
-router.get("/allProducts/:martId", async (req, res) => {
+router.post("/allProducts/", async (req, res) => {
   try {
-    const products = await Products.find({ martId: req.params.martId })
+    const products = await Products.find({ martId: req.body.martId })
       .sort({ productName: 1, quantity: 1 });
 
     return res.json({
