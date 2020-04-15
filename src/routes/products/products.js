@@ -120,9 +120,8 @@ router.get("/categoryTitlesAndImages", async (req, res) => {
 
 router.get("/allProducts", async (req, res) => {
   try {
-    const products = await Products.find()
-      .select("title img price net count quantity categoryTitle category")
-      .sort({ title: 1, quantity: 1 });
+    const products = await Products.find({ martId: req.body.martId })
+      .sort({ productName: 1, quantity: 1 });
 
     return res.json({
       status: "200",

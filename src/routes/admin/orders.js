@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const moment = require('moment-timezone');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
@@ -11,22 +12,35 @@ router.post('/saveOrder', async (req, res) => {
     try {
         const params = req.body;
 
-        params.products = await JSON.parse(params.products);
-
         const mart = await Mart.findById({ _id: params.martId })
-            .select('name phone address playerId');
+            .select('-password -__v');
 
-        params.martId = mart._id;
-        params.martPhone = mart.phone;
-        params.martAddress = mart.address;
+        const formatedOrderTime = moment(params.time).format('hh:mm');
+        const orderTime = moment(formatedOrderTime, 'hh:mm').tz('Asia/karachi');
+        const openingTime = moment(mart.openingTime, 'hh:mm').tz('Asia/karachi');
+        const closingTime = moment(mart.closingTime, 'hh:mm').tz('Asia/karachi');
 
-        await new Orders(params).save();
+        if (orderTime.isBetween(openingTime, closingTime)) {
 
-        await notify.admin(mart.playerId, { flag: 'orderReceived' });
+            params.products = await JSON.parse(params.products);
+            params.martId = mart._id;
+            params.martPhone = mart.phone;
+            params.martAddress = mart.address;
+            params.time = orderTime;
+
+            await new Orders(params).save();
+
+            await notify.admin(mart.playerId, { flag: 'orderReceived' });
+
+            return res.json({
+                status: '200',
+                msg: 'Order received'
+            });
+        }
 
         return res.json({
-            status: '200',
-            msg: 'Order received'
+            status: '404',
+            msg: 'Mart is closed'
         });
     }
     catch (err) {

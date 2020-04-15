@@ -8,6 +8,7 @@ const ordersModel = mongoose.Schema({
     phone: String,
     address: String,
     date: String,
+    time: String,
     products: Object,
     martPhone: String,
     martAddress: String,
