@@ -52,9 +52,9 @@ router.post('/saveOrder', async (req, res) => {
     }
 });
 
-router.get('/allOrders/:martId', async (req, res) => {
+router.post('/allOrders', async (req, res) => {
     try {
-        const orders = await Orders.find({ martId: req.params.martId })
+        const orders = await Orders.find({ _id: req.body.martId })
             .sort({ createdAt: -1 });
 
         if (orders.length === 0) {
