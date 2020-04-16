@@ -24,6 +24,7 @@ router.post('/saveOrder', async (req, res) => {
 
             params.products = await JSON.parse(params.products);
             params.martId = mart._id;
+            params.martName = mart.name;
             params.martPhone = mart.phone;
             params.martAddress = mart.address;
             params.time = orderTime;
