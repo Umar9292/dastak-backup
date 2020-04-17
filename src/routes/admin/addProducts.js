@@ -7,19 +7,23 @@ router.post('/addProduct', async (req, res) => {
     try {
         const params = req.body;
 
-        const productQuery = {
-            title: params.title,
+        const query = {
+            martId: params.martId,
+            productName: params.productName,
             quantity: params.quantity
         };
 
-        const product = await Products.findOne(productQuery);
+        const product = await Products.findOne(query);
         if (product) return res.json({
             status: '404',
             msg: 'product already added'
         });
 
-        const category = await Products.findOne({ categoryTitle: params.categoryTitle });
-        params.categoryImg = category.categoryImg;
+        const category = await Products.findOne({ subCategory: params.subCategory })
+            .select('mainCategoryImg subCategoryImg');
+
+        params.subCategoryImg = category.subCategoryImg;
+        params.mainCategoryImg = category.mainCategoryImg;
 
         await new Products(params).save();
 
