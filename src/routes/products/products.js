@@ -135,27 +135,6 @@ router.post("/allProducts/", async (req, res) => {
   }
 });
 
-router.post("/specificProducts", async (req, res) => {
-  try {
-    /*  await Products.insertMany(
-            
-         );
-         res.json('done')
-         // const products = await Products.find({ categoryTitle: req.body.categoryTitle })
-         //     .select('title net count quantity img price');
- 
-         // return res.json({
-         //     status: '200',
-         //     data: products
-         // }); */
-  } catch (err) {
-    return res.json({
-      status: "404",
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
-    });
-  }
-});
-
 router.post('/deleteProduct/', async (req, res) => {
   try {
     await Products.findByIdAndDelete({ _id: req.body.productId });
@@ -180,7 +159,7 @@ router.get('/addBulkProducts/', async (req, res) => {
     await Products.insertMany(
       [
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "7up 1.5litre",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586874424/Product%20Images/7up_1.5l_awbv1p.jpg",
           "mainCategory": "Beverages",
@@ -188,12 +167,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "1.5 Liter",
-          "price": "100",
+          "price": "90",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Ahmed Mango Squash 800ml",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586874385/Product%20Images/ahmedMangosquash_onhkrt.jpg",
           "mainCategory": "Beverages",
@@ -203,10 +183,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "800ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Ajwain",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586428604/Product%20Images/ajwain_c5sxx4.jpg",
           "mainCategory": "Grocery",
@@ -216,10 +197,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "50",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Ala Quilty Steem Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586175798/Product%20Images/steam_rice_tcpih6.jpg",
           "mainCategory": "Grocery",
@@ -227,12 +209,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "500g",
-          "price": "65",
+          "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Ala Quilty Steem Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586175798/Product%20Images/steam_rice_tcpih6.jpg",
           "mainCategory": "Grocery",
@@ -240,12 +223,55 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "130",
+          "price": "160",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Always Classic Thick Long (9 Pads)",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587201937/Product%20Images/always-classic-thick-long_uakigh.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Women Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200020/Category%20Images/womencare_vbhing.jpg",
+          "quantity": "1 Unit 9 Pcs",
+          "price": "165",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Always Maxi Thick Long",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587202042/Product%20Images/always-maxi-thick-long_ujkmkv.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Women Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200020/Category%20Images/womencare_vbhing.jpg",
+          "quantity": "1 Unit 9 Pcs",
+          "price": "170",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Always Ultra Long With Gel Core Value Pack (16 Pads)\n",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587202304/Product%20Images/always-ultra-long-with-gel_dgf6ne.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Women Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200020/Category%20Images/womencare_vbhing.jpg",
+          "quantity": "1 Unit 16s",
+          "price": "330",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Anaar Dana",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586169363/Product%20Images/anar_dana_okkuak.jpg",
           "mainCategory": "Grocery",
@@ -255,10 +281,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Ariel",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229314/Product%20Images/Ariel_500g_lhfuwd.jpg",
           "mainCategory": "Home Care",
@@ -266,25 +293,27 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Laundry",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887238/Category%20Images/Laundry5906_amer3q.png",
           "quantity": "1kg",
-          "price": "150",
+          "price": "300",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Ariel",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229431/Product%20Images/Ariel_80g_ffpsl4.jpg",
           "mainCategory": "Home Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
           "subCategory": "Laundry",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887238/Category%20Images/Laundry5906_amer3q.png",
-          "quantity": "170g",
-          "price": "20",
+          "quantity": "500gg",
+          "price": "150",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Ariel",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229432/Product%20Images/Ariel_35g_fohzkh.jpg",
           "mainCategory": "Home Care",
@@ -294,10 +323,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "35g",
           "price": "10",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Ariel Downy",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229314/Product%20Images/Ariel_500g_lhfuwd.jpg",
           "mainCategory": "Home Care",
@@ -305,25 +335,111 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Laundry",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887238/Category%20Images/Laundry5906_amer3q.png",
           "quantity": "1kg",
-          "price": "100",
+          "price": "300",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Ariel Original",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Ariel Downy",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229431/Product%20Images/Ariel_80g_ffpsl4.jpg",
           "mainCategory": "Home Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
           "subCategory": "Laundry",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887238/Category%20Images/Laundry5906_amer3q.png",
-          "quantity": "65g",
-          "price": "100",
+          "quantity": "500g",
+          "price": "150",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Axe Apollo Body Spray",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587234762/Product%20Images/axe-apollo-body-spray_n2ltvm.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Men Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200023/Category%20Images/mencare_msjirg.jpg",
+          "quantity": "150ml",
+          "price": "265",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Axe Body Spray God Temptation",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587234660/Product%20Images/axe-body-spray-god-temptation_rccuav.png",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Men Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200023/Category%20Images/mencare_msjirg.jpg",
+          "quantity": "150ml",
+          "price": "260",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Axe Collision Body Spray\n",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587235056/Product%20Images/axe-collision-body-spray_qtqpfw.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Men Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200023/Category%20Images/mencare_msjirg.jpg",
+          "quantity": "150ml",
+          "price": "290",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Axe Dark Temptation Body Spray",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587234987/Product%20Images/axe-dark-temptation-body-spray_i82lcu.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Men Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200023/Category%20Images/mencare_msjirg.jpg",
+          "quantity": "150ml",
+          "price": "290",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Axe Marine Deodorant & Body Spray",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587234840/Product%20Images/axe-marine-deodorant-body_szxoia.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Men Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200023/Category%20Images/mencare_msjirg.jpg",
+          "quantity": "150ml",
+          "price": "275",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Baisan",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231806/Product%20Images/baisin_1kg_u7lby6.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Daalain, Rice & Flour",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
+          "quantity": "500g",
+          "price": "85",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Baisan",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231806/Product%20Images/baisin_1kg_u7lby6.jpg",
           "mainCategory": "Grocery",
@@ -331,64 +447,97 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "150",
+          "price": "160",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Bake Parlor Bar B Que Macroni",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586874599/Product%20Images/Bar-B-Que-Macaroni_fjossl.png",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Baking & Deserts",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885953/Category%20Images/Desserts4352_p2shfs.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
           "quantity": "250g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Bake Parlor Chicken Ginger Macroni",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586874579/Product%20Images/bakeparlor-chicken-ginger-macaroni_xdt8q6.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Baking & Deserts",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885953/Category%20Images/Desserts4352_p2shfs.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
           "quantity": "250g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Bake Parlor Elbow Macaroni Pouch",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587285334/Product%20Images/bake-parlor-elbow-macaroni-pouch_tt78yh.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
+          "quantity": "400g",
+          "price": "100",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Bake Parlor Spaghetti",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587285502/Product%20Images/bake-parlor-spaghetti_stvkty.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
+          "quantity": "450g",
+          "price": "110",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Bake Parlour Macroni",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229343/Product%20Images/Bake_Parlour_Macroni_400g_xmkkqy.png",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Baking & Deserts",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885953/Category%20Images/Desserts4352_p2shfs.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
           "quantity": "400g",
           "price": "90",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Bake Parlour Spaghetti",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229354/Product%20Images/Bake_Parlour_Spaghetti_450g_jxzpcf.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Baking & Deserts",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885953/Category%20Images/Desserts4352_p2shfs.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
           "quantity": "450g",
           "price": "95",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Baking Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586944015/Product%20Images/bakingpowder_x75ioo.jpg",
           "mainCategory": "Grocery",
@@ -398,10 +547,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Baking Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586944015/Product%20Images/bakingpowder_x75ioo.jpg",
           "mainCategory": "Grocery",
@@ -411,10 +561,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "50g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Bari Elaichi",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586960990/Product%20Images/big-cardamom_rnlgz5.jpg",
           "mainCategory": "Grocery",
@@ -424,10 +575,25 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "50g",
           "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Bic Body Disposable Razor",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587234582/Product%20Images/bic-body-disposable-razor_grvw1r.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Men Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200023/Category%20Images/mencare_msjirg.jpg",
+          "quantity": "1 Unit",
+          "price": "20",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Black Chana",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231823/Product%20Images/Black_Chana_1kg_tr0ylq.jpg",
           "mainCategory": "Grocery",
@@ -435,12 +601,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "500g",
-          "price": "75",
+          "price": "85",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Black Chana",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231823/Product%20Images/Black_Chana_1kg_tr0ylq.jpg",
           "mainCategory": "Grocery",
@@ -448,12 +615,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "150",
+          "price": "165",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Bonus Active",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229314/Product%20Images/Bonus_2kg_e8uonw.jpg",
           "mainCategory": "Home Care",
@@ -461,12 +629,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Laundry",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887238/Category%20Images/Laundry5906_amer3q.png",
           "quantity": "750g",
-          "price": "205",
+          "price": "110",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Bonus tristar",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229316/Product%20Images/Bonus_475g_bcq0tk.jpg",
           "mainCategory": "Home Care",
@@ -474,12 +643,167 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Laundry",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887238/Category%20Images/Laundry5906_amer3q.png",
           "quantity": "450g",
-          "price": "50",
+          "price": "55",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cadbury Dairy Milk Bubbly",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587288801/Product%20Images/cadbury-dairy-milk-bubbly_xhfcqk.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chocolates",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chocolates_uznthy.jpg",
+          "quantity": "40g",
+          "price": "85",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cadbury Dairy Milk Chocolate",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587288657/Product%20Images/cadbury-dairy-milk-chocolate_vfuinj.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chocolates",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chocolates_uznthy.jpg",
+          "quantity": "30.5g",
+          "price": "100",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cadbury Dairy Milk Chocolate",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587288657/Product%20Images/cadbury-dairy-milk-chocolate_vfuinj.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chocolates",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chocolates_uznthy.jpg",
+          "quantity": "38g",
+          "price": "65",
+          "net": "0",
+          "count": "0",
+          "field12": "0"
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cadbury Dairy Milk Chocolate",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587288657/Product%20Images/cadbury-dairy-milk-chocolate_vfuinj.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chocolates",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chocolates_uznthy.jpg",
+          "quantity": "90 gm",
+          "price": "180",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cadbury Dairy Milk Chocolate Pack Box",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587289004/Product%20Images/cadbury-dairy-milk-chocolate_ge8qur.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chocolates",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chocolates_uznthy.jpg",
+          "quantity": "36 Pcs Box",
+          "price": "360",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cadbury Dairy Milk Fruit & Nut",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587288895/Product%20Images/cadbury-dairy-milk-fruit_rfswsr.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chocolates",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chocolates_uznthy.jpg",
+          "quantity": "38g",
+          "price": "80",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cadbury Eclairs Gold Box",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587289105/Product%20Images/cadbury-eclairs-gold-box_eplwll.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chocolates",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chocolates_uznthy.jpg",
+          "quantity": "315g",
+          "price": "200",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cadbury Perk Chocolate Pack Box",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587288980/Product%20Images/cadbury-perk-chocolate_zntzvz.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chocolates",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chocolates_uznthy.jpg",
+          "quantity": "24 Pcs Box",
+          "price": "240",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cherry Blossom Black Shoe Polish",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587201288/Product%20Images/cherry-blossom-black-shoe-polish_fi4ss6.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Shoes Polish & Brush",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200027/Category%20Images/shoe_poliish_rps4u1.jpg",
+          "quantity": "1 Pcs",
+          "price": "85",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cherry Blossom Liquid polish",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587201700/Product%20Images/cherry-blossom-liquid_fezltq.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Shoes Polish & Brush",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200027/Category%20Images/shoe_poliish_rps4u1.jpg",
+          "quantity": "75ml",
+          "price": "200",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Cherry Blossom Neutral Shoe Shine",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587201578/Product%20Images/cherry-blossom-neutral-handy-shine_xphikf.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Shoes Polish & Brush",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200027/Category%20Images/shoe_poliish_rps4u1.jpg",
+          "quantity": "1 Pcs",
+          "price": "190",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Chili Sauce",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229325/Product%20Images/Chili_Sauce_300ml_yiits6.jpg",
           "mainCategory": "Grocery",
@@ -489,10 +813,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "300ml",
           "price": "105",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Chili Soya Sauce",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229316/Product%20Images/Chili_Soya_Sauce_trio_pack_alspfk.jpg",
           "mainCategory": "Grocery",
@@ -500,27 +825,15 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sauces, Olives & Pickles",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
           "quantity": "Tri Pack",
-          "price": "138",
+          "price": "145",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Choti Elaichi",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586169801/Product%20Images/Small-Cardamom_fxotyh.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Spices, Salt & Sugar",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
-          "quantity": "50g",
-          "price": "425",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Clean & Clear Face Wash",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586347640/Product%20Images/clean_n_clear_c0x75h.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586347640/Product%20Images/clean_n_clear_c0x75h.jpg",
           "mainCategory": "Personal Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
           "subCategory": "Skin Care",
@@ -528,10 +841,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Clinic Plus Shampoo",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586874379/Product%20Images/clinical_plus_shampoojpg_pnqobo.jpg",
           "mainCategory": "Personal Care",
@@ -541,10 +855,25 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "340ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Coca Cola (Coke)",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586944021/Product%20Images/grocerapp-coca-cola-drink_inp6vd.jpg",
+          "mainCategory": "Beverages",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
+          "subCategory": "Sharbat & Drinks",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
+          "quantity": "1.5 Liter",
+          "price": "100",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Coffee Jar",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586345629/Product%20Images/necsafe_50g_jfrgr5.jpg",
           "mainCategory": "Beverages",
@@ -554,10 +883,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "50g",
           "price": "295",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Coffee Jar",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586345628/Product%20Images/nescafe_200g_qbymiv.jpg",
           "mainCategory": "Beverages",
@@ -565,38 +895,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Cold Tea, Coffee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885588/Category%20Images/Cold-TeaCoffee3952_h93w2t.jpg",
           "quantity": "200g",
-          "price": "295",
+          "price": "540",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Coffee Jar",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586345629/Product%20Images/nescafe_100g_ib4u5j.jpg",
-          "mainCategory": "Beverages",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
-          "subCategory": "Cold Tea, Coffee",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885588/Category%20Images/Cold-TeaCoffee3952_h93w2t.jpg",
-          "quantity": "100g",
-          "price": "295",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Coffee Jar",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229317/Product%20Images/Coffee_Jar_25g_wqjala.jpg",
-          "mainCategory": "Beverages",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
-          "subCategory": "Cold Tea, Coffee",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885588/Category%20Images/Cold-TeaCoffee3952_h93w2t.jpg",
-          "quantity": "25g",
-          "price": "295",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Coffee Sachet",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229333/Product%20Images/Coffee_Sachet_okv0xp.jpg",
           "mainCategory": "Beverages",
@@ -606,23 +911,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1 Sachet",
           "price": "30",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Coke 1.5 L",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586944021/Product%20Images/grocerapp-coca-cola-drink_inp6vd.webp",
-          "mainCategory": "Beverages",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
-          "subCategory": "Sharbat & Drinks",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
-          "quantity": "1.5 Liter",
-          "price": "100",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Colgate Anticavity Paste",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229371/Product%20Images/Colgate_200g_imwg97.png",
           "mainCategory": "Personal Care",
@@ -632,10 +925,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "200g",
           "price": "185",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Colgate Anticavity Paste",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229355/Product%20Images/Colgate_150g_v7dafc.png",
           "mainCategory": "Personal Care",
@@ -645,10 +939,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "150g",
           "price": "158",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Colgate Anticavity Paste",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229346/Product%20Images/Colgate_100g_m8fezr.png",
           "mainCategory": "Personal Care",
@@ -658,10 +953,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "108",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Colgate Anticavity Paste",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229356/Product%20Images/Colgate_50g_t6lxw2.png",
           "mainCategory": "Personal Care",
@@ -671,10 +967,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "50g",
           "price": "50",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Colgate Max Fresh",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229345/Product%20Images/Colgate_Max_Fresh_125g_yrgtjv.jpg",
           "mainCategory": "Personal Care",
@@ -684,10 +981,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "125g",
           "price": "140",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Colgate Max Fresh",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229338/Product%20Images/Colgate_Max_Fresh_75g_huwwsw.jpg",
           "mainCategory": "Personal Care",
@@ -697,12 +995,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "75g",
           "price": "92",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Colgate Sensitive",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586943685/Product%20Images/colgate-sensitive_pjxafr.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586943685/Product%20Images/colgate-sensitive_pjxafr.jpg",
           "mainCategory": "Personal Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
           "subCategory": "Dental Care",
@@ -710,10 +1009,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "70g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Cornflour",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229355/Product%20Images/cornFlour_500g_l13yaq.jpg",
           "mainCategory": "Grocery",
@@ -721,12 +1021,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "500g",
-          "price": "73",
+          "price": "95",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Daal Chana",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231833/Product%20Images/Daal_Chana_1kg_spik9v.jpg",
           "mainCategory": "Grocery",
@@ -736,10 +1037,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Daal Chana",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231833/Product%20Images/Daal_Chana_1kg_spik9v.jpg",
           "mainCategory": "Grocery",
@@ -747,12 +1049,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "155",
+          "price": "160",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Daal Mash Chilka",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231823/Product%20Images/Daal_mash_Chilka_xkm6hs.jpg",
           "mainCategory": "Grocery",
@@ -760,12 +1063,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "500g",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Daal Mash Chilka",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231823/Product%20Images/Daal_mash_Chilka_xkm6hs.jpg",
           "mainCategory": "Grocery",
@@ -773,12 +1077,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "230",
+          "price": "250",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Daal Mash Washed",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586174632/Product%20Images/Daal_Masg_Washed_zxcaue.jpg",
           "mainCategory": "Grocery",
@@ -786,12 +1091,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "500g",
-          "price": "120",
+          "price": "150",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Daal Mash Washed",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586174632/Product%20Images/Daal_Masg_Washed_zxcaue.jpg",
           "mainCategory": "Grocery",
@@ -799,12 +1105,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "240",
+          "price": "300",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Daal Masoor",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586961884/Product%20Images/daal_masoor_tma75g.jpg",
           "mainCategory": "Grocery",
@@ -814,10 +1121,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500g",
           "price": "90",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Daal Masoor",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586961884/Product%20Images/daal_masoor_tma75g.jpg",
           "mainCategory": "Grocery",
@@ -827,10 +1135,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Daal Moong",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586175086/Product%20Images/1-moong-dal-moong-dal_b1teva.jpg",
           "mainCategory": "Grocery",
@@ -838,12 +1147,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "500g",
-          "price": "125",
+          "price": "140",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Daal Moong",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586175086/Product%20Images/1-moong-dal-moong-dal_b1teva.jpg",
           "mainCategory": "Grocery",
@@ -851,12 +1161,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "250",
+          "price": "280",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dalda Banaspati",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231827/Product%20Images/Dalda_Banaspati_1kg_cyvilv.jpg",
           "mainCategory": "Grocery",
@@ -864,12 +1175,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "1kg",
-          "price": "227",
+          "price": "240",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dalda Banaspati",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231827/Product%20Images/Dalda_Banaspati_1kg_cyvilv.jpg",
           "mainCategory": "Grocery",
@@ -877,12 +1189,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "5kg",
-          "price": "227",
+          "price": "1175",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dalda Cooking Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231840/Product%20Images/Dalda_cooking_oil_1liter_ifmtfm.jpg",
           "mainCategory": "Grocery",
@@ -890,12 +1203,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "1Liter",
-          "price": "235",
+          "price": "245",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dalda Cooking Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231840/Product%20Images/Dalda_cooking_oil_1liter_ifmtfm.jpg",
           "mainCategory": "Grocery",
@@ -903,12 +1217,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "5Liter",
-          "price": "235",
+          "price": "1200",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Danedaar Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231834/Product%20Images/Danedaar_190g_jbifz8.jpg",
           "mainCategory": "Beverages",
@@ -918,10 +1233,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "190g",
           "price": "208",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Danedaar Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231828/Product%20Images/danedaar_100g_caicmx.jpg",
           "mainCategory": "Beverages",
@@ -931,10 +1247,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "108",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Danedaar Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231833/Product%20Images/danedaar_385g_ttnfm5.jpg",
           "mainCategory": "Beverages",
@@ -944,10 +1261,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "385g",
           "price": "420",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Danedaar Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231829/Product%20Images/danedaar_95g_xwphg4.jpg",
           "mainCategory": "Beverages",
@@ -957,10 +1275,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "950g",
           "price": "925",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Detol",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229357/Product%20Images/Detol_130g_gtjih1.jpg",
           "mainCategory": "Personal Care",
@@ -970,10 +1289,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "130g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dettol",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586353438/Product%20Images/dettol_orignal_nw6l22.jpg",
           "mainCategory": "Personal Care",
@@ -983,10 +1303,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "130g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dettol cool",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586353439/Product%20Images/dettol_pro_fresh_cool_50g_fppdv4.jpg",
           "mainCategory": "Personal Care",
@@ -996,10 +1317,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "50g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dettol Cool",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586353439/Product%20Images/dettol_pro_fresh_cool_50g_fppdv4.jpg",
           "mainCategory": "Personal Care",
@@ -1009,10 +1331,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "130g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dettol Lemon",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586355463/Product%20Images/safeguard_lemon_kn1jqv.jpg",
           "mainCategory": "Personal Care",
@@ -1022,10 +1345,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dettol Original",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586353438/Product%20Images/dettol_138g_quoalr.jpg",
           "mainCategory": "Personal Care",
@@ -1035,10 +1359,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "130g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dettol Original",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586353438/Product%20Images/dettol_orignal_nw6l22.jpg",
           "mainCategory": "Personal Care",
@@ -1048,10 +1373,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dettol RE Energize",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586353438/Product%20Images/detlo_pfrfresh_138g_r6auym.jpg",
           "mainCategory": "Personal Care",
@@ -1061,10 +1387,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "130g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dettol Revitalise",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586353436/Product%20Images/derrol_pro_fresh_130g_svmvo9.jpg",
           "mainCategory": "Personal Care",
@@ -1074,10 +1401,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "130g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dettol Skincare",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586353440/Product%20Images/dettol_proskin_170g_r60oat.jpg",
           "mainCategory": "Personal Care",
@@ -1087,10 +1415,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "130g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dettol Skincare",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586355468/Product%20Images/safeguard_white_95g_blhpft.jpg",
           "mainCategory": "Personal Care",
@@ -1100,10 +1429,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "95g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dodhi Mirch",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586356991/Product%20Images/kalwanji_gneajl.jpg",
           "mainCategory": "Grocery",
@@ -1111,12 +1441,55 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "125g",
-          "price": "75",
+          "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Dodhi Mirch",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586356991/Product%20Images/kalwanji_gneajl.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Spices, Salt & Sugar",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
+          "quantity": "250g",
+          "price": "160",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Dodhi Mirch",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586356991/Product%20Images/kalwanji_gneajl.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Spices, Salt & Sugar",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
+          "quantity": "500g",
+          "price": "320",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Dodhi Mirch",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586356991/Product%20Images/kalwanji_gneajl.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Spices, Salt & Sugar",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
+          "quantity": "1kg",
+          "price": "640",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dove",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229350/Product%20Images/Dove_135g_nsch1y.jpg",
           "mainCategory": "Personal Care",
@@ -1126,12 +1499,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "135g",
           "price": "125",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Dove HFR Shampoo 9m",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586944025/Product%20Images/grocerapp-dove-nutrition-solution-hair-fall-5e6d239537783_fsn06p.webp",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Dove HFR Shampoos",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586944025/Product%20Images/grocerapp-dove-nutrition-solution-hair-fall-5e6d239537783_fsn06p.jpg",
           "mainCategory": "Personal Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
           "subCategory": "Hair Care",
@@ -1139,10 +1513,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "360ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dove Intensive Cream Nourishing Care",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586348097/Product%20Images/grocerapp-dove-skin-care-intensive-cream-5e6d1af3ce021_hr289p.jpg",
           "mainCategory": "Personal Care",
@@ -1152,10 +1527,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "150ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Dove Intensive Cream Nourishing Care",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586348097/Product%20Images/grocerapp-dove-skin-care-intensive-cream-5e6d1af3ce021_hr289p.jpg",
           "mainCategory": "Personal Care",
@@ -1165,10 +1541,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "75ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "English Anti Lice Shampoo",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586944342/Product%20Images/English_anto_lice_s1d4jt.jpg",
           "mainCategory": "Personal Care",
@@ -1178,10 +1555,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "120ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Express Power",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229354/Product%20Images/Express_1.5kg_bpz5ti.jpg",
           "mainCategory": "Home Care",
@@ -1191,10 +1569,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1.5kg",
           "price": "290",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Fair & Lovely BB Fairness Cream",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586351574/Product%20Images/grocerapp-fair-lovely-bb-fairness-5e6d20fc44f0f_oystme.jpg",
           "mainCategory": "Personal Care",
@@ -1204,10 +1583,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "18g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Fair & Lovely Face Wash Insta Glow",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586352139/Product%20Images/fair_lovelt_glow_80g_db1jxh.png",
           "mainCategory": "Personal Care",
@@ -1217,10 +1597,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "80g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Fair & Lovely Winter Fairness Cream",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586348398/Product%20Images/afairness_cream_ueo8mj.png",
           "mainCategory": "Personal Care",
@@ -1230,10 +1611,67 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "75g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Ferrori Black Body Spray",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587235287/Product%20Images/ferrori-black-body-spray_czcodz.png",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Men Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200023/Category%20Images/mencare_msjirg.jpg",
+          "quantity": "150ml",
+          "price": "180",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Ferrori Body Spray Red",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587235236/Product%20Images/ferrori-body-spray-red_eud0nv.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Men Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200023/Category%20Images/mencare_msjirg.jpg",
+          "quantity": "150ml",
+          "price": "180",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Ferrori Deo Spray Green",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587235290/Product%20Images/ferrori-deo-spray-green_j1f4mn.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Men Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200023/Category%20Images/mencare_msjirg.jpg",
+          "quantity": "150ml",
+          "price": "180",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Frey  Air Freshener",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587236301/Product%20Images/fery_airfreshner_ci2xv3.jpg",
+          "mainCategory": "Home Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
+          "subCategory": "Air Fresheners",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200254/Category%20Images/air-fresheners_nx3mxj.jpg",
+          "quantity": "300ml",
+          "price": "165",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "G/F Punjab rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586175797/Product%20Images/adhwar_rice_jk2lsw.jpg",
           "mainCategory": "Grocery",
@@ -1243,10 +1681,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "120",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Garam Masala Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231742/Product%20Images/Garam_Masala_Powder_250g_125g_62g_a3mypg.jpg",
           "mainCategory": "Grocery",
@@ -1256,10 +1695,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "250g",
           "price": "240",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Garam Masala Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231742/Product%20Images/Garam_Masala_Powder_250g_125g_62g_a3mypg.jpg",
           "mainCategory": "Grocery",
@@ -1269,10 +1709,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "125g",
           "price": "120",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Garam Masala Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231742/Product%20Images/Garam_Masala_Powder_250g_125g_62g_a3mypg.jpg",
           "mainCategory": "Grocery",
@@ -1282,10 +1723,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "60-62g",
           "price": "60",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Garam Masala Sabut",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231746/Product%20Images/Garam_Masala_Sabut_250_125_62g_v0id5p.jpg",
           "mainCategory": "Grocery",
@@ -1295,10 +1737,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "250g",
           "price": "220",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Garam Masala Sabut",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231746/Product%20Images/Garam_Masala_Sabut_250_125_62g_v0id5p.jpg",
           "mainCategory": "Grocery",
@@ -1308,10 +1751,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "125g",
           "price": "110",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Garam Masala Sabut",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231746/Product%20Images/Garam_Masala_Sabut_250_125_62g_v0id5p.jpg",
           "mainCategory": "Grocery",
@@ -1321,10 +1765,25 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "62-60g",
           "price": "55",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Gillette Blue 2 (Pack of 3 ) Bag",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587234479/Product%20Images/gillette-blue-2-pack_3-_jlioqj.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Men Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200023/Category%20Images/mencare_msjirg.jpg",
+          "quantity": "3 Razors",
+          "price": "81",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Ginger (Adrak) Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586428805/Product%20Images/q4mvambtahuj1q08u3ne.jpg",
           "mainCategory": "Grocery",
@@ -1334,10 +1793,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "90",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Gulab Jamun",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229383/Product%20Images/Gulab_Jamun_85g_wjktnp.jpg",
           "mainCategory": "Grocery",
@@ -1347,10 +1807,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "85g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Habib Cooking Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231748/Product%20Images/Habib_cooking_oil_1_liter_go7g54.jpg",
           "mainCategory": "Grocery",
@@ -1358,25 +1819,27 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "1 Liter",
-          "price": "235",
+          "price": "230",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Habib Ghee",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586944026/Product%20Images/grocerapp-habib-banaspati-5e6bd0e749965_vow3ka.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586944026/Product%20Images/grocerapp-habib-banaspati-5e6bd0e749965_vow3ka.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "1kg",
-          "price": "100",
+          "price": "225",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Haldi  Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231748/Product%20Images/haldi_powder_250g_eizyx4.jpg",
           "mainCategory": "Grocery",
@@ -1386,10 +1849,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "250g",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Haldi  Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231748/Product%20Images/haldi_powder_250g_eizyx4.jpg",
           "mainCategory": "Grocery",
@@ -1399,10 +1863,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "125g",
           "price": "40",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Harpic Power",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229358/Product%20Images/Harpic_Power_500ml_maejsb.jpg",
           "mainCategory": "Home Care",
@@ -1410,12 +1875,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Kitchen Cleaning",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887629/Category%20Images/Kitchen7548_xokq4e.jpg",
           "quantity": "500ml",
-          "price": "195",
+          "price": "410",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Harpic Power",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229361/Product%20Images/Harpic_Power_250ml_fnzlqi.jpg",
           "mainCategory": "Home Care",
@@ -1423,12 +1889,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Kitchen Cleaning",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887629/Category%20Images/Kitchen7548_xokq4e.jpg",
           "quantity": "250ml",
-          "price": "95",
+          "price": "210",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Harpic Power Red",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229371/Product%20Images/Harpic_Power_red_500ml_o3yri3.png",
           "mainCategory": "Home Care",
@@ -1438,10 +1905,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500ml",
           "price": "190",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Head & Shoulder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229365/Product%20Images/Head_Shoulder_400ml_t83glo.jpg",
           "mainCategory": "Personal Care",
@@ -1451,10 +1919,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "400ml",
           "price": "420",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Head & Shoulder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229367/Product%20Images/Head_Shoulder_200ml_uzguni.jpg",
           "mainCategory": "Personal Care",
@@ -1464,10 +1933,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "200ml",
           "price": "215",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Hemani Pure Honey",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947776/Product%20Images/Hemani-Pure-Honey-250g_tvqxtm.jpg",
           "mainCategory": "Grocery",
@@ -1477,10 +1947,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "250g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Hemani Pure Honey",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947776/Product%20Images/Hemani-Pure-Honey-250g_tvqxtm.jpg",
           "mainCategory": "Grocery",
@@ -1490,10 +1961,39 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Hilal Bake Time Chocolate Cake Box",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286061/Product%20Images/hilal-bake-time-chocolate-cake_iaakwz.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Biscuits & Cookies",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/biscuits-cookies_ohgug4.jpg",
+          "quantity": "6 Pcs Box",
+          "price": "150",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Hilal Cup Cake With Double Chocolate Box",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286063/Product%20Images/hilal-cup-cake-with-double_wg5r7h.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Biscuits & Cookies",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/biscuits-cookies_ohgug4.jpg",
+          "quantity": "12 Pcs Box",
+          "price": "120",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Himalaya Anti hair Fall Shampoo",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947780/Product%20Images/himalaya-anti-hair-fall-shampoo-200ml-gomart-pakistan-2230-420x420_y2fbjn.png",
           "mainCategory": "Personal Care",
@@ -1503,10 +2003,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "400ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Iqbal Rice Mills",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947796/Product%20Images/rice-brands-0001_ms69lq.png",
           "mainCategory": "Grocery",
@@ -1514,25 +2015,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "130",
+          "price": "140",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Jalwatri",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586442583/Product%20Images/javatri_plxqnc.png",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Spices, Salt & Sugar",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
-          "quantity": "50 gm",
-          "price": "310",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Jam-E-Shirin",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229366/Product%20Images/Jam-E-Shirin_800ml_dwntef.jpg",
           "mainCategory": "Beverages",
@@ -1540,12 +2029,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "800ml",
-          "price": "210",
+          "price": "230",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Jam-E-Shirin",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586343154/Product%20Images/jam-e-shirin-1500ml-gomart-pakistan-1501-500x500_wmvhgr.jpg",
           "mainCategory": "Beverages",
@@ -1553,12 +2043,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "1500ml",
-          "price": "210",
+          "price": "350",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Jam-E-Shirin",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586343154/Product%20Images/jam-e-shirin-1500ml-gomart-pakistan-1501-500x500_wmvhgr.jpg",
           "mainCategory": "Beverages",
@@ -1566,13 +2057,112 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "3000ml",
-          "price": "210",
+          "price": "720",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Kainaat Export Quality Chawal",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "K&N Chapli Kabab",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587289744/Product%20Images/kn-chapli-kabab_llgt17.jpg",
+          "mainCategory": "Frozen & Chilled",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/frozen-chilled_kaz1zs.jpg",
+          "subCategory": "K&Ns",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200687/Category%20Images/kns_zm2x4k.jpg",
+          "quantity": "296g",
+          "price": "275",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "K&N Chicken Nuggets",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587289741/Product%20Images/kn-chicken-nuggets_sgrqur.jpg",
+          "mainCategory": "Frozen & Chilled",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/frozen-chilled_kaz1zs.jpg",
+          "subCategory": "K&Ns",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200687/Category%20Images/kns_zm2x4k.jpg",
+          "quantity": "1000g",
+          "price": "730",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "K&N Fun Nuggets",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587289744/Product%20Images/kn-fun-nuggets_ifh6pi.jpg",
+          "mainCategory": "Frozen & Chilled",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/frozen-chilled_kaz1zs.jpg",
+          "subCategory": "K&Ns",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200687/Category%20Images/kns_zm2x4k.jpg",
+          "quantity": "265g",
+          "price": "275",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "K&N Kafta Kabab",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587289745/Product%20Images/kn-kafta-kabab_djb1ew.jpg",
+          "mainCategory": "Frozen & Chilled",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/frozen-chilled_kaz1zs.jpg",
+          "subCategory": "K&Ns",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200687/Category%20Images/kns_zm2x4k.jpg",
+          "quantity": "515g",
+          "price": "635",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "K&N Shami Kabab",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587289378/Product%20Images/kn-shami-kabab-_ax8ei8.jpg",
+          "mainCategory": "Frozen & Chilled",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/frozen-chilled_kaz1zs.jpg",
+          "subCategory": "K&Ns",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200687/Category%20Images/kns_zm2x4k.jpg",
+          "quantity": "252g",
+          "price": "250",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "K&N Tenders Pops",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587289745/Product%20Images/kn-tenders-pops_ugsehs.jpg",
+          "mainCategory": "Frozen & Chilled",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/frozen-chilled_kaz1zs.jpg",
+          "subCategory": "K&Ns",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200687/Category%20Images/kns_zm2x4k.jpg",
+          "quantity": "780g",
+          "price": "705",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "K&Ns Nuggets (Family Pack)",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587289749/Product%20Images/kns-nuggets-family-pack_pumfad.jpg",
+          "mainCategory": "Frozen & Chilled",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/frozen-chilled_kaz1zs.jpg",
+          "subCategory": "K&Ns",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200687/Category%20Images/kns_zm2x4k.jpg",
+          "quantity": "1.7kg",
+          "price": "1235",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Kainaat Export Quality Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231742/Product%20Images/Kainat_export_quality_1kg_vdmhiz.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
@@ -1581,11 +2171,12 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "180",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Kainaat New Chawal",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Kainaat New Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231743/Product%20Images/kainat_nata_and_purana_1kg_xrkf8g.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
@@ -1594,11 +2185,12 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Kainaat Old Chawal",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Kainaat Old Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231743/Product%20Images/kainat_nata_and_purana_1kg_xrkf8g.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
@@ -1607,10 +2199,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "150",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Kali mirch",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586170654/Product%20Images/kali-mirch-sabut_liorrq.jpg",
           "mainCategory": "Grocery",
@@ -1620,10 +2213,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "120",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Kali Mirch Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586170654/Product%20Images/kali-mirch-sabut_liorrq.jpg",
           "mainCategory": "Grocery",
@@ -1633,10 +2227,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "140",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Kalwanji",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586356991/Product%20Images/kalwanji_gneajl.jpg",
           "mainCategory": "Grocery",
@@ -1646,10 +2241,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "95",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Kashkhas",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586429779/Product%20Images/Kashkhas_pqctpy.png",
           "mainCategory": "Grocery",
@@ -1659,10 +2255,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "45",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Kashmir Banaspati",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231749/Product%20Images/kashmir_Banaspati_1kg_spzc96.jpg",
           "mainCategory": "Grocery",
@@ -1672,10 +2269,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "225",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Kashmir Banaspati",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231748/Product%20Images/kashmir_Banaspati_5kg_vfh5uv.jpg",
           "mainCategory": "Grocery",
@@ -1685,10 +2283,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "5kg",
           "price": "1160",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Kashmir Cooking Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231758/Product%20Images/Kashmir_cooking_oil_1_liter_ufwvpq.jpg",
           "mainCategory": "Grocery",
@@ -1698,10 +2297,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1 Liter",
           "price": "235",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Kashmir Cooking Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231750/Product%20Images/Kasmir_cooking_oil_5_liter_dknxwt.jpg",
           "mainCategory": "Grocery",
@@ -1711,10 +2311,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "5 Liter",
           "price": "1180",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Kashmir Cooking Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231756/Product%20Images/Kashmir_cooking_oil_3_liter_grf8vt.jpg",
           "mainCategory": "Grocery",
@@ -1724,36 +2325,123 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "3 Liter",
           "price": "710",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Knorr Chicken Chatpata Noodles 4 in 1",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229398/Product%20Images/Knorr_Chicken_Chatpata_Noodles_4_in_1_yeqaok.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Spices, Salt & Sugar",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
-          "quantity": "68g*4",
-          "price": "125",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "King Air Freshener Jasmine",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587236411/Product%20Images/king-air-freshener-jasmin-300ml_hcu09s.jpg",
+          "mainCategory": "Home Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
+          "subCategory": "Air Fresheners",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200254/Category%20Images/air-fresheners_nx3mxj.jpg",
+          "quantity": "300ml",
+          "price": "200",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "King Air Freshener Red Rose",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587236754/Product%20Images/king_air_freshener_red_rose_300ml_h8z3xy.jpg",
+          "mainCategory": "Home Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
+          "subCategory": "Air Fresheners",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200254/Category%20Images/air-fresheners_nx3mxj.jpg",
+          "quantity": "300ml",
+          "price": "200",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Knorr Chatpata Noodles",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584790189/Product%20Images/knorr_chatpata_rwzzfh.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
+          "quantity": "68g",
+          "price": "40",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Knorr Chatpata Noodles 4 in 1",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229398/Product%20Images/Knorr_Chicken_Chatpata_Noodles_4_in_1_yeqaok.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
+          "quantity": "68g*4",
+          "price": "150",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Knorr Chicken Noodles",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584790189/Product%20Images/knorr_chicken1_n8qlsr.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
+          "quantity": "68g",
+          "price": "40",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Knorr Chicken Noodles 4 in 1",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584790189/Product%20Images/knorr_chicken_vancah.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
+          "quantity": "68g*4",
+          "price": "150",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Knorr Cubes",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229387/Product%20Images/Knorr_Cubes_20g_tyqmln.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Spices, Salt & Sugar",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
           "quantity": "20g",
-          "price": "35",
+          "price": "40",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Knorr Cubes Pulao",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229387/Product%20Images/Knorr_Cubes_20g_tyqmln.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
+          "quantity": "20g",
+          "price": "40",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Knorr Tomato Ketchup",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947777/Product%20Images/knoor_ketchup_eumiv2.jpg",
           "mainCategory": "Grocery",
@@ -1761,12 +2449,97 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sauces, Olives & Pickles",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
           "quantity": "300g",
-          "price": "215",
+          "price": "2200",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Kolson Jalapeno Slanty",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286494/Product%20Images/kolson-jalapeno-slanty_bpfvxr.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chips & Nimko",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chips-nimko_eny6ko.jpg",
+          "quantity": "16g",
+          "price": "10",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Kolson Lasagne",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587285499/Product%20Images/kolson-lasagne_rdspuc.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
+          "quantity": "400g",
+          "price": "170",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Kolson Potato Sticks",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286519/Product%20Images/kolson-potato-sticks_xgwrnv.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chips & Nimko",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chips-nimko_eny6ko.jpg",
+          "quantity": "18g",
+          "price": "10",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Kolson Vegetable Slanty",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286471/Product%20Images/kolson-vegetable-slanty_udemmn.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chips & Nimko",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chips-nimko_eny6ko.jpg",
+          "quantity": "16g",
+          "price": "10",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Kurkure Chutney Chaska",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286441/Product%20Images/kurkure-chutney-chaska_dovpun.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chips & Nimko",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chips-nimko_eny6ko.jpg",
+          "quantity": "70 gm",
+          "price": "30",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Kurkure Nimko Mix",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587287301/Product%20Images/nimko_kuurkure_zs54uy.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chips & Nimko",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chips-nimko_eny6ko.jpg",
+          "quantity": "29g",
+          "price": "20",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lal Mirch Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586163518/Product%20Images/red-Chilli-Powder_uf47cc.jpg",
           "mainCategory": "Grocery",
@@ -1774,12 +2547,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "500g",
-          "price": "280",
+          "price": "320",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lal Mirch Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586163518/Product%20Images/red-Chilli-Powder_uf47cc.jpg",
           "mainCategory": "Grocery",
@@ -1787,12 +2561,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "250g",
-          "price": "140",
+          "price": "160",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lal Mirch Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586163518/Product%20Images/red-Chilli-Powder_uf47cc.jpg",
           "mainCategory": "Grocery",
@@ -1800,12 +2575,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "125g",
-          "price": "70",
+          "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Langese Pure Honey",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947781/Product%20Images/langese_honey_500g_f7nbyu.jpg",
           "mainCategory": "Grocery",
@@ -1815,12 +2591,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Langese Pure Honey",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947779/Product%20Images/langese_honey_vcggl8.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947779/Product%20Images/langese_honey_vcggl8.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Jam, Honey & Spread",
@@ -1828,10 +2605,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "250g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Langnese Pure Honey",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586948036/Product%20Images/langnese_pure_bee_honey_125gm_2_t2s5fo.jpg",
           "mainCategory": "Grocery",
@@ -1841,10 +2619,95 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "125g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Lays Classic Salted",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587283903/Product%20Images/lays_salted_ugpy2y.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Lays Chips",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200613/Category%20Images/lays-chips_sqvygl.jpg",
+          "quantity": "1 Pack",
+          "price": "30",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Lays French Cheese",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587283751/Product%20Images/french_cheese_kkjw8z.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Lays Chips",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200613/Category%20Images/lays-chips_sqvygl.jpg",
+          "quantity": "1 Pack",
+          "price": "30",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Lays Masala",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587283983/Product%20Images/Lays_masala_q6vbab.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Lays Chips",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200613/Category%20Images/lays-chips_sqvygl.jpg",
+          "quantity": "1 Pack",
+          "price": "30",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Lays Wavy BBQ",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587283807/Product%20Images/wavy_BBQ_tqk8pp.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Lays Chips",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200613/Category%20Images/lays-chips_sqvygl.jpg",
+          "quantity": "1 Pack",
+          "price": "30",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Lays Wavy Mexican Chilli",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587283646/Product%20Images/lays_wavy_nfknqh.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Lays Chips",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200613/Category%20Images/lays-chips_sqvygl.jpg",
+          "quantity": "1 pack",
+          "price": "20",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Lays Yogurt & Herb",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587284121/Product%20Images/lays_yogurt_oisvc2.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Lays Chips",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200613/Category%20Images/lays-chips_sqvygl.jpg",
+          "quantity": "1 Pack",
+          "price": "30",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Laziza Kheer",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229388/Product%20Images/Laziza_Kheer_double_rr3fnl.jpg",
           "mainCategory": "Grocery",
@@ -1854,10 +2717,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "Double Pack",
           "price": "140",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Laziza Kheer",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229385/Product%20Images/Laziza_Kheer_single_l8qjbb.jpg",
           "mainCategory": "Grocery",
@@ -1867,10 +2731,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "Single Pack",
           "price": "75",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Laziza Sheer Khurma",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229394/Product%20Images/Laziza_Sheer_Khurma_160g_hochdz.jpg",
           "mainCategory": "Grocery",
@@ -1880,10 +2745,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "160g",
           "price": "88",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lemon Max",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229386/Product%20Images/Lemon_Max_325g_qaozss.jpg",
           "mainCategory": "Home Care",
@@ -1893,10 +2759,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "325g",
           "price": "42",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lemon Max",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229382/Product%20Images/Lemon_Max_180g_p0qkid.jpg",
           "mainCategory": "Home Care",
@@ -1906,10 +2773,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "180g",
           "price": "25",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lemon Max",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229389/Product%20Images/Lemon_Max_104g_ynzgjw.jpg",
           "mainCategory": "Home Care",
@@ -1919,10 +2787,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "104g",
           "price": "12",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lemon Max Liquid",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229389/Product%20Images/Lemon_Max_Liquid_475ml_krid9q.jpg",
           "mainCategory": "Home Care",
@@ -1930,12 +2799,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Kitchen Cleaning",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887629/Category%20Images/Kitchen7548_xokq4e.jpg",
           "quantity": "475ml",
-          "price": "145",
+          "price": "155",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lemon Max Long Bar Double",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229389/Product%20Images/Lemon_Max_Long_Bar_Double_540g_mzsdgg.jpg",
           "mainCategory": "Home Care",
@@ -1943,12 +2813,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Kitchen Cleaning",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887629/Category%20Images/Kitchen7548_xokq4e.jpg",
           "quantity": "540g",
-          "price": "68",
+          "price": "70",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lemon Max Long Bar Single",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229390/Product%20Images/Lemon_Max_Long_Bar_single_270g_ur0dcc.jpg",
           "mainCategory": "Home Care",
@@ -1956,12 +2827,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Kitchen Cleaning",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887629/Category%20Images/Kitchen7548_xokq4e.jpg",
           "quantity": "270g",
-          "price": "36",
+          "price": "37",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lemon Max Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229390/Product%20Images/Lemon_Max_Powder_840g_pzpbeo.jpg",
           "mainCategory": "Home Care",
@@ -1971,11 +2843,26 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "840g",
           "price": "85",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Life BoyNaturally Long Shampoo",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Lemon Sandwich Ticky Pack Box",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286043/Product%20Images/lemon-sandwich-ticky-pack-box_yw8rxs.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Biscuits & Cookies",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/biscuits-cookies_ohgug4.jpg",
+          "quantity": "24 Pcs Box",
+          "price": "240",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Life Boy Naturally Long Shampoo",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947778/Product%20Images/lifeboy_shampoo_hlv8zi.jpg",
           "mainCategory": "Personal Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
@@ -1984,12 +2871,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "375 ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lifeboy Herbal Shampoo",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947780/Product%20Images/lifeboy_herbal_shampoo_kt1ulv.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947780/Product%20Images/lifeboy_herbal_shampoo_kt1ulv.jpg",
           "mainCategory": "Personal Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
           "subCategory": "Hair Care",
@@ -1997,12 +2885,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "375 ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lifeboy Silk soft Shampoo",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947784/Product%20Images/lifeboy_sliksoft_fvewdc.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947784/Product%20Images/lifeboy_sliksoft_fvewdc.jpg",
           "mainCategory": "Personal Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
           "subCategory": "Hair Care",
@@ -2010,10 +2899,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "375 ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lifebuoy",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229391/Product%20Images/Lifebuoy_146g_mb8inn.jpg",
           "mainCategory": "Personal Care",
@@ -2023,10 +2913,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "146g",
           "price": "55",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lifebuoy",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229393/Product%20Images/Lifebuoy_112g_uvw2ao.jpg",
           "mainCategory": "Personal Care",
@@ -2036,10 +2927,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "112g",
           "price": "45",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lifebuoy",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229394/Product%20Images/Lifebuoy_375ml_xmcmp9.jpg",
           "mainCategory": "Personal Care",
@@ -2047,12 +2939,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Hair Care",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887903/Category%20Images/Hair-care9214_pluvf0.jpg",
           "quantity": "375ml",
-          "price": "295",
+          "price": "320",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lifebuoy",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229399/Product%20Images/Lifebuoy_175ml_stdtvz.jpg",
           "mainCategory": "Personal Care",
@@ -2060,12 +2953,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Hair Care",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887903/Category%20Images/Hair-care9214_pluvf0.jpg",
           "quantity": "175ml",
-          "price": "160",
+          "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lipton Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231774/Product%20Images/Lipton_tea_190g_otrdh8.jpg",
           "mainCategory": "Beverages",
@@ -2073,12 +2967,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
           "quantity": "190g",
-          "price": "225",
+          "price": "230",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lipton Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231792/Product%20Images/Lipton_tea_100g_ejgup6.jpg",
           "mainCategory": "Beverages",
@@ -2086,12 +2981,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
           "quantity": "100g",
-          "price": "118",
+          "price": "105",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lipton Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231770/Product%20Images/Lipton_tea_475g_v1c4pq.jpg",
           "mainCategory": "Beverages",
@@ -2101,10 +2997,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "475g",
           "price": "530",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lipton Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231779/Product%20Images/Lipton_tea_950g_efe64g.jpg",
           "mainCategory": "Beverages",
@@ -2112,12 +3009,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
           "quantity": "950g",
-          "price": "970",
+          "price": "960",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Long",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586429471/Product%20Images/long_rizuzj.png",
           "mainCategory": "Grocery",
@@ -2127,23 +3025,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "235",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Loreal Kids  Mango Shampoo",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947786/Product%20Images/loreal_kid_shampoo_bk721g.jpg",
-          "mainCategory": "Personal Care",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
-          "subCategory": "Hair Care",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887903/Category%20Images/Hair-care9214_pluvf0.jpg",
-          "quantity": "250ml",
-          "price": "100",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lux Purple Lotus Bar Soap",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586352978/Product%20Images/Lux_purple_tznrcb.jpg",
           "mainCategory": "Personal Care",
@@ -2153,10 +3039,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "145g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lux Soft Touch Bar Soap For Soft",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586352979/Product%20Images/Lux_soft_touch_pqemq5.jpg",
           "mainCategory": "Personal Care",
@@ -2166,10 +3053,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "145g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lux Trio Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229392/Product%20Images/Lux_Trio_Pack_110g_kadpst.jpg",
           "mainCategory": "Personal Care",
@@ -2179,10 +3067,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "145g*3",
           "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Lux Velvet Touch Soap",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586352979/Product%20Images/Lux_velvet_oymqz0.jpg",
           "mainCategory": "Personal Care",
@@ -2192,23 +3081,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "110g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "M Morinaga Bf-2 Follow-up Formula",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586956324/Product%20Images/morinaga-bf-2-follow-up-formula_v0ihbv.webp",
-          "mainCategory": "Baby Care",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/babyCare_yr2dzn.png",
-          "subCategory": "Food & Milk",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/foodandmilk_dmvd6o.webp",
-          "quantity": "400g",
-          "price": "1030",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Masar Salim",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231807/Product%20Images/Daal_masar_1kg_onuk5g.jpg",
           "mainCategory": "Grocery",
@@ -2218,10 +3095,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500g",
           "price": "70",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Masar Salim",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231807/Product%20Images/Daal_masar_1kg_onuk5g.jpg",
           "mainCategory": "Grocery",
@@ -2231,10 +3109,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "140",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Max Dish Wash Paste",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229394/Product%20Images/Max_Dish_Wash_Paste_400mg_hj7q5x.jpg",
           "mainCategory": "Home Care",
@@ -2242,12 +3121,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Kitchen Cleaning",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887629/Category%20Images/Kitchen7548_xokq4e.jpg",
           "quantity": "400g",
-          "price": "103",
+          "price": "115",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Max Dish Wash Paste",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229394/Product%20Images/Max_Dish_Wash_Paste_200mg_bry6sw.jpg",
           "mainCategory": "Home Care",
@@ -2255,12 +3135,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Kitchen Cleaning",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887629/Category%20Images/Kitchen7548_xokq4e.jpg",
           "quantity": "200g",
-          "price": "63",
+          "price": "55",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Max Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229404/Product%20Images/Max_Powder_900g_kblf2l.jpg",
           "mainCategory": "Home Care",
@@ -2268,12 +3149,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Kitchen Cleaning",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887629/Category%20Images/Kitchen7548_xokq4e.jpg",
           "quantity": "900g",
-          "price": "78",
+          "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Medicam",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229402/Product%20Images/Medicam_200g_szcoxo.png",
           "mainCategory": "Personal Care",
@@ -2283,10 +3165,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "200g",
           "price": "210",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Medicam",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229407/Product%20Images/Medicam_70g_igt1rl.png",
           "mainCategory": "Personal Care",
@@ -2296,10 +3179,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "70g",
           "price": "98",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Medicam",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229403/Product%20Images/Medicam_50g_rabqtg.png",
           "mainCategory": "Personal Care",
@@ -2309,10 +3193,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "50g",
           "price": "63",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Mehran Basmati Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947782/Product%20Images/mehran_rice_wzwyib.jpg",
           "mainCategory": "Grocery",
@@ -2320,12 +3205,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "100",
+          "price": "160",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Methi Dana",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586429211/Product%20Images/methi_dnaa_dtklzn.png",
           "mainCategory": "Grocery",
@@ -2335,101 +3221,95 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "40",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Minar Rice",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947782/Product%20Images/minar_rice_ft45jy.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Daalain, Rice & Flour",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
-          "quantity": "1kg",
-          "price": "110",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Mitchells Diet Apple Jam",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947783/Product%20Images/mitchells_apple_diet_jam_folx99.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947783/Product%20Images/mitchells_apple_diet_jam_folx99.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "325g",
-          "price": "100",
+          "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Mitchells Diet Mixed Fruit Jam",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947783/Product%20Images/Mitchells_Diet_Mixed_Fruit_Jam_jpg_adjmvz.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947783/Product%20Images/Mitchells_Diet_Mixed_Fruit_Jam_jpg_adjmvz.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "325g",
-          "price": "100",
+          "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Mitchells Diet Strawberr Jam",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947785/Product%20Images/Mitchells_Diet_Strawberr_Jam_pobgur.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947785/Product%20Images/Mitchells_Diet_Strawberr_Jam_pobgur.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "325g",
-          "price": "100",
+          "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Mitchells Golden Apple Jam",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586949876/Product%20Images/Mitchells_Golden_Apple_Jam_mbqsg8.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586949876/Product%20Images/Mitchells_Golden_Apple_Jam_mbqsg8.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "325g",
-          "price": "100",
+          "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Mitchells Mango Jam",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947785/Product%20Images/Mitchells_Mango_Jam_lmdxnu.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947785/Product%20Images/Mitchells_Mango_Jam_lmdxnu.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "200g",
-          "price": "100",
+          "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Mitchells Mixed Fruit Jam",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947786/Product%20Images/Mitchells_Mixed_Fruit_Jam_itmkva.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947786/Product%20Images/Mitchells_Mixed_Fruit_Jam_itmkva.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "200g",
-          "price": "100",
+          "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Mitchells Orange Squash",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947786/Product%20Images/Mitchells_Orange_Squash_800ml_lby70m.jpg",
           "mainCategory": "Beverages",
@@ -2439,75 +3319,123 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "800ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Mitchells Tomato Ketchup",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947788/Product%20Images/Mitchells_Tomato_Ketchup_yyblqx.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947788/Product%20Images/Mitchells_Tomato_Ketchup_yyblqx.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Sauces, Olives & Pickles",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
+          "quantity": "500g",
+          "price": "150",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Mitchells Tomato Ketchup",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947788/Product%20Images/Mitchells_Tomato_Ketchup_yyblqx.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Sauces, Olives & Pickles",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
           "quantity": "250g",
-          "price": "215",
+          "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Molfix 4 Maxi (7-14)kg",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586955501/Product%20Images/molfix-4-maxi-7-14kg_syhegg.jpg",
           "mainCategory": "Baby Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/babyCare_yr2dzn.png",
           "subCategory": "Diaper & Wipes",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/Diaper_and_wipes_hr8lgl.webp",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/Diaper_and_wipes_hr8lgl.jpg",
           "quantity": "64 pcs",
-          "price": "1615",
+          "price": "1300",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Molfix 5 Junior (11-18)kg",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586955505/Product%20Images/molfix-5-junior-11-18kg_mhloea.jpg",
           "mainCategory": "Baby Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/babyCare_yr2dzn.png",
           "subCategory": "Diaper & Wipes",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/Diaper_and_wipes_hr8lgl.webp",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/Diaper_and_wipes_hr8lgl.jpg",
           "quantity": "60 pcs",
-          "price": "1615",
+          "price": "1300",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Molfix 6 Extra Large (15+kg)",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586955106/Product%20Images/molfix-6-extra-large-15kg_crrrnf.jpg",
           "mainCategory": "Baby Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/babyCare_yr2dzn.png",
           "subCategory": "Diaper & Wipes",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/Diaper_and_wipes_hr8lgl.webp",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/Diaper_and_wipes_hr8lgl.jpg",
           "quantity": "52 pcs",
-          "price": "1615",
+          "price": "1300",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Molfix Size 3 Midi (4-9) kg",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586955619/Product%20Images/molfix-size-3-midi-4-9_nqbngm.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586955619/Product%20Images/molfix-size-3-midi-4-9_nqbngm.jpg",
           "mainCategory": "Baby Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/babyCare_yr2dzn.png",
           "subCategory": "Diaper & Wipes",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/Diaper_and_wipes_hr8lgl.webp",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/Diaper_and_wipes_hr8lgl.jpg",
           "quantity": "36 pcs",
-          "price": "930",
+          "price": "870",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Mortein Liquid Mosquito Repellant Machine With Refill",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587235913/Product%20Images/mortien_machine_oegnmv.jpg",
+          "mainCategory": "Home Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
+          "subCategory": "Repellents Mosquito Killers",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200256/Category%20Images/repellents-mosquito-killers_p2ndzp.jpg",
+          "quantity": "42 ml",
+          "price": "450",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Mortein Liquid Repellant 60 Nights Refill Pack",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587235690/Product%20Images/mortein-odourless-mosquito-repellant_n3er1h.jpg",
+          "mainCategory": "Home Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
+          "subCategory": "Repellents Mosquito Killers",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200256/Category%20Images/repellents-mosquito-killers_p2ndzp.jpg",
+          "quantity": "42 ml",
+          "price": "335",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Achar",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229399/Product%20Images/National_Achar_1kg_d05qp7.jpg",
           "mainCategory": "Grocery",
@@ -2515,12 +3443,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sauces, Olives & Pickles",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
           "quantity": "1kg",
-          "price": "270",
+          "price": "280",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Achar",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229398/Product%20Images/National_Achar_400g_p4lrio.jpg",
           "mainCategory": "Grocery",
@@ -2528,12 +3457,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sauces, Olives & Pickles",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
           "quantity": "400g",
-          "price": "150",
+          "price": "145",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Achar Gosht Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229398/Product%20Images/National_Achar_Gosht_Masala_double_odktj8.jpg",
           "mainCategory": "Grocery",
@@ -2541,12 +3471,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "Double Pack",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Biryani Masala Double Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231769/Product%20Images/National_Biryani_Masala_Double_Pack_hoszwb.jpg",
           "mainCategory": "Grocery",
@@ -2554,12 +3485,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "130g",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Chapli kabab Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229403/Product%20Images/National_Chapli_kabab_Masala_single_vc8ece.jpg",
           "mainCategory": "Grocery",
@@ -2567,12 +3499,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "Single Pack",
-          "price": "63",
+          "price": "70",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Chat Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229402/Product%20Images/National_Chat_Masala_double_bctcac.jpg",
           "mainCategory": "Grocery",
@@ -2580,12 +3513,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "Double Pack",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Chicken Tikka Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229406/Product%20Images/National_Chicken_Tikka_Masala_double_npkxvj.jpg",
           "mainCategory": "Grocery",
@@ -2593,38 +3527,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "Double Pack",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "National Custard",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229407/Product%20Images/National_Custard_300mg_qk7jt1.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Baking & Deserts",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885953/Category%20Images/Desserts4352_p2shfs.jpg",
-          "quantity": "300g",
-          "price": "83",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "National Custard",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231611/Product%20Images/National_Custard_120g_jmuzci.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Baking & Deserts",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885953/Category%20Images/Desserts4352_p2shfs.jpg",
-          "quantity": "120g",
-          "price": "45",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Fish Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229404/Product%20Images/National_Fish_Masala_double_wnvmsh.jpg",
           "mainCategory": "Grocery",
@@ -2632,12 +3541,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "Double Pack",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Haleem Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229406/Product%20Images/National_Haleem_Masala_double_tmd7cc.jpg",
           "mainCategory": "Grocery",
@@ -2645,12 +3555,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "Double Pack",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Karahi Gosht Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229407/Product%20Images/National_Karahi_Gosht_Masala_double_nefa3r.jpg",
           "mainCategory": "Grocery",
@@ -2658,12 +3569,41 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "Double Pack",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "National Ketchup",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586177989/Product%20Images/national_ketchup_dxlj9b.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Sauces, Olives & Pickles",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
+          "quantity": "500g",
+          "price": "150",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "National Ketchup",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586177989/Product%20Images/national_ketchup_dxlj9b.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Sauces, Olives & Pickles",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
+          "quantity": "1kg",
+          "price": "230",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Ketchup",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586177989/Product%20Images/national_ketchup_dxlj9b.jpg",
           "mainCategory": "Grocery",
@@ -2671,12 +3611,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sauces, Olives & Pickles",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
           "quantity": "250g",
-          "price": "215",
+          "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Qourma Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229407/Product%20Images/National_Qourma_Masala_double_vtdon3.jpg",
           "mainCategory": "Grocery",
@@ -2684,25 +3625,27 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "Double Pack",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Salt",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586171271/Product%20Images/grocerapp-national-refined-salt_a7jma0.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586171271/Product%20Images/grocerapp-national-refined-salt_a7jma0.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "800g",
-          "price": "30",
+          "price": "35",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "National Tandoori Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229412/Product%20Images/National_Tandoori_Masala_single_x62qya.jpg",
           "mainCategory": "Grocery",
@@ -2710,25 +3653,55 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "Single Pack",
-          "price": "63",
+          "price": "70",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Nestle Cerelac Rice 1m",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle Cerelac 3 fruit",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586955808/Product%20Images/nestle-cerelac-rice-1m_syukde.jpg",
           "mainCategory": "Baby Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/babyCare_yr2dzn.png",
           "subCategory": "Food & Milk",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/foodandmilk_dmvd6o.webp",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/foodandmilk_dmvd6o.jpg",
           "quantity": "175g",
-          "price": "410",
+          "price": "210",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle Cerelac Rice",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586955808/Product%20Images/nestle-cerelac-rice-1m_syukde.jpg",
+          "mainCategory": "Baby Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/babyCare_yr2dzn.png",
+          "subCategory": "Food & Milk",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/foodandmilk_dmvd6o.jpg",
+          "quantity": "175g",
+          "price": "210",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle Cerelac wheat",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586955808/Product%20Images/nestle-cerelac-rice-1m_syukde.jpg",
+          "mainCategory": "Baby Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/babyCare_yr2dzn.png",
+          "subCategory": "Food & Milk",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/foodandmilk_dmvd6o.jpg",
+          "quantity": "175g",
+          "price": "210",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "nestle fruita chaunsa",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947788/Product%20Images/nestle_fruita_chunsa_ihjuox.jpg",
           "mainCategory": "Beverages",
@@ -2736,25 +3709,27 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "1 liter",
-          "price": "100",
+          "price": "200",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "nestle fruita mango orange",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947788/Product%20Images/nestle_fruita_mango_orange_ec62ul.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947788/Product%20Images/nestle_fruita_mango_orange_ec62ul.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "1 liter",
-          "price": "100",
+          "price": "200",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "nestle fruita tropical fruit",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947789/Product%20Images/nestle_fruita_tropical_fruit_kgwrbx.jpg",
           "mainCategory": "Beverages",
@@ -2762,129 +3737,153 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "1 liter",
-          "price": "100",
+          "price": "200",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "nestle fruita tropical punch200ml",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "nestle fruita tropical punch",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947789/Product%20Images/nestle_fruita_tropical_punch200ml_gfx3nb.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "200ml",
-          "price": "100",
+          "price": "35",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Nestle Lactogen-2 From 6 Month",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle Lactogen-2",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586956172/Product%20Images/nestle-lactogen-2-from-6-month_u9y9ej.jpg",
           "mainCategory": "Baby Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/babyCare_yr2dzn.png",
           "subCategory": "Food & Milk",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/foodandmilk_dmvd6o.webp",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/foodandmilk_dmvd6o.jpg",
           "quantity": "400g",
           "price": "585",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "nestle mango orange 200ml",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle mango orange",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947795/Product%20Images/nestle_fruita_mangoorange_punch200ml_xsixuu.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "200ml",
-          "price": "100",
+          "price": "25",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "nestle milo 180ml",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle milo",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947789/Product%20Images/nestle_milo_180ml_ogkejs.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "180ml",
-          "price": "100",
+          "price": "45",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "nestle nesfruta mango 200ml",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947800/Product%20Images/nestle_nesfruta_200ml_fydpkd.webp",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle nesfruta mango",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947800/Product%20Images/nestle_nesfruta_200ml_fydpkd.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "200ml",
-          "price": "100",
+          "price": "25",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Nestle Nido 1+ Shield",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586955259/Product%20Images/nestle-nido-1-shield-_yd7nem.jpg",
           "mainCategory": "Baby Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/babyCare_yr2dzn.png",
           "subCategory": "Food & Milk",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/foodandmilk_dmvd6o.webp",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586950291/Category%20Images/foodandmilk_dmvd6o.jpg",
           "quantity": "1kg",
           "price": "1299",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Nestle Peach 200ml",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle Peach",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947790/Product%20Images/Nestle_Peach_200ml_up6l3c.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "200ml",
-          "price": "100",
+          "price": "35",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Nestle pure life 330ml",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle pure life",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947791/Product%20Images/Nestle_pure_life_330ml_pgwnj1.jpg",
+          "mainCategory": "Beverages",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
+          "subCategory": "Sharbat & Drinks",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
+          "quantity": "1.5 Liter",
+          "price": "60",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle pure life",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947791/Product%20Images/Nestle_pure_life_330ml_pgwnj1.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "330ml",
-          "price": "100",
+          "price": "35",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Nestle pure life Active 550ml",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Nestle pure life Active",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947791/Product%20Images/Nestle_pure_life_Active_550ml_an75vr.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "550ml",
-          "price": "100",
+          "price": "50",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Nivea Intensive Moisture",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586352139/Product%20Images/nivea_mostriuser_75ml_moglfe.jpg",
           "mainCategory": "Personal Care",
@@ -2894,12 +3893,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "75ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Nyle Shampoo",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947792/Product%20Images/Nyle_Shampoo_180ml_w7iowg.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947792/Product%20Images/Nyle_Shampoo_180ml_w7iowg.jpg",
           "mainCategory": "Personal Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
           "subCategory": "Hair Care",
@@ -2907,10 +3907,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "180ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Palmolive",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229408/Product%20Images/Palmolive_180ml_ku0a04.jpg",
           "mainCategory": "Personal Care",
@@ -2920,10 +3921,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "180ml",
           "price": "170",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Palmolive Intensive Moisture Shampoo",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947793/Product%20Images/Palmolive_Intensive_Moisture_Shampoo_180ml_wciosv.jpg",
           "mainCategory": "Personal Care",
@@ -2933,10 +3935,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "180ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Palmolive Silky Straight Shampoo",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947794/Product%20Images/Palmolive_Silky_Straight_Shampoo_va460q.jpg",
           "mainCategory": "Personal Care",
@@ -2946,10 +3949,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "350ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Palmolive Single Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229408/Product%20Images/Palmolive_Single_Pack_145g_nxafgz.jpg",
           "mainCategory": "Personal Care",
@@ -2959,10 +3963,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "145g",
           "price": "60",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Palmolive Trio Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229412/Product%20Images/Palmolive_Trio_Pack_110g_uc0cce.jpg",
           "mainCategory": "Personal Care",
@@ -2972,10 +3977,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "110g*3",
           "price": "165",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Panteen",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229412/Product%20Images/Panteen_400ml_yvicpi.jpg",
           "mainCategory": "Personal Care",
@@ -2985,10 +3991,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "400ml",
           "price": "395",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Panteen",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229410/Product%20Images/Panteen_200ml_ofqzrk.jpg",
           "mainCategory": "Personal Care",
@@ -2998,114 +4005,179 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "200ml",
           "price": "195",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Qamar Tea",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231773/Product%20Images/qamar_chae_475g_lg3nel.jpg",
-          "mainCategory": "Beverages",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
-          "subCategory": "Tea",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
-          "quantity": "190g",
-          "price": "205",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Peanut pik Ticky pack Box",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286039/Product%20Images/peanut-pik-ticky-pack-box_xxydhr.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Biscuits & Cookies",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/biscuits-cookies_ohgug4.jpg",
+          "quantity": "24 Pcs Box",
+          "price": "120",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Qamar Tea",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231773/Product%20Images/qamar_chae_475g_lg3nel.jpg",
-          "mainCategory": "Beverages",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
-          "subCategory": "Tea",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
-          "quantity": "475g",
-          "price": "495",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Peek Freans Cake Up Triple Chocolate Box",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286039/Product%20Images/peek-freans-cake-up-triple_rfrjrx.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Biscuits & Cookies",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/biscuits-cookies_ohgug4.jpg",
+          "quantity": "6 Pcs Box",
+          "price": "90",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Rafhan Custard",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229412/Product%20Images/Rafhan_Custard_285g_sokvft.jpg",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Peek Freans Rio Cotton Candy Ticky Pack Box",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286040/Product%20Images/peek-freans-rio-cotton-candy_ouxvmb.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Biscuits & Cookies",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/biscuits-cookies_ohgug4.jpg",
+          "quantity": "24 Pcs Box",
+          "price": "120",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Rafhan Banana Custard",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231611/Product%20Images/National_Custard_120g_jmuzci.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Baking & Deserts",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885953/Category%20Images/Desserts4352_p2shfs.jpg",
-          "quantity": "285g",
-          "price": "88",
+          "quantity": "300g",
+          "price": "95",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Rangeen seviyan",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229415/Product%20Images/Rangeen_seviyan_big_utdcr6.jpg",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Rafhan Manngo Custard",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229407/Product%20Images/National_Custard_300mg_qk7jt1.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Sauces, Olives & Pickles",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
+          "subCategory": "Baking & Deserts",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885953/Category%20Images/Desserts4352_p2shfs.jpg",
+          "quantity": "300g",
+          "price": "95",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Rafhan Strewberry Custard",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231611/Product%20Images/National_Custard_120g_jmuzci.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Baking & Deserts",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885953/Category%20Images/Desserts4352_p2shfs.jpg",
+          "quantity": "300g",
+          "price": "95",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Rafhan Vanila Custard",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231611/Product%20Images/National_Custard_120g_jmuzci.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Baking & Deserts",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885953/Category%20Images/Desserts4352_p2shfs.jpg",
+          "quantity": "300g",
+          "price": "95",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Rangeen seviyan",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229415/Product%20Images/Rangeen_seviyan_big_utdcr6.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
           "quantity": "Big",
           "price": "60",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Rangeen seviyan",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229416/Product%20Images/Rangeen_seviyan_small_wbja6h.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Sauces, Olives & Pickles",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
           "quantity": "Small",
           "price": "35",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Rani float Mango 240ml",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Rani float Mango",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947802/Product%20Images/Rani_float_Mango_240ml_boumqj.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "240ml",
-          "price": "100",
+          "price": "70",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Rani Mango 200ml",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947795/Product%20Images/Rani_Mango_200ml_rnqcqh.webp",
-          "mainCategory": "Beverages",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
-          "subCategory": "Sharbat & Drinks",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
-          "quantity": "200ml",
-          "price": "100",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Rani orange 200ml",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Rani float orange",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947795/Product%20Images/Rani_orange_200ml_zkms0w.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
-          "quantity": "200ml",
-          "price": "100",
+          "quantity": "240ml",
+          "price": "70",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Rani float Pineaple",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947795/Product%20Images/Rani_Mango_200ml_rnqcqh.jpg",
+          "mainCategory": "Beverages",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
+          "subCategory": "Sharbat & Drinks",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
+          "quantity": "240ml",
+          "price": "70",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Ras Malai",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229417/Product%20Images/Shahi_Tukra_180g_qboppj.jpg",
           "mainCategory": "Grocery",
@@ -3115,23 +4187,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "75g",
           "price": "98",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Red Lobia",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231778/Product%20Images/laal_lobia_1_kg_mg5mp3.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Daalain, Rice & Flour",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
-          "quantity": "1kg",
-          "price": "220",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Revlon Shampoo",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947795/Product%20Images/Revlon_Shampoo_400ml_sxrxab.jpg",
           "mainCategory": "Personal Care",
@@ -3141,10 +4201,25 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "400ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Rio Strawberry & Vanilla Snack Pack Box",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587286054/Product%20Images/rio-strawberry-vanilla-snack_oh92vt.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Biscuits & Cookies",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/biscuits-cookies_ohgug4.jpg",
+          "quantity": "12 Pcs Box",
+          "price": "120",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Rooh Afza",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229415/Product%20Images/Rooh_Afza_800ml_joecek.jpg",
           "mainCategory": "Beverages",
@@ -3152,12 +4227,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "800ml",
-          "price": "100",
+          "price": "240",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Rooh Afza",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584450697/Product%20Images/rooh_afza_1500ml_alimkh.jpg",
           "mainCategory": "Beverages",
@@ -3165,12 +4241,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "1500ml",
-          "price": "100",
+          "price": "550",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Rose Petal Deluxe Ultra Soft",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586346818/Product%20Images/grocerapp-rose-petal-luxury-ultra-soft-5e6bcbdad730c_w0dbpe.jpg",
           "mainCategory": "Home Care",
@@ -3178,12 +4255,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Tissue Paper",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586346154/Category%20Images/tissues_ayg8zx.jpg",
           "quantity": "1 pack 200 sheets",
-          "price": "100",
+          "price": "1200",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Rose Petal Facial Perfumed",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586347088/Product%20Images/grocerapp-rose-petal-facial-perfumed-ultra-5e6bf2f3d0e3d_c6ubji.jpg",
           "mainCategory": "Home Care",
@@ -3193,10 +4271,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1 Pack of 100",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Rose Petal Facial Tissue Pop Up",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586346819/Product%20Images/grocerapp-rose-petal-facial-tissue-pop-5e6beed930d24_awjraf.jpg",
           "mainCategory": "Home Care",
@@ -3204,12 +4283,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Tissue Paper",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586346154/Category%20Images/tissues_ayg8zx.jpg",
           "quantity": "1 Unit 150pcs",
-          "price": "100",
+          "price": "120",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Rose Petal pop up Smart Tissue",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586346620/Product%20Images/grocerapp-rose-petal-multi-color-ultra-5e6bcbea4dd8d_ut80tn.jpg",
           "mainCategory": "Home Care",
@@ -3219,10 +4299,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1 Pack of 80\n",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Rose Petal Tulip Soft",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586346970/Product%20Images/tullip_tissue_qaobiu.jpg",
           "mainCategory": "Home Care",
@@ -3232,10 +4313,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1 Pack of 80\n",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sabut Dhania",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586169975/Product%20Images/Sabut_Dhania_cywo6p.jpg",
           "mainCategory": "Grocery",
@@ -3245,10 +4327,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "125g",
           "price": "50",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sabut Dhania",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586169975/Product%20Images/Sabut_Dhania_cywo6p.jpg",
           "mainCategory": "Grocery",
@@ -3258,10 +4341,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "250g",
           "price": "90",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Safegaurd Trio Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229415/Product%20Images/Safegaurd_Trio_Pack_165g_rbvds2.jpg",
           "mainCategory": "Personal Care",
@@ -3271,23 +4355,25 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "135g*3",
           "price": "185",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Sela Chawal",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231781/Product%20Images/Sela_rice_1kg_ntzwrs.jpg",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Daalain, Rice & Flour",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
-          "quantity": "1kg",
-          "price": "150",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Scoth Brite Sponge",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229443/Product%20Images/Sponge_tjwvn1.jpg",
+          "mainCategory": "Home Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
+          "subCategory": "Kitchen Cleaning",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887629/Category%20Images/Kitchen7548_xokq4e.jpg",
+          "quantity": "1 Unit 1s",
+          "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sella Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586175799/Product%20Images/Sela_rice_ed6nhy.jpg",
           "mainCategory": "Grocery",
@@ -3295,12 +4381,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "100",
+          "price": "150",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sensodyne",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583234991/Product%20Images/Sensodyne_50g_plgjpr.jpg",
           "mainCategory": "Personal Care",
@@ -3310,23 +4397,25 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "50g",
           "price": "135",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "seviyan Bake Parlour",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229442/Product%20Images/seviyan_Bake_Parlour_150g_rhzxzg.png",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Sauces, Olives & Pickles",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Noodles & Pasta",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200617/Category%20Images/noodles-pasta_i66xm1.jpg",
           "quantity": "150g",
           "price": "30",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shahi Tukra",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229417/Product%20Images/Shahi_Tukra_180g_qboppj.jpg",
           "mainCategory": "Grocery",
@@ -3336,10 +4425,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "180g",
           "price": "85",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Achar Gosht Double Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583233930/Product%20Images/Shan_Achar_Gosht_Double_Pack_dgnsxg.jpg",
           "mainCategory": "Grocery",
@@ -3347,12 +4437,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "50g+50g",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Biryani Double Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231780/Product%20Images/Shan_Biryani_Double_Pack_50_50g_z4knxg.jpg",
           "mainCategory": "Grocery",
@@ -3360,12 +4451,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "50g+50g",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Chapli Kabab  Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231782/Product%20Images/Shan_Chapli_Kabab_Masala_vu5vq7.jpg",
           "mainCategory": "Grocery",
@@ -3373,12 +4465,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "50g",
-          "price": "63",
+          "price": "70",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Chat Masala Double Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231790/Product%20Images/Shan_Chat_Masala_Double_Pack_erxw5j.jpg",
           "mainCategory": "Grocery",
@@ -3386,12 +4479,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "100g",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Chicken Tikka Double Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583234068/Product%20Images/Shan_Chicken_Tikka_Double_Pack_vgrovp.jpg",
           "mainCategory": "Grocery",
@@ -3399,12 +4493,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "100g",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Dhania Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231791/Product%20Images/Shan_Dhania_Powder_250g_lqdkbh.jpg",
           "mainCategory": "Grocery",
@@ -3412,12 +4507,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "250g",
-          "price": "100",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Dhania Powder",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231792/Product%20Images/Shan_Dhania_Powder_125g_ancwf6.jpg",
           "mainCategory": "Grocery",
@@ -3427,10 +4523,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "125g",
           "price": "50",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Fish Masala Double Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583234168/Product%20Images/Shan_Fish_Masala_Double_Pack_h18kvv.jpg",
           "mainCategory": "Grocery",
@@ -3438,12 +4535,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "50g+50g",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Haleem Masala Double Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231785/Product%20Images/Shan_Haleem_Masala_Double_Pack_yyyaku.jpg",
           "mainCategory": "Grocery",
@@ -3451,12 +4549,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "50g+50g",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Iodized Salt",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231788/Product%20Images/Shan_Iodized_Salt_800g_pt1b78.jpg",
           "mainCategory": "Grocery",
@@ -3466,10 +4565,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "800g",
           "price": "35",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Karahi Double Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231789/Product%20Images/Shan_Karahi_Double_Pack_xz8sr9.jpg",
           "mainCategory": "Grocery",
@@ -3477,25 +4577,27 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "100g",
-          "price": "115",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Qorma Double Pack",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583233843/Product%20Images/Shan_Qorma_Double_Pack_qp7prp.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
-          "quantity": "50g",
-          "price": "115",
+          "quantity": "100g",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shan Tandoori Masala",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231795/Product%20Images/Shan_Tandoori_Masala_cdmomj.jpg",
           "mainCategory": "Grocery",
@@ -3503,12 +4605,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "50g",
-          "price": "63",
+          "price": "70",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shangrilla Ketchup",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229418/Product%20Images/Shangrilla_Ketchup_1kg_pine6h.jpg",
           "mainCategory": "Grocery",
@@ -3516,25 +4619,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sauces, Olives & Pickles",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
           "quantity": "1kg",
-          "price": "215",
+          "price": "220",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Shangrilla Ketchup",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229418/Product%20Images/Shangrilla_Ketchup_500g_txrkcl.webp",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Sauces, Olives & Pickles",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
-          "quantity": "500g",
-          "price": "215",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shangrilla Ketchup",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229418/Product%20Images/Shangrilla_Ketchup_500g_txrkcl.jpg",
           "mainCategory": "Grocery",
@@ -3542,12 +4633,27 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sauces, Olives & Pickles",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
           "quantity": "500g",
-          "price": "145",
+          "price": "150",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Shangrilla Ketchup",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229418/Product%20Images/Shangrilla_Ketchup_500g_txrkcl.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Sauces, Olives & Pickles",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
+          "quantity": "250g",
+          "price": "80",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shangrilla Ketchup Chili Garlic",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229419/Product%20Images/Shangrilla_Ketchup_chili_garlic_500mg_xd8rfh.jpg",
           "mainCategory": "Grocery",
@@ -3555,12 +4661,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sauces, Olives & Pickles",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
           "quantity": "500g",
-          "price": "145",
+          "price": "150",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Shangrilla Ketchup Chili Garlic",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229417/Product%20Images/Shangrilla_Ketchup_chili_garlic_1kg_nm93jw.jpg",
           "mainCategory": "Grocery",
@@ -3568,12 +4675,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sauces, Olives & Pickles",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885350/Category%20Images/Sauces_-Olives-and-Pickles5329_uqy3is.jpg",
           "quantity": "1kg",
-          "price": "215",
+          "price": "220",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Soonf",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229419/Product%20Images/Soonf_250g_tv4so5.jpg",
           "mainCategory": "Grocery",
@@ -3583,10 +4691,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "250g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Soonf",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229420/Product%20Images/Soonf_125g_azuqzi.jpg",
           "mainCategory": "Grocery",
@@ -3596,10 +4705,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "125g",
           "price": "50",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Soya Sauce",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583232237/Product%20Images/Soya_Sauce_300ml_vt6qmn.jpg",
           "mainCategory": "Grocery",
@@ -3609,23 +4719,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "300ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Sponge",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229443/Product%20Images/Sponge_tjwvn1.jpg",
-          "mainCategory": "Home Care",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
-          "subCategory": "Kitchen Cleaning",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887629/Category%20Images/Kitchen7548_xokq4e.jpg",
-          "quantity": "1 Unit 1s",
-          "price": "80",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sprite Lemon Lime",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947796/Product%20Images/Sprite_1.5_L_wkov2s.jpg",
           "mainCategory": "Beverages",
@@ -3635,10 +4733,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1.5 Liter",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sprite Lemon Lime",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947800/Product%20Images/Sprite_2.2.5_L_d6cgvd.jpg",
           "mainCategory": "Beverages",
@@ -3646,12 +4745,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Sharbat & Drinks",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582888211/Category%20Images/Sharbat6606_f8lfy3.png",
           "quantity": "2.25 Liter",
-          "price": "100",
+          "price": "125",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Steam Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586175798/Product%20Images/steam_rice_tcpih6.jpg",
           "mainCategory": "Grocery",
@@ -3659,12 +4759,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "125",
+          "price": "140",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Steam Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586175798/Product%20Images/steam_rice_tcpih6.jpg",
           "mainCategory": "Grocery",
@@ -3672,12 +4773,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "2kg",
-          "price": "250",
+          "price": "280",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Suchy Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584719910/Product%20Images/rice_bmjzkn.jpg",
           "mainCategory": "Grocery",
@@ -3687,10 +4789,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sufi Banaspati",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947797/Product%20Images/Sufi_Banaspati_1kg_shlyfk.jpg",
           "mainCategory": "Grocery",
@@ -3700,10 +4803,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "240",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sufi Banaspati",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947797/Product%20Images/Sufi_Banaspati_5kg_zlm9fu.jpg",
           "mainCategory": "Grocery",
@@ -3711,12 +4815,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "5kg",
-          "price": "240",
+          "price": "1175",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sufi Canola Cooking Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231792/Product%20Images/Sufi_canola_cooking_oil_1liter_t9it8l.jpg",
           "mainCategory": "Grocery",
@@ -3724,12 +4829,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "1 Liter",
-          "price": "240",
+          "price": "245",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sufi Canola Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947798/Product%20Images/Sufi_Canola_Oil_3l_ffbihs.jpg",
           "mainCategory": "Grocery",
@@ -3737,12 +4843,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "3 Liter",
-          "price": "240",
+          "price": "720",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sufi Canola Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947799/Product%20Images/sufi_Canola_oil_5l_fbz3pa.jpg",
           "mainCategory": "Grocery",
@@ -3750,25 +4857,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "5 Liter",
-          "price": "240",
+          "price": "1200",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Sufi Oil",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231796/Product%20Images/Sufi_oil_1liter_sc2xwg.png",
-          "mainCategory": "Grocery",
-          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
-          "subCategory": "Oil & Ghee",
-          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
-          "quantity": "1 Liter",
-          "price": "240",
-          "net": "0",
-          "count": "0"
-        },
-        {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sufi Sunflower Cooking Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947800/Product%20Images/Sufi_Sunflower_Cooking_Oil_5l_blbiqg.jpg",
           "mainCategory": "Grocery",
@@ -3776,12 +4871,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "5 Liter",
-          "price": "240",
+          "price": "1225",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sufi Sunflower Oil",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231796/Product%20Images/Sufi_oil_1liter_sc2xwg.png",
           "mainCategory": "Grocery",
@@ -3789,12 +4885,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Oil & Ghee",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884826/Category%20Images/Oil-and-ghee4193_vvbbw8.jpg",
           "quantity": "1 Liter",
-          "price": "240",
+          "price": "250",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sugar",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583232017/Product%20Images/Sugar_1kg_mbvgsx.jpg",
           "mainCategory": "Grocery",
@@ -3802,12 +4899,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "1kg",
-          "price": "75",
+          "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Suji",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231790/Product%20Images/sooji_1kg_avty0f.jpg",
           "mainCategory": "Grocery",
@@ -3817,10 +4915,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "60",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Suji",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586175994/Product%20Images/Suji_500gm_-550x550_ebzi8k.jpg",
           "mainCategory": "Grocery",
@@ -3828,12 +4927,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "500g",
-          "price": "90",
+          "price": "30",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sunlight",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229425/Product%20Images/Sunlight_850g_wbhvhf.jpg",
           "mainCategory": "Home Care",
@@ -3843,10 +4943,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "850g",
           "price": "99",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sunsilk Black",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229428/Product%20Images/Sunsilk_Black_200ml_ipmtxk.jpg",
           "mainCategory": "Personal Care",
@@ -3854,12 +4955,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Hair Care",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887903/Category%20Images/Hair-care9214_pluvf0.jpg",
           "quantity": "200ml",
-          "price": "208",
+          "price": "220",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sunsilk H/F Shampoo",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1585396581/Product%20Images/sunsilk_vcank3.jpg",
           "mainCategory": "Personal Care",
@@ -3867,12 +4969,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Hair Care",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887903/Category%20Images/Hair-care9214_pluvf0.jpg",
           "quantity": "200ml",
-          "price": "100",
+          "price": "220",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Sunsilk Pink, Yellow, Golden, Blue",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583229426/Product%20Images/Sunsilk_200ml_eljz1i.jpg",
           "mainCategory": "Personal Care",
@@ -3880,12 +4983,27 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Hair Care",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887903/Category%20Images/Hair-care9214_pluvf0.jpg",
           "quantity": "200ml",
-          "price": "218",
+          "price": "220",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Super Crisp Nimko Mix",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587287297/Product%20Images/super_crips_nimko_ac4o7o.jpg",
+          "mainCategory": "Instant Food",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200446/Main%20Category%20Images/instant-food_vu4zdk.jpg",
+          "subCategory": "Chips & Nimko",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200608/Category%20Images/chips-nimko_eny6ko.jpg",
+          "quantity": "44g",
+          "price": "30",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Super Kernal New Chawal",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231795/Product%20Images/super_kernal_old_and_new_ofo1kn.jpg",
           "mainCategory": "Grocery",
@@ -3895,10 +5013,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "185",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Super Kernal Old Chawal",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231795/Product%20Images/super_kernal_old_and_new_ofo1kn.jpg",
           "mainCategory": "Grocery",
@@ -3908,10 +5027,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "195",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Supreeme Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231798/Product%20Images/supreeme_tea_190g_trkfpi.jpg",
           "mainCategory": "Beverages",
@@ -3919,12 +5039,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
           "quantity": "190g",
-          "price": "193",
+          "price": "195",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Supreeme Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231794/Product%20Images/supreeme_chae_100g_dsojgv.jpg",
           "mainCategory": "Beverages",
@@ -3932,12 +5053,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
           "quantity": "100g",
-          "price": "98",
+          "price": "105",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Supreeme Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231796/Product%20Images/Supreeme_chae_475g_uuokmg.jpg",
           "mainCategory": "Beverages",
@@ -3947,10 +5069,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "475g",
           "price": "465",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Supreeme Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231799/Product%20Images/supreeme_chae_950g_x1xezo.jpg",
           "mainCategory": "Beverages",
@@ -3958,12 +5081,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
           "quantity": "950g",
-          "price": "895",
+          "price": "900",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Surf Excel",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1585392107/Product%20Images/surf-excel-500gm_gud2h5.jpg",
           "mainCategory": "Home Care",
@@ -3971,38 +5095,41 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Laundry",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887238/Category%20Images/Laundry5906_amer3q.png",
           "quantity": "500g",
-          "price": "100",
+          "price": "150",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Surf Excel",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1585392292/Product%20Images/grocerapp-surf-excel-2kg_inspe5.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1585392292/Product%20Images/grocerapp-surf-excel-2kg_inspe5.jpg",
           "mainCategory": "Home Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
           "subCategory": "Laundry",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887238/Category%20Images/Laundry5906_amer3q.png",
           "quantity": "2kg",
-          "price": "100",
+          "price": "570",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Surf Excel",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1585392291/Product%20Images/grocerapp-surf-excel-1kg_rh7rgr.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1585392291/Product%20Images/grocerapp-surf-excel-1kg_rh7rgr.jpg",
           "mainCategory": "Home Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519402/Main%20Category%20Images/homeCare_fkl2gn.png",
           "subCategory": "Laundry",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582887238/Category%20Images/Laundry5906_amer3q.png",
           "quantity": "1kg",
-          "price": "100",
+          "price": "300",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Tapal Danedar",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947805/Product%20Images/Tapan_475g_iqlzal.jpg",
           "mainCategory": "Beverages",
@@ -4012,10 +5139,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "475g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Tapal Danedar",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947800/Product%20Images/Tapal_950g_pjv6zk.jpg",
           "mainCategory": "Beverages",
@@ -4025,12 +5153,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "950g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Tapal Danedar 50g",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231828/Product%20Images/danedaar_100g_caicmx.webp",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Tapal Danedar",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231828/Product%20Images/danedaar_100g_caicmx.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Tea",
@@ -4038,12 +5167,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Tapal Danedar 95g",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231829/Product%20Images/danedaar_95g_xwphg4.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231829/Product%20Images/danedaar_95g_xwphg4.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Tea",
@@ -4051,11 +5181,12 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "95g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Tapal Family Mixture 190g",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Tapal Family Mixture",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947801/Product%20Images/Tapal_Family_Mixture_190g_rhair5.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
@@ -4064,11 +5195,12 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "190g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Tapal Family Mixture 475 g",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Tapal Family Mixture",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947802/Product%20Images/Tapal_Family_Mixture_475_g_tgwlyx.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
@@ -4077,11 +5209,12 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "475g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Tapal Family Mixture 950g",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Tapal Family Mixture",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947802/Product%20Images/Tapal_Family_Mixture_950g_lufb6b.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
@@ -4090,11 +5223,12 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "950g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "Tapal Family Mixture 95g",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Tapal Family Mixture",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947800/Product%20Images/Tapal_Family_Mixture_95g_ujzkce.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
@@ -4103,49 +5237,53 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "95g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Tapal Green Tea Apple",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231797/Product%20Images/Tapal_Green_Tea_Apple_32tb_xorp9u.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
-          "quantity": "32 Tb",
-          "price": "128",
+          "quantity": "30 Tb",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Tapal Green Tea Elaichi",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231801/Product%20Images/Tapal_Green_Tea_Ilaichi_zyg3u8.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
-          "quantity": "45g",
-          "price": "128",
+          "quantity": "30 Tb",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Tapal Green Tea Lemon",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231803/Product%20Images/Tapal_Green_Tea_Lemon_45g_p2dyow.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
-          "quantity": "45g",
-          "price": "128",
+          "quantity": "30 Tb",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Tapal Green Tea Mint",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231798/Product%20Images/Tapal_Green_Tea_Mint_edvsnj.jpg",
           "mainCategory": "Beverages",
@@ -4153,25 +5291,27 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
           "quantity": "30 Tb",
-          "price": "128",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Tapal Green Tea Strawberry",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231799/Product%20Images/Tapal_Green_Tea_Strawberry_y0mjcy.jpg",
           "mainCategory": "Beverages",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519397/Main%20Category%20Images/beverages_tukjjk.png",
           "subCategory": "Tea",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885181/Category%20Images/Tea4716_bvcnan.png",
-          "quantity": "45g",
-          "price": "128",
+          "quantity": "30 Tb",
+          "price": "130",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Taqwa Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947802/Product%20Images/taqwa_bsimhy.jpg",
           "mainCategory": "Grocery",
@@ -4179,12 +5319,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "100",
+          "price": "190",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Taqwa Rice",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947802/Product%20Images/taqwa_bsimhy.jpg",
           "mainCategory": "Grocery",
@@ -4192,12 +5333,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "2kg",
-          "price": "100",
+          "price": "380",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Tezdum Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231805/Product%20Images/tezdu_chae_190g_gabbzb.jpg",
           "mainCategory": "Beverages",
@@ -4207,10 +5349,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "190g",
           "price": "198",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Tezdum Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231801/Product%20Images/tezdu_chae_475g_g8aier.jpg",
           "mainCategory": "Beverages",
@@ -4220,10 +5363,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "475g",
           "price": "475",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Vaseline Blueseal Pure",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586351624/Product%20Images/grocerapp-vaseline-blueseal-pure-petroleum-jelly-5e6ce0036bd14_bbhokz.png",
           "mainCategory": "Personal Care",
@@ -4233,10 +5377,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "100ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Vaseline Blueseal Pure",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586352142/Product%20Images/vaseline_jelly_50ml_puidla.png",
           "mainCategory": "Personal Care",
@@ -4246,12 +5391,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "50ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Vatika Almond and Honey shampoo",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586949913/Product%20Images/Vatika_Almond_and_Honey_shampoo_u5plnn.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586949913/Product%20Images/Vatika_Almond_and_Honey_shampoo_u5plnn.jpg",
           "mainCategory": "Personal Care",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
           "subCategory": "Hair Care",
@@ -4259,10 +5405,67 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "200ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Veet Hair Removal Cream Brightening Sensitive",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587202138/Pduct%20Images/veet-hair-removal-cream-brightening_hgdrgt.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Women Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200020/Category%20Images/womencare_vbhing.jpg",
+          "quantity": "25g",
+          "price": "110",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Veet Silk & Fresh Normal Skin Hair",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587202210/Product%20Images/veet-silk-fresh-normal.jgp_wo21cn.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Women Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200020/Category%20Images/womencare_vbhing.jpg",
+          "quantity": "50g",
+          "price": "199",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Veet Silk & Fresh Normal Skin Hair",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587202210/Product%20Images/veet-silk-fresh-normal.jgp_wo21cn.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Women Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200020/Category%20Images/womencare_vbhing.jpg",
+          "quantity": "80g",
+          "price": "220",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "Veet Wax Strips",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587202424/Product%20Images/veet-wax-strips_cyekn9.jpg",
+          "mainCategory": "Personal Care",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519396/Main%20Category%20Images/personalCare_gg0xbq.png",
+          "subCategory": "Women Care",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1587200020/Category%20Images/womencare_vbhing.jpg",
+          "quantity": "1 Unit 12 Pcs",
+          "price": "299",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Vital Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231804/Product%20Images/vital_tea_190g_jnob8m.jpg",
           "mainCategory": "Beverages",
@@ -4272,10 +5475,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "475g",
           "price": "495",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Vital Tea",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231804/Product%20Images/vital_tea_190g_jnob8m.jpg",
           "mainCategory": "Beverages",
@@ -4285,36 +5489,67 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "190g",
           "price": "205",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "White Chana",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "White Chana bareek",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231806/Product%20Images/sufaid_chanay_1kg_ragwa1.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "500g",
-          "price": "60",
+          "price": "65",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
-          "productName": "White Chana",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "White Chana bareek",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231806/Product%20Images/sufaid_chanay_1kg_ragwa1.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Daalain, Rice & Flour",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
           "quantity": "1kg",
-          "price": "120",
+          "price": "125",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "White Chana moota",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231806/Product%20Images/sufaid_chanay_1kg_ragwa1.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Daalain, Rice & Flour",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
+          "quantity": "500g",
+          "price": "70",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "White Chana moota",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231806/Product%20Images/sufaid_chanay_1kg_ragwa1.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Daalain, Rice & Flour",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885003/Category%20Images/Daalain_-Rice-_-Flour-11474_remmh6.jpg",
+          "quantity": "1kg",
+          "price": "130",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "White Lobia",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231810/Product%20Images/Sufaid_lobia_1kg_hjhfyf.jpg",
           "mainCategory": "Grocery",
@@ -4324,10 +5559,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "White Lobia",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1583231810/Product%20Images/Sufaid_lobia_1kg_hjhfyf.jpg",
           "mainCategory": "Grocery",
@@ -4337,10 +5573,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "1kg",
           "price": "200",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "White Zeera",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586172678/Product%20Images/white_zeera_h4ahfq.jpg",
           "mainCategory": "Grocery",
@@ -4350,12 +5587,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "50 gm",
           "price": "80",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs Bee Hives Honey",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947803/Product%20Images/youngs_Bee_Hives_Honey_250g_kuymyu.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947803/Product%20Images/youngs_Bee_Hives_Honey_250g_kuymyu.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Jam, Honey & Spread",
@@ -4363,12 +5601,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "250g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs Bee Hives Honey",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947805/Product%20Images/youngs_Bee_Hives_Honey_500g_s0kt16.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947805/Product%20Images/youngs_Bee_Hives_Honey_500g_s0kt16.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Jam, Honey & Spread",
@@ -4376,10 +5615,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Youngs Bee Honey",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947829/Product%20Images/youngs_Bee_Hives_Honey_125g_ofkain.jpg",
           "mainCategory": "Grocery",
@@ -4389,10 +5629,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "125g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs Chicken Spread",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584791840/Product%20Images/chicken_spread_l8g7r8.jpg",
           "mainCategory": "Grocery",
@@ -4400,12 +5641,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "1 Liter",
-          "price": "100",
+          "price": "560",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs chicken Spread",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584791840/Product%20Images/chicken_spread_l8g7r8.jpg",
           "mainCategory": "Grocery",
@@ -4413,12 +5655,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "200ml",
-          "price": "100",
+          "price": "150",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs chicken spread",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584791840/Product%20Images/chicken_spread_l8g7r8.jpg",
           "mainCategory": "Grocery",
@@ -4426,12 +5669,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "500ml",
-          "price": "100",
+          "price": "310",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs Chicken Spread Bar B Que",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947804/Product%20Images/youngs_Chicken_Spread_Bar_B_Que_200ml_yxmsva.jpg",
           "mainCategory": "Grocery",
@@ -4441,10 +5685,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "200ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs Chicken Spread Bar B Que",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947804/Product%20Images/youngs_Chicken_Spread_Bar_B_Que_500ml_uvq1dn.jpg",
           "mainCategory": "Grocery",
@@ -4454,12 +5699,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs choco Bliss Milky spread",
-          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947805/Product%20Images/youngs_choco_Bliss_Milky_spread_360g_d1xjm7.webp",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947805/Product%20Images/youngs_choco_Bliss_Milky_spread_360g_d1xjm7.jpg",
           "mainCategory": "Grocery",
           "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
           "subCategory": "Jam, Honey & Spread",
@@ -4467,10 +5713,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "360g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Youngs Chocolaty Spread",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947806/Product%20Images/Youngs_Chocolaty_Spread_360g_psg0df.jpg",
           "mainCategory": "Grocery",
@@ -4480,10 +5727,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "360g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Youngs Chocolaty Spread",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947806/Product%20Images/Youngs_Chocolaty_Spread_360g_psg0df.jpg",
           "mainCategory": "Grocery",
@@ -4493,10 +5741,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "600g",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs Creamy &Salted Mayonnaise",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947811/Product%20Images/youngs_Creamy_Salted_Mayonnaise_500ml_xofvln.jpg",
           "mainCategory": "Grocery",
@@ -4506,10 +5755,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs creamy salted Mayonnaise",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947812/Product%20Images/youngs_Creamy_Salted_Mayonnaise_200ml_g6xwlk.jpg",
           "mainCategory": "Grocery",
@@ -4519,10 +5769,25 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "200ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
+          "productName": "youngs Mayonnaise",
+          "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584791780/Product%20Images/mayonees_500ml_kbd0jp.jpg",
+          "mainCategory": "Grocery",
+          "mainCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586519395/Main%20Category%20Images/grocery_lcp8jn.png",
+          "subCategory": "Jam, Honey & Spread",
+          "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
+          "quantity": "200ml",
+          "price": "95",
+          "net": "0",
+          "count": "0",
+          "field12": ""
+        },
+        {
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs Mayonnaise",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584791780/Product%20Images/mayonees_500ml_kbd0jp.jpg",
           "mainCategory": "Grocery",
@@ -4530,12 +5795,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "100ml",
-          "price": "100",
+          "price": "40",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs Mayonnaise",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584791780/Product%20Images/mayonees_500ml_kbd0jp.jpg",
           "mainCategory": "Grocery",
@@ -4543,12 +5809,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "500ml",
-          "price": "100",
+          "price": "180",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs Mayonnaise",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1584791780/Product%20Images/mayonees_500ml_kbd0jp.jpg",
           "mainCategory": "Grocery",
@@ -4556,12 +5823,13 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Jam, Honey & Spread",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582885776/Category%20Images/Jam_-honey-and-spread3188_ujnlxc.jpg",
           "quantity": "1 Liter",
-          "price": "100",
+          "price": "310",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Youngs Sandwich Spread",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947809/Product%20Images/Youngs_Sandwich_Spread_200ml_vwnbke.jpg",
           "mainCategory": "Grocery",
@@ -4571,10 +5839,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "200ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "youngs sandwich Spread",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586947819/Product%20Images/Youngs_Sandwich_Spread_500ml_j5kc9n.jpg",
           "mainCategory": "Grocery",
@@ -4584,10 +5853,11 @@ router.get('/addBulkProducts/', async (req, res) => {
           "quantity": "500ml",
           "price": "100",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         },
         {
-          "martId": "5e9596f08f4e2b058164dca2",
+          "martId": "5e9d5b58cfe81216f8fd4139",
           "productName": "Zarda Rang",
           "productImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1586357053/Product%20Images/Quality-Foods-Zarda-Rang-50g_onghfj.jpg",
           "mainCategory": "Grocery",
@@ -4595,9 +5865,10 @@ router.get('/addBulkProducts/', async (req, res) => {
           "subCategory": "Spices, Salt & Sugar",
           "subCategoryImg": "https://res.cloudinary.com/hmwday8rj/image/upload/v1582884505/Category%20Images/Spices_-Salt-_-Sugar1688_hopvue.jpg",
           "quantity": "25g",
-          "price": "70",
+          "price": "30",
           "net": "0",
-          "count": "0"
+          "count": "0",
+          "field12": ""
         }
       ]
     );

@@ -36,7 +36,12 @@ router.post('/addMart', async (req, res) => {
 
 router.get("/allMarts", async (req, res) => {
     try {
-        const allMarts = await Marts.find({ type: 'admin' })
+        const query = {
+            type: 'admin',
+            status: 'active'
+        };
+
+        const allMarts = await Marts.find(query)
             .sort({ name: 1 })
             .select('-password -__v');
 
