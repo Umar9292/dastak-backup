@@ -15,8 +15,8 @@ router.post('/saveOrder', async (req, res) => {
         const mart = await Mart.findById({ _id: params.martId })
             .select('-password -__v');
 
-        const formatedOrderTime = moment(params.time).format('hh:mm');
-        const orderTime = moment(formatedOrderTime, 'hh:mm').tz('Asia/karachi');
+        const orderTime = moment().tz('Asia/karachi');
+        const formatedTime = moment(orderTime).format('hh:mm a');
         const openingTime = moment(mart.openingTime, 'hh:mm').tz('Asia/karachi');
         const closingTime = moment(mart.closingTime, 'hh:mm').tz('Asia/karachi');
 
@@ -27,7 +27,7 @@ router.post('/saveOrder', async (req, res) => {
             params.martName = mart.name;
             params.martPhone = mart.phone;
             params.martAddress = mart.address;
-            params.time = orderTime;
+            params.time = formatedTime;
 
             await new Orders(params).save();
 
