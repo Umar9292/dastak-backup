@@ -46,6 +46,11 @@ router.post('/signIn', async (req, res) => {
             msg: `The number you have entered is not associated with any account`
         });
 
+        if (user.status === 'inactive') return res.json({
+            status: '404',
+            msg: `You account has been deactivated`
+        });
+
         const result = await bcrypt.compare(password, user.password);
         if (!result) return res.json({
             status: '404',
