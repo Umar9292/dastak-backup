@@ -48,8 +48,8 @@ router.post('/saveOrder', async (req, res) => {
         }
 
         return res.json({
-            status: '404',
-            msg: 'Mart is closed'
+            status: '204',
+            msg: 'You are placing an order for tomorrow, you will received your order next day'
         });
     }
     catch (err) {
