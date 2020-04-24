@@ -11,16 +11,24 @@ const notify = require('../../notificationHandler/handler');
 router.post('/saveOrder', async (req, res) => {
     try {
         const params = req.body;
+        const total = params.orderTotal;
 
         const mart = await Mart.findById({ _id: params.martId })
             .select('-password -__v');
 
-        const orderTime = moment().tz('Asia/karachi');
-        const formatedTime = moment(orderTime).format('hh:mm a');
-        const openingTime = moment(mart.openingTime, 'hh:mm').tz('Asia/karachi');
-        const closingTime = moment(mart.closingTime, 'hh:mm').tz('Asia/karachi');
+        const orderTime = moment().tz('Asia/karachi').format('HH:mm');
+        const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
+        const openingTime = moment(mart.openingTime, 'HH:mm').format('HH:mm');
+        const closingTime = moment(mart.closingTime, 'HH:mm').format('HH:mm');
 
-        if (orderTime.isBetween(openingTime, closingTime)) {
+        if (+total < mart.minimumOrder) {
+            return res.json({
+                status: '404',
+                msg: `Minimun order is Rs ${mart.minimumOrder}`
+            });
+        }
+
+        if (orderTime >= openingTime && orderTime < closingTime) {
 
             params.products = await JSON.parse(params.products);
             params.martId = mart._id;
