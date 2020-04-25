@@ -137,7 +137,7 @@ router.post('/changeOrderStatus', async (req, res) => {
         }
 
         if (req.body.status === 'Shipped') {
-            const msg = `Dear ${user.name} your order# ${req.body.orderNum} has been shipped and will arrive in approximately 1 hour.`;
+            const msg = `Dear ${user.name} your order# ${req.body.orderNum} has been shipped and will arrive in approximately 30 mins.`;
 
             await notify.user(msg, user.playerId, { flag: 'orderShipped' });
         }
