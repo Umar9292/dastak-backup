@@ -28,28 +28,29 @@ router.post('/saveOrder', async (req, res) => {
             });
         }
 
-        if (orderTime >= openingTime && orderTime < closingTime) {
+        params.products = await JSON.parse(params.products);
+        params.martId = mart._id;
+        params.martName = mart.name;
+        params.martPhone = mart.phone;
+        params.martAddress = mart.address;
+        params.time = formatedTime;
 
-            params.products = await JSON.parse(params.products);
-            params.martId = mart._id;
-            params.martName = mart.name;
-            params.martPhone = mart.phone;
-            params.martAddress = mart.address;
-            params.time = formatedTime;
+        await new Orders(params).save();
 
-            await new Orders(params).save();
+        await notify.admin(mart.playerId, { flag: 'orderReceived' });
 
-            await notify.admin(mart.playerId, { flag: 'orderReceived' });
+        if (orderTime < openingTime || orderTime > closingTime) {
+            const date = moment(params.date, 'DD-MM-YYYY').add(1, 'days').format('DD-MM-YYYY');
 
             return res.json({
-                status: '200',
-                msg: 'Order received'
+                status: '204',
+                msg: `You are placing an order for tomorrow, you will received your order on ${date}`
             });
         }
 
         return res.json({
-            status: '204',
-            msg: 'You are placing an order for tomorrow, you will received your order next day'
+            status: '200',
+            msg: `Order Received`
         });
     }
     catch (err) {
