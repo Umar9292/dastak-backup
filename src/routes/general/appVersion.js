@@ -4,7 +4,6 @@ const router = express.Router();
 router.post('/checkVersion', async (req, res) => {
     try {
         const body = req.body;
-        console.log(body);
 
         if (body.platform === 'ios' && body.version === '1.2.0') return res.json({ status: '200' });
 
