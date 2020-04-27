@@ -1,5 +1,5 @@
-const express = require("express");
 require("dotenv").config();
+const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -21,6 +21,7 @@ const logoutRouter = require('./src/routes/user/logout');
 const martsRouter = require('./src/routes/marts/marts');
 const mainCategoriesRouter = require('./src/routes/products/mainCategories');
 const subCategoriesRouter = require('./src/routes/products/subCategories');
+const appVersionRouter = require('./src/routes/general/appVersion');
 
 const port = process.env.PORT || 8080;
 
@@ -47,6 +48,7 @@ app.use('/products',
 app.use('/orders', ordersRouter);
 app.use('/admin', playerIdRouter);
 app.use('/marts', martsRouter);
+app.use('/app', appVersionRouter);
 
 mongoose.connect(dbUrl,
     {

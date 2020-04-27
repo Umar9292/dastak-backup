@@ -10,6 +10,7 @@ const martsModel = mongoose.Schema(
         password: String,
         address: String,
         minimumOrder: Number,
+        deliveryRange: String,
         openingTime: String,
         closingTime: String,
         playerId: String,
