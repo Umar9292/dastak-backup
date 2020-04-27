@@ -6,21 +6,21 @@ router.post('/checkVersion', async (req, res) => {
         const body = req.body;
         console.log(body);
 
-        if (body.platform === 'ios' && body.version === '1.1.10') return res.json({ status: '200' });
+        if (body.platform === 'ios' && body.version === '1.2.0') return res.json({ status: '200' });
 
-        if (body.platform === 'ios' && body.version !== '1.1.10') {
+        if (body.platform === 'ios' && body.version !== '1.2.0') {
             return res.json({
                 status: '404',
-                msg: `We have updated the App.So kindly update your App from the App Store to get the best experience`
+                msg: `A new update is now available. kindly update your App to get the best experience`
             });
         }
 
-        if (body.platform === 'android' && body.version === '1.1.11') return res.json({ status: '200' });
+        if (body.platform === 'android' && body.version === '1.2.0') return res.json({ status: '200' });
 
-        if (body.platform === 'android' && body.version !== '1.1.11') {
+        if (body.platform === 'android' && body.version !== '1.2.0') {
             return res.json({
                 status: '404',
-                msg: `We have updated the App.So kindly update your App from the App Store to get the best experience`
+                msg: `A new update is now available. kindly update your App to get the best experience`
             });
         }
     }
