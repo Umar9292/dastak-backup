@@ -14,9 +14,9 @@ router.post('/checkVersion', async (req, res) => {
             });
         }
 
-        if (body.platform === 'android' && body.version === '1.2.1') return res.json({ status: '200' });
+        if (body.platform === 'android' && body.version === '1.2.0') return res.json({ status: '200' });
 
-        if (body.platform === 'android' && body.version !== '1.2.1') {
+        if (body.platform === 'android' && body.version !== '1.2.0s') {
             return res.json({
                 status: '404',
                 msg: `A new update is now available. kindly update your App to get the best experience`
