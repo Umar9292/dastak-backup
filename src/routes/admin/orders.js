@@ -24,7 +24,7 @@ router.post('/saveOrder', async (req, res) => {
         if (+total < mart.minimumOrder) {
             return res.json({
                 status: '404',
-                msg: `Minimun order is Rs ${mart.minimumOrder}`
+                msg: `Minimum order is Rs ${mart.minimumOrder}`
             });
         }
 
