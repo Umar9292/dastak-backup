@@ -77,7 +77,7 @@ router.post('/checkTime', async (req, res) => {
         if (shop.shopType === 'restaurant') {
             return res.json({
                 status: '404',
-                msg: `${mart.name} is closed`
+                msg: `${shop.name} is closed`
             });
         }
     }
