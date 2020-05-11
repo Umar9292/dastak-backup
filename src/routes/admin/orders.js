@@ -59,6 +59,7 @@ router.post('/checkTime', async (req, res) => {
         const orderTime = moment(formatedOrderTime, 'HH:mma');
         const openingTime = moment(shop.openingTime, 'HH:mma').tz('Asia/karachi');
         const closingTime = moment(shop.closingTime, 'HH:mma').tz('Asia/karachi');
+
         if (
             orderTime.isAfter(openingTime) &&
             orderTime.isBefore(closingTime) &&
