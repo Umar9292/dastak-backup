@@ -38,7 +38,8 @@ router.get("/allMarts", async (req, res) => {
     try {
         const query = {
             type: 'admin',
-            status: 'active'
+            status: 'active',
+            shopType: 'mart'
         };
 
         const allMarts = await Marts.find(query)
@@ -48,6 +49,33 @@ router.get("/allMarts", async (req, res) => {
         return res.json({
             status: '200',
             data: allMarts
+        });
+    }
+    catch (err) {
+        return res.json({
+            status: '404',
+            data: 'Looks like an error occurred on our side. Kindly try again',
+            error: err.toString()
+        });
+    }
+});
+
+
+router.get("/allRestaurants", async (req, res) => {
+    try {
+        const query = {
+            type: 'admin',
+            status: 'active',
+            shopType: 'restaurant'
+        };
+
+        const allRestaurants = await Marts.find(query)
+            .sort({ name: 1 })
+            .select('-password -__v');
+
+        return res.json({
+            status: '200',
+            data: allRestaurants
         });
     }
     catch (err) {
