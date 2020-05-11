@@ -9,6 +9,7 @@ const martsModel = mongoose.Schema(
         phone: String,
         password: String,
         address: String,
+        shopType: String,
         minimumOrder: Number,
         deliveryRange: String,
         openingTime: String,

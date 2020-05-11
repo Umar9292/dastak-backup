@@ -127,7 +127,8 @@ router.post("/allProducts/", async (req, res) => {
       status: "200",
       data: products
     });
-  } catch (err) {
+  }
+  catch (err) {
     return res.json({
       status: "404",
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
@@ -5887,4 +5888,4 @@ router.get('/addBulkProducts/', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;
