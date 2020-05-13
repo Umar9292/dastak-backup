@@ -58,12 +58,17 @@ router.post('/checkTime', async (req, res) => {
         const formatedOrderTime = moment().tz('Asia/karachi').format('HH:mma');
         const orderTime = moment(formatedOrderTime, 'HH:mma');
         const openingTime = moment(shop.openingTime, 'HH:mma').tz('Asia/karachi');
-        const closingTime = moment(shop.closingTime, 'HH:mma').tz('Asia/karachi');
+        let closingTime = moment(shop.closingTime, 'HH:mma').tz('Asia/karachi');
+        const openingTimeOffSet = moment(openingTime).format('a');
+        const closingTimeOffSet = moment(closingTime).format('a');
+
+        if (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') {
+            closingTime = moment(closingTime).add(1, 'days');
+        }
 
         if (
             orderTime.isAfter(openingTime) &&
-            orderTime.isBefore(closingTime) &&
-            !orderTime.isAfter(closingTime)
+            orderTime.isBefore(closingTime)
         ) {
             return res.json({ status: '200' });
         }
@@ -79,6 +84,7 @@ router.post('/checkTime', async (req, res) => {
         }
 
         if (shop.shopType === 'restaurant') {
+
             return res.json({
                 status: '404',
                 msg: `${shop.name} is closed`
