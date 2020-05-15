@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
-    "heroku": "heroku logs -t --app martbackend"
+    "heroku": "heroku logs -t --app martbackend",
+    "herokuDev": "heroku logs -t --app dastakbackend"
   },
   "author": "",
   "license": "ISC",
