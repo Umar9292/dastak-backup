@@ -16,16 +16,11 @@ router.post('/saveOrder', async (req, res) => {
         const mart = await Mart.findById({ _id: params.martId })
             .select('-password -__v');
 
-        const orderTime = moment().tz('Asia/karachi').format('HH:mm');
+        const orderTime = moment().tz('Asia/karachi');
         const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
-        const openingTime = moment(mart.openingTime, 'HH:mm').format('HH:mm');
-        const closingTime = moment(mart.closingTime, 'HH:mm').format('HH:mm');
 
         if (+total < mart.minimumOrder) {
-            return res.json({
-                status: '404',
-                msg: `Minimum order is Rs ${mart.minimumOrder}`
-            });
+            return res.json({ msg: `Minimun order is Rs ${mart.minimumOrder}` });
         }
 
         params.products = await JSON.parse(params.products);
@@ -39,19 +34,62 @@ router.post('/saveOrder', async (req, res) => {
 
         await notify.admin(mart.playerId, { flag: 'orderReceived' });
 
-        if (orderTime < openingTime || orderTime > closingTime) {
-            const date = moment(params.date, 'DD-MM-YYYY').add(1, 'days').format('DD-MM-YYYY');
-
-            return res.json({
-                status: '204',
-                msg: `You are placing an order for tomorrow, you will received your order on ${date}`
-            });
-        }
-
         return res.json({
             status: '200',
             msg: `Order Received`
         });
+    }
+    catch (err) {
+        return res.json({
+            status: '404',
+            error: err.toString(),
+            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
+        });
+    }
+});
+
+router.post('/checkTime', async (req, res) => {
+    try {
+        const params = req.body;
+
+        const shop = await Mart.findById({ _id: params.martId })
+            .select('-password -__v');
+
+        const formatedOrderTime = moment().tz('Asia/karachi').format('HH:mma');
+        const orderTime = moment(formatedOrderTime, 'HH:mma');
+        const openingTime = moment(shop.openingTime, 'HH:mma').tz('Asia/karachi');
+        let closingTime = moment(shop.closingTime, 'HH:mma').tz('Asia/karachi');
+        const openingTimeOffSet = moment(openingTime).format('a');
+        const closingTimeOffSet = moment(closingTime).format('a');
+
+        if (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') {
+            closingTime = moment(closingTime).add(1, 'days');
+        }
+
+        if (
+            orderTime.isAfter(openingTime) &&
+            orderTime.isBefore(closingTime)
+        ) {
+            return res.json({ status: '200' });
+        }
+
+        if (shop.shopType === 'mart') {
+            const currentDate = moment().tz('Asia/karachi').format('DD-MM-YYYY');
+            const nextDate = moment(currentDate, 'DD-MM-YYYY').add(1, 'days').format('DD-MM-YYYY');
+
+            return res.json({
+                status: '204',
+                msg: `You are placing an order for tomorrow, you will received your order on ${nextDate}`
+            });
+        }
+
+        if (shop.shopType === 'restaurant') {
+
+            return res.json({
+                status: '404',
+                msg: `${shop.name} is closed`
+            });
+        }
     }
     catch (err) {
         return res.json({

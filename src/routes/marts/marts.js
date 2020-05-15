@@ -39,7 +39,7 @@ router.get("/allMarts", async (req, res) => {
         const query = {
             type: 'admin',
             status: 'active',
-            shop:'mart'
+            shopType: 'mart'
         };
 
         const allMarts = await Marts.find(query)
@@ -66,7 +66,7 @@ router.get("/allRestaurants", async (req, res) => {
         const query = {
             type: 'admin',
             status: 'active',
-            shop:'restaurant'
+            shopType: 'restaurant'
         };
 
         const allRestaurants = await Marts.find(query)
