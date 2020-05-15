@@ -5,20 +5,20 @@ router.post('/checkVersion', async (req, res) => {
     try {
         const body = req.body;
 
-        if (body.platform === 'ios' && body.version === '1.2.1') return res.json({ status: '200' });
+        if (body.platform === 'ios' && body.version === '1.2.3') return res.json({ status: '200' });
 
-        if (body.platform === 'ios' && body.version !== '1.2.1') {
+        if (body.platform === 'ios' && body.version !== '1.2.3') {
             return res.json({
-                status: '200',
+                status: '404',
                 msg: `A new update is now available. kindly update your App to get the best experience`
             });
         }
 
-        if (body.platform === 'android' && body.version === '1.2.1') return res.json({ status: '200' });
+        if (body.platform === 'android' && body.version === '1.2.2') return res.json({ status: '200' });
 
-        if (body.platform === 'android' && body.version !== '1.2.1') {
+        if (body.platform === 'android' && body.version !== '1.2.2') {
             return res.json({
-                status: '200',
+                status: '404',
                 msg: `A new update is now available. kindly update your App to get the best experience`
             });
         }
