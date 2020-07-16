@@ -1,11 +1,11 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const logger = require("morgan");
-const path = require("path");
-const cloudinary = require("cloudinary");
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const logger = require('morgan');
+const path = require('path');
+const cloudinary = require('cloudinary');
 
 const dbUrl = require('./utils/dbUrls');
 const signUpRouter = require('./src/routes/user/signUp');
@@ -20,7 +20,6 @@ const playerIdRouter = require('./src/routes/admin/playerId');
 const logoutRouter = require('./src/routes/user/logout');
 const martsRouter = require('./src/routes/marts/marts');
 const mainCategoriesRouter = require('./src/routes/products/mainCategories');
-const subCategoriesRouter = require('./src/routes/products/subCategories');
 const appVersionRouter = require('./src/routes/general/appVersion');
 
 const port = process.env.PORT || 8080;
@@ -30,47 +29,48 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(logger("dev"));
+app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "views")));
+app.use(express.static(path.join(__dirname, 'views')));
 
 app.use('/user', signUpRouter, profileRouter, logoutRouter);
-app.use('/products',
-    productsRouter,
-    pricingRouter,
-    adminCategoriesRouter,
-    addProductsRouter,
-    productImageRouter,
-    mainCategoriesRouter,
-    subCategoriesRouter
+app.use(
+  '/products',
+  productsRouter,
+  pricingRouter,
+  adminCategoriesRouter,
+  addProductsRouter,
+  productImageRouter,
+  mainCategoriesRouter
 );
 app.use('/orders', ordersRouter);
 app.use('/admin', playerIdRouter);
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 
-mongoose.connect(dbUrl,
-    {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false
-    }, (err) => {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            app.listen(port, () => console.log(`Listening on port ${port}`));
+mongoose.connect(
+  dbUrl,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  },
+  err => {
+    if (err) {
+      console.log(err);
+    } else {
+      app.listen(port, () => console.log(`Listening on port ${port}`));
 
-            console.log("Connected to databse");
-        }
+      console.log('Connected to databse');
     }
+  }
 );
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
 });
 
 module.exports = app;
