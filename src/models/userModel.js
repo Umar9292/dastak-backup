@@ -7,7 +7,7 @@ const userModel = mongoose.Schema(
     phone: String,
     password: String,
     email: String,
-    address: String,
+    address: Object,
     playerId: String,
     type: {
       type: String,
