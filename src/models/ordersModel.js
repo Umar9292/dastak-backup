@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const ordersModel = mongoose.Schema({
+const ordersModel = mongoose.Schema(
+  {
     userId: String,
     martId: String,
     martName: String,
@@ -14,12 +15,14 @@ const ordersModel = mongoose.Schema({
     martPhone: String,
     martAddress: String,
     status: {
-        type: String,
-        status: 'pending'
-    }
-}, {
+      type: String,
+      status: 'pending',
+    },
+  },
+  {
     versionKey: false,
-    timestamps: true
-});
+    timestamps: true,
+  }
+);
 
 module.exports = mongoose.model('orders', ordersModel);

@@ -1,4 +1,5 @@
 const express = require('express');
+const _ = require('lodash');
 
 const router = express.Router();
 
@@ -10,14 +11,13 @@ router.post('/allProducts', async (req, res) => {
   try {
     const { martId } = req.body;
     const allCategories = [];
-    const finalData = [];
+    let finalData = [];
 
     const categories = await Products.find({ martId })
       .sort({
         category: 1,
       })
       .select('category');
-
     const business = await Marts.findById({ _id: martId }).select('shopType');
 
     await Promise.all(
@@ -66,6 +66,8 @@ router.post('/allProducts', async (req, res) => {
           await Promise.resolve(finalData.push(data));
         })
       );
+
+      finalData = _.orderBy(finalData, ['category'], ['asc']);
 
       return res.json({
         status: '200',
