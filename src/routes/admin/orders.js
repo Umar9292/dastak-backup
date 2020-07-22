@@ -32,13 +32,14 @@ router.post('/saveOrder', async (req, res) => {
     params.martAddress = mart.address;
     params.time = formatedTime;
 
-    await new Orders(params).save();
+    const order = await new Orders(params).save();
 
     await notify.admin(mart.playerId, { flag: 'orderReceived' });
 
     return res.json({
       status: '200',
       msg: `Order Received`,
+      data: order,
     });
   } catch (err) {
     return res.json({
@@ -149,7 +150,7 @@ router.post('/orderDetails', async (req, res) => {
 router.post('/specificUserOrders', async (req, res) => {
   try {
     const orders = await Orders.find({ userId: req.body.userId }).sort({
-      createdAt: 1,
+      createdAt: -1,
     });
 
     return res.json({
