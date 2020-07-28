@@ -12,7 +12,6 @@ const signUpRouter = require('./src/routes/user/signUp');
 const profileRouter = require('./src/routes/user/profle');
 const productsRouter = require('./src/routes/products/products');
 const pricingRouter = require('./src/routes/admin/productPricing');
-const adminCategoriesRouter = require('./src/routes/admin/categoriesAndSubCategories');
 const addProductsRouter = require('./src/routes/admin/addProducts');
 const productImageRouter = require('./src/routes/admin/productImage');
 const ordersRouter = require('./src/routes/admin/orders');
@@ -39,7 +38,6 @@ app.use(
   '/products',
   productsRouter,
   pricingRouter,
-  adminCategoriesRouter,
   addProductsRouter,
   productImageRouter,
   mainCategoriesRouter

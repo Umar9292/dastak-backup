@@ -96,6 +96,8 @@ router.post('/allProducts', async (req, res) => {
       })
     );
 
+    finalData = _.orderBy(finalData, ['category'], ['asc']);
+
     return res.json({
       status: '200',
       data: finalData,
