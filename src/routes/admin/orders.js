@@ -8,6 +8,12 @@ const Users = require('../../models/userModel');
 const Mart = require('../../models/martsModel');
 
 const notify = require('../../notificationHandler/handler');
+const {
+  emailOrderDetails,
+} = require('../../emailHandler/orderEmail/orderEmail');
+const {
+  emailOrderDetailsToCustomer,
+} = require('../../emailHandler/customerEmail/customerEmail');
 
 router.post('/saveOrder', async (req, res) => {
   try {
@@ -15,6 +21,10 @@ router.post('/saveOrder', async (req, res) => {
     const total = params.orderTotal;
 
     const mart = await Mart.findById({ _id: params.martId }).select(
+      '-password -__v'
+    );
+
+    const user = await Users.findById({ _id: params.userId }).select(
       '-password -__v'
     );
 
@@ -36,11 +46,37 @@ router.post('/saveOrder', async (req, res) => {
 
     await notify.admin(mart.playerId, { flag: 'orderReceived' });
 
-    return res.json({
+    res.json({
       status: '200',
       msg: `Order Received`,
       data: order,
     });
+
+    let count = 0;
+    params.products.map(p => {
+      count += +p.count;
+      return count;
+    });
+
+    emailOrderDetails(
+      mart,
+      user,
+      formatedTime,
+      params.address,
+      params.products,
+      count,
+      params.orderTotal
+    );
+
+    emailOrderDetailsToCustomer(
+      user,
+      mart,
+      params.date,
+      params.orderTotal,
+      params.address,
+      params.products,
+      count
+    );
   } catch (err) {
     return res.json({
       status: '404',
@@ -259,7 +295,7 @@ router.post('/changeOrderStatus', async (req, res) => {
     if (req.body.status === 'Rejected') {
       const msg = `Dear ${user.name} your order# ${req.body.orderNum} has not been accepted because the ${user.type} is ${req.body.reason}`;
 
-      await notify.user(msg, user.playerId, { flag: 'orderCancelled' });
+      await notify.user(msg, user.playerId, { flag: 'orderRejected' });
 
       order.reason = req.body.reason;
       order.save();
@@ -274,7 +310,7 @@ router.post('/changeOrderStatus', async (req, res) => {
     if (req.body.status === 'Delivered') {
       const msg = `Dear ${user.name} your order# ${req.body.orderNum} has been dispatched and will arrive in approximately 30 mins.`;
 
-      await notify.user(msg, user.playerId, { flag: 'orderShipped' });
+      await notify.user(msg, user.playerId, { flag: 'orderDelivered' });
     }
 
     return res.json({

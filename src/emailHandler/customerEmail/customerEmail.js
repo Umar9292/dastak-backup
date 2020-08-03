@@ -1,12 +1,16 @@
 const nodeMailer = require('nodemailer');
 const hbs = require('nodemailer-express-handlebars');
 
-exports.sendConfirmationEmail = async (
-  whomToSend,
-  firstName,
-  lastName,
-  receiptUrl
+exports.emailOrderDetailsToCustomer = (
+  user,
+  shop,
+  date,
+  orderTotal,
+  customerAddress,
+  products,
+  count
 ) => {
+  console.log(customerAddress);
   const transporter = nodeMailer.createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
@@ -25,7 +29,7 @@ exports.sendConfirmationEmail = async (
       extName: '.hbs',
       partialsDir: `${__dirname}/views/`,
       layoutsDir: `${__dirname}/views/`,
-      defaultLayout: 'appointmentReceipt.hbs',
+      defaultLayout: 'customerEmail.hbs',
     },
     viewPath: `${__dirname}/views/`,
     extName: '.hbs',
@@ -34,13 +38,17 @@ exports.sendConfirmationEmail = async (
   transporter.use('compile', hbs(handlebarOptions));
 
   const mailOptions = {
-    from: 'no-reply@calldocmd.com',
-    to: whomToSend,
-    subject: 'Appointment Receipt',
-    template: 'appointmentReceipt',
+    from: 'no-reply@dastak.store',
+    to: 'haseeb@healthrix.com',
+    subject: 'Order Details',
+    template: 'customerEmail',
     context: {
-      name: `${firstName} ${lastName}`,
-      link: receiptUrl,
+      shopName: shop.name,
+      orderDate: date,
+      orderTotal,
+      customerAddress,
+      count,
+      products,
     },
   };
 
@@ -48,5 +56,6 @@ exports.sendConfirmationEmail = async (
     if (err) {
       console.log(err);
     }
+    console.log('email sent');
   });
 };

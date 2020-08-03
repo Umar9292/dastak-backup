@@ -110,6 +110,38 @@ router.post('/allProducts', async (req, res) => {
   }
 });
 
+router.post('/allCategories', async (req, res) => {
+  try {
+    const { martId } = req.body;
+    const allCategories = [];
+
+    const categories = await Products.find({ martId })
+      .sort({
+        category: 1,
+      })
+      .select('category');
+
+    await Promise.all(
+      categories.map(c => {
+        if (!allCategories.includes(c.category)) {
+          allCategories.push(c.category);
+        }
+        return allCategories;
+      })
+    );
+
+    return res.json({
+      status: '200',
+      data: allCategories,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 router.post('/deleteProduct/', async (req, res) => {
   try {
     await Products.findByIdAndDelete({ _id: req.body.productId });
@@ -1443,6 +1475,23 @@ router.get('/addBulkProducts/', async (req, res) => {
     return res.json({
       status: '200',
       msg: 'Product added successfully',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/allMartProducts', async (req, res) => {
+  try {
+    const products = await Products.find({ martId: req.body.martId });
+
+    return res.json({
+      status: '200',
+      data: products,
     });
   } catch (err) {
     return res.json({
