@@ -66,33 +66,9 @@ router.post('/signIn', async (req, res) => {
         msg: `Number or password is invalid`,
       });
 
-    if (user.type === 'user') {
-      return res.json({
-        status: '200',
-        data: _.pick(user, [
-          '_id',
-          'phone',
-          'name',
-          'address',
-          'type',
-          'playerId',
-        ]),
-      });
-    }
-
     return res.json({
       status: '200',
-      data: _.pick(user, [
-        '_id',
-        'phone',
-        'name',
-        'address',
-        'type',
-        'playerId',
-        'img',
-        'openingTime',
-        'closingTime',
-      ]),
+      data: user,
     });
   } catch (err) {
     res.json({
