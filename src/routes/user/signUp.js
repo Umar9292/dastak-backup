@@ -2,7 +2,6 @@ const express = require('express');
 
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const _ = require('lodash');
 
 const User = require('../../models/userModel');
 
@@ -24,14 +23,7 @@ router.post('/signUp', async (req, res) => {
 
     return res.json({
       status: '200',
-      data: _.pick(newUser, [
-        '_id',
-        'phone',
-        'name',
-        'image',
-        'address',
-        'type',
-      ]),
+      data: newUser,
     });
   } catch (err) {
     return res.json({

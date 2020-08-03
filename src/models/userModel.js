@@ -6,8 +6,14 @@ const userModel = mongoose.Schema(
     name: String,
     phone: String,
     password: String,
-    email: String,
-    address: Object,
+    email: {
+      type: String,
+      default: '',
+    },
+    address: {
+      type: Object,
+      default: [],
+    },
     playerId: String,
     type: {
       type: String,
