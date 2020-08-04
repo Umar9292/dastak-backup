@@ -228,16 +228,17 @@ router.post('/specificUserOrders', async (req, res) => {
 
 router.post('/changeOrderStatus', async (req, res) => {
   try {
-    const { orderNum, reason, orderId, status, orderType } = req.body;
+    const { orderNum, reason, orderId, status, orderType, martId } = req.body;
 
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
 
     const user = await Users.findById(order.userId);
+    const shop = await Mart.findById(martId);
 
     if (status === 'Rejected') {
-      const msg = `Dear ${user.name} your order# ${orderNum} has not been accepted because they are ${reason}`;
+      const msg = `Dear ${user.name} your order# ${orderNum} has not been accepted because ${shop.shopType} is ${reason}`;
 
       await notify.user(msg, user.playerId, { flag: 'orderRejected' });
 
