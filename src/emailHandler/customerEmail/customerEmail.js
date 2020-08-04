@@ -10,7 +10,6 @@ exports.emailOrderDetailsToCustomer = (
   products,
   count
 ) => {
-  console.log(customerAddress);
   const transporter = nodeMailer.createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
@@ -39,7 +38,7 @@ exports.emailOrderDetailsToCustomer = (
 
   const mailOptions = {
     from: 'no-reply@dastak.store',
-    to: 'haseeb@healthrix.com',
+    to: user.email,
     subject: 'Order Details',
     template: 'customerEmail',
     context: {
