@@ -229,7 +229,7 @@ router.post('/specificUserOrders', async (req, res) => {
 router.post('/changeOrderStatus', async (req, res) => {
   try {
     const { orderNum, reason, orderId, status, orderType } = req.body;
-    console.log(req.body);
+
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
@@ -237,7 +237,7 @@ router.post('/changeOrderStatus', async (req, res) => {
     const user = await Users.findById(order.userId);
 
     if (status === 'Rejected') {
-      const msg = `Dear ${user.name} your order# ${orderNum} has not been accepted because the ${user.type} is ${reason}`;
+      const msg = `Dear ${user.name} your order# ${orderNum} has not been accepted because they are ${reason}`;
 
       await notify.user(msg, user.playerId, { flag: 'orderRejected' });
 
@@ -246,7 +246,7 @@ router.post('/changeOrderStatus', async (req, res) => {
     }
 
     if (status === 'Accepted') {
-      const msg = `Dear ${user.name} your order# ${orderNum} is being prepared. WE'll notify you once it's dispatched.`;
+      const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
 
       await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
     }
