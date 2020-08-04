@@ -13,6 +13,7 @@ const ordersModel = mongoose.Schema(
     time: String,
     products: Object,
     orderTotal: Number,
+    orderType: String,
     martPhone: String,
     martAddress: String,
     status: {

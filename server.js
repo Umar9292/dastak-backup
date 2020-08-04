@@ -58,7 +58,7 @@ mongoose.connect(
     if (err) {
       console.log(err);
     } else {
-      app.listen(port, () => console.log(`Listening on port ${port}`));
+      app.listen(port, () => console.log(`Listening on port ${port}\n`));
 
       console.log('Connected to databse');
     }

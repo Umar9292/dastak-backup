@@ -94,118 +94,24 @@ router.post('/checkTime', async (req, res) => {
       '-password -__v'
     );
 
-    const formatedOrderTime = moment()
-      .tz('Asia/karachi')
-      .format('HH:mma');
+    const orderTime = moment().tz('Asia/karachi');
 
-    const orderTime = moment(formatedOrderTime, 'HH:mma');
-    let openingTime = moment(shop.openingTime, 'HH:mma').tz('Asia/karachi');
-    let closingTime = moment(shop.closingTime, 'HH:mma').tz('Asia/karachi');
+    const openingTime = moment(shop.openingTime, 'HH:mm:ssa');
+    let closingTime = moment(shop.closingTime, 'HH:mm:ssa');
+
     const openingTimeOffSet = moment(openingTime).format('a');
     const closingTimeOffSet = moment(closingTime).format('a');
-    const orderTimeOffSet = moment(orderTime).format('a');
 
     if (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') {
       closingTime = moment(closingTime).add(1, 'days');
     }
 
-    if (shop.shopType === 'restaurant' && orderTimeOffSet === 'am') {
-      openingTime = moment(orderTime).subtract(1, 'days');
-      const orderHour = moment(orderTime).format('HH');
-      const openingHour = moment(openingTime).format('HH');
-
-      if (+orderHour >= +openingHour) {
-        return res.json({
-          status: '404',
-          msg: `${shop.name} is closed now`,
-        });
-      }
-    }
-
-    if (orderTime.isAfter(openingTime) && orderTime.isBefore(closingTime)) {
-      return res.json({ status: '200' });
-    }
-
-    if (shop.shopType === 'mart') {
-      const currentDate = moment()
-        .tz('Asia/karachi')
-        .format('DD-MM-YYYY');
-      const nextDate = moment(currentDate, 'DD-MM-YYYY')
-        .add(1, 'days')
-        .format('DD-MM-YYYY');
-
-      return res.json({
-        status: '204',
-        msg: `You are placing an order for tomorrow, you will received your order on ${nextDate}`,
-      });
-    }
-
-    if (shop.shopType === 'restaurant') {
-      return res.json({
-        status: '404',
-        msg: `${shop.name} is closed`,
-      });
-    }
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
-/* router.post('/checkTime', async (req, res) => {
-  try {
-    const params = req.body;
-
-    const shop = await Mart.findById({ _id: params.martId }).select(
-      '-password -__v'
-    );
-    console.log('!......................! \n');
-    const formatedOrderTime = moment()
-      .tz('Asia/karachi')
-      .format('HH:mma');
-    console.log(formatedOrderTime);
-    let orderTime = moment(formatedOrderTime, 'HH:mma');
-    orderTime = moment(orderTime).add(1, 'days');
-    orderTime = moment(orderTime).subtract(15, 'hours');
-    const orderTimeOffSet = moment(orderTime).format('a');
-
-    console.log('Order time: ', orderTime);
-
-    let openingTime = moment(shop.openingTime, 'HH:mma').tz('Asia/karachi');
-    openingTime = moment(openingTime).add(1, 'days');
-
-    let closingTime = moment(shop.closingTime, 'HH:mma').tz('Asia/karachi');
-    closingTime = moment(closingTime).add(1, 'days');
-
-    const openingTimeOffSet = moment(openingTime).format('a');
-    const closingTimeOffSet = moment(closingTime).format('a');
-
-    console.log(openingTimeOffSet, closingTimeOffSet, orderTimeOffSet);
-
-    if (shop.shopType === 'restaurant' && orderTimeOffSet === 'am') {
-      openingTime = moment(orderTime).subtract(1, 'days');
-      const orderHour = moment(orderTime).format('HH');
-      const openingHour = moment(openingTime).format('HH');
-
-      if (orderHour >= openingHour) {
-        return res.json({
-          status: '404',
-          msg: `${shop.name} is closed now`,
-        });
-      }
-    }
-
-    if (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') {
-      closingTime = moment(closingTime).add(1, 'days');
-    }
-
-    console.log('Opening time: ', openingTime);
-    console.log('Closing time: ', closingTime);
-
-    if (orderTime.isAfter(openingTime) && orderTime.isBefore(closingTime)) {
+    if (
+      orderTime.isBetween(
+        `${openingTime.toISOString()}`,
+        `${closingTime.toISOString()}`
+      )
+    ) {
       return res.json({ status: '200' });
     }
 
@@ -231,7 +137,6 @@ router.post('/checkTime', async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -239,7 +144,7 @@ router.post('/checkTime', async (req, res) => {
     });
   }
 });
- */
+
 router.post('/allOrders', async (req, res) => {
   try {
     const upcoming = await Orders.find({
