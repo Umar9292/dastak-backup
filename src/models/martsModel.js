@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const martsModel = mongoose.Schema(
   {
     status: String,
+    available: {
+      type: Boolean,
+      default: true,
+    },
     img: String,
     logo: String,
     name: String,

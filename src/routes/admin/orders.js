@@ -24,6 +24,13 @@ router.post('/saveOrder', async (req, res) => {
       '-password -__v'
     );
 
+    if (!mart.available) {
+      return res.json({
+        status: '404',
+        msg: `Sorry the ${mart.shopType} is not available due to some reason`,
+      });
+    }
+
     const user = await Users.findById({ _id: params.userId }).select(
       '-password -__v'
     );

@@ -40,6 +40,7 @@ router.get('/allMarts', async (req, res) => {
     const query = {
       type: 'admin',
       status: 'active',
+      available: true,
       shopType: 'mart',
     };
 
@@ -65,6 +66,7 @@ router.get('/allRestaurants', async (req, res) => {
     const query = {
       type: 'admin',
       status: 'active',
+      available: true,
       shopType: 'restaurant',
     };
 
@@ -81,6 +83,32 @@ router.get('/allRestaurants', async (req, res) => {
       status: '404',
       data: 'Looks like an error occurred on our side. Kindly try again',
       error: err.toString(),
+    });
+  }
+});
+
+router.post('/availabilityStatus', async (req, res) => {
+  try {
+    const { martId } = req.body;
+
+    const shop = await Marts.findByIdAndUpdate(
+      martId,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    );
+
+    return res.json({
+      status: '200',
+      msg: 'Status updated',
+      data: shop,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
