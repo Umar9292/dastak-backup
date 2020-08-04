@@ -59,6 +59,5 @@ exports.emailOrderDetails = (
     if (err) {
       console.log(err);
     }
-    console.log('done');
   });
 };

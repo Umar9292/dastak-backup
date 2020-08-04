@@ -55,6 +55,5 @@ exports.emailOrderDetailsToCustomer = (
     if (err) {
       console.log(err);
     }
-    console.log('email sent');
   });
 };

@@ -96,8 +96,10 @@ router.post('/checkTime', async (req, res) => {
 
     const orderTime = moment().tz('Asia/karachi');
 
-    const openingTime = moment(shop.openingTime, 'HH:mm:ssa');
-    let closingTime = moment(shop.closingTime, 'HH:mm:ssa');
+    const openingTime = moment(shop.openingTime, 'HH:mm:ssa').tz(
+      'Asia/karachi'
+    );
+    let closingTime = moment(shop.closingTime, 'HH:mm:ssa').tz('Asia/karachi');
 
     const openingTimeOffSet = moment(openingTime).format('a');
     const closingTimeOffSet = moment(closingTime).format('a');
@@ -221,31 +223,41 @@ router.post('/specificUserOrders', async (req, res) => {
 
 router.post('/changeOrderStatus', async (req, res) => {
   try {
-    const order = await Orders.findByIdAndUpdate(req.body.orderId, {
+    const { orderNum, reason, orderId, status, orderType } = req.body;
+    console.log(req.body);
+    const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
 
     const user = await Users.findById(order.userId);
 
-    if (req.body.status === 'Rejected') {
-      const msg = `Dear ${user.name} your order# ${req.body.orderNum} has not been accepted because the ${user.type} is ${req.body.reason}`;
+    if (status === 'Rejected') {
+      const msg = `Dear ${user.name} your order# ${orderNum} has not been accepted because the ${user.type} is ${reason}`;
 
       await notify.user(msg, user.playerId, { flag: 'orderRejected' });
 
-      order.reason = req.body.reason;
+      order.reason = reason;
       order.save();
     }
 
-    if (req.body.status === 'Accepted') {
-      const msg = `Dear ${user.name} your order# ${req.body.orderNum} is being prepared. WE'll notify you once it's dispatched.`;
+    if (status === 'Accepted') {
+      const msg = `Dear ${user.name} your order# ${orderNum} is being prepared. WE'll notify you once it's dispatched.`;
 
       await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
     }
 
-    if (req.body.status === 'Delivered') {
-      const msg = `Dear ${user.name} your order# ${req.body.orderNum} has been dispatched and will arrive in approximately 30 mins.`;
+    if (status === 'Delivered') {
+      if (orderType === 'PickUp') {
+        const customerMsg = `Dear ${user.name} your order number ${orderNum} is ready kindly collect your order as soon as possible.`;
 
-      await notify.user(msg, user.playerId, { flag: 'orderDelivered' });
+        await notify.user(customerMsg, user.playerId, {
+          flag: 'orderDelivered',
+        });
+      } else {
+        const msg = `Dear ${user.name} your order# ${orderNum} has been dispatched and will arrive in approximately 30 mins.`;
+
+        await notify.user(msg, user.playerId, { flag: 'orderDelivered' });
+      }
     }
 
     return res.json({
