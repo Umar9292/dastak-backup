@@ -100,7 +100,7 @@ router.post('/checkTime', async (req, res) => {
       'Asia/karachi'
     );
     let closingTime = moment(shop.closingTime, 'HH:mm:ssa').tz('Asia/karachi');
-    console.log(openingTime, `\n${closingTime}`);
+    console.log(`${openingTime}`, `\n${closingTime}`);
     const openingTimeOffSet = moment(openingTime).format('a');
     const closingTimeOffSet = moment(closingTime).format('a');
 
