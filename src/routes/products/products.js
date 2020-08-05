@@ -18,6 +18,7 @@ router.post('/allProducts', async (req, res) => {
         category: 1,
       })
       .select('category');
+
     const business = await Marts.findById({ _id: martId }).select('shopType');
 
     await Promise.all(

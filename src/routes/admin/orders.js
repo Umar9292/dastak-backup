@@ -130,17 +130,9 @@ router.post('/checkTime', async (req, res) => {
     }
 
     if (shop.shopType === 'mart') {
-      const currentDate = moment()
-        .tz('Asia/karachi')
-        .format('DD-MM-YYYY');
-
-      const nextDate = moment(currentDate, 'DD-MM-YYYY')
-        .add(1, 'days')
-        .format('DD-MM-YYYY');
-
       return res.json({
         status: '204',
-        msg: `You are placing an order for tomorrow, you will received your order on ${nextDate}`,
+        msg: `${shop.name} has been closed. You can still place your order but it will be entertained after it opens at ${shop.openingTime}`,
       });
     }
 
