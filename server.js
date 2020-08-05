@@ -18,7 +18,6 @@ const ordersRouter = require('./src/routes/admin/orders');
 const playerIdRouter = require('./src/routes/admin/playerId');
 const logoutRouter = require('./src/routes/user/logout');
 const martsRouter = require('./src/routes/marts/marts');
-const mainCategoriesRouter = require('./src/routes/products/mainCategories');
 const appVersionRouter = require('./src/routes/general/appVersion');
 
 const port = process.env.PORT || 8080;
@@ -39,8 +38,7 @@ app.use(
   productsRouter,
   pricingRouter,
   addProductsRouter,
-  productImageRouter,
-  mainCategoriesRouter
+  productImageRouter
 );
 app.use('/orders', ordersRouter);
 app.use('/admin', playerIdRouter);
