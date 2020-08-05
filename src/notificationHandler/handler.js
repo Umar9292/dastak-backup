@@ -34,7 +34,7 @@ exports.user = async (msg, whomToSend, toBeSentData) => {
     android_channel_id: '89c63241-377d-49b6-8605-271517dc0a71',
     small_icon: 'ic_stat_onesignal_default',
     large_icon:
-      'https://res.cloudinary.com/hmwday8rj/image/upload/v1585752843/Dastaak-ico_nt3ymw.png',
+      'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
   });
 
   const res = await oneSignalClient.sendNotification(notification);
