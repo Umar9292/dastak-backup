@@ -28,7 +28,7 @@ exports.emailOrderDetails = (
       extName: '.hbs',
       partialsDir: `${__dirname}/views/`,
       layoutsDir: `${__dirname}/views/`,
-      defaultLayout: 'index.hbs',
+      defaultLayout: 'order.hbs',
     },
     viewPath: `${__dirname}/views/`,
     extName: '.hbs',
@@ -40,7 +40,7 @@ exports.emailOrderDetails = (
     from: 'no-reply@dastak.store',
     to: 'support@dastak.store',
     subject: 'Order Details',
-    template: 'index',
+    template: 'order',
     context: {
       customerName: user.name,
       customerAddress: orderAddress,

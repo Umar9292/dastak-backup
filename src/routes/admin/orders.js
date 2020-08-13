@@ -8,6 +8,7 @@ const Users = require('../../models/userModel');
 const Mart = require('../../models/martsModel');
 
 const notify = require('../../notificationHandler/handler');
+
 const {
   emailOrderDetails,
 } = require('../../emailHandler/orderEmail/orderEmail');
