@@ -1,29 +1,33 @@
 const mongoose = require('mongoose');
 
 const martsModel = mongoose.Schema(
-    {
-        status: String,
-        img: String,
-        logo: String,
-        name: String,
-        phone: String,
-        password: String,
-        address: String,
-        shopType: String,
-        minimumOrder: Number,
-        deliveryRange: String,
-        openingTime: String,
-        closingTime: String,
-        playerId: String,
-        type: {
-            type: String,
-            default: 'admin'
-        }
+  {
+    status: String,
+    available: {
+      type: Boolean,
+      default: true,
     },
-    {
-        versionKey: false,
-        timestamps: true
-    }
+    img: String,
+    logo: String,
+    name: String,
+    phone: String,
+    password: String,
+    address: String,
+    shopType: String,
+    minimumOrder: Number,
+    deliveryRange: String,
+    openingTime: String,
+    closingTime: String,
+    playerId: String,
+    type: {
+      type: String,
+      default: 'admin',
+    },
+  },
+  {
+    versionKey: false,
+    timestamps: true,
+  }
 );
 
 module.exports = mongoose.model('user', martsModel);

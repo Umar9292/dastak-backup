@@ -1,44 +1,46 @@
-const express = require("express");
+const express = require('express');
+
 const router = express.Router();
 
-const Products = require("../../models/productsModel");
+const Products = require('../../models/productsModel');
 
 router.post('/addProduct', async (req, res) => {
-    try {
-        const params = req.body;
+  try {
+    const params = req.body;
 
-        const query = {
-            martId: params.martId,
-            productName: params.productName,
-            quantity: params.quantity
-        };
+    const query = {
+      martId: params.martId,
+      productName: params.productName,
+      quantity: params.quantity,
+    };
 
-        const product = await Products.findOne(query);
-        if (product) return res.json({
-            status: '404',
-            msg: 'product already added'
-        });
+    const product = await Products.findOne(query);
+    if (product)
+      return res.json({
+        status: '404',
+        msg: 'product already added',
+      });
 
-        const category = await Products.findOne({ subCategory: params.subCategory })
-            .select('mainCategoryImg subCategoryImg');
+    const category = await Products.findOne({
+      subCategory: params.subCategory,
+    }).select('mainCategoryImg subCategoryImg');
 
-        params.subCategoryImg = category.subCategoryImg;
-        params.mainCategoryImg = category.mainCategoryImg;
+    params.subCategoryImg = category.subCategoryImg;
+    params.mainCategoryImg = category.mainCategoryImg;
 
-        await new Products(params).save();
+    await new Products(params).save();
 
-        return res.json({
-            status: '200',
-            msg: 'Product added successfully'
-        });
-    }
-    catch (err) {
-        return res.json({
-            status: '404',
-            error: err.toString(),
-            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
-        });
-    }
+    return res.json({
+      status: '200',
+      msg: 'Product added successfully',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
 });
 
 module.exports = router;

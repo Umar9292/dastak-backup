@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const moment = require('moment-timezone');
 
@@ -8,190 +9,274 @@ const Mart = require('../../models/martsModel');
 
 const notify = require('../../notificationHandler/handler');
 
+const {
+  emailOrderDetails,
+} = require('../../emailHandler/orderEmail/orderEmail');
+const {
+  emailOrderDetailsToCustomer,
+} = require('../../emailHandler/customerEmail/customerEmail');
+
 router.post('/saveOrder', async (req, res) => {
-    try {
-        const params = req.body;
-        const total = params.orderTotal;
+  try {
+    const params = req.body;
+    const total = params.orderTotal;
 
-        const mart = await Mart.findById({ _id: params.martId })
-            .select('-password -__v');
+    const mart = await Mart.findById({ _id: params.martId }).select(
+      '-password -__v'
+    );
 
-        const orderTime = moment().tz('Asia/karachi');
-        const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
-
-        if (+total < mart.minimumOrder) {
-            return res.json({ msg: `Minimun order is Rs ${mart.minimumOrder}` });
-        }
-
-        params.products = await JSON.parse(params.products);
-        params.martId = mart._id;
-        params.martName = mart.name;
-        params.martPhone = mart.phone;
-        params.martAddress = mart.address;
-        params.time = formatedTime;
-
-        await new Orders(params).save();
-
-        await notify.admin(mart.playerId, { flag: 'orderReceived' });
-
-        return res.json({
-            status: '200',
-            msg: `Order Received`
-        });
+    if (!mart.available) {
+      return res.json({
+        status: '404',
+        msg: `Sorry the ${mart.shopType} is not available due to some reason`,
+      });
     }
-    catch (err) {
-        return res.json({
-            status: '404',
-            error: err.toString(),
-            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
-        });
+
+    const user = await Users.findById({ _id: params.userId }).select(
+      '-password -__v'
+    );
+
+    const orderTime = moment().tz('Asia/karachi');
+    const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
+
+    if (+total < mart.minimumOrder) {
+      return res.json({ msg: `Minimun order is Rs ${mart.minimumOrder}` });
     }
+
+    params.products = await JSON.parse(params.products);
+    params.martId = mart._id;
+    params.martName = mart.name;
+    params.martPhone = mart.phone;
+    params.martAddress = mart.address;
+    params.time = formatedTime;
+
+    const order = await new Orders(params).save();
+
+    await notify.admin(mart.playerId, { flag: 'orderReceived' });
+
+    res.json({
+      status: '200',
+      msg: `Order Received`,
+      data: order,
+    });
+
+    let count = 0;
+    params.products.map(p => {
+      count += +p.count;
+      return count;
+    });
+
+    emailOrderDetails(
+      mart,
+      user,
+      formatedTime,
+      params.address,
+      params.products,
+      count,
+      params.orderTotal
+    );
+
+    emailOrderDetailsToCustomer(
+      user,
+      mart,
+      params.date,
+      params.orderTotal,
+      params.address,
+      params.products,
+      count
+    );
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
 });
 
 router.post('/checkTime', async (req, res) => {
-    try {
-        const params = req.body;
+  try {
+    const params = req.body;
 
-        const shop = await Mart.findById({ _id: params.martId })
-            .select('-password -__v');
+    const shop = await Mart.findById({ _id: params.martId }).select(
+      '-password -__v'
+    );
 
-        const formatedOrderTime = moment().tz('Asia/karachi').format('HH:mma');
-        const orderTime = moment(formatedOrderTime, 'HH:mma');
-        const openingTime = moment(shop.openingTime, 'HH:mma').tz('Asia/karachi');
-        let closingTime = moment(shop.closingTime, 'HH:mma').tz('Asia/karachi');
-        const openingTimeOffSet = moment(openingTime).format('a');
-        const closingTimeOffSet = moment(closingTime).format('a');
+    const orderTime = moment().tz('Asia/karachi');
 
-        if (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') {
-            closingTime = moment(closingTime).add(1, 'days');
-        }
+    const formatedOpeningTime = moment(shop.openingTime, 'HH:mm:ssa').tz(
+      'Asia/karachi'
+    );
+    const formatedClosingTime = moment(shop.closingTime, 'HH:mm:ssa').tz(
+      'Asia/karachi'
+    );
 
-        if (
-            orderTime.isAfter(openingTime) &&
-            orderTime.isBefore(closingTime)
-        ) {
-            return res.json({ status: '200' });
-        }
+    const openingTime = moment(formatedOpeningTime).subtract(5, 'hours');
+    let closingTime = moment(formatedClosingTime).subtract(5, 'hours');
 
-        if (shop.shopType === 'mart') {
-            const currentDate = moment().tz('Asia/karachi').format('DD-MM-YYYY');
-            const nextDate = moment(currentDate, 'DD-MM-YYYY').add(1, 'days').format('DD-MM-YYYY');
+    const openingTimeOffSet = moment(openingTime).format('a');
+    const closingTimeOffSet = moment(closingTime).format('a');
 
-            return res.json({
-                status: '204',
-                msg: `You are placing an order for tomorrow, you will received your order on ${nextDate}`
-            });
-        }
-
-        if (shop.shopType === 'restaurant') {
-
-            return res.json({
-                status: '404',
-                msg: `${shop.name} is closed`
-            });
-        }
+    if (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') {
+      closingTime = moment(closingTime).add(1, 'days');
     }
-    catch (err) {
-        return res.json({
-            status: '404',
-            error: err.toString(),
-            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
-        });
+
+    if (
+      orderTime.isBetween(
+        `${openingTime.toISOString()}`,
+        `${closingTime.toISOString()}`
+      )
+    ) {
+      return res.json({ status: '200' });
     }
+
+    if (shop.shopType === 'mart') {
+      return res.json({
+        status: '204',
+        msg: `${shop.name} has been closed. You can still place your order but it will be entertained after it opens at ${shop.openingTime}`,
+      });
+    }
+
+    if (shop.shopType === 'restaurant') {
+      return res.json({
+        status: '404',
+        msg: `${shop.name} is closed`,
+      });
+    }
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
 });
 
 router.post('/allOrders', async (req, res) => {
-    try {
-        const orders = await Orders.find({ martId: req.body.martId })
-            .sort({ createdAt: -1 });
+  try {
+    const upcoming = await Orders.find({
+      martId: req.body.martId,
+      status: 'Pending',
+    }).sort({
+      createdAt: -1,
+    });
 
-        if (orders.length === 0) {
-            return res.json({
-                status: '404',
-                msg: 'There are no orders yet'
-            });
-        }
+    const accepted = await Orders.find({
+      martId: req.body.martId,
+      status: 'Accepted',
+    }).sort({
+      createdAt: -1,
+    });
 
-        return res.json({
-            status: '200',
-            data: orders
-        });
-    }
-    catch (err) {
-        return res.json({
-            status: '404',
-            error: err.toString(),
-            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
-        });
-    }
+    const delivered = await Orders.find({
+      martId: req.body.martId,
+      status: 'Delivered',
+    }).sort({
+      createdAt: -1,
+    });
+
+    return res.json({
+      status: '200',
+      upcoming,
+      accepted,
+      delivered,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
 });
 
 router.post('/orderDetails', async (req, res) => {
-    try {
-        const order = await Orders.findById(req.body.orderId);
+  try {
+    const order = await Orders.findById(req.body.orderId);
 
-        return res.json({
-            status: '200',
-            data: order
-        });
-    }
-    catch (err) {
-        return res.json({
-            status: '404',
-            error: err.toString(),
-            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
-        });
-    }
+    return res.json({
+      status: '200',
+      data: order,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
 });
 
 router.post('/specificUserOrders', async (req, res) => {
-    try {
-        const orders = await Orders.find({ userId: req.body.userId }).sort({ createdAt: 1 });
+  try {
+    const orders = await Orders.find({ userId: req.body.userId }).sort({
+      createdAt: -1,
+    });
 
-        return res.json({
-            status: '200',
-            data: orders
-        });
-    }
-    catch (err) {
-        return res.json({
-            status: '404',
-            error: err.toString(),
-            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
-        });
-    }
+    return res.json({
+      status: '200',
+      data: orders,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
 });
 
 router.post('/changeOrderStatus', async (req, res) => {
-    try {
-        const order = await Orders.findByIdAndUpdate(req.body.orderId, { $set: req.body });
+  try {
+    const { orderNum, reason, orderId, status, orderType, martId } = req.body;
 
-        const user = await Users.findById(order.userId);
+    const order = await Orders.findByIdAndUpdate(orderId, {
+      $set: req.body,
+    });
 
-        if (req.body.status === 'Cancelled') {
-            const msg = `Dear ${user.name} your order# ${req.body.orderNum} has been cancelled`;
+    const user = await Users.findById(order.userId);
+    const shop = await Mart.findById(martId);
 
-            await notify.user(msg, user.playerId, { flag: 'orderCancelled' });
-        }
+    if (status === 'Rejected') {
+      const msg = `Dear ${user.name} your order# ${orderNum} has not been accepted because ${shop.shopType} is ${reason}`;
 
-        if (req.body.status === 'Shipped') {
-            const msg = `Dear ${user.name} your order# ${req.body.orderNum} has been shipped and will arrive in approximately 30 mins.`;
+      await notify.user(msg, user.playerId, { flag: 'orderRejected' });
 
-            await notify.user(msg, user.playerId, { flag: 'orderShipped' });
-        }
-
-        return res.json({
-            status: '200',
-            msg: 'Order status updated'
-        });
+      order.reason = reason;
+      order.save();
     }
-    catch (err) {
-        return res.json({
-            status: '404',
-            error: err.toString(),
-            msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`
-        });
+
+    if (status === 'Accepted') {
+      const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
+
+      await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
     }
+
+    if (status === 'Delivered') {
+      if (orderType === 'PickUp') {
+        const customerMsg = `Dear ${user.name} your order number ${orderNum} is ready kindly collect your order as soon as possible.`;
+
+        await notify.user(customerMsg, user.playerId, {
+          flag: 'orderDelivered',
+        });
+      } else {
+        const msg = `Dear ${user.name} your order# ${orderNum} has been dispatched and will arrive in approximately 30 mins.`;
+
+        await notify.user(msg, user.playerId, { flag: 'orderDelivered' });
+      }
+    }
+
+    return res.json({
+      status: '200',
+      msg: 'Order status updated',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
 });
 
 module.exports = router;
