@@ -260,7 +260,7 @@ router.post('/changeOrderStatus', async (req, res) => {
           flag: 'orderDelivered',
         });
       } else {
-        const msg = `Dear ${user.name} your order# ${orderNum} has been dispatched and will arrive in approximately 30 mins.`;
+        const msg = `Dear ${user.name} your order# ${orderNum} has been dispatched and will arrive shortly.`;
 
         await notify.user(msg, user.playerId, { flag: 'orderDelivered' });
       }
