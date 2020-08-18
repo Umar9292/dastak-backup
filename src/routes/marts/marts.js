@@ -61,6 +61,25 @@ router.get('/allMarts', async (req, res) => {
   }
 });
 
+router.post('/martDetails', async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const shop = await Marts.findById(id).select('-password -__v');
+
+    return res.json({
+      status: '200',
+      data: shop,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      data: 'Looks like an error occurred on our side. Kindly try again',
+      error: err.toString(),
+    });
+  }
+});
+
 router.get('/allRestaurants', async (req, res) => {
   try {
     const query = {
