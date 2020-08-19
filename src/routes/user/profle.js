@@ -2,8 +2,11 @@ const express = require('express');
 
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const speakeasy = require('speakeasy');
 
 const User = require('../../models/userModel');
+const Otp = require('../../models/otpModel');
+const { emailOtp } = require('../../emailHandler/otpEmail/otpEmail');
 
 router.post('/editProfile', async (req, res) => {
   try {
@@ -59,6 +62,109 @@ router.post('/changePassword', async (req, res) => {
     status: '200',
     msg: 'Your password is updated successfully',
   });
+});
+
+router.post('/sendOtp', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.json({
+        status: '404',
+        msg: 'The email you entered is not associated with any account',
+      });
+    }
+
+    const secret = speakeasy.generateSecret({ length: 20 });
+    const token = speakeasy.totp({
+      secret: secret.base32,
+      encoding: 'base32',
+    });
+
+    await new Otp({
+      userId: user._id,
+      email,
+      secret: secret.base32,
+      token,
+    }).save();
+
+    emailOtp(user.email, token);
+
+    res.json({
+      status: '200',
+      msg: `A verification code has been sent to ${user.email}.`,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: `Looks like an error occurred on our side. Kindly try again`,
+      error: err.toString(),
+    });
+  }
+});
+
+router.post('/validateOtp', async (req, res) => {
+  try {
+    const { email, token } = req.body;
+
+    const otp = await Otp.findOne({ email, token });
+
+    if (!otp) {
+      return res.json({
+        status: '404',
+        msg: `Sorry you've entered the wrong verification code.`,
+      });
+    }
+
+    const verification = speakeasy.totp.verify({
+      secret: otp.secret,
+      encoding: 'base32',
+      token,
+      window: 300,
+    });
+
+    if (verification === true) return res.json({ status: '200' });
+
+    return res.json({
+      status: '404',
+      msg: 'Your code is no longer valid. Kindly resend the code',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: 'Looks like an error occurred on our side. Kindly try again',
+    });
+  }
+});
+
+router.post('/forgotPassword', async (req, res) => {
+  try {
+    const { newPassword, email } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.json({
+        status: '404',
+        msg: 'There was no user found with that email',
+      });
+    }
+
+    const hash = await bcrypt.hash(newPassword, 10);
+    user.password = hash;
+    await user.save();
+
+    return res.json({
+      status: '200',
+      msg: 'Password successfully updated.',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: 'Looks like something went wrong on our side. Kindly try again',
+    });
+  }
 });
 
 module.exports = router;

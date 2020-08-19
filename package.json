@@ -26,7 +26,8 @@
     "nodemailer": "^6.4.10",
     "nodemailer-express-handlebars": "^4.0.0",
     "nodemon": "^2.0.2",
-    "onesignal-node": "^2.0.1"
+    "onesignal-node": "^2.0.1",
+    "speakeasy": "^2.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^9.0.0",
