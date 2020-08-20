@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const http = require('http');
 const cors = require('cors');
 const logger = require('morgan');
 const path = require('path');
@@ -44,6 +45,23 @@ app.use('/orders', ordersRouter);
 app.use('/admin', playerIdRouter);
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
+
+const options = {
+  // host: 'https://dastakbackend.herokuapp.com',
+  host: 'https://martbackend.herokuapp.com',
+};
+const request = () => {
+  http
+    .get(options, function(res) {
+      res.on('data', function(chunk) {
+        console.log('Working');
+      });
+    })
+    .on('error', function(e) {
+      console.log(`Got error: ${e.message}`);
+    });
+};
+setInterval(request, 1500000);
 
 mongoose.connect(
   dbUrl,
