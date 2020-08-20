@@ -36,6 +36,7 @@ router.post('/allProducts', async (req, res) => {
           const query = {
             category: ac,
             martId,
+            available: 'in stock',
           };
 
           const products = await Products.find(query).sort({ productName: 1 });
@@ -81,6 +82,7 @@ router.post('/allProducts', async (req, res) => {
         const query = {
           category: ac,
           martId,
+          available: 'in stock',
         };
 
         const martProducts = await Products.find(query).sort({
@@ -90,6 +92,60 @@ router.post('/allProducts', async (req, res) => {
         const data = {
           category: ac,
           data: martProducts,
+        };
+
+        await Promise.resolve(data);
+        await Promise.resolve(finalData.push(data));
+      })
+    );
+
+    finalData = _.orderBy(finalData, ['category'], ['asc']);
+
+    return res.json({
+      status: '200',
+      data: finalData,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/allRestaurantProducts', async (req, res) => {
+  try {
+    const { martId } = req.body;
+    const allCategories = [];
+    let finalData = [];
+
+    const categories = await Products.find({ martId })
+      .sort({
+        category: 1,
+      })
+      .select('category');
+
+    await Promise.all(
+      categories.map(c => {
+        if (!allCategories.includes(c.category)) {
+          allCategories.push(c.category);
+        }
+        return allCategories;
+      })
+    );
+
+    await Promise.all(
+      allCategories.map(async ac => {
+        const query = {
+          category: ac,
+          martId,
+        };
+
+        const products = await Products.find(query).sort({ productName: 1 });
+
+        const data = {
+          category: ac,
+          data: products,
         };
 
         await Promise.resolve(data);
@@ -143,13 +199,41 @@ router.post('/allCategories', async (req, res) => {
   }
 });
 
-router.post('/deleteProduct/', async (req, res) => {
+router.post('/productAvailability', async (req, res) => {
   try {
-    await Products.findByIdAndDelete({ _id: req.body.productId });
+    const { productId } = req.body;
+
+    await Products.findByIdAndUpdate(productId, { $set: req.body });
 
     return res.json({
       status: '200',
-      msg: 'Product deleted successfully',
+      msg: 'Product status updated',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/allMartProducts', async (req, res) => {
+  try {
+    const { martId, type } = req.body;
+    let products;
+
+    if (type === 'admin') {
+      products = await Products.find({ martId }).sort({ productName: 1 });
+    } else {
+      products = await Products.find({ martId, available: 'in stock' }).sort({
+        productName: 1,
+      });
+    }
+
+    return res.json({
+      status: '200',
+      data: products,
     });
   } catch (err) {
     return res.json({
@@ -1502,13 +1586,13 @@ router.post('/deleteProduct/', async (req, res) => {
   }
 }); */
 
-router.post('/allMartProducts', async (req, res) => {
+router.get('/addAvailability', async (req, res) => {
   try {
-    const products = await Products.find({ martId: req.body.martId });
+    await Products.updateMany({}, { available: 'in stock' });
 
     return res.json({
       status: '200',
-      data: products,
+      msg: 'Products updated',
     });
   } catch (err) {
     return res.json({

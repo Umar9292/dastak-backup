@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const productsModel = mongoose.Schema(
   {
     martId: String,
+    available: {
+      default: 'in stock',
+      type: String,
+    },
     productName: String,
     price: Number,
     category: String,
