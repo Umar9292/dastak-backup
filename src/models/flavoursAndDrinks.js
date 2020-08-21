@@ -4,6 +4,7 @@ const model = mongoose.Schema(
   {
     martId: String,
     flavours: Object,
+    regularFlavours: Object,
     drinks: Object,
   },
   {
