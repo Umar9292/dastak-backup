@@ -47,8 +47,8 @@ app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 
 const options = {
-  host: 'https://dastakbackend.herokuapp.com',
-  // host: 'https://martbackend.herokuapp.com',
+  // host: 'https://dastakbackend.herokuapp.com',
+  host: 'https://martbackend.herokuapp.com',
 };
 const request = () => {
   http
