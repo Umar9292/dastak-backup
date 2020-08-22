@@ -17,7 +17,7 @@ router.post('/checkVersion', async (req, res) => {
 
     if (body.platform === 'ios' && body.version !== '1.3.3') {
       return res.json({
-        status: '200',
+        status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
       });
     }
@@ -33,7 +33,7 @@ router.post('/checkVersion', async (req, res) => {
 
     if (body.platform === 'android' && body.version !== '1.3.3') {
       return res.json({
-        status: '200',
+        status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
       });
     }
