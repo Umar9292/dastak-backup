@@ -47,9 +47,8 @@ app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 
 const options = {
-  host: 'https://dastakbackend.herokuapp.com',
+  host: 'dastakbackend.herokuapp.com',
   // host: 'https://martbackend.herokuapp.com',
-  // host: 'http://localhost:8080',
 };
 const request = () => {
   http
@@ -62,7 +61,7 @@ const request = () => {
       console.log(`Got error: ${e.message}`);
     });
 };
-setInterval(request, 1500000);
+setInterval(request, 15000);
 
 mongoose.connect(
   dbUrl,
