@@ -79,7 +79,7 @@ router.post('/allProducts', async (req, res) => {
         })
       );
 
-      finalData = _.orderBy(finalData, ['category'], ['asc']);
+      finalData = _.orderBy(finalData, ['category'], ['desc']);
 
       return res.json({
         status: '200',
@@ -109,7 +109,7 @@ router.post('/allProducts', async (req, res) => {
       })
     );
 
-    finalData = _.orderBy(finalData, ['category'], ['asc']);
+    finalData = _.orderBy(finalData, ['category'], ['desc']);
 
     return res.json({
       status: '200',

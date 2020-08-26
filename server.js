@@ -61,7 +61,7 @@ const request = () => {
       console.log(`Got error: ${e.message}`);
     });
 };
-setInterval(request, 15000);
+setInterval(request, 1500000);
 
 mongoose.connect(
   dbUrl,
