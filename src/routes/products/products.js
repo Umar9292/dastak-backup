@@ -254,6 +254,23 @@ router.post('/allMartProducts', async (req, res) => {
   }
 });
 
+router.get('/addAvailability', async (req, res) => {
+  try {
+    await Products.updateMany({}, { available: 'in stock' });
+
+    return res.json({
+      status: '200',
+      msg: 'Products updated',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 /* router.get('/addBulkProducts/', async (req, res) => {
   try {
     await Products.insertMany([
@@ -2577,13 +2594,13 @@ router.post('/allMartProducts', async (req, res) => {
   }
 }); */
 
-router.get('/addAvailability', async (req, res) => {
+/* router.post('/deleteProducts', async (req, res) => {
   try {
-    await Products.updateMany({}, { available: 'in stock' });
+    await Products.deleteMany({ martId: req.body.martId });
 
     return res.json({
       status: '200',
-      msg: 'Products updated',
+      msg: 'Products deleted',
     });
   } catch (err) {
     return res.json({
@@ -2593,5 +2610,5 @@ router.get('/addAvailability', async (req, res) => {
     });
   }
 });
-
+ */
 module.exports = router;
