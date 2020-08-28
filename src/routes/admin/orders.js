@@ -16,6 +16,10 @@ const {
   emailOrderDetailsToCustomer,
 } = require('../../emailHandler/customerEmail/customerEmail');
 
+const {
+  orderStatusEmail,
+} = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
+
 router.post('/saveOrder', async (req, res) => {
   try {
     const params = req.body;
@@ -229,25 +233,37 @@ router.post('/specificUserOrders', async (req, res) => {
 router.post('/changeOrderStatus', async (req, res) => {
   try {
     const { orderNum, reason, orderId, status, orderType, shopType } = req.body;
+
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
 
     const user = await Users.findById(order.userId);
+    const shop = await Mart.findById(order.martId);
 
     if (status === 'Rejected') {
       const msg = `Dear ${user.name} your order# ${orderNum} has not been accepted because ${shopType} is ${reason}`;
 
-      await notify.user(msg, user.playerId, { flag: 'orderRejected' });
+      // await notify.user(msg, user.playerId, { flag: 'orderRejected' });
 
       order.reason = reason;
+      order.orderNum = orderNum;
       order.save();
+
+      const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
+      orderStatusEmail(adminMessage);
     }
 
     if (status === 'Accepted') {
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
 
       await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
+
+      order.orderNum = orderNum;
+      order.save();
+
+      const adminMessage = `The order number ${orderNum} has been Accepted by ${shop.name}`;
+      orderStatusEmail(adminMessage);
     }
 
     if (status === 'Delivered') {

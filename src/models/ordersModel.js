@@ -4,6 +4,7 @@ const ordersModel = mongoose.Schema(
   {
     userId: String,
     martId: String,
+    orderNum: String,
     martName: String,
     name: String,
     phone: String,
