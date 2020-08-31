@@ -242,9 +242,9 @@ router.post('/changeOrderStatus', async (req, res) => {
     const shop = await Mart.findById(order.martId);
 
     if (status === 'Rejected') {
-      const msg = `Dear ${user.name} your order# ${orderNum} has not been accepted because ${shopType} is ${reason}`;
+      const msg = `Dear ${user.name} your order# ${orderNum} has been rejected by ${shopType} because ${reason}`;
 
-      // await notify.user(msg, user.playerId, { flag: 'orderRejected' });
+      await notify.user(msg, user.playerId, { flag: 'orderRejected' });
 
       order.reason = reason;
       order.orderNum = orderNum;
