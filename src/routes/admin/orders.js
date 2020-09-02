@@ -273,10 +273,16 @@ router.post('/changeOrderStatus', async (req, res) => {
         await notify.user(customerMsg, user.playerId, {
           flag: 'orderDelivered',
         });
+
+        const adminMessage = `The order number ${orderNum} has been picked up by user`;
+        orderStatusEmail(adminMessage);
       } else {
         const msg = `Dear ${user.name} your order# ${orderNum} has been dispatched and will arrive shortly.`;
 
         await notify.user(msg, user.playerId, { flag: 'orderDelivered' });
+
+        const adminMessage = `The order number ${orderNum} has been dispatched by ${shop.name}`;
+        orderStatusEmail(adminMessage);
       }
     }
 
