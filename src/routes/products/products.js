@@ -273,6 +273,31 @@ router.get('/addAvailability', async (req, res) => {
   }
 });
 
+router.post('/updateProductsAvailability', async (req, res) => {
+  try {
+    const { category, martId } = req.body;
+
+    const query = {
+      category,
+      martId,
+    };
+
+    await Products.updateMany(query, { $set: req.body });
+
+    return res.json({
+      status: '200',
+      msg: 'Status successfully updated',
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 /* router.get('/addBulkProducts/', async (req, res) => {
   try {
     await Products.insertMany([

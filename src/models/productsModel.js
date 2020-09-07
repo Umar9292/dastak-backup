@@ -21,6 +21,7 @@ const productsModel = mongoose.Schema(
     drinks: Boolean,
     allDrinks: Object,
     sizes: Object,
+    randomOffer: Boolean,
   },
   {
     versionKey: false,
