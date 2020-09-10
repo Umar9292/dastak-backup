@@ -56,7 +56,9 @@ router.post('/saveOrder', async (req, res) => {
 
     const order = await new Orders(params).save();
 
-    await notify.admin(mart.playerId, { flag: 'orderReceived' });
+    const adminMessage = 'You have a new order';
+
+    await notify.admin(adminMessage, mart.playerId, { flag: 'adminReceived' });
 
     res.json({
       status: '200',
@@ -167,7 +169,7 @@ router.post('/allOrders', async (req, res) => {
 
     const accepted = await Orders.find({
       martId: req.body.martId,
-      status: 'Accepted',
+      status: { $in: ['Admin Accepted', 'Rider Accepted'] },
     }).sort({
       createdAt: -1,
     });
@@ -230,7 +232,7 @@ router.post('/specificUserOrders', async (req, res) => {
   }
 });
 
-router.post('/changeOrderStatus', async (req, res) => {
+router.post('/adminResponse', async (req, res) => {
   try {
     const { orderNum, reason, orderId, status, orderType, shopType } = req.body;
 
@@ -241,6 +243,8 @@ router.post('/changeOrderStatus', async (req, res) => {
     const user = await Users.findById(order.userId);
     const shop = await Mart.findById(order.martId);
 
+    const ridersMessage = `New order from ${shop.name}`;
+
     if (status === 'Rejected') {
       const msg = `Dear ${user.name} your order# ${orderNum} has been rejected by ${shopType} because ${reason}`;
 
@@ -250,46 +254,192 @@ router.post('/changeOrderStatus', async (req, res) => {
       order.orderNum = orderNum;
       order.save();
 
+      res.json({
+        status: '200',
+        msg: 'Order successfully rejected',
+      });
+
       const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
       orderStatusEmail(adminMessage);
     }
 
-    if (status === 'Accepted') {
+    if (status === 'Admin Accepted') {
+      if (orderType === 'PickUp') {
+        const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
+
+        await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
+
+        const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
+        orderStatusEmail(adminMessage);
+      }
+
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
 
       await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
 
+      const availableRiders = await Users.find({
+        type: 'rider',
+        status: 'available',
+      });
+
+      if (availableRiders.length === 0) {
+        const allRiders = await Users.find({ type: 'rider' });
+
+        allRiders.map(async rider => {
+          await notify.riders(ridersMessage, rider.playerId, {
+            flag: 'riderNotified',
+          });
+        });
+      }
+
+      availableRiders.map(async rider => {
+        await notify.riders(ridersMessage, rider.playerId, {
+          flag: 'riderNotified',
+        });
+      });
+
       order.orderNum = orderNum;
       order.save();
+
+      res.json({
+        status: '200',
+        msg: 'Order successfully accepted',
+      });
 
       const adminMessage = `The order number ${orderNum} has been Accepted by ${shop.name}`;
       orderStatusEmail(adminMessage);
     }
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
 
-    if (status === 'Delivered') {
-      if (orderType === 'PickUp') {
-        const customerMsg = `Dear ${user.name} your order number ${orderNum} is ready kindly collect your order as soon as possible.`;
-
-        await notify.user(customerMsg, user.playerId, {
-          flag: 'orderDelivered',
-        });
-
-        const adminMessage = `The order number ${orderNum} has been picked up by user`;
-        orderStatusEmail(adminMessage);
-      } else {
-        const msg = `Dear ${user.name} your order# ${orderNum} has been dispatched and will arrive shortly.`;
-
-        await notify.user(msg, user.playerId, { flag: 'orderDelivered' });
-
-        const adminMessage = `The order number ${orderNum} has been dispatched by ${shop.name}`;
-        orderStatusEmail(adminMessage);
-      }
-    }
+router.get('/adminAcceptedOrders', async (req, res) => {
+  try {
+    const acceptedOrders = await Orders.find({
+      status: 'Admin Accepted',
+    }).sort({
+      createdAt: -1,
+    });
 
     return res.json({
       status: '200',
-      msg: 'Order status updated',
+      data: acceptedOrders,
     });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/assignRider', async (req, res) => {
+  try {
+    const { orderId, riderId, riderName, riderPhone, status } = req.body;
+
+    const order = await Orders.findById(orderId);
+    const { playerId } = await Users.findById(order.martId);
+
+    if (order.status === 'Rider Accepted')
+      return res.json({
+        status: '404',
+        msg:
+          'This order has already been assigned to another rider. Stay active another order might com your way',
+      });
+
+    order.riderId = riderId;
+    order.riderName = riderName;
+    order.riderPhone = riderPhone;
+    order.status = status;
+    order.save();
+
+    res.json({
+      status: '200',
+      msg: 'This order is now assigned to you.',
+    });
+
+    const message = `Dastak rider ${riderName} is assigned to order# ${order.orderNum}.`;
+
+    await notify.admin(message, playerId, {
+      flag: 'riderAccepted',
+    });
+
+    orderStatusEmail(message);
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/riderOrders', async (req, res) => {
+  try {
+    const { riderId } = req.body;
+
+    const accepted = await Orders.find({
+      riderId,
+      status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+    }).sort({
+      createdAt: -1,
+    });
+
+    const delivered = await Orders.find({
+      riderId,
+      status: 'Delivered',
+    }).sort({
+      createdAt: -1,
+    });
+
+    return res.json({
+      status: '200',
+      accepted,
+      delivered,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/changeOrderStatus', async (req, res) => {
+  try {
+    const { orderId, status } = req.body;
+
+    const order = await Orders.findByIdAndUpdate(orderId, { $set: req.body });
+
+    if (status === 'Delivered') {
+      const message = `Order# ${order.orderNum} has been delivered by ${order.riderName}`;
+      orderStatusEmail(message);
+
+      return res.json({
+        status: '202',
+        msg: 'Order successfully delivered',
+      });
+    }
+
+    res.json({ status: '200' });
+
+    const { playerId } = await Users.findById(order.userId);
+
+    const pickUpMsg =
+      'Your order has been picked up by dastak rider and will be delivered to you shortly';
+
+    await notify.user(pickUpMsg, playerId, { flag: 'orderPickedUp' });
+
+    const message = `Order# ${order.orderNum} has been picked up by ${order.riderName}`;
+    orderStatusEmail(message);
   } catch (err) {
     return res.json({
       status: '404',

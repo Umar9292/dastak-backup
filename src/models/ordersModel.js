@@ -6,6 +6,9 @@ const ordersModel = mongoose.Schema(
     martId: String,
     orderNum: String,
     martName: String,
+    riderId: String,
+    riderName: String,
+    riderPhone: String,
     name: String,
     phone: String,
     reason: String,
@@ -17,10 +20,7 @@ const ordersModel = mongoose.Schema(
     orderType: String,
     martPhone: String,
     martAddress: String,
-    status: {
-      type: String,
-      status: 'pending',
-    },
+    status: String,
   },
   {
     versionKey: false,
