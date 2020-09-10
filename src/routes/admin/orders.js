@@ -20,7 +20,7 @@ const {
   orderStatusEmail,
 } = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
 
-router.post('/saveOrder', async (req, res) => {
+router.post('/placeOrder', async (req, res) => {
   try {
     const params = req.body;
     const total = params.orderTotal;
