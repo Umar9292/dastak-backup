@@ -15,7 +15,6 @@ const {
 const {
   emailOrderDetailsToCustomer,
 } = require('../../emailHandler/customerEmail/customerEmail');
-
 const {
   orderStatusEmail,
 } = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
@@ -279,11 +278,12 @@ router.post('/adminResponse', async (req, res) => {
 
       const availableRiders = await Users.find({
         type: 'rider',
-        status: 'available',
+        status: 'idle',
+        available: true,
       });
 
       if (availableRiders.length === 0) {
-        const allRiders = await Users.find({ type: 'rider' });
+        const allRiders = await Users.find({ type: 'rider', available: true });
 
         allRiders.map(async rider => {
           await notify.riders(ridersMessage, rider.playerId, {
@@ -346,11 +346,11 @@ router.post('/assignRider', async (req, res) => {
     const order = await Orders.findById(orderId);
     const { playerId } = await Users.findById(order.martId);
 
-    if (order.status === 'Rider Accepted')
+    if (order.riderId)
       return res.json({
         status: '404',
         msg:
-          'This order has already been assigned to another rider. Stay active another order might com your way',
+          'This order has already been assigned to another rider. Stay active another order might come your way.',
       });
 
     order.riderId = riderId;
@@ -358,6 +358,10 @@ router.post('/assignRider', async (req, res) => {
     order.riderPhone = riderPhone;
     order.status = status;
     order.save();
+
+    await Users.findByIdAndUpdate(order.riderId, {
+      status: 'on delivery',
+    });
 
     res.json({
       status: '200',
@@ -372,7 +376,6 @@ router.post('/assignRider', async (req, res) => {
 
     orderStatusEmail(message);
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -420,13 +423,24 @@ router.post('/changeOrderStatus', async (req, res) => {
     const order = await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
     if (status === 'Delivered') {
-      const message = `Order# ${order.orderNum} has been delivered by ${order.riderName}`;
-      orderStatusEmail(message);
+      const query = {
+        riderId: order.riderId,
+        status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+      };
 
-      return res.json({
+      const riderOrders = await Orders.find(query);
+
+      if (riderOrders.length === 0) {
+        await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
+      }
+
+      res.json({
         status: '202',
         msg: 'Order successfully delivered',
       });
+
+      const message = `Order# ${order.orderNum} has been delivered by ${order.riderName}`;
+      orderStatusEmail(message);
     }
 
     res.json({ status: '200' });

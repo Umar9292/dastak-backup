@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const martsModel = mongoose.Schema(
+const model = mongoose.Schema(
   {
     status: String,
     available: {
@@ -25,4 +25,4 @@ const martsModel = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('user', martsModel);
+module.exports = mongoose.model('user', model);

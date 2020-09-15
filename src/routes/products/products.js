@@ -3,9 +3,13 @@ const _ = require('lodash');
 
 const router = express.Router();
 
+const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
 const Flavours = require('../../models/flavoursAndDrinks');
 const Marts = require('../../models/martsModel');
+const Offers = require('../../models/offersModel');
+
+const notify = require('../../notificationHandler/handler');
 
 router.post('/allProducts', async (req, res) => {
   try {
@@ -275,7 +279,7 @@ router.get('/addAvailability', async (req, res) => {
 
 router.post('/updateProductsAvailability', async (req, res) => {
   try {
-    const { category, martId } = req.body;
+    const { category, martId, available } = req.body;
 
     const query = {
       category,
@@ -284,12 +288,25 @@ router.post('/updateProductsAvailability', async (req, res) => {
 
     await Products.updateMany(query, { $set: req.body });
 
-    return res.json({
+    res.json({
       status: '200',
       msg: 'Status successfully updated',
     });
+
+    if (available === 'in stock') {
+      const { offers } = await Offers.findOne({ martId });
+
+      offers.forEach(async offer => {
+        if (offer.name === category) {
+          const users = await Users.find({ type: 'user' });
+
+          users.forEach(async user => {
+            await notify.user(offer.text, user.playerId, { flag: 'offer' });
+          });
+        }
+      });
+    }
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -3164,5 +3181,22 @@ router.post('/updateProductsAvailability', async (req, res) => {
     });
   }
 }); */
+
+router.get('/test', async (req, res) => {
+  try {
+    await Users.updateMany({}, { playerId: '' });
+
+    return res.json({
+      status: '200',
+      msg: 'Player Ids removed',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
 
 module.exports = router;
