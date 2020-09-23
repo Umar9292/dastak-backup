@@ -14,7 +14,6 @@ const notify = require('../../notificationHandler/handler');
 router.post('/allProducts', async (req, res) => {
   try {
     const { martId } = req.body;
-    const allCategories = [];
     let finalData = [];
 
     const categories = await Products.find({ martId })
@@ -23,16 +22,14 @@ router.post('/allProducts', async (req, res) => {
       })
       .select('category');
 
-    const business = await Marts.findById({ _id: martId }).select('shopType');
+    const business = await Marts.findById(martId).select('shopType');
 
-    await Promise.all(
-      categories.map(c => {
-        if (!allCategories.includes(c.category)) {
-          allCategories.push(c.category);
-        }
-        return allCategories;
-      })
-    );
+    const allCategories = categories.reduce((unique, item) => {
+      if (!unique.includes(item.category)) {
+        unique.push(item.category);
+      }
+      return unique;
+    }, []);
 
     if (business.shopType === 'restaurant') {
       await Promise.all(
@@ -81,7 +78,7 @@ router.post('/allProducts', async (req, res) => {
           };
 
           await Promise.resolve(data);
-          await Promise.resolve(finalData.push(data));
+          finalData.push(data);
         })
       );
 
@@ -111,7 +108,7 @@ router.post('/allProducts', async (req, res) => {
         };
 
         await Promise.resolve(data);
-        await Promise.resolve(finalData.push(data));
+        finalData.push(data);
       })
     );
 
@@ -122,6 +119,7 @@ router.post('/allProducts', async (req, res) => {
       data: finalData,
     });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
@@ -3182,9 +3180,14 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 }); */
 
-router.get('/test', async (req, res) => {
+/* router.get('/test', async (req, res) => {
   try {
-    await Users.updateMany({}, { playerId: '' });
+    const products = [{ count: 3 }, { count: 5 }];
+    const total = products.reduce((acc, cur) => acc.count + cur.count);
+
+    res.json(total);
+
+    await Products.deleteMany({ martId: '5f61d778b72790548e89e016' });
 
     return res.json({
       status: '200',
@@ -3197,6 +3200,6 @@ router.get('/test', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 module.exports = router;

@@ -22,11 +22,9 @@ const {
 router.post('/placeOrder', async (req, res) => {
   try {
     const params = req.body;
-    const total = params.orderTotal;
+    let { orderTotal, martId, userId, products } = params;
 
-    const mart = await Mart.findById({ _id: params.martId }).select(
-      '-password -__v'
-    );
+    const mart = await Mart.findById(martId).select('-password -__v');
 
     if (!mart.available) {
       return res.json({
@@ -35,18 +33,14 @@ router.post('/placeOrder', async (req, res) => {
       });
     }
 
-    const user = await Users.findById({ _id: params.userId }).select(
-      '-password -__v'
-    );
+    if (+orderTotal < mart.minimumOrder) {
+      return res.json({ msg: `Minimun order is Rs ${mart.minimumOrder}` });
+    }
 
     const orderTime = moment().tz('Asia/karachi');
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
-    if (+total < mart.minimumOrder) {
-      return res.json({ msg: `Minimun order is Rs ${mart.minimumOrder}` });
-    }
-
-    params.products = await JSON.parse(params.products);
+    products = await JSON.parse(params.products);
     params.martId = mart._id;
     params.martName = mart.name;
     params.martPhone = mart.phone;
@@ -56,7 +50,6 @@ router.post('/placeOrder', async (req, res) => {
     const order = await new Orders(params).save();
 
     const adminMessage = 'You have a new order';
-
     await notify.admin(adminMessage, mart.playerId, { flag: 'adminReceived' });
 
     res.json({
@@ -65,11 +58,9 @@ router.post('/placeOrder', async (req, res) => {
       data: order,
     });
 
-    let count = 0;
-    params.products.map(p => {
-      count += +p.count;
-      return count;
-    });
+    const user = await Users.findById(userId).select('-password -__v');
+
+    const count = products.reduce((acc, cur) => acc.count + cur.count);
 
     emailOrderDetails(
       mart,
@@ -341,7 +332,7 @@ router.get('/adminAcceptedOrders', async (req, res) => {
 
 router.post('/assignRider', async (req, res) => {
   try {
-    const { orderId, riderId, riderName, riderPhone, status } = req.body;
+    const { orderId, riderName } = req.body;
 
     const order = await Orders.findById(orderId);
     const { playerId } = await Users.findById(order.martId);
@@ -353,11 +344,7 @@ router.post('/assignRider', async (req, res) => {
           'This order has already been assigned to another rider. Stay active another order might come your way.',
       });
 
-    order.riderId = riderId;
-    order.riderName = riderName;
-    order.riderPhone = riderPhone;
-    order.status = status;
-    order.save();
+    await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
     await Users.findByIdAndUpdate(order.riderId, {
       status: 'on delivery',
