@@ -22,7 +22,7 @@ const {
 router.post('/placeOrder', async (req, res) => {
   try {
     const params = req.body;
-    let { orderTotal, martId, userId, products } = params;
+    const { orderTotal, martId, userId, products } = params;
 
     const mart = await Mart.findById(martId).select('-password -__v');
 
@@ -40,7 +40,7 @@ router.post('/placeOrder', async (req, res) => {
     const orderTime = moment().tz('Asia/karachi');
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
-    products = await JSON.parse(params.products);
+    params.products = await JSON.parse(products);
     params.martId = mart._id;
     params.martName = mart.name;
     params.martPhone = mart.phone;
@@ -60,7 +60,7 @@ router.post('/placeOrder', async (req, res) => {
 
     const user = await Users.findById(userId).select('-password -__v');
 
-    const count = products.reduce((acc, cur) => acc.count + cur.count);
+    const count = params.products.reduce((acc, cur) => acc.count + cur.count);
 
     emailOrderDetails(
       mart,
@@ -332,7 +332,7 @@ router.get('/adminAcceptedOrders', async (req, res) => {
 
 router.post('/assignRider', async (req, res) => {
   try {
-    const { orderId, riderName } = req.body;
+    const { orderId, riderName, riderId } = req.body;
 
     const order = await Orders.findById(orderId);
     const { playerId } = await Users.findById(order.martId);
@@ -346,7 +346,7 @@ router.post('/assignRider', async (req, res) => {
 
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
-    await Users.findByIdAndUpdate(order.riderId, {
+    await Users.findByIdAndUpdate(riderId, {
       status: 'on delivery',
     });
 
