@@ -332,7 +332,7 @@ router.get('/adminAcceptedOrders', async (req, res) => {
 
 router.post('/assignRider', async (req, res) => {
   try {
-    const { orderId, riderName } = req.body;
+    const { orderId, riderName, riderId } = req.body;
 
     const order = await Orders.findById(orderId);
     const { playerId } = await Users.findById(order.martId);
@@ -346,7 +346,7 @@ router.post('/assignRider', async (req, res) => {
 
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
-    await Users.findByIdAndUpdate(order.riderId, {
+    await Users.findByIdAndUpdate(riderId, {
       status: 'on delivery',
     });
 

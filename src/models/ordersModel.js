@@ -9,6 +9,7 @@ const ordersModel = mongoose.Schema(
     riderId: String,
     riderName: String,
     riderPhone: String,
+    deliveryCharges: String,
     name: String,
     phone: String,
     reason: String,
