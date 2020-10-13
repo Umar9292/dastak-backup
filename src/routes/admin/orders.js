@@ -60,7 +60,7 @@ router.post('/placeOrder', async (req, res) => {
 
     const user = await Users.findById(userId).select('-password -__v');
 
-    const count = params.products.reduce((acc, cur) => acc.count + cur.count);
+    const count = params.products.reduce((a, b) => a + b.count, 0);
 
     emailOrderDetails(
       mart,
@@ -82,6 +82,7 @@ router.post('/placeOrder', async (req, res) => {
       count
     );
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),

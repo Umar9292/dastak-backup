@@ -16,22 +16,11 @@ router.post('/allProducts', async (req, res) => {
     const { martId } = req.body;
     let finalData = [];
 
-    const categories = await Products.find({ martId })
-      .sort({
-        category: 1,
-      })
-      .select('category');
+    const allCategories = await Products.distinct('category', { martId });
 
-    const business = await Marts.findById(martId).select('shopType');
+    const { shopType } = await Marts.findById(martId);
 
-    const allCategories = categories.reduce((unique, item) => {
-      if (!unique.includes(item.category)) {
-        unique.push(item.category);
-      }
-      return unique;
-    }, []);
-
-    if (business.shopType === 'restaurant') {
+    if (shopType === 'restaurant') {
       await Promise.all(
         allCategories.map(async ac => {
           const query = {
@@ -50,24 +39,18 @@ router.post('/allProducts', async (req, res) => {
                   p.regular === null ||
                   p.regular === false)
               ) {
-                const flavoursAndDrinks = await Flavours.findOne({
-                  martId,
-                }).select('flavours');
-                p.flavours = flavoursAndDrinks.flavours;
+                const { flavours } = await Flavours.findOne({ martId });
+                p.flavours = flavours;
               }
 
               if (p.type === 'deal' && p.regular === true) {
-                const flavoursAndDrinks = await Flavours.findOne({
-                  martId,
-                }).select('regularFlavours');
-                p.flavours = flavoursAndDrinks.regularFlavours;
+                const { regularFlavours } = await Flavours.findOne({ martId });
+                p.flavours = regularFlavours;
               }
 
               if (p.drinks === true) {
-                const flavoursAndDrinks = await Flavours.findOne({
-                  martId,
-                }).select('drinks');
-                p.allDrinks = flavoursAndDrinks.drinks;
+                const { drinks } = await Flavours.findOne({ martId });
+                p.allDrinks = drinks;
               }
             })
           );
@@ -119,7 +102,6 @@ router.post('/allProducts', async (req, res) => {
       data: finalData,
     });
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
@@ -3182,18 +3164,32 @@ router.post('/updateProductsAvailability', async (req, res) => {
 
 /* router.get('/test', async (req, res) => {
   try {
-    const products = [{ count: 3 }, { count: 5 }];
-    const total = products.reduce((acc, cur) => acc.count + cur.count);
+    // await Products.deleteMany({ martId: '5f841e770a3f9205db17ea38' });
 
-    res.json(total);
-
-    await Products.deleteMany({ martId: '5f61d778b72790548e89e016' });
-
-    return res.json({
-      status: '200',
-      msg: 'Player Ids removed',
+    const products = await Products.find({
+      martId: '5f841e770a3f9205db17ea38',
     });
+
+    await Promise.all(
+      products.map(async product => {
+        if (product.discount === '20') {
+          const discountedPrice = ((20 / 100) * product.price).toFixed(2);
+          product.discountedPrice = +(product.price - discountedPrice);
+        }
+
+        if (product.discount === '10') {
+          const discountedPrice = ((10 / 100) * product.price).toFixed(2);
+          product.discountedPrice = +(product.price - discountedPrice);
+        }
+
+        await product.save();
+        return product;
+      })
+    );
+
+    return res.json('done');
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),

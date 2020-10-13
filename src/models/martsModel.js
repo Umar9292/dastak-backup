@@ -19,6 +19,7 @@ const martsModel = mongoose.Schema(
     openingTime: String,
     closingTime: String,
     playerId: String,
+    discount: String,
     type: {
       type: String,
       default: 'admin',
