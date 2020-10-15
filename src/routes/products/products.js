@@ -3167,13 +3167,13 @@ router.post('/updateProductsAvailability', async (req, res) => {
     // await Products.deleteMany({ martId: '5f841e770a3f9205db17ea38' });
 
     const products = await Products.find({
-      martId: '5f841e770a3f9205db17ea38',
+      martId: '5f86c9b53f5c6cc2a5c73f87',
     });
 
     await Promise.all(
       products.map(async product => {
-        if (product.discount === '20') {
-          const discountedPrice = ((20 / 100) * product.price).toFixed(2);
+        if (product.discount === '15') {
+          const discountedPrice = ((15 / 100) * product.price).toFixed();
           product.discountedPrice = +(product.price - discountedPrice);
         }
 

@@ -451,4 +451,44 @@ router.post('/changeOrderStatus', async (req, res) => {
   }
 });
 
+router.post('/weeklyOrders', async (req, res) => {
+  try {
+    let { martId, startDate, endDate } = req.body;
+    const thisWeeksOrders = [];
+
+    const orders = await Orders.find({
+      martId,
+      status: { $in: ['Delivered', 'Rider Picked Up'] },
+    });
+
+    startDate = moment(startDate, 'DD-MM-YYYY');
+
+    endDate = moment(endDate, 'DD-MM-YYYY');
+
+    await Promise.all(
+      orders.map(order => {
+        const orderDate = moment(order.date, 'DD-MM-YYYY');
+
+        if (
+          orderDate.isSameOrAfter(startDate) &&
+          orderDate.isSameOrBefore(endDate)
+        ) {
+          thisWeeksOrders.push(order);
+        }
+      })
+    );
+
+    return res.json({
+      status: '200',
+      data: thisWeeksOrders,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;

@@ -53,7 +53,7 @@ const options = {
 const request = () => {
   http
     .get(options, function(res) {
-      res.on('data', function(chunk) {
+      res.on('data', function() {
         console.log('Working');
       });
     })
