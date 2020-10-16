@@ -18,6 +18,9 @@ const {
 const {
   orderStatusEmail,
 } = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
+const {
+  emailOrderDetailsToRider,
+} = require('../../emailHandler/riderEmail/riderEmail');
 
 router.post('/placeOrder', async (req, res) => {
   try {
@@ -281,6 +284,8 @@ router.post('/adminResponse', async (req, res) => {
           await notify.riders(ridersMessage, rider.playerId, {
             flag: 'riderNotified',
           });
+
+          emailOrderDetailsToRider(rider.email);
         });
       }
 
@@ -288,6 +293,8 @@ router.post('/adminResponse', async (req, res) => {
         await notify.riders(ridersMessage, rider.playerId, {
           flag: 'riderNotified',
         });
+
+        emailOrderDetailsToRider(rider.email);
       });
 
       order.orderNum = orderNum;

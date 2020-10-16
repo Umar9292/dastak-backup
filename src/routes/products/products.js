@@ -3177,8 +3177,9 @@ router.post('/updateProductsAvailability', async (req, res) => {
           product.category !== 'Hot Tea' &&
           product.category !== `Add ON's`
         ) {
-          const discountedPrice = ((10 / 100) * product.price).toFixed();
-          product.discountedPrice = +(product.price - discountedPrice);
+          // const discountedPrice = ((10 / 100) * product.price).toFixed();
+          // product.discountedPrice = +(product.price - discountedPrice);
+          product.discount = '10';
         }
 
         if (product.discount === '10') {
