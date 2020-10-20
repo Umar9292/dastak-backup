@@ -11,6 +11,7 @@ const notify = require('../../notificationHandler/handler');
 
 const {
   emailOrderDetails,
+  notifyRestaurantByEmail,
 } = require('../../emailHandler/orderEmail/orderEmail');
 const {
   emailOrderDetailsToCustomer,
@@ -65,6 +66,8 @@ router.post('/placeOrder', async (req, res) => {
 
     const count = params.products.reduce((a, b) => a + b.count, 0);
 
+    notifyRestaurantByEmail(mart.email);
+
     emailOrderDetails(
       mart,
       user,
@@ -85,7 +88,6 @@ router.post('/placeOrder', async (req, res) => {
       count
     );
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -265,6 +267,11 @@ router.post('/adminResponse', async (req, res) => {
 
         const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
         orderStatusEmail(adminMessage);
+
+        return res.json({
+          status: '200',
+          msg: 'Order successfully accepted',
+        });
       }
 
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
@@ -485,7 +492,10 @@ router.post('/weeklyOrders', async (req, res) => {
       })
     );
 
+    const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+
     return res.json({
+      total,
       status: '200',
       data: thisWeeksOrders,
     });
@@ -497,5 +507,24 @@ router.post('/weeklyOrders', async (req, res) => {
     });
   }
 });
+
+/* router.get('/particularRiderOrders', async (req, res) => {
+  try {
+    const orders = await Orders.find({ riderId: '5f898b035cd57809ecde59d8' });
+
+    const total = orders.reduce((a, b) => a + b.orderTotal, 0);
+
+    return res.json({
+      total,
+      status: '200',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
 
 module.exports = router;
