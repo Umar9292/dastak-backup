@@ -172,6 +172,7 @@ router.post('/allOrders', async (req, res) => {
 
     const delivered = await Orders.find({
       martId: req.body.martId,
+      paid: { $in: [false, undefined] },
       status: 'Delivered',
     }).sort({
       createdAt: -1,
@@ -526,5 +527,44 @@ router.post('/weeklyOrders', async (req, res) => {
     });
   }
 }); */
+
+router.post('/test', async (req, res) => {
+  try {
+    let { martId, endDate } = req.body;
+    const selectedOrders = [];
+
+    const orders = await Orders.find({ martId });
+
+    endDate = moment(endDate, 'DD-MM-YYYY');
+
+    await Promise.all(
+      orders.map(async order => {
+        const orderDate = moment(order.date, 'DD-MM-YYYY');
+
+        if (orderDate.isSameOrBefore(endDate)) {
+          order.paid = true;
+          selectedOrders.push(order);
+          await order.save();
+        } else {
+          order.paid = false;
+          await order.save();
+        }
+
+        return order;
+      })
+    );
+
+    return res.json({
+      status: '200',
+      data: selectedOrders,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
 
 module.exports = router;
