@@ -48,7 +48,7 @@ router.post('/placeOrder', async (req, res) => {
     params.martId = mart._id;
     params.martName = mart.name;
     params.martPhone = mart.phone;
-    params.martAddress = mart.address;
+    params.martAddress = mart.martAddress;
     params.time = formatedTime;
 
     const order = await new Orders(params).save();
@@ -530,33 +530,18 @@ router.post('/weeklyOrders', async (req, res) => {
 
 router.post('/test', async (req, res) => {
   try {
-    let { martId, endDate } = req.body;
-    const selectedOrders = [];
-
-    const orders = await Orders.find({ martId });
-
-    endDate = moment(endDate, 'DD-MM-YYYY');
+    const marts = await Mart.find({ shopType: 'restaurant' });
 
     await Promise.all(
-      orders.map(async order => {
-        const orderDate = moment(order.date, 'DD-MM-YYYY');
-
-        if (orderDate.isSameOrBefore(endDate)) {
-          order.paid = true;
-          selectedOrders.push(order);
-          await order.save();
-        } else {
-          order.paid = false;
-          await order.save();
-        }
-
-        return order;
+      marts.map(mart => {
+        mart.address = [];
+        mart.save();
       })
     );
 
     return res.json({
       status: '200',
-      data: selectedOrders,
+      data: marts,
     });
   } catch (err) {
     return res.json({

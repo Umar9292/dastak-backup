@@ -16,7 +16,10 @@ const martsModel = mongoose.Schema(
     name: String,
     phone: String,
     password: String,
-    address: String,
+    address: {
+      type: Object,
+      default: [],
+    },
     shopType: String,
     minimumOrder: Number,
     deliveryRange: String,
@@ -24,6 +27,7 @@ const martsModel = mongoose.Schema(
     closingTime: String,
     playerId: String,
     discount: String,
+    martAddress: String,
     type: {
       type: String,
       default: 'admin',
