@@ -5,12 +5,24 @@ const bcrypt = require('bcrypt');
 const speakeasy = require('speakeasy');
 
 const User = require('../../models/userModel');
+const Marts = require('../../models/martsModel');
 const Otp = require('../../models/otpModel');
 const { emailOtp } = require('../../emailHandler/otpEmail/otpEmail');
 
 router.post('/editProfile', async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(
+    const { type } = req.body;
+    let user;
+
+    if (type === 'admin') {
+      user = await Marts.findByIdAndUpdate(
+        req.body.userId,
+        { $set: req.body },
+        { new: true }
+      ).select('-password -__v');
+    }
+
+    user = await User.findByIdAndUpdate(
       req.body.userId,
       { $set: req.body },
       { new: true }
