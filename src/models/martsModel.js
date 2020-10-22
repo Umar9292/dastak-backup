@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const martsModel = mongoose.Schema(
   {
+    useAsCustomer: {
+      type: Boolean,
+      default: false,
+    },
     status: String,
     available: {
       type: Boolean,
