@@ -393,6 +393,7 @@ router.post('/riderOrders', async (req, res) => {
 
     const accepted = await Orders.find({
       riderId,
+      orderType: 'Delivery',
       status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
     }).sort({
       createdAt: -1,
