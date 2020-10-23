@@ -3167,14 +3167,19 @@ router.post('/updateProductsAvailability', async (req, res) => {
     // await Products.deleteMany({ martId: '5f841e770a3f9205db17ea38' });
 
     const products = await Products.find({
-      martId: '5f841e770a3f9205db17ea38',
+      martId: '5f312d42d9d50a3bebf4611a',
     });
 
     await Promise.all(
       products.map(async product => {
-        if (product.discount === '20') {
-          const discountedPrice = ((20 / 100) * product.price).toFixed(2);
-          product.discountedPrice = +(product.price - discountedPrice);
+        if (
+          product.category !== 'Beverages' &&
+          product.category !== 'Hot Tea' &&
+          product.category !== `Add ON's`
+        ) {
+          // const discountedPrice = ((10 / 100) * product.price).toFixed();
+          // product.discountedPrice = +(product.price - discountedPrice);
+          product.discount = '10';
         }
 
         if (product.discount === '10') {

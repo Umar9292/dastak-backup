@@ -11,6 +11,7 @@ const notify = require('../../notificationHandler/handler');
 
 const {
   emailOrderDetails,
+  notifyRestaurantByEmail,
 } = require('../../emailHandler/orderEmail/orderEmail');
 const {
   emailOrderDetailsToCustomer,
@@ -18,6 +19,9 @@ const {
 const {
   orderStatusEmail,
 } = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
+const {
+  emailOrderDetailsToRider,
+} = require('../../emailHandler/riderEmail/riderEmail');
 
 router.post('/placeOrder', async (req, res) => {
   try {
@@ -62,6 +66,8 @@ router.post('/placeOrder', async (req, res) => {
 
     const count = params.products.reduce((a, b) => a + b.count, 0);
 
+    notifyRestaurantByEmail(mart.email);
+
     emailOrderDetails(
       mart,
       user,
@@ -82,7 +88,6 @@ router.post('/placeOrder', async (req, res) => {
       count
     );
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -167,6 +172,7 @@ router.post('/allOrders', async (req, res) => {
 
     const delivered = await Orders.find({
       martId: req.body.martId,
+      paid: { $in: [false, undefined] },
       status: 'Delivered',
     }).sort({
       createdAt: -1,
@@ -262,6 +268,11 @@ router.post('/adminResponse', async (req, res) => {
 
         const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
         orderStatusEmail(adminMessage);
+
+        return res.json({
+          status: '200',
+          msg: 'Order successfully accepted',
+        });
       }
 
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
@@ -281,6 +292,8 @@ router.post('/adminResponse', async (req, res) => {
           await notify.riders(ridersMessage, rider.playerId, {
             flag: 'riderNotified',
           });
+
+          emailOrderDetailsToRider(rider.email);
         });
       }
 
@@ -288,6 +301,8 @@ router.post('/adminResponse', async (req, res) => {
         await notify.riders(ridersMessage, rider.playerId, {
           flag: 'riderNotified',
         });
+
+        emailOrderDetailsToRider(rider.email);
       });
 
       order.orderNum = orderNum;
@@ -378,6 +393,7 @@ router.post('/riderOrders', async (req, res) => {
 
     const accepted = await Orders.find({
       riderId,
+      orderType: 'Delivery',
       status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
     }).sort({
       createdAt: -1,
@@ -442,6 +458,107 @@ router.post('/changeOrderStatus', async (req, res) => {
 
     const message = `Order# ${order.orderNum} has been picked up by ${order.riderName}`;
     orderStatusEmail(message);
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/weeklyOrders', async (req, res) => {
+  try {
+    let { martId, startDate, endDate } = req.body;
+    const thisWeeksOrders = [];
+
+    const orders = await Orders.find({
+      martId,
+      status: { $in: ['Delivered', 'Rider Picked Up'] },
+    });
+
+    startDate = moment(startDate, 'DD-MM-YYYY');
+
+    endDate = moment(endDate, 'DD-MM-YYYY');
+
+    await Promise.all(
+      orders.map(order => {
+        const orderDate = moment(order.date, 'DD-MM-YYYY');
+
+        if (
+          orderDate.isSameOrAfter(startDate) &&
+          orderDate.isSameOrBefore(endDate)
+        ) {
+          thisWeeksOrders.push(order);
+        }
+      })
+    );
+
+    const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+
+    return res.json({
+      total,
+      status: '200',
+      data: thisWeeksOrders,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+/* router.get('/particularRiderOrders', async (req, res) => {
+  try {
+    const orders = await Orders.find({ riderId: '5f898b035cd57809ecde59d8' });
+
+    const total = orders.reduce((a, b) => a + b.orderTotal, 0);
+
+    return res.json({
+      total,
+      status: '200',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+router.post('/test', async (req, res) => {
+  try {
+    let { martId, endDate } = req.body;
+    const selectedOrders = [];
+
+    const orders = await Orders.find({ martId });
+
+    endDate = moment(endDate, 'DD-MM-YYYY');
+
+    await Promise.all(
+      orders.map(async order => {
+        const orderDate = moment(order.date, 'DD-MM-YYYY');
+
+        if (orderDate.isSameOrBefore(endDate)) {
+          order.paid = true;
+          selectedOrders.push(order);
+          await order.save();
+        } else {
+          order.paid = false;
+          await order.save();
+        }
+
+        return order;
+      })
+    );
+
+    return res.json({
+      status: '200',
+      data: selectedOrders,
+    });
   } catch (err) {
     return res.json({
       status: '404',

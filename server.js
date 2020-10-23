@@ -20,6 +20,7 @@ const playerIdRouter = require('./src/routes/admin/playerId');
 const logoutRouter = require('./src/routes/user/logout');
 const martsRouter = require('./src/routes/marts/marts');
 const appVersionRouter = require('./src/routes/general/appVersion');
+const riderPlayerIdRouter = require('./src/routes/admin/riderPlayerId');
 
 const port = process.env.PORT || 8080;
 
@@ -43,6 +44,7 @@ app.use(
 );
 app.use('/orders', ordersRouter);
 app.use('/admin', playerIdRouter);
+app.use('/rider', riderPlayerIdRouter);
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 
@@ -53,7 +55,7 @@ const options = {
 const request = () => {
   http
     .get(options, function(res) {
-      res.on('data', function(chunk) {
+      res.on('data', function() {
         console.log('Working');
       });
     })
