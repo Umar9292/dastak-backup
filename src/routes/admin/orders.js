@@ -48,7 +48,7 @@ router.post('/placeOrder', async (req, res) => {
     params.martId = mart._id;
     params.martName = mart.name;
     params.martPhone = mart.phone;
-    params.martAddress = mart.address;
+    params.martAddress = mart.martAddress;
     params.time = formatedTime;
 
     const order = await new Orders(params).save();
@@ -231,7 +231,15 @@ router.post('/specificUserOrders', async (req, res) => {
 
 router.post('/adminResponse', async (req, res) => {
   try {
-    const { orderNum, reason, orderId, status, orderType, shopType } = req.body;
+    const {
+      orderNum,
+      reason,
+      orderId,
+      status,
+      orderType,
+      shopType,
+      customerNotified,
+    } = req.body;
 
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
@@ -260,7 +268,7 @@ router.post('/adminResponse', async (req, res) => {
       orderStatusEmail(adminMessage);
     }
 
-    if (status === 'Admin Accepted') {
+    if (status === 'Admin Accepted' && !customerNotified) {
       if (orderType === 'PickUp') {
         const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
 
@@ -316,6 +324,26 @@ router.post('/adminResponse', async (req, res) => {
       const adminMessage = `The order number ${orderNum} has been Accepted by ${shop.name}`;
       orderStatusEmail(adminMessage);
     }
+
+    if (status === 'Admin Accepted' && customerNotified) {
+      const msg = `Dear ${user.name} your order# ${orderNum} for ${shop.name} is now ready. Kindly pick it up`;
+      await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
+
+      return res.json({
+        status: '200',
+        msg: 'Customer has been notified',
+      });
+    }
+
+    if (status === 'Delivered') {
+      const msg = `Dear ${user.name} thankyou for your order from ${shop.name}`;
+      await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
+
+      return res.json({
+        status: '200',
+        msg: 'Order successfully completed',
+      });
+    }
   } catch (err) {
     return res.json({
       status: '404',
@@ -329,6 +357,7 @@ router.get('/adminAcceptedOrders', async (req, res) => {
   try {
     const acceptedOrders = await Orders.find({
       status: 'Admin Accepted',
+      orderType: 'Delivery',
     }).sort({
       createdAt: -1,
     });
@@ -393,7 +422,6 @@ router.post('/riderOrders', async (req, res) => {
 
     const accepted = await Orders.find({
       riderId,
-      orderType: 'Delivery',
       status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
     }).sort({
       createdAt: -1,
@@ -401,6 +429,7 @@ router.post('/riderOrders', async (req, res) => {
 
     const delivered = await Orders.find({
       riderId,
+      paidToRider: false,
       status: 'Delivered',
     }).sort({
       createdAt: -1,
@@ -467,7 +496,7 @@ router.post('/changeOrderStatus', async (req, res) => {
   }
 });
 
-router.post('/weeklyOrders', async (req, res) => {
+router.post('/paidToOwner', async (req, res) => {
   try {
     let { martId, startDate, endDate } = req.body;
     const thisWeeksOrders = [];
@@ -510,54 +539,21 @@ router.post('/weeklyOrders', async (req, res) => {
   }
 });
 
-/* router.get('/particularRiderOrders', async (req, res) => {
+router.post('/paidToRider', async (req, res) => {
   try {
-    const orders = await Orders.find({ riderId: '5f898b035cd57809ecde59d8' });
-
-    const total = orders.reduce((a, b) => a + b.orderTotal, 0);
-
-    return res.json({
-      total,
-      status: '200',
-    });
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-}); */
-
-router.post('/test', async (req, res) => {
-  try {
-    let { martId, endDate } = req.body;
-    const selectedOrders = [];
-
-    const orders = await Orders.find({ martId });
-
-    endDate = moment(endDate, 'DD-MM-YYYY');
+    const orders = await Orders.find({ riderId: req.body.riderId });
 
     await Promise.all(
-      orders.map(async order => {
-        const orderDate = moment(order.date, 'DD-MM-YYYY');
-
-        if (orderDate.isSameOrBefore(endDate)) {
-          order.paid = true;
-          selectedOrders.push(order);
-          await order.save();
-        } else {
-          order.paid = false;
-          await order.save();
-        }
-
+      orders.map(order => {
+        order.paidToRider = true;
+        order.save();
         return order;
       })
     );
 
     return res.json({
       status: '200',
-      data: selectedOrders,
+      data: orders,
     });
   } catch (err) {
     return res.json({

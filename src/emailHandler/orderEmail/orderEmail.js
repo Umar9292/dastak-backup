@@ -37,7 +37,7 @@ exports.emailOrderDetails = (
   transporter.use('compile', hbs(handlebarOptions));
 
   const mailOptions = {
-    from: 'no-reply@dastak.store',
+    from: 'DASTAK',
     to: 'support@dastak.store',
     subject: 'Order Details',
     template: 'order',
@@ -47,7 +47,7 @@ exports.emailOrderDetails = (
       customerPhone: user.phone,
       shopName: shop.name,
       shopPhone: shop.phone,
-      shopAddress: shop.address,
+      shopAddress: shop.martAddress,
       orderTime,
       products,
       count,

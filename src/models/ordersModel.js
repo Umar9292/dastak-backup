@@ -22,7 +22,15 @@ const ordersModel = mongoose.Schema(
     orderType: String,
     martPhone: String,
     martAddress: String,
+    customerNotified: {
+      type: Boolean,
+      default: false,
+    },
     status: String,
+    paidToRider: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     versionKey: false,

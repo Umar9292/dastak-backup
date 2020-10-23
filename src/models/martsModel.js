@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const martsModel = mongoose.Schema(
   {
+    useAsCustomer: {
+      type: Boolean,
+      default: false,
+    },
     status: String,
     available: {
       type: Boolean,
@@ -12,7 +16,10 @@ const martsModel = mongoose.Schema(
     name: String,
     phone: String,
     password: String,
-    address: String,
+    address: {
+      type: Object,
+      default: [],
+    },
     shopType: String,
     minimumOrder: Number,
     deliveryRange: String,
@@ -20,6 +27,7 @@ const martsModel = mongoose.Schema(
     closingTime: String,
     playerId: String,
     discount: String,
+    martAddress: String,
     type: {
       type: String,
       default: 'admin',

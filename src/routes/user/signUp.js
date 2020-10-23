@@ -58,6 +58,9 @@ router.post('/signIn', async (req, res) => {
         msg: `Number or password is invalid`,
       });
 
+    user.playerId = '';
+    await user.save();
+
     return res.json({
       status: '200',
       data: user,
