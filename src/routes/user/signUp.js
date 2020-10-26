@@ -58,7 +58,7 @@ router.post('/signIn', async (req, res) => {
         msg: `Number or password is invalid`,
       });
 
-    if (!user.type === 'admin') {
+    if (!(user.type === 'admin')) {
       user.playerId = '';
       await user.save();
     }

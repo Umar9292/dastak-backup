@@ -126,7 +126,10 @@ router.post('/checkTime', async (req, res) => {
     const openingTimeOffSet = moment(openingTime).format('a');
     const closingTimeOffSet = moment(closingTime).format('a');
 
-    if (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') {
+    if (
+      (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+      (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+    ) {
       closingTime = moment(closingTime).add(1, 'days');
     }
 
@@ -260,26 +263,42 @@ router.post('/adminResponse', async (req, res) => {
     if (status === 'Rejected') {
       const msg = `Dear ${user.name} your order# ${orderNum} has been rejected by ${shopType} because ${reason}`;
 
-      await notify.user(msg, user.playerId, { flag: 'orderRejected' });
+      if (user.type === 'admin') {
+        const { playerIds } = user;
+
+        playerIds.forEach(async playerId => {
+          await notify.user(msg, playerId, { flag: 'orderRejected' });
+        });
+      } else {
+        await notify.user(msg, user.playerId, { flag: 'orderRejected' });
+      }
 
       order.reason = reason;
       order.orderNum = orderNum;
       order.save();
 
-      res.json({
+      const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
+      orderStatusEmail(adminMessage);
+
+      return res.json({
         status: '200',
         msg: 'Order successfully rejected',
       });
-
-      const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
-      orderStatusEmail(adminMessage);
     }
 
     if (status === 'Admin Accepted' && !customerNotified) {
       if (orderType === 'PickUp') {
         const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
 
-        await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
+        if (user.type === 'admin') {
+          const { playerIds } = user;
+
+          playerIds.forEach(async playerId => {
+            await notify.user(msg, playerId, { flag: 'orderRejected' });
+          });
+        } else {
+          await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
+        }
 
         const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
         orderStatusEmail(adminMessage);
@@ -476,23 +495,33 @@ router.post('/changeOrderStatus', async (req, res) => {
         await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
       }
 
-      res.json({
+      const message = `Order# ${order.orderNum} has been delivered by ${order.riderName}`;
+      orderStatusEmail(message);
+
+      return res.json({
         status: '202',
         msg: 'Order successfully delivered',
       });
-
-      const message = `Order# ${order.orderNum} has been delivered by ${order.riderName}`;
-      orderStatusEmail(message);
     }
 
     res.json({ status: '200' });
 
-    const { playerId } = await Users.findById(order.userId);
+    const user = await Users.findOne(order.userId);
 
     const pickUpMsg =
       'Your order has been picked up by dastak rider and will be delivered to you shortly';
 
-    await notify.user(pickUpMsg, playerId, { flag: 'orderPickedUp' });
+    if (user.type === 'admin') {
+      const { playerIds } = await Mart.findOne(order.userId);
+
+      playerIds.forEach(async playerId => {
+        await notify.user(pickUpMsg, playerId, { flag: 'orderPickedUp' });
+      });
+    } else {
+      const { playerId } = await Users.findById(order.userId);
+
+      await notify.user(pickUpMsg, playerId, { flag: 'orderPickedUp' });
+    }
 
     const message = `Order# ${order.orderNum} has been picked up by ${order.riderName}`;
     orderStatusEmail(message);
