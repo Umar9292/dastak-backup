@@ -3,15 +3,18 @@ const express = require('express');
 const router = express.Router();
 
 const Marts = require('../../models/martsModel');
+const Users = require('../../models/userModel');
 
 router.post('/allotPlayerId', async (req, res) => {
   try {
     const { userId, playerId } = req.body;
 
-    const user = await Marts.findById(userId);
+    const user = await Users.findById(userId);
 
     if (user.type === 'admin') {
-      const { playerIds } = user;
+      const admin = await Marts.findById(userId);
+
+      const { playerIds } = admin;
 
       const isPlayerIdThere = playerIds.some(id => id === playerId);
 
@@ -19,11 +22,11 @@ router.post('/allotPlayerId', async (req, res) => {
         playerIds.push(playerId);
       }
 
-      await user.save();
+      await admin.save();
 
       return res.json({
         status: '200',
-        data: user,
+        data: admin,
       });
     }
 
