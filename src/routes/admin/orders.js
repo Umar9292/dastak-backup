@@ -54,7 +54,14 @@ router.post('/placeOrder', async (req, res) => {
     const order = await new Orders(params).save();
 
     const adminMessage = 'You have a new order';
-    await notify.admin(adminMessage, mart.playerId, { flag: 'adminReceived' });
+
+    const { playerIds } = mart;
+
+    playerIds.forEach(async playerId => {
+      await notify.admin(adminMessage, playerId, {
+        flag: 'adminReceived',
+      });
+    });
 
     res.json({
       status: '200',
@@ -380,7 +387,7 @@ router.post('/assignRider', async (req, res) => {
     const { orderId, riderName, riderId } = req.body;
 
     const order = await Orders.findById(orderId);
-    const { playerId } = await Users.findById(order.martId);
+    const { playerIds } = await Mart.findById(order.martId);
 
     if (order.riderId)
       return res.json({
@@ -402,8 +409,10 @@ router.post('/assignRider', async (req, res) => {
 
     const message = `Dastak rider ${riderName} is assigned to order# ${order.orderNum}.`;
 
-    await notify.admin(message, playerId, {
-      flag: 'riderAccepted',
+    playerIds.forEach(async playerId => {
+      await notify.admin(message, playerId, {
+        flag: 'adminReceived',
+      });
     });
 
     orderStatusEmail(message);
