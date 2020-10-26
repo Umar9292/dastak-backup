@@ -132,4 +132,29 @@ router.post('/availabilityStatus', async (req, res) => {
   }
 });
 
+router.get('/test', async (req, res) => {
+  try {
+    const marts = await Marts.find({ type: 'admin' });
+
+    marts.forEach(async mart => {
+      // const { playerIds } = mart;
+
+      // if (playerIds[0] === '') {
+      //   mart.playerIds = [];
+      //   await mart.save();
+      // }
+
+      const { playerId, playerIds } = mart;
+
+      playerIds.push(playerId);
+
+      await Marts.updateOne({ _id: mart._id }, { $unset: { playerId: '' } });
+    });
+
+    res.json('done');
+  } catch (error) {
+    return res.json(error.toString());
+  }
+});
+
 module.exports = router;

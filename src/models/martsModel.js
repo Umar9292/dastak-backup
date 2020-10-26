@@ -26,6 +26,7 @@ const martsModel = mongoose.Schema(
     openingTime: String,
     closingTime: String,
     playerId: String,
+    playerIds: Array,
     discount: String,
     martAddress: String,
     type: {
