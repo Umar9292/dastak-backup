@@ -506,13 +506,13 @@ router.post('/changeOrderStatus', async (req, res) => {
 
     res.json({ status: '200' });
 
-    const user = await Users.findOne(order.userId);
+    const user = await Users.findById(order.userId);
 
     const pickUpMsg =
       'Your order has been picked up by dastak rider and will be delivered to you shortly';
 
     if (user.type === 'admin') {
-      const { playerIds } = await Mart.findOne(order.userId);
+      const { playerIds } = await Mart.findById(order.userId);
 
       playerIds.forEach(async playerId => {
         await notify.user(pickUpMsg, playerId, { flag: 'orderPickedUp' });
