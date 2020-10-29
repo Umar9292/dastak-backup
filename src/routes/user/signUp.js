@@ -48,7 +48,7 @@ router.post('/signIn', async (req, res) => {
     if (user.status === 'inactive')
       return res.json({
         status: '404',
-        msg: `You account has been deactivated`,
+        msg: `You account has been temporarily blocked. Kindly contact support@dask.store for more details.`,
       });
 
     const result = await bcrypt.compare(password, user.password);
