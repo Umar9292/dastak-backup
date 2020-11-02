@@ -577,6 +577,49 @@ router.post('/paidToOwner', async (req, res) => {
   }
 });
 
+router.post('/riderWeeklyOrders', async (req, res) => {
+  try {
+    let { riderId, startDate, endDate } = req.body;
+    const thisWeeksOrders = [];
+
+    const orders = await Orders.find({
+      riderId,
+      status: { $in: ['Delivered', 'Rider Picked Up'] },
+    });
+
+    startDate = moment(startDate, 'DD-MM-YYYY');
+
+    endDate = moment(endDate, 'DD-MM-YYYY');
+
+    await Promise.all(
+      orders.map(order => {
+        const orderDate = moment(order.date, 'DD-MM-YYYY');
+
+        if (
+          orderDate.isSameOrAfter(startDate) &&
+          orderDate.isSameOrBefore(endDate)
+        ) {
+          thisWeeksOrders.push(order);
+        }
+      })
+    );
+
+    const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+
+    return res.json({
+      total,
+      status: '200',
+      data: thisWeeksOrders,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 router.post('/paidToRider', async (req, res) => {
   try {
     const orders = await Orders.find({ riderId: req.body.riderId });

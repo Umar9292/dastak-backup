@@ -300,7 +300,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
     // await Products.deleteMany({ martId: '5f841e770a3f9205db17ea38' });
 
     const products = await Products.find({
-      martId: '5f942a3f0eb51603a2105007',
+      martId: '5f4f8f1b9bc2c4209adf025e',
     });
 
     await Promise.all(
@@ -311,8 +311,9 @@ router.post('/updateProductsAvailability', async (req, res) => {
         }
 
         // if (product.discount === '10') {
-        //   const discountedPrice = ((10 / 100) * product.price).toFixed(2);
-        //   product.discountedPrice = +(product.price - discountedPrice);
+        product.discount = '15';
+        const discountedPrice = ((15 / 100) * product.price).toFixed();
+        product.discountedPrice = +(product.price - discountedPrice);
         // }
 
         await product.save();
