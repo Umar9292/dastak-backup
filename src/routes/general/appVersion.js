@@ -25,18 +25,18 @@ router.post('/checkVersion', async (req, res) => {
     if (body.platform === 'android' && body.version === '1.4.4')
       return res.json({ status: '200' });
 
-    if (body.platform === 'android' && body.version !== '1.4.4') {
+    /* if (body.platform === 'android' && body.version !== '1.4.4') {
       return res.json({
         msg: `Our app is being updated to make the experience even better for you. Kindly try again in 24 hours.`,
       });
-    }
-    /* 
+    } */
+
     if (body.platform === 'android' && body.version !== '1.4.4') {
       return res.json({
-        status: '200',
+        status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
       });
-    } */
+    }
   } catch (err) {
     return res.json({
       status: '404',
