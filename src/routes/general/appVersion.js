@@ -6,10 +6,10 @@ router.post('/checkVersion', async (req, res) => {
   try {
     const { body } = req;
 
-    if (body.platform === 'ios' && body.version === '1.4.4')
+    if (body.platform === 'ios' && body.version === '1.4.5')
       return res.json({ status: '200' });
 
-    if (body.platform === 'ios' && body.version !== '1.4.4') {
+    if (body.platform === 'ios' && body.version !== '1.4.5') {
       return res.json({
         msg: `Our app is being updated to make the experience even better for you. Kindly try again in 24 hours.`,
       });
