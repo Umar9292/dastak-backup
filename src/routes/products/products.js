@@ -295,26 +295,26 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 });
 
-/* router.get('/test', async (req, res) => {
+router.get('/test', async (req, res) => {
   try {
     // await Products.deleteMany({ martId: '5f841e770a3f9205db17ea38' });
 
     const products = await Products.find({
-      martId: '5f4f8f1b9bc2c4209adf025e',
+      martId: '5f9fd16710f8440c8b6f6d85',
     });
 
     await Promise.all(
       products.map(async product => {
-        if (product.category !== 'Bar B.Q') {
+        /*   if (product.category !== 'Bar B.Q') {
+          const discountedPrice = ((15 / 100) * product.price).toFixed();
+          product.discountedPrice = +(product.price - discountedPrice);
+        } */
+
+        if (product.discount === '15') {
+          // product.discount = '15';
           const discountedPrice = ((15 / 100) * product.price).toFixed();
           product.discountedPrice = +(product.price - discountedPrice);
         }
-
-        // if (product.discount === '10') {
-        product.discount = '15';
-        const discountedPrice = ((15 / 100) * product.price).toFixed();
-        product.discountedPrice = +(product.price - discountedPrice);
-        // }
 
         await product.save();
         return product;
@@ -330,6 +330,6 @@ router.post('/updateProductsAvailability', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 module.exports = router;
