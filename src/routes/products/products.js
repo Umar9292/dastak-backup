@@ -3,11 +3,13 @@ const _ = require('lodash');
 
 const router = express.Router();
 
+const { orderBy } = require('lodash');
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
 const Flavours = require('../../models/flavoursAndDrinks');
 const Marts = require('../../models/martsModel');
 const Offers = require('../../models/offersModel');
+const Categories = require('../../models/categoriesModel');
 
 const notify = require('../../notificationHandler/handler');
 
@@ -16,56 +18,57 @@ router.post('/allProducts', async (req, res) => {
     const { martId } = req.body;
     let finalData = [];
 
-    const allCategories = await Products.distinct('category', { martId });
+    const { categories } = await Categories.findOne({ martId });
 
     const { shopType } = await Marts.findById(martId);
 
     if (shopType === 'restaurant') {
-      await Promise.all(
-        allCategories.map(async ac => {
+      const allQueries = await Promise.all(
+        categories.map(category => {
           const query = {
-            category: ac,
+            category,
             martId,
             available: 'in stock',
           };
 
-          const products = await Products.find(query).sort({ productName: 1 });
-
-          await Promise.all(
-            products.map(async p => {
-              if (
-                p.type === 'deal' &&
-                (p.regular === undefined ||
-                  p.regular === null ||
-                  p.regular === false)
-              ) {
-                const { flavours } = await Flavours.findOne({ martId });
-                p.flavours = flavours;
-              }
-
-              if (p.type === 'deal' && p.regular === true) {
-                const { regularFlavours } = await Flavours.findOne({ martId });
-                p.flavours = regularFlavours;
-              }
-
-              if (p.drinks === true) {
-                const { drinks } = await Flavours.findOne({ martId });
-                p.allDrinks = drinks;
-              }
-            })
-          );
-
-          const data = {
-            category: ac,
-            data: products,
-          };
-
-          await Promise.resolve(data);
-          finalData.push(data);
+          return query;
         })
       );
 
-      finalData = _.orderBy(finalData, ['category'], ['asc']);
+      for (const query of allQueries) {
+        const products = await Products.find(query).sort({ productName: 1 });
+
+        products.map(async p => {
+          if (
+            p.type === 'deal' &&
+            (p.regular === undefined ||
+              p.regular === null ||
+              p.regular === false)
+          ) {
+            const { flavours } = await Flavours.findOne({ martId });
+            p.flavours = flavours;
+          }
+
+          if (p.type === 'deal' && p.regular === true) {
+            const { regularFlavours } = await Flavours.findOne({ martId });
+            p.flavours = regularFlavours;
+          }
+
+          if (p.drinks === true) {
+            const { drinks } = await Flavours.findOne({ martId });
+            p.allDrinks = drinks;
+          }
+        });
+
+        const data = {
+          category: query.category,
+          data: products,
+        };
+
+        await Promise.resolve(data);
+
+        finalData.push(data);
+      }
 
       return res.json({
         status: '200',
@@ -74,7 +77,7 @@ router.post('/allProducts', async (req, res) => {
     }
 
     await Promise.all(
-      allCategories.map(async ac => {
+      categories.map(async ac => {
         const query = {
           category: ac,
           martId,
@@ -95,7 +98,7 @@ router.post('/allProducts', async (req, res) => {
       })
     );
 
-    finalData = _.orderBy(finalData, ['category'], ['asc']);
+    finalData = orderBy(finalData, ['category'], ['asc']);
 
     return res.json({
       status: '200',
@@ -295,7 +298,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 });
 
-router.get('/test', async (req, res) => {
+/* router.get('/test', async (req, res) => {
   try {
     // await Products.deleteMany({ martId: '5f841e770a3f9205db17ea38' });
 
@@ -305,10 +308,10 @@ router.get('/test', async (req, res) => {
 
     await Promise.all(
       products.map(async product => {
-        /*   if (product.category !== 'Bar B.Q') {
+        if (product.category !== 'Bar B.Q') {
           const discountedPrice = ((15 / 100) * product.price).toFixed();
           product.discountedPrice = +(product.price - discountedPrice);
-        } */
+        }
 
         if (product.discount === '15') {
           // product.discount = '15';
@@ -324,6 +327,28 @@ router.get('/test', async (req, res) => {
     return res.json('done');
   } catch (err) {
     console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+router.get('/test', async (req, res) => {
+  try {
+    const martIds = await Products.distinct('martId');
+
+    await Promise.all(
+      martIds.map(async id => {
+        const categories = await Products.distinct('category', { martId: id });
+
+        await new Categories({ martId: id, categories }).save();
+      })
+    );
+
+    return res.json('done');
+  } catch (err) {
     return res.json({
       status: '404',
       error: err.toString(),
