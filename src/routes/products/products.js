@@ -303,19 +303,19 @@ router.post('/updateProductsAvailability', async (req, res) => {
     // await Products.deleteMany({ martId: '5f841e770a3f9205db17ea38' });
 
     const products = await Products.find({
-      martId: '5f9fd16710f8440c8b6f6d85',
+      martId: '5fa13489677c9f070a9014f0',
     });
 
     await Promise.all(
       products.map(async product => {
-        if (product.category !== 'Bar B.Q') {
-          const discountedPrice = ((15 / 100) * product.price).toFixed();
-          product.discountedPrice = +(product.price - discountedPrice);
-        }
+        // if (product.category !== 'Bar B.Q') {
+        //   const discountedPrice = ((15 / 100) * product.price).toFixed();
+        //   product.discountedPrice = +(product.price - discountedPrice);
+        // }
 
-        if (product.discount === '15') {
+        if (product.discount === '10') {
           // product.discount = '15';
-          const discountedPrice = ((15 / 100) * product.price).toFixed();
+          const discountedPrice = ((10 / 100) * product.price).toFixed();
           product.discountedPrice = +(product.price - discountedPrice);
         }
 
@@ -335,7 +335,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 }); */
 
-router.get('/test', async (req, res) => {
+/* router.get('/test', async (req, res) => {
   try {
     const martIds = await Products.distinct('martId');
 
@@ -355,6 +355,6 @@ router.get('/test', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 module.exports = router;
