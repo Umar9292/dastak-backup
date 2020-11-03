@@ -45,7 +45,7 @@ router.post('/userPlayerId', async (req, res) => {
     const { userId, playerId } = req.body;
 
     const user = await Users.findById(userId);
-    const { status } = user;
+    const { status, type } = user;
 
     if (status === 'inactive')
       return res.json({
@@ -53,6 +53,8 @@ router.post('/userPlayerId', async (req, res) => {
         msg:
           'Your account has temporarily been blocked. Kindly contact support@dastak.store for more details or contact the following number 03124133513.',
       });
+
+    if (type === 'admin') return res.json({ status: '200' });
 
     if (user.playerId !== playerId && user.playerId !== '')
       return res.json({
