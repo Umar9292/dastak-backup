@@ -54,7 +54,7 @@ router.post('/userPlayerId', async (req, res) => {
           'Your account has temporarily been blocked. Kindly contact support@dastak.store for more details or contact the following number 03124133513.',
       });
 
-    if (type === 'admin') return res.json({ status: '200' });
+    if (type === 'admin') return res.json({ status: '200', data: user });
 
     if (user.playerId !== playerId && user.playerId !== '')
       return res.json({
