@@ -250,7 +250,7 @@ router.post('/adminResponse', async (req, res) => {
       shopType,
       customerNotified,
     } = req.body;
-
+    console.log(req.body);
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
@@ -264,7 +264,7 @@ router.post('/adminResponse', async (req, res) => {
       const msg = `Dear ${user.name} your order# ${orderNum} has been rejected by ${shopType} because ${reason}`;
 
       if (user.type === 'admin') {
-        const { playerIds } = user;
+        const { playerIds } = shop;
 
         playerIds.forEach(async playerId => {
           await notify.user(msg, playerId, { flag: 'orderRejected' });
@@ -371,6 +371,7 @@ router.post('/adminResponse', async (req, res) => {
       });
     }
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),

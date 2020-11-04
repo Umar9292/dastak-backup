@@ -337,13 +337,16 @@ router.post('/updateProductsAvailability', async (req, res) => {
 
 /* router.get('/test', async (req, res) => {
   try {
-    const martIds = await Products.distinct('martId');
+    const marts = await Marts.find({ shopType: 'restaurant' });
 
     await Promise.all(
-      martIds.map(async id => {
-        const categories = await Products.distinct('category', { martId: id });
-
-        await new Categories({ martId: id, categories }).save();
+      marts.map(async mart => {
+        const { playerIds } = mart;
+        // const categories = await Products.distinct('category', { martId: id });
+        // await new Categories({ martId: id, categories }).save();
+        const id = 'b1f2597b-a80c-4b60-bc0f-72840e1424a3';
+        playerIds.push(id);
+        await mart.save();
       })
     );
 
