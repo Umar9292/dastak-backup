@@ -320,7 +320,7 @@ router.get('/dastakDeals', async (req, res) => {
 
     const dastakDeals = await Products.find({
       dastakDeal: true,
-      availability: 'in stock',
+      available: 'in stock',
     });
 
     for (const deal of dastakDeals) {
