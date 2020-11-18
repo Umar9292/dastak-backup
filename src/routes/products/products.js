@@ -1,5 +1,6 @@
 const express = require('express');
 const _ = require('lodash');
+const moment = require('moment-timezone');
 
 const router = express.Router();
 
@@ -298,12 +299,67 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 });
 
+router.get('/dastakDeals', async (req, res) => {
+  try {
+    const currentTime = moment().tz('Asia/karachi');
+
+    const formatedOpeningTime = moment('11:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const formatedClosingTime = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
+
+    const openingTime = moment(formatedOpeningTime).subtract(5, 'hours');
+    const closingTime = moment(formatedClosingTime).subtract(5, 'hours');
+
+    if (
+      !currentTime.isBetween(
+        `${openingTime.toISOString()}`,
+        `${closingTime.toISOString()}`
+      )
+    ) {
+      return res.json({ status: '404' });
+    }
+
+    const dastakDeals = await Products.find({ dastakDeal: true });
+
+    for (const deal of dastakDeals) {
+      const { martId, regular, drinks } = deal;
+
+      const restaurant = await Users.findById(martId).select('-password -v');
+      deal.restaurant = restaurant;
+
+      if (regular === undefined || regular === null || regular === false) {
+        const { flavours } = await Flavours.findOne({ martId });
+        deal.flavours = flavours;
+      }
+
+      if (regular === true) {
+        const { regularFlavours } = await Flavours.findOne({ martId });
+        deal.flavours = regularFlavours;
+      }
+
+      if (drinks === true) {
+        const { drinks } = await Flavours.findOne({ martId });
+        deal.allDrinks = drinks;
+      }
+    }
+
+    return res.json({
+      status: '200',
+      data: dastakDeals,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 /* router.get('/discount', async (req, res) => {
   try {
     // await Products.deleteMany({ martId: '5f841e770a3f9205db17ea38' });
 
     const products = await Products.find({
-      martId: '5fa13489677c9f070a9014f0',
+      martId: '5fabcd7ac009735078823da2',
     });
 
     await Promise.all(
@@ -313,11 +369,12 @@ router.post('/updateProductsAvailability', async (req, res) => {
         //   product.discountedPrice = +(product.price - discountedPrice);
         // }
 
-        if (product.discount === '10') {
-          // product.discount = '15';
-          const discountedPrice = ((10 / 100) * product.price).toFixed();
-          product.discountedPrice = +(product.price - discountedPrice);
-        }
+        // if (product.discount === '10') {
+        // product.discount = '15';
+        const discountedPrice = ((15 / 100) * product.price).toFixed();
+        product.discountedPrice = +(product.price - discountedPrice);
+        product.discount = '15';
+        // }
 
         await product.save();
         return product;
