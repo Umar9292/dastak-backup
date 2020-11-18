@@ -318,10 +318,59 @@ router.get('/dastakDeals', async (req, res) => {
       return res.json({ status: '404' });
     }
 
-    const dastakDeals = await Products.find({
+    const restaurants = await Marts.find({
+      shopType: 'restaurant',
+      available: true,
       dastakDeal: true,
-      available: 'in stock',
     });
+
+    const openRestaurants = [];
+
+    await Promise.all(
+      restaurants.map(restaurant => {
+        const formatedOpeningTime = moment(
+          restaurant.openingTime,
+          'HH:mm:ssa'
+        ).tz('Asia/karachi');
+
+        const formatedClosingTime = moment(
+          restaurant.closingTime,
+          'HH:mm:ssa'
+        ).tz('Asia/karachi');
+
+        const openingTime = moment(formatedOpeningTime).subtract(5, 'hours');
+        let closingTime = moment(formatedClosingTime).subtract(5, 'hours');
+
+        const openingTimeOffSet = moment(openingTime).format('a');
+        const closingTimeOffSet = moment(closingTime).format('a');
+
+        if (
+          (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+          (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+        ) {
+          closingTime = moment(closingTime).add(1, 'days');
+        }
+
+        if (
+          currentTime.isBetween(
+            `${openingTime.toISOString()}`,
+            `${closingTime.toISOString()}`
+          )
+        ) {
+          openRestaurants.push(restaurant._id);
+        }
+      })
+    );
+
+    const dastakDeals = [];
+
+    for (const id of openRestaurants) {
+      const products = await Products.find({ martId: id, dastakDeal: true });
+
+      for (const product of products) {
+        dastakDeals.push(product);
+      }
+    }
 
     for (const deal of dastakDeals) {
       const { martId, regular, drinks, type } = deal;

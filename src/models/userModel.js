@@ -4,6 +4,7 @@ const userModel = mongoose.Schema(
   {
     status: String,
     orderFare: Number,
+    dastakDeal: Boolean,
     fareType: String,
     name: String,
     phone: String,
