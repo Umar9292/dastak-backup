@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const userModel = mongoose.Schema(
   {
     status: String,
+    orderFare: Number,
+    fareType: String,
     name: String,
     phone: String,
     password: String,

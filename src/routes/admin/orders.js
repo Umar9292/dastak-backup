@@ -396,7 +396,6 @@ router.post('/adminAcceptedOrders', async (req, res) => {
 
     if (idleRiders.length > 0) {
       if (rider.status === 'idle') {
-        console.log('here');
         acceptedOrders = await Orders.find({
           status: 'Admin Accepted',
           orderType: 'Delivery',
@@ -473,6 +472,8 @@ router.post('/riderOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
+    const { orderFare } = await Users.findById(riderId);
+
     const accepted = await Orders.find({
       riderId,
       status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
@@ -488,10 +489,24 @@ router.post('/riderOrders', async (req, res) => {
       createdAt: -1,
     });
 
+    let totalOrdersAmount = 0;
+
+    for (const order of delivered) {
+      const { reason, orderTotal } = order;
+
+      if (reason === '') {
+        totalOrdersAmount += orderTotal;
+      }
+    }
+
+    const totalRidersFare = delivered.length * orderFare;
+
     return res.json({
       status: '200',
       accepted,
       delivered,
+      totalOrdersAmount,
+      totalRidersFare,
     });
   } catch (err) {
     return res.json({
@@ -605,39 +620,23 @@ router.post('/paidToOwner', async (req, res) => {
   }
 });
 
-router.post('/riderWeeklyOrders', async (req, res) => {
+router.post('/riderUnpaidOrders', async (req, res) => {
   try {
-    let { riderId, startDate, endDate } = req.body;
-    const thisWeeksOrders = [];
+    const { riderId, endDate } = req.body;
 
-    const orders = await Orders.find({
+    const unpaidOrders = await Orders.find({
       riderId,
+      paidToRider: false,
       status: { $in: ['Delivered', 'Rider Picked Up'] },
+      date: { $lte: endDate },
     });
 
-    startDate = moment(startDate, 'DD-MM-YYYY');
-
-    endDate = moment(endDate, 'DD-MM-YYYY');
-
-    await Promise.all(
-      orders.map(order => {
-        const orderDate = moment(order.date, 'DD-MM-YYYY');
-
-        if (
-          orderDate.isSameOrAfter(startDate) &&
-          orderDate.isSameOrBefore(endDate)
-        ) {
-          thisWeeksOrders.push(order);
-        }
-      })
-    );
-
-    const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+    const total = unpaidOrders.reduce((a, b) => a + b.orderTotal, 0);
 
     return res.json({
       total,
       status: '200',
-      data: thisWeeksOrders,
+      data: unpaidOrders,
     });
   } catch (err) {
     return res.json({
