@@ -48,8 +48,8 @@ app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter);
 
 const options = {
-  host: 'dastakbackend.herokuapp.com',
-  // host: 'martbackend.herokuapp.com',
+  // host: 'dastakbackend.herokuapp.com',
+   host: 'martbackend.herokuapp.com',
 };
 const request = () => {
   http
