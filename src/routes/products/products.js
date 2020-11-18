@@ -39,27 +39,27 @@ router.post('/allProducts', async (req, res) => {
       for (const query of allQueries) {
         const products = await Products.find(query).sort({ productName: 1 });
 
-        products.map(async p => {
+        for (const product of products) {
+          const { type, regular, drinks } = product;
+
           if (
-            p.type === 'deal' &&
-            (p.regular === undefined ||
-              p.regular === null ||
-              p.regular === false)
+            type === 'deal' &&
+            (regular === undefined || regular === null || regular === false)
           ) {
             const { flavours } = await Flavours.findOne({ martId });
-            p.flavours = flavours;
+            product.flavours = flavours;
           }
 
-          if (p.type === 'deal' && p.regular === true) {
+          if (type === 'deal' && regular === true) {
             const { regularFlavours } = await Flavours.findOne({ martId });
-            p.flavours = regularFlavours;
+            product.flavours = regularFlavours;
           }
 
-          if (p.drinks === true) {
+          if (drinks === true) {
             const { drinks } = await Flavours.findOne({ martId });
-            p.allDrinks = drinks;
+            product.allDrinks = drinks;
           }
-        });
+        }
 
         const data = {
           category: query.category,
@@ -318,12 +318,15 @@ router.get('/dastakDeals', async (req, res) => {
       return res.json({ status: '404' });
     }
 
-    const dastakDeals = await Products.find({ dastakDeal: true });
+    const dastakDeals = await Products.find({
+      dastakDeal: true,
+      availability: 'in stock',
+    });
 
     for (const deal of dastakDeals) {
       const { martId, regular, drinks } = deal;
 
-      const restaurant = await Users.findById(martId).select('-password -v');
+      const restaurant = await Users.findById(martId).select('-password -__v');
       deal.restaurant = restaurant;
 
       if (regular === undefined || regular === null || regular === false) {
