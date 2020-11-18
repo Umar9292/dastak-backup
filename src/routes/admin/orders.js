@@ -380,14 +380,38 @@ router.post('/adminResponse', async (req, res) => {
   }
 });
 
-router.get('/adminAcceptedOrders', async (req, res) => {
+router.post('/adminAcceptedOrders', async (req, res) => {
   try {
-    const acceptedOrders = await Orders.find({
-      status: 'Admin Accepted',
-      orderType: 'Delivery',
-    }).sort({
-      createdAt: -1,
+    const { riderId } = req.body;
+
+    const idleRiders = await Users.find({
+      type: 'rider',
+      status: 'idle',
+      available: true,
     });
+
+    const rider = await Users.findById(riderId);
+
+    let acceptedOrders = [];
+
+    if (idleRiders.length > 0) {
+      if (rider.status === 'idle') {
+        console.log('here');
+        acceptedOrders = await Orders.find({
+          status: 'Admin Accepted',
+          orderType: 'Delivery',
+        }).sort({
+          createdAt: -1,
+        });
+      }
+    } else {
+      acceptedOrders = await Orders.find({
+        status: 'Admin Accepted',
+        orderType: 'Delivery',
+      }).sort({
+        createdAt: -1,
+      });
+    }
 
     return res.json({
       status: '200',
@@ -542,6 +566,7 @@ router.post('/paidToOwner', async (req, res) => {
 
     const orders = await Orders.find({
       martId,
+      paid: { $in: [false, undefined] },
       status: { $in: ['Delivered', 'Rider Picked Up'] },
     });
 
@@ -550,7 +575,7 @@ router.post('/paidToOwner', async (req, res) => {
     endDate = moment(endDate, 'DD-MM-YYYY');
 
     await Promise.all(
-      orders.map(order => {
+      orders.map(async order => {
         const orderDate = moment(order.date, 'DD-MM-YYYY');
 
         if (
@@ -558,6 +583,8 @@ router.post('/paidToOwner', async (req, res) => {
           orderDate.isSameOrBefore(endDate)
         ) {
           thisWeeksOrders.push(order);
+          // order.paid = true;
+          // await order.save();
         }
       })
     );

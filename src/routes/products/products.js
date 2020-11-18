@@ -298,7 +298,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 });
 
-/* router.get('/test', async (req, res) => {
+/* router.get('/discount', async (req, res) => {
   try {
     // await Products.deleteMany({ martId: '5f841e770a3f9205db17ea38' });
 
@@ -335,23 +335,24 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 }); */
 
-/* router.get('/test', async (req, res) => {
+/* router.get('/notifications', async (req, res) => {
   try {
-    const marts = await Marts.find({ shopType: 'restaurant' });
+    const users = await Users.find({ type: 'user' });
+    let count = 0;
 
     await Promise.all(
-      marts.map(async mart => {
-        const { playerIds } = mart;
-        // const categories = await Products.distinct('category', { martId: id });
-        // await new Categories({ martId: id, categories }).save();
-        const id = 'b1f2597b-a80c-4b60-bc0f-72840e1424a3';
-        playerIds.push(id);
-        await mart.save();
+      users.map(async user => {
+        const text = `Aj Umar Khayam ka Bar B.Q ho jaye ?`;
+        const msg = `${text}\nAbhi order karain Cricket Deal jis ma apko milay ga 1 Leg peice 🍗 2 Rotian 🧇 or 500ml Drink 🥤 in just RS.195`;
+
+        await notify.user(msg, user.playerId, {});
+        count += 1;
       })
     );
 
-    return res.json('done');
+    return res.json('done', count);
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),

@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 
 const ordersModel = mongoose.Schema(
   {
-    paid: Boolean,
+    paid: {
+      type: Boolean,
+      default: false,
+    },
     userId: String,
     martId: String,
     orderNum: String,
