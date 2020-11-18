@@ -330,8 +330,8 @@ router.get('/dastakDeals', async (req, res) => {
       deal.restaurant = restaurant;
 
       if (
-        (type === 'deal',
-        regular === undefined || regular === null || regular === false)
+        type === 'deal' &&
+        (regular === undefined || regular === null || regular === false)
       ) {
         const { flavours } = await Flavours.findOne({ martId });
         deal.flavours = flavours;
