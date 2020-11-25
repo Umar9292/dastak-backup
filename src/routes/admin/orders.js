@@ -497,19 +497,20 @@ router.post('/riderOrders', async (req, res) => {
       createdAt: -1,
     });
 
-    const delivered = await Orders.find({
+    let delivered = await Orders.find({
       riderId,
       paidToRider: false,
       riderFare: { $gt: 0 },
       status: 'Delivered',
-      reason: '',
     }).sort({
       createdAt: -1,
     });
 
-    const totalOrdersAmount = delivered.reduce((a, b) => a + b.orderTotal, 0);
-
     const totalRidersFare = delivered.reduce((a, b) => a + b.riderFare, 0);
+
+    delivered = delivered.filter(order => order.reason === '');
+
+    const totalOrdersAmount = delivered.reduce((a, b) => a + b.orderTotal, 0);
 
     return res.json({
       status: '200',
