@@ -1,10 +1,10 @@
 const express = require('express');
 const _ = require('lodash');
 const moment = require('moment-timezone');
+const { orderBy } = require('lodash');
 
 const router = express.Router();
 
-const { orderBy } = require('lodash');
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
 const Flavours = require('../../models/flavoursAndDrinks');
@@ -465,6 +465,31 @@ router.get('/dastakDeals', async (req, res) => {
     return res.json('done', count);
   } catch (err) {
     console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+/* router.get('/test', async (req, res) => {
+  try {
+    const restaurants = await Marts.find({ shopType: 'restaurant' });
+
+    const restaurantNames = restaurants.map(restaurant => {
+      const data = {
+        name: restaurant.name,
+        restaurantId: restaurant._id,
+      };
+
+      return data;
+    });
+
+    await new Restaurants({ restaurants: restaurantNames }).save();
+
+    return res.json('done');
+  } catch (err) {
     return res.json({
       status: '404',
       error: err.toString(),

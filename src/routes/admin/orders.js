@@ -490,6 +490,10 @@ router.post('/riderOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
+    const { fareType } = await Users.findById(riderId);
+
+    let delivered;
+
     const accepted = await Orders.find({
       riderId,
       status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
@@ -497,14 +501,24 @@ router.post('/riderOrders', async (req, res) => {
       createdAt: -1,
     });
 
-    let delivered = await Orders.find({
-      riderId,
-      paidToRider: false,
-      riderFare: { $gt: 0 },
-      status: 'Delivered',
-    }).sort({
-      createdAt: -1,
-    });
+    if (fareType === 'salary') {
+      delivered = await Orders.find({
+        riderId,
+        paidToRider: false,
+        status: 'Delivered',
+      }).sort({
+        createdAt: -1,
+      });
+    } else {
+      delivered = await Orders.find({
+        riderId,
+        paidToRider: false,
+        riderFare: { $gt: 0 },
+        status: 'Delivered',
+      }).sort({
+        createdAt: -1,
+      });
+    }
 
     const totalRidersFare = delivered.reduce((a, b) => a + b.riderFare, 0);
 
