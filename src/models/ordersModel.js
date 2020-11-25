@@ -30,6 +30,7 @@ const ordersModel = mongoose.Schema(
       default: false,
     },
     status: String,
+    riderFare: Number,
     paidToRider: {
       type: Boolean,
       default: false,

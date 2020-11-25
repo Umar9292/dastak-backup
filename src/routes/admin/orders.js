@@ -42,6 +42,7 @@ router.post('/placeOrder', async (req, res) => {
     }
 
     const orderTime = moment().tz('Asia/karachi');
+
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
     params.products = await JSON.parse(products);
@@ -50,6 +51,23 @@ router.post('/placeOrder', async (req, res) => {
     params.martPhone = mart.phone;
     params.martAddress = mart.martAddress;
     params.time = formatedTime;
+
+    const formatedStartTime = moment('20:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const formatedEndTime = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
+
+    const specialFareStartTime = moment(formatedStartTime).subtract(5, 'hours');
+    const specialFareEndTime = moment(formatedEndTime).subtract(5, 'hours');
+
+    if (
+      orderTime.isBetween(
+        `${specialFareStartTime.toISOString()}`,
+        `${specialFareEndTime.toISOString()}`
+      )
+    ) {
+      params.riderFare = 100;
+    } else {
+      params.riderFare = 50;
+    }
 
     const order = await new Orders(params).save();
 
@@ -396,7 +414,6 @@ router.post('/adminAcceptedOrders', async (req, res) => {
 
     if (idleRiders.length > 0) {
       if (rider.status === 'idle') {
-        console.log('here');
         acceptedOrders = await Orders.find({
           status: 'Admin Accepted',
           orderType: 'Delivery',
@@ -480,18 +497,27 @@ router.post('/riderOrders', async (req, res) => {
       createdAt: -1,
     });
 
-    const delivered = await Orders.find({
+    let delivered = await Orders.find({
       riderId,
       paidToRider: false,
+      riderFare: { $gt: 0 },
       status: 'Delivered',
     }).sort({
       createdAt: -1,
     });
 
+    const totalRidersFare = delivered.reduce((a, b) => a + b.riderFare, 0);
+
+    delivered = delivered.filter(order => order.reason === '');
+
+    const totalOrdersAmount = delivered.reduce((a, b) => a + b.orderTotal, 0);
+
     return res.json({
       status: '200',
       accepted,
       delivered,
+      totalOrdersAmount,
+      totalRidersFare,
     });
   } catch (err) {
     return res.json({
@@ -605,39 +631,23 @@ router.post('/paidToOwner', async (req, res) => {
   }
 });
 
-router.post('/riderWeeklyOrders', async (req, res) => {
+router.post('/riderUnpaidOrders', async (req, res) => {
   try {
-    let { riderId, startDate, endDate } = req.body;
-    const thisWeeksOrders = [];
+    const { riderId, endDate } = req.body;
 
-    const orders = await Orders.find({
+    const unpaidOrders = await Orders.find({
       riderId,
+      paidToRider: false,
       status: { $in: ['Delivered', 'Rider Picked Up'] },
+      date: { $lte: endDate },
     });
 
-    startDate = moment(startDate, 'DD-MM-YYYY');
-
-    endDate = moment(endDate, 'DD-MM-YYYY');
-
-    await Promise.all(
-      orders.map(order => {
-        const orderDate = moment(order.date, 'DD-MM-YYYY');
-
-        if (
-          orderDate.isSameOrAfter(startDate) &&
-          orderDate.isSameOrBefore(endDate)
-        ) {
-          thisWeeksOrders.push(order);
-        }
-      })
-    );
-
-    const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+    const total = unpaidOrders.reduce((a, b) => a + b.orderTotal, 0);
 
     return res.json({
       total,
       status: '200',
-      data: thisWeeksOrders,
+      data: unpaidOrders,
     });
   } catch (err) {
     return res.json({
