@@ -42,6 +42,7 @@ router.post('/placeOrder', async (req, res) => {
     }
 
     const orderTime = moment().tz('Asia/karachi');
+
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
     params.products = await JSON.parse(products);
@@ -50,6 +51,23 @@ router.post('/placeOrder', async (req, res) => {
     params.martPhone = mart.phone;
     params.martAddress = mart.martAddress;
     params.time = formatedTime;
+
+    const formatedStartTime = moment('20:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const formatedEndTime = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
+
+    const specialFareStartTime = moment(formatedStartTime).subtract(5, 'hours');
+    const specialFareEndTime = moment(formatedEndTime).subtract(5, 'hours');
+
+    if (
+      orderTime.isBetween(
+        `${specialFareStartTime.toISOString()}`,
+        `${specialFareEndTime.toISOString()}`
+      )
+    ) {
+      params.riderFare = 100;
+    } else {
+      params.riderFare = 50;
+    }
 
     const order = await new Orders(params).save();
 
@@ -472,8 +490,6 @@ router.post('/riderOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
-    const { orderFare } = await Users.findById(riderId);
-
     const accepted = await Orders.find({
       riderId,
       status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
@@ -484,6 +500,7 @@ router.post('/riderOrders', async (req, res) => {
     const delivered = await Orders.find({
       riderId,
       paidToRider: false,
+      riderFare: { $gt: 0 },
       status: 'Delivered',
     }).sort({
       createdAt: -1,
@@ -499,7 +516,7 @@ router.post('/riderOrders', async (req, res) => {
       }
     }
 
-    const totalRidersFare = delivered.length * orderFare;
+    const totalRidersFare = delivered.reduce((a, b) => a + b.riderFare, 0);
 
     return res.json({
       status: '200',
