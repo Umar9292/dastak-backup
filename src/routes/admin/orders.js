@@ -502,19 +502,12 @@ router.post('/riderOrders', async (req, res) => {
       paidToRider: false,
       riderFare: { $gt: 0 },
       status: 'Delivered',
+      reason: '',
     }).sort({
       createdAt: -1,
     });
 
-    let totalOrdersAmount = 0;
-
-    for (const order of delivered) {
-      const { reason, orderTotal } = order;
-
-      if (reason === '') {
-        totalOrdersAmount += orderTotal;
-      }
-    }
+    const totalOrdersAmount = delivered.reduce((a, b) => a + b.orderTotal, 0);
 
     const totalRidersFare = delivered.reduce((a, b) => a + b.riderFare, 0);
 
