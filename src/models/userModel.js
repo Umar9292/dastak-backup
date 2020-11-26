@@ -22,6 +22,7 @@ const userModel = mongoose.Schema(
       type: String,
       default: 'user',
     },
+    position: Number,
   },
   {
     versionKey: false,

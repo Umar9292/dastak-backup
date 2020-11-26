@@ -90,7 +90,7 @@ router.get('/allRestaurants', async (req, res) => {
     };
 
     const allRestaurants = await Marts.find(query)
-      .sort({ name: 1 })
+      .sort({ position: -1 })
       .select('-password -__v');
 
     return res.json({
