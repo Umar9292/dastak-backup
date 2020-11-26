@@ -47,7 +47,11 @@ router.post('/userPlayerId', async (req, res) => {
     const user = await Users.findById(userId);
     const { status, type } = user;
 
-    if (status === 'inactive')
+    if (
+      status === 'inactive' ||
+      user.playerId === 'c57690cb-3581-4a66-bc67-3a7069976311' ||
+      user.playerId === '21d178dc-3a1e-44fc-9f01-42dfc38ac064'
+    )
       return res.json({
         status: '404',
         msg:
