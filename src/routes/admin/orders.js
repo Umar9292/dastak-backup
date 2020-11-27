@@ -607,6 +607,7 @@ router.post('/paidToOwner', async (req, res) => {
     const orders = await Orders.find({
       martId,
       paid: { $in: [false, undefined] },
+      orderType: 'Delivery',
       status: { $in: ['Delivered', 'Rider Picked Up'] },
     });
 
@@ -645,7 +646,7 @@ router.post('/paidToOwner', async (req, res) => {
   }
 });
 
-router.post('/riderUnpaidOrders', async (req, res) => {
+router.post('/paidToRider', async (req, res) => {
   try {
     const { riderId, endDate } = req.body;
 
@@ -656,37 +657,20 @@ router.post('/riderUnpaidOrders', async (req, res) => {
       date: { $lte: endDate },
     });
 
-    const total = unpaidOrders.reduce((a, b) => a + b.orderTotal, 0);
-
-    return res.json({
-      total,
-      status: '200',
-      data: unpaidOrders,
-    });
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
-router.post('/paidToRider', async (req, res) => {
-  try {
-    const orders = await Orders.find({ riderId: req.body.riderId });
-
     await Promise.all(
-      orders.map(order => {
+      unpaidOrders.map(order => {
         order.paidToRider = true;
         order.save();
         return order;
       })
     );
 
+    const total = unpaidOrders.reduce((a, b) => a + b.orderTotal, 0);
+
     return res.json({
+      total,
       status: '200',
-      data: orders,
+      data: unpaidOrders,
     });
   } catch (err) {
     return res.json({
