@@ -52,7 +52,7 @@ router.post('/placeOrder', async (req, res) => {
     params.martAddress = mart.martAddress;
     params.time = formatedTime;
 
-    const formatedStartTime = moment('20:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const formatedStartTime = moment('21:00', 'HH:mm:ssa').tz('Asia/karachi');
     const formatedEndTime = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
 
     const specialFareStartTime = moment(formatedStartTime).subtract(5, 'hours');
@@ -64,7 +64,7 @@ router.post('/placeOrder', async (req, res) => {
         `${specialFareEndTime.toISOString()}`
       )
     ) {
-      params.riderFare = 100;
+      params.riderFare = 80;
     } else {
       params.riderFare = 50;
     }
