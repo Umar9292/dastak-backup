@@ -315,7 +315,10 @@ router.get('/dastakDeals', async (req, res) => {
         `${closingTime.toISOString()}`
       )
     ) {
-      return res.json({ status: '404' });
+      return res.json({
+        status: '404',
+        msg: 'Dastak deals are available from 11am to 12pm',
+      });
     }
 
     const restaurants = await Marts.find({
