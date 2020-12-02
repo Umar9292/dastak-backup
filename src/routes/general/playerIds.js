@@ -49,8 +49,8 @@ router.post('/userPlayerId', async (req, res) => {
 
     if (
       status === 'inactive' ||
-      user.playerId === 'c57690cb-3581-4a66-bc67-3a7069976311' ||
-      user.playerId === '21d178dc-3a1e-44fc-9f01-42dfc38ac064'
+      playerId === 'c57690cb-3581-4a66-bc67-3a7069976311' ||
+      playerId === '21d178dc-3a1e-44fc-9f01-42dfc38ac064'
     )
       return res.json({
         status: '404',
