@@ -19,24 +19,23 @@ router.post('/allProducts', async (req, res) => {
     const { martId } = req.body;
     let finalData = [];
 
-    const { categories } = await Categories.findOne({ martId });
+    const result = await Promise.all([
+      Categories.findOne({ martId }),
+      Marts.findById(martId),
+    ]);
 
-    const { shopType } = await Marts.findById(martId);
+    const [{ categories }, { shopType }] = result;
+
+    let allProducts = [];
 
     if (shopType === 'restaurant') {
-      const allQueries = await Promise.all(
-        categories.map(category => {
-          const query = {
-            category,
-            martId,
-            available: 'in stock',
-          };
+      for (const category of categories) {
+        const query = {
+          category,
+          martId,
+          available: 'in stock',
+        };
 
-          return query;
-        })
-      );
-
-      for (const query of allQueries) {
         const products = await Products.find(query).sort({ productName: 1 });
 
         for (const product of products) {
@@ -59,16 +58,18 @@ router.post('/allProducts', async (req, res) => {
             const { drinks } = await Flavours.findOne({ martId });
             product.allDrinks = drinks;
           }
+
+          allProducts = [...allProducts, product];
         }
 
         const data = {
           category: query.category,
-          data: products,
+          data: allProducts,
         };
 
         await Promise.resolve(data);
 
-        finalData.push(data);
+        finalData = [...finalData, data];
       }
 
       return res.json({
@@ -368,7 +369,11 @@ router.get('/dastakDeals', async (req, res) => {
     const dastakDeals = [];
 
     for (const id of openRestaurants) {
-      const products = await Products.find({ martId: id, dastakDeal: true });
+      const products = await Products.find({
+        martId: id,
+        dastakDeal: true,
+        available: 'in stock',
+      });
 
       for (const product of products) {
         dastakDeals.push(product);
@@ -452,22 +457,77 @@ router.get('/dastakDeals', async (req, res) => {
 
 /* router.get('/notifications', async (req, res) => {
   try {
-    const users = await Users.find({ type: 'user' });
+    const users = await Marts.find({ type: 'admin' });
     let count = 0;
 
-    await Promise.all(
-      users.map(async user => {
-        const text = `Aj Umar Khayam ka Bar B.Q ho jaye ?`;
-        const msg = `${text}\nAbhi order karain Cricket Deal jis ma apko milay ga 1 Leg peice 🍗 2 Rotian 🧇 or 500ml Drink 🥤 in just RS.195`;
+    for (const user of users) {
+      const { playerIds } = user;
 
-        await notify.user(msg, user.playerId, {});
-        count += 1;
+      for (const playerId of playerIds) {
+        const msg = `Dear owner of ${user.name}, we really appreciate you working with us. This is to notify you that starting from today we will be charging 15% per order as we discussed. We wish you a very best of luck`;
+
+        await notify.user(msg, playerId, {});
+      }
+
+      count += 1;
+    }
+
+    return res.status(200).json(count);
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+/* router.get('/removeDiscount', async (req, res) => {
+  try {
+    const { martId } = req.body;
+
+    const products = await Products.find({ martId });
+
+    await Promise.all(
+      products.map(async product => {
+        product.discount = '0';
+        await product.save();
+        return product;
       })
     );
 
-    return res.json('done', count);
+    return res.json('done');
   } catch (err) {
     console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+/* router.get('/test', async (req, res) => {
+  try {
+    const { martId } = req.body;
+
+    const marts = await Marts.find({
+      type: 'admin',
+      shopType: 'restaurant',
+    });
+
+    await Promise.all(
+      marts.map(async product => {
+        product.latitude = '';
+        product.longitude = '';
+        await product.save();
+        return product;
+      })
+    );
+
+    return res.json('done');
+  } catch (err) {
     return res.json({
       status: '404',
       error: err.toString(),

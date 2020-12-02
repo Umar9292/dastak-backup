@@ -526,6 +526,17 @@ router.post('/riderOrders', async (req, res) => {
 
     const totalOrdersAmount = delivered.reduce((a, b) => a + b.orderTotal, 0);
 
+    await Promise.all(
+      accepted.map(async order => {
+        const { martId } = order;
+
+        const { latitude, longitude } = await Mart.findById(martId);
+
+        order.martLatitude = latitude;
+        order.martLongitude = longitude;
+      })
+    );
+
     return res.json({
       status: '200',
       accepted,

@@ -35,6 +35,10 @@ const ordersModel = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    latitude: String,
+    longitude: String,
+    martLatitude: String,
+    martLongitude: String,
   },
   {
     versionKey: false,

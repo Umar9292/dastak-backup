@@ -32,6 +32,8 @@ const martsModel = mongoose.Schema(
       type: String,
       default: 'admin',
     },
+    latitude: String,
+    longitude: String,
   },
   {
     versionKey: false,
