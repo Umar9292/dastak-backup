@@ -45,7 +45,7 @@ app.use('/orders', ordersRouter);
 app.use('/admin', playerIdRouter);
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
-app.use('/general', playerIdRouter);
+// app.use('/general', playerIdRouter);
 
 const options = {
   // host: 'dastakbackend.herokuapp.com',
