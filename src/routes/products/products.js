@@ -11,6 +11,7 @@ const Flavours = require('../../models/flavoursAndDrinks');
 const Marts = require('../../models/martsModel');
 const Offers = require('../../models/offersModel');
 const Categories = require('../../models/categoriesModel');
+// const Orders = require('../../models/ordersModel');
 
 const notify = require('../../notificationHandler/handler');
 
@@ -19,23 +20,24 @@ router.post('/allProducts', async (req, res) => {
     const { martId } = req.body;
     let finalData = [];
 
-    const result = await Promise.all([
-      Categories.findOne({ martId }),
-      Marts.findById(martId),
-    ]);
+    const { categories } = await Categories.findOne({ martId });
 
-    const [{ categories }, { shopType }] = result;
-
-    let allProducts = [];
+    const { shopType } = await Marts.findById(martId);
 
     if (shopType === 'restaurant') {
-      for (const category of categories) {
-        const query = {
-          category,
-          martId,
-          available: 'in stock',
-        };
+      const allQueries = await Promise.all(
+        categories.map(category => {
+          const query = {
+            category,
+            martId,
+            available: 'in stock',
+          };
 
+          return query;
+        })
+      );
+
+      for (const query of allQueries) {
         const products = await Products.find(query).sort({ productName: 1 });
 
         for (const product of products) {
@@ -58,18 +60,16 @@ router.post('/allProducts', async (req, res) => {
             const { drinks } = await Flavours.findOne({ martId });
             product.allDrinks = drinks;
           }
-
-          allProducts = [...allProducts, product];
         }
 
         const data = {
           category: query.category,
-          data: allProducts,
+          data: products,
         };
 
         await Promise.resolve(data);
 
-        finalData = [...finalData, data];
+        finalData.push(data);
       }
 
       return res.json({
@@ -510,23 +510,39 @@ router.get('/dastakDeals', async (req, res) => {
 
 /* router.get('/test', async (req, res) => {
   try {
-    const { martId } = req.body;
+    let { startDate, endDate } = req.body;
+    const thisWeeksOrders = [];
 
-    const marts = await Marts.find({
-      type: 'admin',
-      shopType: 'restaurant',
+    const orders = await Orders.find({
+      status: { $in: ['Delivered', 'Rider Picked Up'] },
     });
 
+    startDate = moment(startDate, 'DD-MM-YYYY');
+
+    endDate = moment(endDate, 'DD-MM-YYYY');
+
     await Promise.all(
-      marts.map(async product => {
-        product.latitude = '';
-        product.longitude = '';
-        await product.save();
-        return product;
+      orders.map(async order => {
+        const orderDate = moment(order.date, 'DD-MM-YYYY');
+
+        if (
+          orderDate.isSameOrAfter(startDate) &&
+          orderDate.isSameOrBefore(endDate)
+        ) {
+          thisWeeksOrders.push(order);
+        }
       })
     );
 
-    return res.json('done');
+    const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+
+    const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
+
+    return res.json({
+      total,
+      riderFare,
+      status: '200',
+    });
   } catch (err) {
     return res.json({
       status: '404',
