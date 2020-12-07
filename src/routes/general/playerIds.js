@@ -51,16 +51,17 @@ router.post('/userPlayerId', async (req, res) => {
       status === 'inactive' ||
       playerId === 'c57690cb-3581-4a66-bc67-3a7069976311' ||
       playerId === '21d178dc-3a1e-44fc-9f01-42dfc38ac064'
-    )
+    ) {
       return res.json({
         status: '404',
         msg:
           'Your account has temporarily been blocked. Kindly contact support@dastak.store for more details or contact the following number 03124133513.',
       });
+    }
 
     if (type === 'admin') return res.json({ status: '200', data: user });
 
-    if (user.playerId !== playerId && user.playerId !== '')
+    if (user.playerId !== playerId && user.playerId)
       return res.json({
         status: '404',
         msg:
