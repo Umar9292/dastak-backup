@@ -659,29 +659,44 @@ router.post('/paidToOwner', async (req, res) => {
 
 router.post('/paidToRider', async (req, res) => {
   try {
-    const { riderId, endDate } = req.body;
+    let { riderId, startDate, endDate } = req.body;
+    const thisWeeksOrders = [];
 
-    const unpaidOrders = await Orders.find({
+    const orders = await Orders.find({
       riderId,
       paidToRider: false,
+      orderType: 'Delivery',
       status: { $in: ['Delivered', 'Rider Picked Up'] },
-      date: { $lte: endDate },
     });
 
+    startDate = moment(startDate, 'DD-MM-YYYY');
+
+    endDate = moment(endDate, 'DD-MM-YYYY');
+
     await Promise.all(
-      unpaidOrders.map(order => {
-        order.paidToRider = true;
-        order.save();
-        return order;
+      orders.map(async order => {
+        const orderDate = moment(order.date, 'DD-MM-YYYY');
+
+        if (
+          orderDate.isSameOrAfter(startDate) &&
+          orderDate.isSameOrBefore(endDate)
+        ) {
+          thisWeeksOrders.push(order);
+          // order.paidToRider = true;
+          // await order.save();
+        }
       })
     );
 
-    const total = unpaidOrders.reduce((a, b) => a + b.orderTotal, 0);
+    const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+
+    const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
 
     return res.json({
       total,
       status: '200',
-      data: unpaidOrders,
+      data: thisWeeksOrders,
+      riderFare,
     });
   } catch (err) {
     return res.json({
