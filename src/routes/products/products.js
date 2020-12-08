@@ -457,24 +457,21 @@ router.get('/dastakDeals', async (req, res) => {
 
 /* router.get('/notifications', async (req, res) => {
   try {
-    const users = await Marts.find({ type: 'admin' });
+    const users = await Users.find({ type: 'user' });
     let count = 0;
 
     for (const user of users) {
-      const { playerIds } = user;
+      const { playerId } = user;
 
-      for (const playerId of playerIds) {
-        const msg = `Dear owner of ${user.name}, we really appreciate you working with us. This is to notify you that starting from today we will be charging 15% per order as we discussed. We wish you a very best of luck`;
+      const msg = `Great News! 😀\nThis week there will be no delivery charges on any Dastak order what so ever. Toh ab sirf khanay ka pay karain.\nAbhi Mangwao Abhi Khao Dastak Now. 🏍`;
 
-        await notify.user(msg, playerId, {});
-      }
+      await notify.user(msg, playerId, {});
 
       count += 1;
     }
 
     return res.status(200).json(count);
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -485,21 +482,21 @@ router.get('/dastakDeals', async (req, res) => {
 
 /* router.get('/removeDiscount', async (req, res) => {
   try {
-    const { martId } = req.body;
-
-    const products = await Products.find({ martId });
+    const allUsers = await Users.find();
 
     await Promise.all(
-      products.map(async product => {
-        product.discount = '0';
-        await product.save();
-        return product;
+      allUsers.map(async user => {
+        const { address } = user;
+
+        if (typeof address === 'object' || address instanceof Array) {
+          user.address = [];
+          await user.save();
+        }
       })
     );
 
     return res.json('done');
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),

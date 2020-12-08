@@ -22,6 +22,7 @@ const martsModel = mongoose.Schema(
     },
     shopType: String,
     minimumOrder: Number,
+    deliveryCharges: String,
     deliveryRange: String,
     openingTime: String,
     closingTime: String,
