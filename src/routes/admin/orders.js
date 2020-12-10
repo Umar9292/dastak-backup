@@ -448,7 +448,6 @@ router.post('/assignRider', async (req, res) => {
     const { orderId, riderName, riderId } = req.body;
 
     const order = await Orders.findById(orderId);
-    const { playerIds } = await Mart.findById(order.martId);
 
     if (order.riderId)
       return res.json({
@@ -467,6 +466,8 @@ router.post('/assignRider', async (req, res) => {
       status: '200',
       msg: 'This order is now assigned to you.',
     });
+
+    const { playerIds } = await Mart.findById(order.martId);
 
     const message = `Dastak rider ${riderName} is assigned to order# ${order.orderNum}.`;
 
