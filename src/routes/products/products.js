@@ -453,15 +453,15 @@ router.get('/dastakDeals', async (req, res) => {
   }
 }); */
 
-/* router.get('/notifications', async (req, res) => {
+router.get('/notifications', async (req, res) => {
   try {
-    const users = await Users.find({ type: 'user' });
+    const users = await Users.find();
     let count = 0;
 
     for (const user of users) {
       const { playerId } = user;
 
-      const msg = `Great News! 😀\nThis week there will be no delivery charges on any Dastak order what so ever. Toh ab sirf khanay ka pay karain.\nAbhi Mangwao Abhi Khao Dastak Now. 🏍`;
+      const msg = `Dear Dastak users we have added maps funtionality to get your accurate location and hence providing you with better service. So kindly update your addresses through maps. Thankyou for being patient.`;
 
       await notify.user(msg, playerId, {});
 
@@ -476,7 +476,7 @@ router.get('/dastakDeals', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 /* router.get('/removeDiscount', async (req, res) => {
   try {
@@ -486,7 +486,11 @@ router.get('/dastakDeals', async (req, res) => {
       allUsers.map(async user => {
         const { address } = user;
 
-        if (typeof address === 'object' || address instanceof Array) {
+        if (
+          typeof address === 'object' ||
+          address instanceof Array ||
+          typeof address === 'string'
+        ) {
           user.address = [];
           await user.save();
         }

@@ -33,7 +33,7 @@ router.post('/checkVersion', async (req, res) => {
 
     if (platform === 'android' && version !== '1.4.9') {
       return res.json({
-        status: '404',
+        status: '200',
         msg: `A new update is now available. kindly update your App to get the best experience`,
       });
     }
