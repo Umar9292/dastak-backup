@@ -419,10 +419,8 @@ router.get('/dastakDeals', async (req, res) => {
 
 /* router.get('/discount', async (req, res) => {
   try {
-    // await Products.deleteMany({ martId: '5f841e770a3f9205db17ea38' });
-
     const products = await Products.find({
-      martId: '5fabcd7ac009735078823da2',
+      martId: '5fb39837fabe7d09bfa361c5',
     });
 
     await Promise.all(
@@ -434,9 +432,9 @@ router.get('/dastakDeals', async (req, res) => {
 
         // if (product.discount === '10') {
         // product.discount = '15';
-        const discountedPrice = ((15 / 100) * product.price).toFixed();
+        const discountedPrice = ((20 / 100) * product.price).toFixed();
         product.discountedPrice = +(product.price - discountedPrice);
-        product.discount = '15';
+        product.discount = '20';
         // }
 
         await product.save();
@@ -505,7 +503,7 @@ router.get('/dastakDeals', async (req, res) => {
   }
 }); */
 
-/* router.get('/test', async (req, res) => {
+/* router.post('/test', async (req, res) => {
   try {
     let { startDate, endDate } = req.body;
     const thisWeeksOrders = [];
