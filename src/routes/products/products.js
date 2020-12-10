@@ -453,7 +453,7 @@ router.get('/dastakDeals', async (req, res) => {
   }
 }); */
 
-router.get('/notifications', async (req, res) => {
+/* router.get('/notifications', async (req, res) => {
   try {
     const users = await Users.find();
     let count = 0;
@@ -476,7 +476,7 @@ router.get('/notifications', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 /* router.get('/removeDiscount', async (req, res) => {
   try {
