@@ -19,44 +19,38 @@ router.post('/allProducts', async (req, res) => {
     const { martId } = req.body;
     let finalData = [];
 
-    const { categories } = await Categories.findOne({ martId });
-
-    const { shopType } = await Marts.findById(martId);
+    const [
+      { categories },
+      { shopType },
+      { flavours, regularFlavours, drinks },
+    ] = await Promise.all([
+      Categories.findOne({ martId }),
+      Marts.findById(martId),
+      Flavours.findOne({ martId }),
+    ]);
 
     if (shopType === 'restaurant') {
-      const allQueries = await Promise.all(
-        categories.map(category => {
-          const query = {
-            category,
-            martId,
-            available: 'in stock',
-          };
+      for (const category of categories) {
+        const query = {
+          category,
+          martId,
+          available: 'in stock',
+        };
 
-          return query;
-        })
-      );
-
-      for (const query of allQueries) {
         const products = await Products.find(query).sort({ productName: 1 });
 
         for (const product of products) {
-          const { type, regular, drinks } = product;
+          const { type, regular } = product;
 
-          if (
-            type === 'deal' &&
-            (regular === undefined || regular === null || regular === false)
-          ) {
-            const { flavours } = await Flavours.findOne({ martId });
+          if (type === 'deal' && regular === false) {
             product.flavours = flavours;
           }
 
           if (type === 'deal' && regular === true) {
-            const { regularFlavours } = await Flavours.findOne({ martId });
             product.flavours = regularFlavours;
           }
 
-          if (drinks === true) {
-            const { drinks } = await Flavours.findOne({ martId });
+          if (product.drinks === true) {
             product.allDrinks = drinks;
           }
         }
@@ -68,7 +62,7 @@ router.post('/allProducts', async (req, res) => {
 
         await Promise.resolve(data);
 
-        finalData.push(data);
+        finalData = [...finalData, data];
       }
 
       return res.json({
@@ -299,7 +293,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 });
 
-router.get('/dastakDeals', async (req, res) => {
+router.get('/dastakDeals', async (_req, res) => {
   try {
     const currentTime = moment().tz('Asia/karachi');
 
