@@ -181,8 +181,8 @@ router.post('/riderCollections', async (req, res) => {
 });
 
 /* router.get('/test', async (_req, res) => {
-    try {
-        const userIds = await Orders.distinct('userId');
+  try {
+     const userIds = await Orders.distinct('userId');
   
       await Promise.all(
         userIds.map(async userId => {
@@ -237,16 +237,37 @@ router.post('/riderCollections', async (req, res) => {
           await user.save();
         })
       );
-  
-      return res.json('done');
-    } catch (err) {
-      console.log(err);
-      return res.json({
-        status: '404',
-        error: err.toString(),
-        msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-      });
+
+    const products = await Products.find({
+      martId: '5fcf7e31728d19030781f2cf',
+      category: 'IceCream',
+    });
+
+    for (const product of products) {
+      if (product.quantity === 'Small') {
+        product.price = 100;
+      }
+
+      if (product.quantity === 'Medium') {
+        product.price = 150;
+      }
+
+      if (product.quantity === 'Large') {
+        product.price = 190;
+      }
+
+      await product.save();
     }
+
+    return res.json('done');
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
 }); */
 
 module.exports = router;
