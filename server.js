@@ -20,6 +20,7 @@ const logoutRouter = require('./src/routes/user/logout');
 const martsRouter = require('./src/routes/marts/marts');
 const appVersionRouter = require('./src/routes/general/appVersion');
 const playerIdRouter = require('./src/routes/general/playerIds');
+const generalApisRouter = require('./src/routes/general/generalApis');
 
 const port = process.env.PORT || 8080;
 
@@ -45,7 +46,7 @@ app.use('/orders', ordersRouter);
 app.use('/admin', playerIdRouter);
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
-app.use('/general', playerIdRouter);
+app.use('/general', playerIdRouter, generalApisRouter);
 
 const options = {
   host: 'dastakbackend.herokuapp.com',
