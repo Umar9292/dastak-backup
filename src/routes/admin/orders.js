@@ -628,11 +628,11 @@ router.post('/changeOrderStatus', async (req, res) => {
 
 router.post('/paidToOwner', async (req, res) => {
   try {
-    let { martId, startDate, endDate, percentage } = req.body;
+    let { martName, startDate, endDate, percentage } = req.body;
     const thisWeeksOrders = [];
 
     const orders = await Orders.find({
-      martId,
+      martName,
       paid: { $in: [false, undefined] },
       orderType: 'Delivery',
       status: { $in: ['Delivered', 'Rider Picked Up'] },
