@@ -117,15 +117,17 @@ router.post('/placeOrder', async (req, res) => {
       params.orderTotal
     );
 
-    emailOrderDetailsToCustomer(
-      user,
-      mart,
-      params.date,
-      params.orderTotal,
-      params.address,
-      params.products,
-      count
-    );
+    if (user.email) {
+      emailOrderDetailsToCustomer(
+        user,
+        mart,
+        params.date,
+        params.orderTotal,
+        params.address,
+        params.products,
+        count
+      );
+    }
   } catch (err) {
     return res.json({
       status: '404',
@@ -484,7 +486,7 @@ router.post('/assignRider', async (req, res) => {
     const { playerIds } = await Mart.findById(order.martId);
 
     const message = `Dastak rider ${riderName} is assigned to order# ${order.orderNum}.`;
-    const info = `${riderName} is assigned to an order for ${order.name}`;
+    const info = `${riderName} is assigned to an order for ${order.martName}`;
 
     playerIds.forEach(async playerId => {
       await notify.admin(info, message, playerId, {
