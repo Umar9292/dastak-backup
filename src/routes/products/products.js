@@ -19,11 +19,7 @@ router.post('/allProducts', async (req, res) => {
     const { martId } = req.body;
     let finalData = [];
 
-    const [
-      { categories },
-      { shopType },
-      { flavours, regularFlavours, drinks },
-    ] = await Promise.all([
+    const [{ categories }, { shopType }, options] = await Promise.all([
       Categories.findOne({ martId }),
       Marts.findById(martId),
       Flavours.findOne({ martId }),
@@ -43,15 +39,15 @@ router.post('/allProducts', async (req, res) => {
           const { type, regular } = product;
 
           if (type === 'deal' && regular === false) {
-            product.flavours = flavours;
+            product.flavours = options.flavours;
           }
 
           if (type === 'deal' && regular === true) {
-            product.flavours = regularFlavours;
+            product.flavours = options.regularFlavours;
           }
 
           if (product.drinks === true) {
-            product.allDrinks = drinks;
+            product.allDrinks = options.drinks;
           }
         }
 
@@ -100,6 +96,7 @@ router.post('/allProducts', async (req, res) => {
       data: finalData,
     });
   } catch (err) {
+    console.error(err);
     return res.json({
       status: '404',
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
