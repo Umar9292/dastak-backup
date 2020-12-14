@@ -14,7 +14,7 @@ const userModel = mongoose.Schema(
       default: '',
     },
     address: {
-      type: Object,
+      type: Array,
       default: [],
     },
     playerId: String,

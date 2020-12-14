@@ -52,31 +52,45 @@ router.post('/placeOrder', async (req, res) => {
     params.martAddress = mart.martAddress;
     params.time = formatedTime;
 
-    const formatedStartTime = moment('21:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const formatedEndTime = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
+    const morningFareStart = moment('09:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const morningFareEnd = moment('14:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const nightFareStart = moment('21:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const nightFareSEnd = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
 
-    const specialFareStartTime = moment(formatedStartTime).subtract(5, 'hours');
-    const specialFareEndTime = moment(formatedEndTime).subtract(5, 'hours');
+    const morningFareStartTime = moment(morningFareStart).subtract(5, 'hours');
+    const morningFareEndTime = moment(morningFareEnd).subtract(5, 'hours');
+    const nightFareStartTime = moment(nightFareStart).subtract(5, 'hours');
+    const nightFareEndTime = moment(nightFareSEnd).subtract(5, 'hours');
 
     if (
       orderTime.isBetween(
-        `${specialFareStartTime.toISOString()}`,
-        `${specialFareEndTime.toISOString()}`
+        `${morningFareStartTime.toISOString()}`,
+        `${morningFareEndTime.toISOString()}`
       )
     ) {
-      params.riderFare = 80;
-    } else {
-      params.riderFare = 50;
+      params.riderFare = 100;
     }
+
+    if (
+      orderTime.isBetween(
+        `${nightFareStartTime.toISOString()}`,
+        `${nightFareEndTime.toISOString()}`
+      )
+    ) {
+      params.riderFare = 100;
+    }
+
+    params.riderFare = 70;
 
     const order = await new Orders(params).save();
 
     const adminMessage = 'You have a new order';
+    const info = `An order is placed to ${params.martName}`;
 
     const { playerIds } = mart;
 
     playerIds.forEach(async playerId => {
-      await notify.admin(adminMessage, playerId, {
+      await notify.admin(info, adminMessage, playerId, {
         flag: 'adminReceived',
       });
     });
@@ -268,7 +282,7 @@ router.post('/adminResponse', async (req, res) => {
       shopType,
       customerNotified,
     } = req.body;
-    console.log(req.body);
+
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
@@ -470,9 +484,10 @@ router.post('/assignRider', async (req, res) => {
     const { playerIds } = await Mart.findById(order.martId);
 
     const message = `Dastak rider ${riderName} is assigned to order# ${order.orderNum}.`;
+    const info = `${riderName} is assigned to an order for ${order.name}`;
 
     playerIds.forEach(async playerId => {
-      await notify.admin(message, playerId, {
+      await notify.admin(info, message, playerId, {
         flag: 'adminReceived',
       });
     });
@@ -613,7 +628,7 @@ router.post('/changeOrderStatus', async (req, res) => {
 
 router.post('/paidToOwner', async (req, res) => {
   try {
-    let { martId, startDate, endDate } = req.body;
+    let { martId, startDate, endDate, percentage } = req.body;
     const thisWeeksOrders = [];
 
     const orders = await Orders.find({
@@ -642,10 +657,30 @@ router.post('/paidToOwner', async (req, res) => {
       })
     );
 
-    const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+    const originalTotal = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+
+    const totalWithoutDeliveryCharges = thisWeeksOrders.reduce(
+      (a, b) =>
+        b.deliveryCharges !== '0' ? a + b.orderTotal - 30 : a + b.orderTotal,
+      0
+    );
+
+    const ourProfit = (
+      (percentage / 100) *
+      totalWithoutDeliveryCharges
+    ).toFixed();
+
+    const totalDeliveryCharges = originalTotal - totalWithoutDeliveryCharges;
+
+    const totalToPayOwner = totalWithoutDeliveryCharges - +ourProfit;
 
     return res.json({
-      total,
+      totalOrders: thisWeeksOrders.length,
+      originalTotal,
+      totalWithoutDeliveryCharges,
+      totalDeliveryCharges,
+      totalToPayOwner,
+      ourProfit,
       status: '200',
       data: thisWeeksOrders,
     });

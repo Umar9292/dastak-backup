@@ -1,7 +1,7 @@
 const { Notification } = require('onesignal-node');
 const { oneSignalClient } = require('../../utils/onSignalConfig');
 
-exports.admin = async (msg, whomToSend, toBeSentData) => {
+exports.admin = async (info, msg, whomToSend, toBeSentData) => {
   const notification = new Notification({
     contents: {
       en: msg,
@@ -16,8 +16,9 @@ exports.admin = async (msg, whomToSend, toBeSentData) => {
       'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
   });
 
-  const res = await oneSignalClient.sendNotification(notification);
-  console.log(res.data);
+  const { data } = await oneSignalClient.sendNotification(notification);
+
+  return data.id ? console.log(info) : console.log(data.errors[0]);
 };
 
 exports.user = async (msg, whomToSend, toBeSentData) => {
@@ -35,8 +36,9 @@ exports.user = async (msg, whomToSend, toBeSentData) => {
       'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
   });
 
-  const res = await oneSignalClient.sendNotification(notification);
-  console.log(res.data);
+  const { data } = await oneSignalClient.sendNotification(notification);
+
+  return data.id ? console.log('User Notified') : console.log(data.errors[0]);
 };
 
 exports.riders = async (msg, whomToSend, toBeSentData) => {
@@ -54,6 +56,7 @@ exports.riders = async (msg, whomToSend, toBeSentData) => {
       'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
   });
 
-  const res = await oneSignalClient.sendNotification(notification);
-  console.log(res.data);
+  const { data } = await oneSignalClient.sendNotification(notification);
+
+  return data.id ? console.log('Rider Notified') : console.log(data.errors[0]);
 };
