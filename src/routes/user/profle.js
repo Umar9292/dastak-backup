@@ -1,13 +1,13 @@
-const express = require('express');
+import { Router } from 'express';
+import { compare, hash } from 'bcrypt';
+import { generateSecret, totp } from 'speakeasy';
 
-const router = express.Router();
-const bcrypt = require('bcrypt');
-const speakeasy = require('speakeasy');
+import User from '../../models/userModel';
+import Marts from '../../models/martsModel';
+import Otp from '../../models/otpModel';
+import { emailOtp } from '../../emailHandler/otpEmail/otpEmail';
 
-const User = require('../../models/userModel');
-const Marts = require('../../models/martsModel');
-const Otp = require('../../models/otpModel');
-const { emailOtp } = require('../../emailHandler/otpEmail/otpEmail');
+const router = Router();
 
 router.post('/editProfile', async (req, res) => {
   try {
@@ -51,21 +51,21 @@ router.post('/changePassword', async (req, res) => {
       msg: 'User not found',
     });
 
-  const oldPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+  const oldPasswordMatch = await compare(oldPassword, user.password);
   if (oldPasswordMatch === false)
     return res.json({
       status: '404',
       msg: 'Invalid Old password',
     });
 
-  const newPasswordMatch = await bcrypt.compare(newPassword, user.password);
+  const newPasswordMatch = await compare(newPassword, user.password);
   if (newPasswordMatch === true)
     return res.json({
       status: '404',
       msg: 'You can not set the previous password again',
     });
 
-  const hashNewPassword = await bcrypt.hash(newPassword, 10);
+  const hashNewPassword = await hash(newPassword, 10);
   user.password = hashNewPassword;
 
   await user.save();
@@ -89,8 +89,8 @@ router.post('/sendOtp', async (req, res) => {
       });
     }
 
-    const secret = speakeasy.generateSecret({ length: 20 });
-    const token = speakeasy.totp({
+    const secret = generateSecret({ length: 20 });
+    const token = totp({
       secret: secret.base32,
       encoding: 'base32',
     });
@@ -130,7 +130,7 @@ router.post('/validateOtp', async (req, res) => {
       });
     }
 
-    const verification = speakeasy.totp.verify({
+    const verification = totp.verify({
       secret: otp.secret,
       encoding: 'base32',
       token,
@@ -163,8 +163,8 @@ router.post('/forgotPassword', async (req, res) => {
       });
     }
 
-    const hash = await bcrypt.hash(newPassword, 10);
-    user.password = hash;
+    const hashedPassword = await hash(newPassword, 10);
+    user.password = hashedPassword;
     await user.save();
 
     return res.json({
@@ -179,4 +179,4 @@ router.post('/forgotPassword', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

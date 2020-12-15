@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const model = mongoose.Schema(
+const ridersModel = Schema(
   {
     status: String,
     available: {
@@ -25,4 +25,4 @@ const model = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('user', model);
+export default model('user', ridersModel);

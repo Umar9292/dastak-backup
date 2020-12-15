@@ -1,6 +1,6 @@
-const express = require('express');
+import { Router } from 'express';
 
-const router = express.Router();
+const router = Router();
 
 router.post('/checkVersion', async (req, res) => {
   try {
@@ -46,4 +46,4 @@ router.post('/checkVersion', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

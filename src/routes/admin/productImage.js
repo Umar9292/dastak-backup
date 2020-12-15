@@ -1,13 +1,13 @@
-const express = require('express');
+import { Router } from 'express';
+import { v2 } from 'cloudinary';
+import { IncomingForm } from 'formidable';
+import { unlinkSync } from 'fs';
 
-const router = express.Router();
-const cloudinary = require('cloudinary');
-const formidable = require('formidable');
-const fs = require('fs');
+const router = Router();
 
 router.post('/addImage', (req, res) => {
   try {
-    const form = new formidable.IncomingForm();
+    const form = new IncomingForm();
 
     form.uploadDir = 'uploads/productImages';
     form.keepExtensions = true;
@@ -16,7 +16,7 @@ router.post('/addImage', (req, res) => {
     form.parse(req, async (_err, _fields, files) => {
       const imgPath = files.avatar.path;
 
-      const img = await cloudinary.v2.uploader.upload(imgPath, {
+      const img = await v2.uploader.upload(imgPath, {
         quality: 'auto',
         folder: 'Product Images',
         width: 550,
@@ -28,7 +28,7 @@ router.post('/addImage', (req, res) => {
         data: img.url,
       });
 
-      fs.unlinkSync(imgPath);
+      unlinkSync(imgPath);
     });
   } catch (err) {
     console.log(err);
@@ -41,4 +41,4 @@ router.post('/addImage', (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

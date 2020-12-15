@@ -1,7 +1,7 @@
-const nodeMailer = require('nodemailer');
-const hbs = require('nodemailer-express-handlebars');
+import { createTransport } from 'nodemailer';
+import hbs from 'nodemailer-express-handlebars';
 
-exports.emailOrderDetails = (
+export const emailOrderDetails = async (
   shop,
   user,
   orderTime,
@@ -10,7 +10,7 @@ exports.emailOrderDetails = (
   count,
   orderTotal
 ) => {
-  const transporter = nodeMailer.createTransport({
+  const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
     secure: true,
@@ -62,8 +62,8 @@ exports.emailOrderDetails = (
   });
 };
 
-exports.notifyRestaurantByEmail = restaurantEmail => {
-  const transporter = nodeMailer.createTransport({
+export const notifyRestaurantByEmail = async restaurantEmail => {
+  const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
     secure: true,

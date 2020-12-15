@@ -1,8 +1,8 @@
-const express = require('express');
+import { Router } from 'express';
 
-const router = express.Router();
+import Marts from '../../models/martsModel';
 
-const Marts = require('../../models/martsModel');
+const router = Router();
 
 router.post('/addMart', async (req, res) => {
   try {
@@ -132,4 +132,4 @@ router.post('/availabilityStatus', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

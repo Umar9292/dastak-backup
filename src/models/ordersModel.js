@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const ordersModel = mongoose.Schema(
+const ordersModel = Schema(
   {
     paid: {
       type: Boolean,
@@ -46,4 +46,4 @@ const ordersModel = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('orders', ordersModel);
+export default model('orders', ordersModel);

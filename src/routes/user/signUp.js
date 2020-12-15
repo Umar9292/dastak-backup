@@ -1,9 +1,9 @@
-const express = require('express');
+import { Router } from 'express';
+import { hash, compare } from 'bcrypt';
 
-const router = express.Router();
-const bcrypt = require('bcrypt');
+import User from '../../models/userModel';
 
-const User = require('../../models/userModel');
+const router = Router();
 
 router.post('/signUp', async (req, res) => {
   try {
@@ -17,7 +17,7 @@ router.post('/signUp', async (req, res) => {
         msg: `The number you have entered is already associated with another account`,
       });
 
-    params.password = await bcrypt.hash(password, 10);
+    params.password = await hash(password, 10);
 
     const newUser = await new User(params).save();
 
@@ -51,7 +51,7 @@ router.post('/signIn', async (req, res) => {
         msg: `You account has been temporarily blocked. Kindly contact support@dask.store for more details.`,
       });
 
-    const result = await bcrypt.compare(password, user.password);
+    const result = await compare(password, user.password);
     if (!result)
       return res.json({
         status: '404',
@@ -76,4 +76,4 @@ router.post('/signIn', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

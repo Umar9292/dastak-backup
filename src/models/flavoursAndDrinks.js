@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const model = mongoose.Schema(
+const optionsModel = Schema(
   {
     martId: String,
     flavours: Object,
@@ -12,4 +12,4 @@ const model = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('flavours and drinks', model);
+export default model('flavours and drinks', optionsModel);

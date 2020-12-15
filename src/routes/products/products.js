@@ -1,18 +1,16 @@
-const express = require('express');
-const _ = require('lodash');
-const moment = require('moment-timezone');
-const { orderBy } = require('lodash');
+import { Router } from 'express';
+import { orderBy } from 'lodash';
+import moment from 'moment-timezone';
 
-const router = express.Router();
+import Users from '../../models/userModel';
+import Products from '../../models/productsModel';
+import Flavours from '../../models/flavoursAndDrinks';
+import Marts from '../../models/martsModel';
+import Offers from '../../models/offersModel';
+import Categories from '../../models/categoriesModel';
+import notify from '../../notificationHandler/handler';
 
-const Users = require('../../models/userModel');
-const Products = require('../../models/productsModel');
-const Flavours = require('../../models/flavoursAndDrinks');
-const Marts = require('../../models/martsModel');
-const Offers = require('../../models/offersModel');
-const Categories = require('../../models/categoriesModel');
-
-const notify = require('../../notificationHandler/handler');
+const router = Router();
 
 router.post('/allProducts', async (req, res) => {
   try {
@@ -96,7 +94,6 @@ router.post('/allProducts', async (req, res) => {
       data: finalData,
     });
   } catch (err) {
-    console.error(err);
     return res.json({
       status: '404',
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
@@ -407,4 +404,4 @@ router.get('/dastakDeals', async (_req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

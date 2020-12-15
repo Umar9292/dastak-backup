@@ -1,7 +1,7 @@
-const nodeMailer = require('nodemailer');
+import { createTransport } from 'nodemailer';
 
-exports.emailOtp = (whomToSend, token) => {
-  const transporter = nodeMailer.createTransport({
+export const emailOtp = async (whomToSend, token) => {
+  const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
     secure: true,

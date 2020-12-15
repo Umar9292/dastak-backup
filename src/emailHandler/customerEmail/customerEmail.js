@@ -1,7 +1,7 @@
-const nodeMailer = require('nodemailer');
-const hbs = require('nodemailer-express-handlebars');
+import { createTransport } from 'nodemailer';
+import hbs from 'nodemailer-express-handlebars';
 
-exports.emailOrderDetailsToCustomer = (
+export const emailOrderDetailsToCustomer = async (
   user,
   shop,
   date,
@@ -10,7 +10,7 @@ exports.emailOrderDetailsToCustomer = (
   products,
   count
 ) => {
-  const transporter = nodeMailer.createTransport({
+  const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
     secure: true,

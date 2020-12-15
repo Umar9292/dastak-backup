@@ -1,27 +1,28 @@
-const express = require('express');
-const moment = require('moment-timezone');
+import { Router } from 'express';
+import moment from 'moment-timezone';
 
-const router = express.Router();
+// import Users from '../../models/userModel';
+import Products from '../../models/productsModel';
+// import Marts from '../../models/martsModel';
+import Orders from '../../models/ordersModel';
+// import notify from '../../notificationHandler/handler';
 
-// const Users = require('../../models/userModel');
-const Products = require('../../models/productsModel');
-// const Marts = require('../../models/martsModel');
-const Orders = require('../../models/ordersModel');
-
-// const notify = require('../../notificationHandler/handler');
+const router = Router();
 
 router.get('/discount', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '5fd76886d7bcdc082b781a27',
+      martId: '5fa90c7c74b8060566d8ff7f',
     });
 
     await Promise.all(
       products.map(async product => {
-        if (product.category === "Pizza's") {
-          const discountedPrice = ((20 / 100) * product.price).toFixed();
+        if (product.category === 'Dastak Deals') {
+          const discountedPrice = ((10 / 100) * product.price).toFixed();
+
+          product.price = +discountedPrice + +product.price;
           product.discountedPrice = +(product.price - discountedPrice);
-          product.discount = 20;
+          // product.discount = 0;
         }
 
         // if (product.discount === '10') {
@@ -271,4 +272,4 @@ router.post('/riderCollections', async (req, res) => {
   }
 }); */
 
-module.exports = router;
+export default router;

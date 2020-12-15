@@ -1,7 +1,7 @@
-const nodeMailer = require('nodemailer');
+import { createTransport } from 'nodemailer';
 
-exports.orderStatusEmail = adminMessage => {
-  const transporter = nodeMailer.createTransport({
+export const orderStatusEmail = async adminMessage => {
+  const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
     secure: true,

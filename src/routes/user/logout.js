@@ -1,21 +1,21 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
 
-const User = require('../../models/userModel');
+import User from '../../models/userModel';
+
+const router = Router();
 
 router.post('/logout', async (req, res) => {
-    try {
-        await User.findByIdAndUpdate(req.body.userId, { playerId: '' });
+  try {
+    await User.findByIdAndUpdate(req.body.userId, { playerId: '' });
 
-        return res.json({ status: '200' });
-    }
-    catch (err) {
-        return res.json({
-            status: '404',
-            msg: `Looks like something went wrong on our side. Sorry for the inconvenience`,
-            error: err.toString()
-        });
-    }
+    return res.json({ status: '200' });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience`,
+      error: err.toString(),
+    });
+  }
 });
 
-module.exports = router;
+export default router;

@@ -1,9 +1,9 @@
-const express = require('express');
+import { Router } from 'express';
 
-const router = express.Router();
+import Marts from '../../models/martsModel';
+import Users from '../../models/userModel';
 
-const Marts = require('../../models/martsModel');
-const Users = require('../../models/userModel');
+const router = Router();
 
 router.post('/adminPlayerId', async (req, res) => {
   try {
@@ -120,4 +120,4 @@ router.post('/riderPlayerId', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

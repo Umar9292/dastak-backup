@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const model = mongoose.Schema(
+const offersModel = Schema(
   {
     martId: String,
     offers: Object,
@@ -10,4 +10,4 @@ const model = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('offers', model);
+export default model('offers', offersModel);

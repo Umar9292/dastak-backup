@@ -1,38 +1,38 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const http = require('http');
-const cors = require('cors');
-const logger = require('morgan');
-const path = require('path');
-const cloudinary = require('cloudinary');
+import express, { json, urlencoded } from 'express';
+import { connect } from 'mongoose';
+import { urlencoded as _urlencoded, json as _json } from 'body-parser';
+import { get } from 'http';
+import cors from 'cors';
+import logger from 'morgan';
+import { join } from 'path';
+import { config } from 'cloudinary';
+import './env';
 
-const dbUrl = require('./utils/dbUrls');
-const signUpRouter = require('./src/routes/user/signUp');
-const profileRouter = require('./src/routes/user/profle');
-const productsRouter = require('./src/routes/products/products');
-const pricingRouter = require('./src/routes/admin/productPricing');
-const addProductsRouter = require('./src/routes/admin/addProducts');
-const productImageRouter = require('./src/routes/admin/productImage');
-const ordersRouter = require('./src/routes/admin/orders');
-const logoutRouter = require('./src/routes/user/logout');
-const martsRouter = require('./src/routes/marts/marts');
-const appVersionRouter = require('./src/routes/general/appVersion');
-const playerIdRouter = require('./src/routes/general/playerIds');
-const generalApisRouter = require('./src/routes/general/generalApis');
+import { dbUrl } from './utils/dbUrls';
+import signUpRouter from './src/routes/user/signUp';
+import profileRouter from './src/routes/user/profle';
+import productsRouter from './src/routes/products/products';
+import pricingRouter from './src/routes/admin/productPricing';
+import addProductsRouter from './src/routes/admin/addProducts';
+import productImageRouter from './src/routes/admin/productImage';
+import ordersRouter from './src/routes/admin/orders';
+import logoutRouter from './src/routes/user/logout';
+import martsRouter from './src/routes/marts/marts';
+import appVersionRouter from './src/routes/general/appVersion';
+import playerIdRouter from './src/routes/general/playerIds';
+import generalApisRouter from './src/routes/general/generalApis';
 
 const port = process.env.PORT || 8080;
 
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(_urlencoded({ extended: false }));
+app.use(_json());
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'views')));
+app.use(json());
+app.use(urlencoded({ extended: false }));
+app.use(express.static(join(__dirname, 'views')));
 
 app.use('/user', signUpRouter, profileRouter, logoutRouter);
 app.use(
@@ -53,19 +53,17 @@ const options = {
   // host: 'martbackend.herokuapp.com',
 };
 const request = () => {
-  http
-    .get(options, function(res) {
-      res.on('data', function() {
-        console.log('Working');
-      });
-    })
-    .on('error', function(e) {
-      console.log(`Got error: ${e.message}`);
+  get(options, function(res) {
+    res.on('data', function() {
+      console.log('Working');
     });
+  }).on('error', function(e) {
+    console.log(`Got error: ${e.message}`);
+  });
 };
 setInterval(request, 1500000);
 
-mongoose.connect(
+connect(
   dbUrl,
   {
     useNewUrlParser: true,
@@ -84,10 +82,10 @@ mongoose.connect(
   }
 );
 
-cloudinary.config({
+config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
 });
 
-module.exports = app;
+export default app;

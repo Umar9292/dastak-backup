@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const martsModel = mongoose.Schema(
+const martsModel = Schema(
   {
     useAsCustomer: {
       type: Boolean,
@@ -42,4 +42,4 @@ const martsModel = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('user', martsModel);
+export default model('user', martsModel);
