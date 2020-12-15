@@ -69,18 +69,16 @@ router.post('/placeOrder', async (req, res) => {
       )
     ) {
       params.riderFare = 100;
-    }
-
-    if (
+    } else if (
       orderTime.isBetween(
         `${nightFareStartTime.toISOString()}`,
         `${nightFareEndTime.toISOString()}`
       )
     ) {
       params.riderFare = 100;
+    } else {
+      params.riderFare = 70;
     }
-
-    params.riderFare = 70;
 
     const order = await new Orders(params).save();
 
