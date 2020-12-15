@@ -4,30 +4,31 @@ const moment = require('moment-timezone');
 const router = express.Router();
 
 // const Users = require('../../models/userModel');
-// const Products = require('../../models/productsModel');
+const Products = require('../../models/productsModel');
 // const Marts = require('../../models/martsModel');
 const Orders = require('../../models/ordersModel');
 
 // const notify = require('../../notificationHandler/handler');
 
-/* router.get('/discount', async (req, res) => {
+router.get('/discount', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '5fb39837fabe7d09bfa361c5',
+      martId: '5fd76886d7bcdc082b781a27',
     });
 
     await Promise.all(
       products.map(async product => {
-        // if (product.category !== 'Bar B.Q') {
-        //   const discountedPrice = ((15 / 100) * product.price).toFixed();
-        //   product.discountedPrice = +(product.price - discountedPrice);
-        // }
+        if (product.category === "Pizza's") {
+          const discountedPrice = ((20 / 100) * product.price).toFixed();
+          product.discountedPrice = +(product.price - discountedPrice);
+          product.discount = 20;
+        }
 
         // if (product.discount === '10') {
         // product.discount = '15';
-        const discountedPrice = ((20 / 100) * product.price).toFixed();
-        product.discountedPrice = +(product.price - discountedPrice);
-        product.discount = '20';
+        // const discountedPrice = ((20 / 100) * product.price).toFixed();
+        // product.discountedPrice = +(product.price - discountedPrice);
+        // product.discount = '20';
         // }
 
         await product.save();
@@ -43,7 +44,7 @@ const Orders = require('../../models/ordersModel');
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 /* router.get('/notifications', async (req, res) => {
   try {
