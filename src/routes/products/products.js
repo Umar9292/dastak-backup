@@ -8,7 +8,7 @@ import Flavours from '../../models/flavoursAndDrinks';
 import Marts from '../../models/martsModel';
 import Offers from '../../models/offersModel';
 import Categories from '../../models/categoriesModel';
-import notify from '../../notificationHandler/handler';
+import { notifyUser } from '../../notificationHandler/handler';
 
 const router = Router();
 
@@ -33,19 +33,28 @@ router.post('/allProducts', async (req, res) => {
 
         const products = await Products.find(query).sort({ productName: 1 });
 
-        for (const product of products) {
-          const { type, regular } = product;
+        const filteredProducts = products.filter(
+          ({ type, drinks }) => type === 'deal' || drinks === true
+        );
 
-          if (type === 'deal' && regular === false) {
-            product.flavours = options.flavours;
-          }
+        if (filteredProducts.length > 0) {
+          for (const product of filteredProducts) {
+            const { type, regular, drinks } = product;
 
-          if (type === 'deal' && regular === true) {
-            product.flavours = options.regularFlavours;
-          }
+            if (
+              (type === 'deal' && !regular) ||
+              (type === 'deal' && regular === undefined)
+            ) {
+              product.flavours = options.flavours;
+            }
 
-          if (product.drinks === true) {
-            product.allDrinks = options.drinks;
+            if (type === 'deal' && regular) {
+              product.flavours = options.regularFlavours;
+            }
+
+            if (drinks === true) {
+              product.allDrinks = options.drinks;
+            }
           }
         }
 
@@ -53,8 +62,6 @@ router.post('/allProducts', async (req, res) => {
           category: query.category,
           data: products,
         };
-
-        await Promise.resolve(data);
 
         finalData = [...finalData, data];
       }
@@ -104,44 +111,26 @@ router.post('/allProducts', async (req, res) => {
 router.post('/allRestaurantProducts', async (req, res) => {
   try {
     const { martId } = req.body;
-    const allCategories = [];
-    let finalData = [];
 
-    const categories = await Products.find({ martId })
-      .sort({
-        category: 1,
-      })
-      .select('category');
+    const { categories } = await Categories.findOne({ martId });
 
-    await Promise.all(
-      categories.map(c => {
-        if (!allCategories.includes(c.category)) {
-          allCategories.push(c.category);
-        }
-        return allCategories;
-      })
-    );
-
-    await Promise.all(
-      allCategories.map(async ac => {
+    const finalData = await Promise.all(
+      categories.map(async category => {
         const query = {
-          category: ac,
+          category,
           martId,
         };
 
         const products = await Products.find(query).sort({ productName: 1 });
 
         const data = {
-          category: ac,
+          category,
           data: products,
         };
 
-        await Promise.resolve(data);
-        await Promise.resolve(finalData.push(data));
+        return data;
       })
     );
-
-    finalData = _.orderBy(finalData, ['category'], ['desc']);
 
     return res.json({
       status: '200',
@@ -158,26 +147,12 @@ router.post('/allRestaurantProducts', async (req, res) => {
 router.post('/allCategories', async (req, res) => {
   try {
     const { martId } = req.body;
-    const allCategories = [];
 
-    const categories = await Products.find({ martId })
-      .sort({
-        category: 1,
-      })
-      .select('category');
-
-    await Promise.all(
-      categories.map(c => {
-        if (!allCategories.includes(c.category)) {
-          allCategories.push(c.category);
-        }
-        return allCategories;
-      })
-    );
+    const { categories } = await Categories.findOne({ martId });
 
     return res.json({
       status: '200',
-      data: allCategories,
+      data: categories,
     });
   } catch (err) {
     return res.json({
@@ -273,7 +248,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
           const users = await Users.find({ type: 'user' });
 
           users.forEach(async user => {
-            await notify.user(offer.text, user.playerId, { flag: 'offer' });
+            await notifyUser(offer.text, user.playerId, { flag: 'offer' });
           });
         }
       });
@@ -315,22 +290,20 @@ router.get('/dastakDeals', async (_req, res) => {
       dastakDeal: true,
     });
 
-    const openRestaurants = [];
-
-    await Promise.all(
+    const openRestaurants = await Promise.all(
       restaurants.map(restaurant => {
-        const formatedOpeningTime = moment(
-          restaurant.openingTime,
-          'HH:mm:ssa'
-        ).tz('Asia/karachi');
+        let { openingTime, closingTime, _id } = restaurant;
 
-        const formatedClosingTime = moment(
-          restaurant.closingTime,
-          'HH:mm:ssa'
-        ).tz('Asia/karachi');
+        const formatedOpeningTime = moment(openingTime, 'HH:mm:ssa').tz(
+          'Asia/karachi'
+        );
 
-        const openingTime = moment(formatedOpeningTime).subtract(5, 'hours');
-        let closingTime = moment(formatedClosingTime).subtract(5, 'hours');
+        const formatedClosingTime = moment(closingTime, 'HH:mm:ssa').tz(
+          'Asia/karachi'
+        );
+
+        openingTime = moment(formatedOpeningTime).subtract(5, 'hours');
+        closingTime = moment(formatedClosingTime).subtract(5, 'hours');
 
         const openingTimeOffSet = moment(openingTime).format('a');
         const closingTimeOffSet = moment(closingTime).format('a');
@@ -348,55 +321,58 @@ router.get('/dastakDeals', async (_req, res) => {
             `${closingTime.toISOString()}`
           )
         ) {
-          openRestaurants.push(restaurant._id);
+          return _id;
         }
+
+        return openRestaurants;
       })
     );
 
-    const dastakDeals = [];
+    let dastakDeals = [];
 
-    for (const id of openRestaurants) {
-      const products = await Products.find({
-        martId: id,
-        dastakDeal: true,
-        available: 'in stock',
-      });
+    await Promise.all(
+      openRestaurants.map(async martId => {
+        const [products, options] = await Promise.all([
+          Products.find({
+            martId,
+            dastakDeal: true,
+            available: 'in stock',
+          }),
 
-      for (const product of products) {
-        dastakDeals.push(product);
-      }
-    }
+          Flavours.findOne({ martId }),
+        ]);
 
-    for (const deal of dastakDeals) {
-      const { martId, regular, drinks, type } = deal;
+        if (products.length > 0) {
+          for (const product of products) {
+            const { regular, drinks, type } = product;
 
-      const restaurant = await Users.findById(martId).select('-password -__v');
-      deal.restaurant = restaurant;
+            if (
+              (type === 'deal' && !regular) ||
+              (type === 'deal' && regular === undefined)
+            ) {
+              product.flavours = options.flavours;
+            }
 
-      if (
-        type === 'deal' &&
-        (regular === undefined || regular === null || regular === false)
-      ) {
-        const { flavours } = await Flavours.findOne({ martId });
-        deal.flavours = flavours;
-      }
+            if (type === 'deal' && regular === true) {
+              product.flavours = options.regularFlavours;
+            }
 
-      if (regular === true) {
-        const { regularFlavours } = await Flavours.findOne({ martId });
-        deal.flavours = regularFlavours;
-      }
+            if (drinks === true) {
+              product.allDrinks = options.drinks;
+            }
 
-      if (drinks === true) {
-        const { drinks } = await Flavours.findOne({ martId });
-        deal.allDrinks = drinks;
-      }
-    }
+            dastakDeals = [...dastakDeals, product];
+          }
+        }
+      })
+    );
 
     return res.json({
       status: '200',
       data: dastakDeals,
     });
   } catch (err) {
+    console.error(err);
     return res.json({
       status: '404',
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
