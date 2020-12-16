@@ -332,7 +332,9 @@ router.get('/dastakDeals', async (_req, res) => {
 
     await Promise.all(
       openRestaurants.map(async martId => {
-        const [products, options] = await Promise.all([
+        const [restaurant, products, options] = await Promise.all([
+          Users.findById(martId),
+
           Products.find({
             martId,
             dastakDeal: true,
@@ -361,6 +363,7 @@ router.get('/dastakDeals', async (_req, res) => {
               product.allDrinks = options.drinks;
             }
 
+            product.restaurant = restaurant;
             dastakDeals = [...dastakDeals, product];
           }
         }
@@ -372,7 +375,6 @@ router.get('/dastakDeals', async (_req, res) => {
       data: dastakDeals,
     });
   } catch (err) {
-    console.error(err);
     return res.json({
       status: '404',
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
