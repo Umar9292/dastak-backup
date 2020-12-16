@@ -3,7 +3,7 @@ import moment from 'moment-timezone';
 
 // import Users from '../../models/userModel';
 import Products from '../../models/productsModel';
-// import Marts from '../../models/martsModel';
+import Marts from '../../models/martsModel';
 import Orders from '../../models/ordersModel';
 // import notify from '../../notificationHandler/handler';
 
@@ -12,18 +12,18 @@ const router = Router();
 router.get('/discount', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '5fa90c7c74b8060566d8ff7f',
+      martId: '',
     });
 
     await Promise.all(
       products.map(async product => {
-        if (product.category === 'Dastak Deals') {
-          const discountedPrice = ((10 / 100) * product.price).toFixed();
+        // if (product.category === 'Dastak Deals') {
+        const discountedPrice = ((15 / 100) * product.price).toFixed();
 
-          product.price = +discountedPrice + +product.price;
-          product.discountedPrice = +(product.price - discountedPrice);
-          // product.discount = 0;
-        }
+        product.price = +discountedPrice + +product.price;
+        // product.discountedPrice = +(product.price - discountedPrice);
+        // product.discount = 0;
+        // }
 
         // if (product.discount === '10') {
         // product.discount = '15';
@@ -53,7 +53,7 @@ router.get('/discount', async (req, res) => {
 
     // const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
 
-    // await notify.user(msg, '6afd2106-68f1-4825-899d-5f990adc02b8', {});
+    // await notify.user(msg, '', {});
 
     for (const user of users) {
       const { playerId } = user;
@@ -110,6 +110,7 @@ router.post('/collections', async (req, res) => {
 
     const orders = await Orders.find({
       status: { $in: ['Delivered', 'Rider Picked Up'] },
+      orderType: 'Delivery',
     });
 
     startDate = moment(startDate, 'DD-MM-YYYY');
@@ -271,5 +272,26 @@ router.post('/riderCollections', async (req, res) => {
     });
   }
 }); */
+
+router.get('/deliveryCharges', async (req, res) => {
+  try {
+    const allUsers = await Marts.find({ shopType: 'restaurant' });
+
+    await Promise.all(
+      allUsers.map(async user => {
+        user.deliveryCharges = '30';
+        await user.save();
+      })
+    );
+
+    return res.json('done');
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
 
 export default router;
