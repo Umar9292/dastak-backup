@@ -2,7 +2,10 @@ import { Schema, model } from 'mongoose';
 
 const userModel = Schema(
   {
-    status: String,
+    status: {
+      type: String,
+      default: 'active',
+    },
     orderFare: Number,
     dastakDeal: Boolean,
     fareType: String,
