@@ -4,7 +4,6 @@ import moment from 'moment-timezone';
 import Orders from '../../models/ordersModel';
 import Users from '../../models/userModel';
 import Mart from '../../models/martsModel';
-import notify from '../../notificationHandler/handler';
 import { emailOrderDetailsToCustomer } from '../../emailHandler/customerEmail/customerEmail';
 import { orderStatusEmail } from '../../emailHandler/orderConfirmationEmail/orderStatusEmail';
 import { emailOrderDetailsToRider } from '../../emailHandler/riderEmail/riderEmail';
@@ -12,6 +11,11 @@ import {
   emailOrderDetails,
   notifyRestaurantByEmail,
 } from '../../emailHandler/orderEmail/orderEmail';
+import {
+  notifyUser,
+  notifyAdmin,
+  notifyRiders,
+} from '../../notificationHandler/handler';
 
 const router = Router();
 
@@ -80,7 +84,7 @@ router.post('/placeOrder', async (req, res) => {
     const { playerIds } = mart;
 
     playerIds.forEach(async playerId => {
-      await notify.admin(info, adminMessage, playerId, {
+      await notifyAdmin(info, adminMessage, playerId, {
         flag: 'adminReceived',
       });
     });
@@ -190,27 +194,24 @@ router.post('/checkTime', async (req, res) => {
 
 router.post('/allOrders', async (req, res) => {
   try {
-    const upcoming = await Orders.find({
-      martId: req.body.martId,
-      status: 'Pending',
-    }).sort({
-      createdAt: -1,
-    });
+    const { martId } = req.body;
 
-    const accepted = await Orders.find({
-      martId: req.body.martId,
-      status: { $in: ['Admin Accepted', 'Rider Accepted'] },
-    }).sort({
-      createdAt: -1,
-    });
-
-    const delivered = await Orders.find({
-      martId: req.body.martId,
-      paid: { $in: [false, undefined] },
-      status: 'Delivered',
-    }).sort({
-      createdAt: -1,
-    });
+    const [upcoming, accepted, delivered] = await Promise.all([
+      Orders.find({ martId, status: 'Pending' }).sort({ createdAt: -1 }),
+      Orders.find({
+        martId,
+        status: {
+          $in: ['Admin Accepted', 'Rider Accepted', 'Rider Picked Up'],
+        },
+      }).sort({ createdAt: -1 }),
+      Orders.find({
+        martId,
+        paid: { $in: [false, undefined] },
+        status: 'Delivered',
+      }).sort({
+        createdAt: -1,
+      }),
+    ]);
 
     return res.json({
       status: '200',
@@ -291,10 +292,10 @@ router.post('/adminResponse', async (req, res) => {
         const { playerIds } = shop;
 
         playerIds.forEach(async playerId => {
-          await notify.user(msg, playerId, { flag: 'orderRejected' });
+          await notifyUser(msg, playerId, { flag: 'orderRejected' });
         });
       } else {
-        await notify.user(msg, user.playerId, { flag: 'orderRejected' });
+        await notifyUser(msg, user.playerId, { flag: 'orderRejected' });
       }
 
       order.reason = reason;
@@ -318,10 +319,10 @@ router.post('/adminResponse', async (req, res) => {
           const { playerIds } = user;
 
           playerIds.forEach(async playerId => {
-            await notify.user(msg, playerId, { flag: 'orderRejected' });
+            await notifyUser(msg, playerId, { flag: 'orderRejected' });
           });
         } else {
-          await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
+          await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
         }
 
         const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
@@ -335,7 +336,7 @@ router.post('/adminResponse', async (req, res) => {
 
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
 
-      await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
+      await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
       const availableRiders = await Users.find({
         type: 'rider',
@@ -347,7 +348,7 @@ router.post('/adminResponse', async (req, res) => {
         const allRiders = await Users.find({ type: 'rider', available: true });
 
         allRiders.map(async rider => {
-          await notify.riders(ridersMessage, rider.playerId, {
+          await notifyRiders(ridersMessage, rider.playerId, {
             flag: 'riderNotified',
           });
 
@@ -356,7 +357,7 @@ router.post('/adminResponse', async (req, res) => {
       }
 
       availableRiders.map(async rider => {
-        await notify.riders(ridersMessage, rider.playerId, {
+        await notifyRiders(ridersMessage, rider.playerId, {
           flag: 'riderNotified',
         });
 
@@ -377,7 +378,7 @@ router.post('/adminResponse', async (req, res) => {
 
     if (status === 'Admin Accepted' && customerNotified) {
       const msg = `Dear ${user.name} your order# ${orderNum} for ${shop.name} is now ready. Kindly pick it up`;
-      await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
+      await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
       return res.json({
         status: '200',
@@ -387,7 +388,7 @@ router.post('/adminResponse', async (req, res) => {
 
     if (status === 'Delivered') {
       const msg = `Dear ${user.name} thankyou for your order from ${shop.name}`;
-      await notify.user(msg, user.playerId, { flag: 'preparingOrder' });
+      await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
       return res.json({
         status: '200',
@@ -462,11 +463,13 @@ router.post('/assignRider', async (req, res) => {
           'This order has already been assigned to another rider. Stay active another order might come your way.',
       });
 
-    await Orders.findByIdAndUpdate(orderId, { $set: req.body });
+    await Promise.all([
+      Orders.findByIdAndUpdate(orderId, { $set: req.body }),
 
-    await Users.findByIdAndUpdate(riderId, {
-      status: 'on delivery',
-    });
+      Users.findByIdAndUpdate(riderId, {
+        status: 'on delivery',
+      }),
+    ]);
 
     res.json({
       status: '200',
@@ -479,7 +482,7 @@ router.post('/assignRider', async (req, res) => {
     const info = `${riderName} is assigned to an order for ${order.martName}`;
 
     playerIds.forEach(async playerId => {
-      await notify.admin(info, message, playerId, {
+      await notifyAdmin(info, message, playerId, {
         flag: 'adminReceived',
       });
     });
@@ -599,12 +602,12 @@ router.post('/changeOrderStatus', async (req, res) => {
       const { playerIds } = await Mart.findById(order.userId);
 
       playerIds.forEach(async playerId => {
-        await notify.user(pickUpMsg, playerId, { flag: 'orderPickedUp' });
+        await notifyUser(pickUpMsg, playerId, { flag: 'orderPickedUp' });
       });
     } else {
       const { playerId } = await Users.findById(order.userId);
 
-      await notify.user(pickUpMsg, playerId, { flag: 'orderPickedUp' });
+      await notifyUser(pickUpMsg, playerId, { flag: 'orderPickedUp' });
     }
 
     const message = `Order# ${order.orderNum} has been picked up by ${order.riderName}`;
