@@ -11,6 +11,7 @@ const martsModel = Schema(
       type: Boolean,
       default: true,
     },
+    email: String,
     img: String,
     logo: String,
     name: String,

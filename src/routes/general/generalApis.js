@@ -132,10 +132,12 @@ router.post('/collections', async (req, res) => {
 
     const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
     const excludingDeliveryCharges = total - thisWeeksOrders.length * 30;
+    const deliveryCharges = thisWeeksOrders.length * 30;
     const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
 
     return res.json({
       total,
+      deliveryCharges,
       excludingDeliveryCharges,
       riderFare,
       status: '200',
@@ -164,7 +166,6 @@ router.post('/riderCollections', async (req, res) => {
         const result = {
           rider,
           collection,
-          orders,
         };
 
         return result;
