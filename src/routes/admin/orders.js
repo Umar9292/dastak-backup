@@ -133,23 +133,19 @@ router.post('/placeOrder', async (req, res) => {
 
 router.post('/checkTime', async (req, res) => {
   try {
-    const params = req.body;
-
-    const shop = await Mart.findById({ _id: params.martId }).select(
-      '-password -__v'
-    );
+    const { martId } = req.body;
 
     const orderTime = moment().tz('Asia/karachi');
 
-    const formatedOpeningTime = moment(shop.openingTime, 'HH:mm:ssa').tz(
-      'Asia/karachi'
-    );
-    const formatedClosingTime = moment(shop.closingTime, 'HH:mm:ssa').tz(
-      'Asia/karachi'
-    );
+    let { openingTime, closingTime, shopType, name } = await Mart.findById(
+      martId
+    ).select('-password -__v');
 
-    const openingTime = moment(formatedOpeningTime).subtract(5, 'hours');
-    let closingTime = moment(formatedClosingTime).subtract(5, 'hours');
+    openingTime = moment(openingTime, 'HH:mm:ssa').tz('Asia/karachi');
+    closingTime = moment(closingTime, 'HH:mm:ssa').tz('Asia/karachi');
+
+    openingTime = moment(openingTime).subtract(5, 'hours');
+    closingTime = moment(closingTime).subtract(5, 'hours');
 
     const openingTimeOffSet = moment(openingTime).format('a');
     const closingTimeOffSet = moment(closingTime).format('a');
@@ -170,19 +166,17 @@ router.post('/checkTime', async (req, res) => {
       return res.json({ status: '200' });
     }
 
-    if (shop.shopType === 'mart') {
+    if (shopType === 'mart') {
       return res.json({
         status: '204',
-        msg: `${shop.name} has been closed. You can still place your order but it will be entertained after it opens at ${shop.openingTime}`,
+        msg: `${name} has been closed. You can still place your order but it will be entertained after it opens at ${shop.openingTime}`,
       });
     }
 
-    if (shop.shopType === 'restaurant') {
-      return res.json({
-        status: '404',
-        msg: `${shop.name} is closed`,
-      });
-    }
+    return res.json({
+      status: '404',
+      msg: `${name} is closed`,
+    });
   } catch (err) {
     return res.json({
       status: '404',
@@ -198,12 +192,14 @@ router.post('/allOrders', async (req, res) => {
 
     const [upcoming, accepted, delivered] = await Promise.all([
       Orders.find({ martId, status: 'Pending' }).sort({ createdAt: -1 }),
+
       Orders.find({
         martId,
         status: {
           $in: ['Admin Accepted', 'Rider Accepted', 'Rider Picked Up'],
         },
       }).sort({ createdAt: -1 }),
+
       Orders.find({
         martId,
         paid: { $in: [false, undefined] },

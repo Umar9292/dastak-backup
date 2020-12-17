@@ -16,7 +16,10 @@ const ordersModel = Schema(
     deliveryCharges: String,
     name: String,
     phone: String,
-    reason: String,
+    reason: {
+      type: String,
+      default: '',
+    },
     address: String,
     date: String,
     time: String,

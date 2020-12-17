@@ -131,11 +131,12 @@ router.post('/collections', async (req, res) => {
     );
 
     const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
-
+    const excludingDeliveryCharges = total - thisWeeksOrders.length * 30;
     const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
 
     return res.json({
       total,
+      excludingDeliveryCharges,
       riderFare,
       status: '200',
     });
@@ -163,6 +164,7 @@ router.post('/riderCollections', async (req, res) => {
         const result = {
           rider,
           collection,
+          orders,
         };
 
         return result;
@@ -185,9 +187,11 @@ router.post('/riderCollections', async (req, res) => {
 
 /* router.get('/test', async (_req, res) => {
   try {
-     const userIds = await Orders.distinct('userId');
-  
-      await Promise.all(
+    const categories = await Products.distinct('category', {
+      martId: '5fda022f84c48616b0a5a4c0',
+    });
+
+     await Promise.all(
         userIds.map(async userId => {
           const user = await Users.findById(userId);
   
@@ -262,7 +266,7 @@ router.post('/riderCollections', async (req, res) => {
       await product.save();
     }
 
-    return res.json('done');
+    return res.json(categories);
   } catch (err) {
     console.log(err);
     return res.json({
