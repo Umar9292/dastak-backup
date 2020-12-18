@@ -172,8 +172,11 @@ router.post('/riderCollections', async (req, res) => {
       })
     );
 
+    const totalCollection = data.reduce((a, b) => a + b.collection, 0);
+
     return res.json({
       riders,
+      totalCollection,
       data,
       status: '200',
     });
