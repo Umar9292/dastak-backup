@@ -24,9 +24,8 @@ router.post('/adminPlayerId', async (req, res) => {
 
     if (!isPlayerIdThere) {
       playerIds.push(playerId);
+      await admin.save();
     }
-
-    await admin.save();
 
     return res.json({
       status: '200',

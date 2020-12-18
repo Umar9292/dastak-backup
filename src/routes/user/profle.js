@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { compare, hash } from 'bcrypt';
 import { generateSecret, totp } from 'speakeasy';
 
-import User from '../../models/userModel';
+import Users from '../../models/userModel';
 import Marts from '../../models/martsModel';
 import Otp from '../../models/otpModel';
 import { emailOtp } from '../../emailHandler/otpEmail/otpEmail';
@@ -20,13 +20,13 @@ router.post('/editProfile', async (req, res) => {
         { $set: req.body },
         { new: true }
       ).select('-password -__v');
+    } else {
+      user = await Users.findByIdAndUpdate(
+        req.body.userId,
+        { $set: req.body },
+        { new: true }
+      ).select('-password -__v');
     }
-
-    user = await User.findByIdAndUpdate(
-      req.body.userId,
-      { $set: req.body },
-      { new: true }
-    ).select('-password -__v');
 
     return res.json({
       status: '200',
@@ -44,7 +44,7 @@ router.post('/editProfile', async (req, res) => {
 router.post('/changePassword', async (req, res) => {
   const { userId, oldPassword, newPassword } = req.body;
 
-  const user = await User.findById(userId);
+  const user = await Users.findById(userId);
   if (!user)
     return res.json({
       status: '404',
@@ -52,14 +52,14 @@ router.post('/changePassword', async (req, res) => {
     });
 
   const oldPasswordMatch = await compare(oldPassword, user.password);
-  if (oldPasswordMatch === false)
+  if (!oldPasswordMatch)
     return res.json({
       status: '404',
-      msg: 'Invalid Old password',
+      msg: 'Invalid old password',
     });
 
   const newPasswordMatch = await compare(newPassword, user.password);
-  if (newPasswordMatch === true)
+  if (newPasswordMatch)
     return res.json({
       status: '404',
       msg: 'You can not set the previous password again',
@@ -80,7 +80,7 @@ router.post('/sendOtp', async (req, res) => {
   try {
     const { email } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await Users.findOne({ email });
 
     if (!user) {
       return res.json({
@@ -155,7 +155,7 @@ router.post('/forgotPassword', async (req, res) => {
   try {
     const { newPassword, email } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await Users.findOne({ email });
     if (!user) {
       return res.json({
         status: '404',
