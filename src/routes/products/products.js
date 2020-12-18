@@ -17,11 +17,13 @@ router.post('/allProducts', async (req, res) => {
     const { martId } = req.body;
     let finalData = [];
 
-    const [{ categories }, { shopType }, options] = await Promise.all([
+    const [{ categories }, { shopType, name }, options] = await Promise.all([
       Categories.findOne({ martId }),
       Marts.findById(martId),
       Flavours.findOne({ martId }),
     ]);
+
+    console.log(`${name} has been opened`);
 
     if (shopType === 'restaurant') {
       for (const category of categories) {
