@@ -175,6 +175,8 @@ router.post('/checkTime', async (req, res) => {
       });
     }
 
+    console.log(`${name} is closed`);
+
     return res.json({
       status: '404',
       msg: `${name} is closed`,
@@ -408,11 +410,13 @@ router.post('/adminAcceptedOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
-    const [idleRiders, { status }] = await Promise.all([
+    const [idleRiders, { status, name }] = await Promise.all([
       Users.find({ type: 'rider', status: 'idle', available: true }),
 
       Users.findById(riderId),
     ]);
+
+    console.log(name);
 
     let acceptedOrders = [];
 
