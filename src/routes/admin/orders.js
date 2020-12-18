@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import moment from 'moment-timezone';
 
-import { identity } from 'lodash';
 import Orders from '../../models/ordersModel';
 import Users from '../../models/userModel';
 import Mart from '../../models/martsModel';
@@ -415,7 +414,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
       Users.findById(riderId),
     ]);
 
-    let acceptedOrders;
+    let acceptedOrders = [];
 
     if (idleRiders.length > 0) {
       if (status === 'idle') {
