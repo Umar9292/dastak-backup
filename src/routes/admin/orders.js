@@ -99,7 +99,9 @@ router.post('/placeOrder', async (req, res) => {
 
     const count = params.products.reduce((a, b) => a + b.count, 0);
 
-    notifyRestaurantByEmail(mart.email);
+    if (mart.email && mart.email !== '') {
+      notifyRestaurantByEmail(mart.email);
+    }
 
     emailOrderDetails(
       mart,
@@ -276,13 +278,15 @@ router.post('/adminResponse', async (req, res) => {
       $set: req.body,
     });
 
-    const user = await Users.findById(order.userId);
-    const shop = await Mart.findById(order.martId);
+    const [user, shop] = await Promise.all([
+      Users.findById(order.userId),
+      Mart.findById(order.martId),
+    ]);
 
     const ridersMessage = `New order from ${shop.name}`;
 
     if (status === 'Rejected') {
-      const msg = `Dear ${user.name} your order# ${orderNum} has been rejected by ${shopType} because ${reason}`;
+      const msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shopType} because ${reason}`;
 
       if (user.type === 'admin') {
         const { playerIds } = shop;
@@ -332,18 +336,16 @@ router.post('/adminResponse', async (req, res) => {
 
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
 
-      await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
+      const [idleRiders, allRiders] = await Promise.all(
+        Users.find({ type: 'rider', status: 'idle', available: true }),
 
-      const availableRiders = await Users.find({
-        type: 'rider',
-        status: 'idle',
-        available: true,
-      });
+        Users.find({ type: 'rider', available: true }),
 
-      if (availableRiders.length === 0) {
-        const allRiders = await Users.find({ type: 'rider', available: true });
+        notifyUser(msg, user.playerId, { flag: 'preparingOrder' })
+      );
 
-        allRiders.map(async rider => {
+      if (idleRiders.length === 0) {
+        allRiders.forEach(async rider => {
           await notifyRiders(ridersMessage, rider.playerId, {
             flag: 'riderNotified',
           });
@@ -352,7 +354,7 @@ router.post('/adminResponse', async (req, res) => {
         });
       }
 
-      availableRiders.map(async rider => {
+      idleRiders.forEach(async rider => {
         await notifyRiders(ridersMessage, rider.playerId, {
           flag: 'riderNotified',
         });
@@ -405,18 +407,16 @@ router.post('/adminAcceptedOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
-    const idleRiders = await Users.find({
-      type: 'rider',
-      status: 'idle',
-      available: true,
-    });
+    const [idleRiders, { status }] = await Promise.all([
+      Users.find({ type: 'rider', status: 'idle', available: true }),
 
-    const rider = await Users.findById(riderId);
+      Users.findById(riderId),
+    ]);
 
-    let acceptedOrders = [];
+    let acceptedOrders;
 
     if (idleRiders.length > 0) {
-      if (rider.status === 'idle') {
+      if (status === 'idle') {
         acceptedOrders = await Orders.find({
           status: 'Admin Accepted',
           orderType: 'Delivery',
@@ -475,7 +475,7 @@ router.post('/assignRider', async (req, res) => {
     const { playerIds } = await Mart.findById(order.martId);
 
     const message = `Dastak rider ${riderName} is assigned to order# ${order.orderNum}.`;
-    const info = `${riderName} is assigned to an order for ${order.martName}`;
+    const info = `${riderName} is assigned to an order for ${order.martName} placed by ${order.name}`;
 
     playerIds.forEach(async playerId => {
       await notifyAdmin(info, message, playerId, {
@@ -497,16 +497,18 @@ router.post('/riderOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
-    const { fareType } = await Users.findById(riderId);
+    const [{ fareType }, accepted] = await Promise.all([
+      Users.findById(riderId),
+
+      Orders.find({
+        riderId,
+        status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+      }).sort({
+        createdAt: -1,
+      }),
+    ]);
 
     let delivered;
-
-    const accepted = await Orders.find({
-      riderId,
-      status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
-    }).sort({
-      createdAt: -1,
-    });
 
     if (fareType === 'salary') {
       delivered = await Orders.find({
@@ -528,10 +530,8 @@ router.post('/riderOrders', async (req, res) => {
     }
 
     const totalRidersFare = delivered.reduce((a, b) => a + b.riderFare, 0);
-
-    delivered = delivered.filter(order => order.reason === '');
-
     const totalOrdersAmount = delivered.reduce((a, b) => a + b.orderTotal, 0);
+    delivered = delivered.filter(order => order.reason === '');
 
     await Promise.all(
       accepted.map(async order => {
