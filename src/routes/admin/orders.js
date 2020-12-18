@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import moment from 'moment-timezone';
 
+import { identity } from 'lodash';
 import Orders from '../../models/ordersModel';
 import Users from '../../models/userModel';
 import Mart from '../../models/martsModel';
@@ -283,6 +284,8 @@ router.post('/adminResponse', async (req, res) => {
       Mart.findById(order.martId),
     ]);
 
+    console.log(user);
+
     const ridersMessage = `New order from ${shop.name}`;
 
     if (status === 'Rejected') {
@@ -335,14 +338,15 @@ router.post('/adminResponse', async (req, res) => {
       }
 
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
+      await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
-      const [idleRiders, allRiders] = await Promise.all(
-        Users.find({ type: 'rider', status: 'idle', available: true }),
+      const idleRiders = await Users.find({
+        type: 'rider',
+        status: 'idle',
+        available: true,
+      });
 
-        Users.find({ type: 'rider', available: true }),
-
-        notifyUser(msg, user.playerId, { flag: 'preparingOrder' })
-      );
+      const allRiders = await Users.find({ type: 'rider', available: true });
 
       if (idleRiders.length === 0) {
         allRiders.forEach(async rider => {
@@ -394,7 +398,7 @@ router.post('/adminResponse', async (req, res) => {
       });
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.json({
       status: '404',
       error: err.toString(),
