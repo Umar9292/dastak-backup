@@ -284,8 +284,6 @@ router.post('/adminResponse', async (req, res) => {
       Mart.findById(order.martId),
     ]);
 
-    console.log(user);
-
     const ridersMessage = `New order from ${shop.name}`;
 
     if (status === 'Rejected') {
