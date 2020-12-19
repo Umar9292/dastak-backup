@@ -99,7 +99,7 @@ router.post('/placeOrder', async (req, res) => {
 
     const count = params.products.reduce((a, b) => a + b.count, 0);
 
-    if (mart.email && mart.email !== '') {
+    if (mart.email && mart.email !== '' && user.email.includes('@')) {
       notifyRestaurantByEmail(mart.email);
     }
 
@@ -113,7 +113,7 @@ router.post('/placeOrder', async (req, res) => {
       params.orderTotal
     );
 
-    if (user.email) {
+    if (user.email && user.email !== '' && user.email.includes('@')) {
       emailOrderDetailsToCustomer(
         user,
         mart,
@@ -349,20 +349,28 @@ router.post('/adminResponse', async (req, res) => {
 
       if (idleRiders.length === 0) {
         allRiders.forEach(async rider => {
-          await notifyRiders(rider.name, ridersMessage, rider.playerId, {
+          const { name, email, playerId } = rider;
+
+          await notifyRiders(name, ridersMessage, playerId, {
             flag: 'riderNotified',
           });
 
-          emailOrderDetailsToRider(rider.email);
+          if (email && email !== '' && email.includes('@')) {
+            emailOrderDetailsToRider(email);
+          }
         });
       }
 
       idleRiders.forEach(async rider => {
-        await notifyRiders(rider.name, ridersMessage, rider.playerId, {
+        const { name, email, playerId } = rider;
+
+        await notifyRiders(name, ridersMessage, playerId, {
           flag: 'riderNotified',
         });
 
-        emailOrderDetailsToRider(rider.email);
+        if (email && email !== '' && email.includes('@')) {
+          emailOrderDetailsToRider(email);
+        }
       });
 
       order.orderNum = orderNum;
