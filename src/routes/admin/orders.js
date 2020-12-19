@@ -79,7 +79,7 @@ router.post('/placeOrder', async (req, res) => {
     const order = await new Orders(params).save();
 
     const adminMessage = 'You have a new order';
-    const info = `An order is placed to ${params.martName}`;
+    const info = `New Order for ${params.martName} placed by ${order.name}`;
 
     const { playerIds } = mart;
 

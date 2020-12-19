@@ -63,6 +63,8 @@ router.post('/signIn', async (req, res) => {
       await user.save();
     }
 
+    console.log(`${user.name} came into the app`);
+
     return res.json({
       status: '200',
       data: user,
