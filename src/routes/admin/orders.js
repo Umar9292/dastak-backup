@@ -416,7 +416,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
       Users.findById(riderId),
     ]);
 
-    console.log(name);
+    console.log(`${name} refreshed`);
 
     let acceptedOrders = [];
 
