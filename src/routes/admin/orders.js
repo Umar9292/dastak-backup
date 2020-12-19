@@ -571,6 +571,12 @@ router.post('/changeOrderStatus', async (req, res) => {
 
     const order = await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
+    if (status === 'Rider Picked Up') {
+      console.log(
+        `${order.name}'s order has been picked up by ${order.riderName}`
+      );
+    }
+
     if (status === 'Delivered') {
       const query = {
         riderId: order.riderId,
