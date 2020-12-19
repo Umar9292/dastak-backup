@@ -27,6 +27,8 @@ router.post('/adminPlayerId', async (req, res) => {
       await admin.save();
     }
 
+    console.log(`${admin.name} opened the app`);
+
     return res.json({
       status: '200',
       data: admin,
@@ -69,6 +71,8 @@ router.post('/userPlayerId', async (req, res) => {
 
     user.playerId = playerId;
     await user.save();
+
+    console.log(`${user.name} came into the app`);
 
     return res.json({
       status: '200',
