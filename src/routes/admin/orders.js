@@ -349,7 +349,7 @@ router.post('/adminResponse', async (req, res) => {
 
       if (idleRiders.length === 0) {
         allRiders.forEach(async rider => {
-          await notifyRiders(ridersMessage, rider.playerId, {
+          await notifyRiders(rider.name, ridersMessage, rider.playerId, {
             flag: 'riderNotified',
           });
 
@@ -358,7 +358,7 @@ router.post('/adminResponse', async (req, res) => {
       }
 
       idleRiders.forEach(async rider => {
-        await notifyRiders(ridersMessage, rider.playerId, {
+        await notifyRiders(rider.name, ridersMessage, rider.playerId, {
           flag: 'riderNotified',
         });
 

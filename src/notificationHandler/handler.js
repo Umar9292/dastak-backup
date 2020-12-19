@@ -41,7 +41,12 @@ export const notifyUser = async (msg, whomToSend, toBeSentData) => {
   return data.id ? console.log('User Notified') : console.log(data.errors[0]);
 };
 
-export const notifyRiders = async (msg, whomToSend, toBeSentData) => {
+export const notifyRiders = async (
+  riderName,
+  msg,
+  whomToSend,
+  toBeSentData
+) => {
   const notification = new Notification({
     contents: {
       en: msg,
@@ -58,5 +63,7 @@ export const notifyRiders = async (msg, whomToSend, toBeSentData) => {
 
   const { data } = await oneSignalClient.sendNotification(notification);
 
-  return data.id ? console.log('Rider Notified') : console.log(data.errors[0]);
+  return data.id
+    ? console.log(`${riderName} Notified`)
+    : console.log(data.errors[0]);
 };
