@@ -23,6 +23,7 @@ const ordersModel = Schema(
     address: String,
     date: String,
     time: String,
+    timeWhenDelivered: String,
     products: Object,
     orderTotal: Number,
     orderType: String,
