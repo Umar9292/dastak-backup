@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import moment from 'moment-timezone';
 
-// import Users from '../../models/userModel';
+import Users from '../../models/userModel';
 import Products from '../../models/productsModel';
 import Marts from '../../models/martsModel';
 import Orders from '../../models/ordersModel';
+import { notifyUser } from '../../notificationHandler/handler';
 // import notify from '../../notificationHandler/handler';
 
 const router = Router();
@@ -47,32 +48,30 @@ router.get('/discount', async (req, res) => {
   }
 });
 
-/* router.get('/notifications', async (req, res) => {
+router.get('/notifications', async (req, res) => {
   try {
     const users = await Users.find({ type: 'user' });
 
     // const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
 
-    // await notify.user(msg, '', {});
+    // await notifyUser(msg, '3b45ad7e-5e0e-49c3-b7ae-ef81c8ae09bd', {});
 
-    for (const user of users) {
+    /*  for (const user of users) {
       const { playerId } = user;
 
-      const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
-
-      await notify.user(msg, playerId, {});
-    }
+      const msg = `!Great News for Dastak Users! 😀\nFrom now on there will be no delivery charges on any order what so ever. Toh abhi mangwao abhi khao Dastak now. 😇`;
+      await notifyUser(msg, playerId, {});
+    } */
 
     return res.status(200).json('done');
   } catch (err) {
-    console.error(err);
     return res.json({
       status: '404',
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 /* router.get('/removeDiscount', async (req, res) => {
   try {
