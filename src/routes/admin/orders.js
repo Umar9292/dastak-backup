@@ -48,32 +48,30 @@ router.post('/placeOrder', async (req, res) => {
     params.martAddress = mart.martAddress;
     params.time = formatedTime;
 
-    const morningFareStart = moment('09:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const morningFareEnd = moment('14:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const nightFareStart = moment('21:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const nightFareSEnd = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
+    const morningTime = moment('09:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const noonTime = moment('21:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const nightTime = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
 
-    const morningFareStartTime = moment(morningFareStart).subtract(5, 'hours');
-    const morningFareEndTime = moment(morningFareEnd).subtract(5, 'hours');
-    const nightFareStartTime = moment(nightFareStart).subtract(5, 'hours');
-    const nightFareEndTime = moment(nightFareSEnd).subtract(5, 'hours');
+    const morningFareTime = moment(morningTime).subtract(5, 'hours');
+    const noonFareTime = moment(noonTime).subtract(5, 'hours');
+    const nightFareEndTime = moment(nightTime).subtract(5, 'hours');
 
     if (
       orderTime.isBetween(
-        `${morningFareStartTime.toISOString()}`,
-        `${morningFareEndTime.toISOString()}`
+        `${morningFareTime.toISOString()}`,
+        `${noonFareTime.toISOString()}`
       )
     ) {
-      params.riderFare = 100;
-    } else if (
+      params.riderFare = 60;
+    }
+
+    if (
       orderTime.isBetween(
-        `${nightFareStartTime.toISOString()}`,
+        `${noonFareTime.toISOString()}`,
         `${nightFareEndTime.toISOString()}`
       )
     ) {
-      params.riderFare = 100;
-    } else {
-      params.riderFare = 70;
+      params.riderFare = 80;
     }
 
     const order = await new Orders(params).save();
