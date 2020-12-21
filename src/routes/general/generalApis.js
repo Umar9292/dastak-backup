@@ -287,7 +287,7 @@ router.get('/deliveryCharges', async (req, res) => {
 
     await Promise.all(
       allUsers.map(async user => {
-        user.deliveryCharges = '30';
+        user.deliveryCharges = '0';
         await user.save();
       })
     );
