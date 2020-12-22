@@ -48,22 +48,24 @@ router.get('/discount', async (req, res) => {
   }
 });
 
-router.get('/notifications', async (req, res) => {
+/* router.get('/notifications', async (req, res) => {
   try {
     const users = await Users.find({ type: 'user' });
+    let count = 0;
 
     // const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
 
     // await notifyUser(msg, '3b45ad7e-5e0e-49c3-b7ae-ef81c8ae09bd', {});
 
-    /*  for (const user of users) {
-      const { playerId } = user;
-
+    for (const user of users) {
       const msg = `!Great News for Dastak Users! 😀\nFrom now on there will be no delivery charges on any order what so ever. Toh abhi mangwao abhi khao Dastak now. 😇`;
-      await notifyUser(msg, playerId, {});
-    } */
+      await notifyUser(msg, user.playerId, {});
 
-    return res.status(200).json('done');
+      count += 1;
+    }
+
+    console.log(count);
+    return res.status(200).json(count, 'count');
   } catch (err) {
     return res.json({
       status: '404',
@@ -71,7 +73,7 @@ router.get('/notifications', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 /* router.get('/removeDiscount', async (req, res) => {
   try {
@@ -130,8 +132,12 @@ router.post('/collections', async (req, res) => {
     );
 
     const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
-    const excludingDeliveryCharges = total - thisWeeksOrders.length * 30;
-    const deliveryCharges = thisWeeksOrders.length * 30;
+    const ordersWithDeliveryCharges = thisWeeksOrders.filter(
+      order => order.deliveryCharges !== '0'
+    );
+    const excludingDeliveryCharges =
+      total - ordersWithDeliveryCharges.length * 30;
+    const deliveryCharges = ordersWithDeliveryCharges.length * 30;
     const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
 
     return res.json({
