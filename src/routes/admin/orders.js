@@ -169,7 +169,7 @@ router.post('/checkTime', async (req, res) => {
     if (shopType === 'mart') {
       return res.json({
         status: '204',
-        msg: `${name} has been closed. You can still place your order but it will be entertained after it opens at ${shop.openingTime}`,
+        msg: `${name} has been closed. You can still place your order but it will be entertained after it opens at ${openingTime}`,
       });
     }
 

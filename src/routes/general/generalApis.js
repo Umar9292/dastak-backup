@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import moment from 'moment-timezone';
 
-import Users from '../../models/userModel';
+// import Users from '../../models/userModel';
 import Products from '../../models/productsModel';
 import Marts from '../../models/martsModel';
 import Orders from '../../models/ordersModel';
-import { notifyUser } from '../../notificationHandler/handler';
+// import { notifyUser } from '../../notificationHandler/handler';
 // import notify from '../../notificationHandler/handler';
 
 const router = Router();
