@@ -1,16 +1,18 @@
 import { Router } from 'express';
 import moment from 'moment-timezone';
+import Exceljs from 'exceljs';
 
 // import Users from '../../models/userModel';
 import Products from '../../models/productsModel';
 import Marts from '../../models/martsModel';
 import Orders from '../../models/ordersModel';
 // import { notifyUser } from '../../notificationHandler/handler';
+import { sendDailyCollection } from '../../emailHandler/dailyCollections/dailyCollections';
 // import notify from '../../notificationHandler/handler';
 
 const router = Router();
 
-router.get('/discount', async (req, res) => {
+/* router.get('/discount', async (req, res) => {
   try {
     const products = await Products.find({
       martId: '',
@@ -46,7 +48,7 @@ router.get('/discount', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 /* router.get('/notifications', async (req, res) => {
   try {
@@ -320,6 +322,61 @@ router.get('/deliveryCharges', async (req, res) => {
 
     return res.json('done');
   } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/test', async (req, res) => {
+  try {
+    const { date } = req.body;
+
+    const riders = await Orders.distinct('riderName', { date });
+
+    const data = await Promise.all(
+      riders.map(async rider => {
+        const orders = await Orders.find({ riderName: rider, date });
+
+        const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
+
+        const result = {
+          rider,
+          collection,
+        };
+
+        return result;
+      })
+    );
+
+    const workbook = new Exceljs.Workbook();
+    const worksheet = workbook.addWorksheet(`${date}`);
+
+    worksheet.columns = [
+      { header: 'Rider', key: 'rider', width: 15 },
+      { header: 'Collection', key: 'collection', width: 15 },
+    ];
+
+    await Promise.all(data.map(doc => worksheet.addRow(doc)));
+
+    worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
+
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    sendDailyCollection(date, buffer);
+
+    const totalCollection = data.reduce((a, b) => a + b.collection, 0);
+
+    return res.json({
+      riders,
+      totalCollection,
+      data,
+      status: '200',
+    });
+  } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
