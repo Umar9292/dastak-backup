@@ -270,6 +270,7 @@ router.get('/dastakDeals', async (_req, res) => {
     const dealsTimeStart = moment('11:00', 'HH:mm:ssa');
     const dealsTimeEnd = moment('23:59', 'HH:mm:ssa');
 
+    console.log(currentTime);
     console.log(dealsTimeStart);
     console.log(dealsTimeEnd);
 
