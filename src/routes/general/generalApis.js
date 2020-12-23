@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import moment from 'moment-timezone';
 
-import Users from '../../models/userModel';
+// import Users from '../../models/userModel';
 import Products from '../../models/productsModel';
 import Marts from '../../models/martsModel';
 import Orders from '../../models/ordersModel';
@@ -48,7 +48,7 @@ router.get('/discount', async (req, res) => {
   }
 });
 
-router.get('/notifications', async (req, res) => {
+/* router.get('/notifications', async (req, res) => {
   try {
     const users = await Users.find({
       type: 'user',
@@ -69,14 +69,14 @@ router.get('/notifications', async (req, res) => {
 
     // await notifyUser(msg, '3b45ad7e-5e0e-49c3-b7ae-ef81c8ae09bd', {});
 
-    /* for (const user of users) {
+    for (const user of users) {
       if (user.playerId && user.player !== '') {
         const msg = `Dear ${user.name} to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
         await notifyUser(msg, user.playerId, {});
 
         count += 1;
       }
-    } */
+    }
 
     console.log(count);
     return res.status(200).send(count, 'count');
@@ -87,7 +87,7 @@ router.get('/notifications', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 /* router.get('/removeDiscount', async (req, res) => {
   try {

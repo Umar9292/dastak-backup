@@ -267,12 +267,8 @@ router.post('/updateProductsAvailability', async (req, res) => {
 router.get('/dastakDeals', async (_req, res) => {
   try {
     const currentTime = moment().tz('Asia/karachi');
-    const dealsTimeStart = moment('11:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const dealsTimeEnd = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
-
-    console.log(currentTime);
-    console.log(dealsTimeStart);
-    console.log(dealsTimeEnd);
+    const dealsTimeStart = moment('06:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const dealsTimeEnd = moment('18:59', 'HH:mm:ssa').tz('Asia/karachi');
 
     if (!currentTime.isBetween(dealsTimeStart, dealsTimeEnd)) {
       return res.json({
@@ -289,20 +285,19 @@ router.get('/dastakDeals', async (_req, res) => {
 
     const openRestaurants = await Promise.all(
       restaurants.map(restaurant => {
-        const { openingTime: opening, closingTime: closing, _id } = restaurant;
+        let { openingTime: opening, closingTime: closing, _id } = restaurant;
 
-        let [openingTime, closingTime] = [
-          moment(opening, 'HH:mm:ssa'),
-          moment(closing, 'HH:mm:ssa'),
+        [opening, closing] = [
+          moment(opening, 'HH:mm:ssa').tz('Asia/Karachi'),
+          moment(closing, 'HH:mm:ssa').tz('Asia/Karachi'),
         ];
 
-        const [openingOffSet, closingOffSet] = [
-          moment(openingTime).format('a'),
-          moment(closingTime).format('a'),
+        let [openingTime, closingTime, openingOffSet, closingOffSet] = [
+          moment(opening).subtract(5, 'hours'),
+          moment(closing).subtract(5, 'hours'),
+          moment(opening).format('a'),
+          moment(closing).format('a'),
         ];
-
-        console.log(openingTime);
-        console.log(closingTime);
 
         if (
           (openingOffSet === 'pm' && closingOffSet === 'am') ||
@@ -311,7 +306,9 @@ router.get('/dastakDeals', async (_req, res) => {
           closingTime = moment(closingTime).add(1, 'days');
         }
 
-        if (currentTime.isBetween(openingTime, closingTime)) return _id;
+        if (currentTime.isBetween(openingTime, closingTime)) {
+          return _id;
+        }
       })
     );
 
