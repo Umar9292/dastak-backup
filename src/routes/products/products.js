@@ -267,8 +267,8 @@ router.post('/updateProductsAvailability', async (req, res) => {
 router.get('/dastakDeals', async (_req, res) => {
   try {
     const currentTime = moment().tz('Asia/karachi');
-    const dealsTimeStart = moment('11:00', 'HH:mm');
-    const dealsTimeEnd = moment('23:59', 'HH:mm');
+    const dealsTimeStart = moment('11:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const dealsTimeEnd = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
 
     console.log(currentTime);
     console.log(dealsTimeStart);
