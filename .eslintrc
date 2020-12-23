@@ -5,6 +5,7 @@
     "rules": {
         "no-unused-vars": "warn",
         "prefer-destructuring": "warn",
-        "no-shadow": "off"
+        "no-shadow": "off",
+        "array-callback-return": "off"
     }
 }

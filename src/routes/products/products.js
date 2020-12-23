@@ -267,19 +267,13 @@ router.post('/updateProductsAvailability', async (req, res) => {
 router.get('/dastakDeals', async (_req, res) => {
   try {
     const currentTime = moment().tz('Asia/karachi');
+    const dealsTimeStart = moment('11:00', 'HH:mm:ssa');
+    const dealsTimeEnd = moment('23:59', 'HH:mm:ssa');
 
-    const formatedOpeningTime = moment('11:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const formatedClosingTime = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
+    console.log(dealsTimeStart);
+    console.log(dealsTimeEnd);
 
-    const openingTime = moment(formatedOpeningTime).subtract(5, 'hours');
-    const closingTime = moment(formatedClosingTime).subtract(5, 'hours');
-
-    if (
-      !currentTime.isBetween(
-        `${openingTime.toISOString()}`,
-        `${closingTime.toISOString()}`
-      )
-    ) {
+    if (!currentTime.isBetween(dealsTimeStart, dealsTimeEnd)) {
       return res.json({
         status: '404',
         msg: 'Dastak deals are available from 11am to 12pm',
@@ -294,39 +288,29 @@ router.get('/dastakDeals', async (_req, res) => {
 
     const openRestaurants = await Promise.all(
       restaurants.map(restaurant => {
-        let { openingTime, closingTime, _id } = restaurant;
+        const { openingTime: opening, closingTime: closing, _id } = restaurant;
 
-        const formatedOpeningTime = moment(openingTime, 'HH:mm:ssa').tz(
-          'Asia/karachi'
-        );
+        let [openingTime, closingTime] = [
+          moment(opening, 'HH:mm:ssa'),
+          moment(closing, 'HH:mm:ssa'),
+        ];
 
-        const formatedClosingTime = moment(closingTime, 'HH:mm:ssa').tz(
-          'Asia/karachi'
-        );
+        const [openingOffSet, closingOffSet] = [
+          moment(openingTime).format('a'),
+          moment(closingTime).format('a'),
+        ];
 
-        openingTime = moment(formatedOpeningTime).subtract(5, 'hours');
-        closingTime = moment(formatedClosingTime).subtract(5, 'hours');
-
-        const openingTimeOffSet = moment(openingTime).format('a');
-        const closingTimeOffSet = moment(closingTime).format('a');
+        console.log(openingTime);
+        console.log(closingTime);
 
         if (
-          (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
-          (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+          (openingOffSet === 'pm' && closingOffSet === 'am') ||
+          (openingTime === 'am' && closingOffSet === 'am')
         ) {
           closingTime = moment(closingTime).add(1, 'days');
         }
 
-        if (
-          currentTime.isBetween(
-            `${openingTime.toISOString()}`,
-            `${closingTime.toISOString()}`
-          )
-        ) {
-          return _id;
-        }
-
-        return openRestaurants;
+        if (currentTime.isBetween(openingTime, closingTime)) return _id;
       })
     );
 
