@@ -1,6 +1,7 @@
 import { createTransport } from 'nodemailer';
+import { unlinkSync } from 'fs';
 
-export const sendDailyCollection = (fileName, buffer) => {
+export const sendDailyCollection = async name => {
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
@@ -20,10 +21,7 @@ export const sendDailyCollection = (fileName, buffer) => {
     subject: 'Daily Rider Collections',
     attachments: [
       {
-        filename: fileName,
-        content: buffer,
-        contentType:
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        path: `${process.cwd()}/${name}`,
       },
     ],
   };
@@ -32,5 +30,7 @@ export const sendDailyCollection = (fileName, buffer) => {
     if (err) {
       console.log(err);
     }
+
+    unlinkSync(`${process.cwd()}/${name}`);
   });
 };
