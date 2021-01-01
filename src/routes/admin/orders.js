@@ -7,6 +7,7 @@ import Mart from '../../models/martsModel';
 import { emailOrderDetailsToCustomer } from '../../emailHandler/customerEmail/customerEmail';
 import { orderStatusEmail } from '../../emailHandler/orderConfirmationEmail/orderStatusEmail';
 import { emailOrderDetailsToRider } from '../../emailHandler/riderEmail/riderEmail';
+import { sendAcceptanceEmail } from '../../emailHandler/customerEmail/acceptanceEmail';
 import {
   emailOrderDetails,
   notifyRestaurantByEmail,
@@ -21,7 +22,7 @@ const router = Router();
 
 router.post('/placeOrder', async (req, res) => {
   try {
-    const params = req.body;
+    let params = req.body;
     const { orderTotal, martId, userId, products } = params;
 
     const mart = await Mart.findById(martId).select('-password -__v');
@@ -38,23 +39,21 @@ router.post('/placeOrder', async (req, res) => {
     }
 
     const orderTime = moment().tz('Asia/karachi');
-
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
-    params.products = await JSON.parse(products);
-    params.martId = mart._id;
-    params.martName = mart.name;
-    params.martPhone = mart.phone;
-    params.martAddress = mart.martAddress;
-    params.time = formatedTime;
+    params = {
+      ...params,
+      products: await JSON.parse(products),
+      martId: mart._id,
+      martName: mart.name,
+      martPhone: mart.phone,
+      martAddress: mart.martAddress,
+      time: formatedTime,
+    };
 
-    const morningTime = moment('09:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const noonTime = moment('21:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const nightTime = moment('23:59', 'HH:mm:ssa').tz('Asia/karachi');
-
-    const morningFareTime = moment(morningTime).subtract(5, 'hours');
-    const noonFareTime = moment(noonTime).subtract(5, 'hours');
-    const nightFareEndTime = moment(nightTime).subtract(5, 'hours');
+    const morningFareTime = moment('04:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const noonFareTime = moment('16:00', 'HH:mm:ssa').tz('Asia/karachi');
+    const nightFareEndTime = moment('18:59', 'HH:mm:ssa').tz('Asia/karachi');
 
     if (
       orderTime.isBetween(
@@ -79,9 +78,8 @@ router.post('/placeOrder', async (req, res) => {
     const adminMessage = 'You have a new order';
     const info = `New Order for ${params.martName} placed by ${order.name}`;
 
-    const { playerIds } = mart;
-
-    playerIds.forEach(async playerId => {
+    const { playerIds: restaurantPlayerIds } = mart;
+    restaurantPlayerIds.forEach(async playerId => {
       await notifyAdmin(info, adminMessage, playerId, {
         flag: 'adminReceived',
       });
@@ -123,6 +121,7 @@ router.post('/placeOrder', async (req, res) => {
       );
     }
   } catch (err) {
+    console.error(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -314,12 +313,13 @@ router.post('/adminResponse', async (req, res) => {
     if (status === 'Admin Accepted' && !customerNotified) {
       if (orderType === 'PickUp') {
         const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
+        sendAcceptanceEmail(msg);
 
         if (user.type === 'admin') {
           const { playerIds } = user;
 
           playerIds.forEach(async playerId => {
-            await notifyUser(msg, playerId, { flag: 'orderRejected' });
+            await notifyUser(msg, playerId, { flag: 'preparingOrder' });
           });
         } else {
           await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
@@ -336,6 +336,7 @@ router.post('/adminResponse', async (req, res) => {
 
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
+      sendAcceptanceEmail(msg);
 
       const idleRiders = await Users.find({
         type: 'rider',
@@ -633,63 +634,81 @@ router.post('/changeOrderStatus', async (req, res) => {
   }
 });
 
-router.post('/paidToOwner', async (req, res) => {
+router.post('/paidToOwners', async (req, res) => {
   try {
-    let { martName, startDate, endDate, percentage } = req.body;
-    const thisWeeksOrders = [];
-
-    const orders = await Orders.find({
-      martName,
-      paid: { $in: [false, undefined] },
-      orderType: 'Delivery',
-      status: { $in: ['Delivered', 'Rider Picked Up'] },
-    });
+    let { restaurants, startDate, endDate, percentage } = req.body;
+    let thisWeeksOrders = [];
 
     startDate = moment(startDate, 'DD-MM-YYYY');
-
     endDate = moment(endDate, 'DD-MM-YYYY');
+    restaurants = JSON.parse(restaurants);
 
-    await Promise.all(
-      orders.map(async order => {
-        const orderDate = moment(order.date, 'DD-MM-YYYY');
+    const data = await Promise.all(
+      restaurants.map(async martName => {
+        const orders = await Orders.find({
+          martName,
+          paid: { $in: [false, undefined] },
+          orderType: 'Delivery',
+          status: { $in: ['Delivered', 'Rider Picked Up'] },
+        });
 
-        if (
-          orderDate.isSameOrAfter(startDate) &&
-          orderDate.isSameOrBefore(endDate)
-        ) {
-          thisWeeksOrders.push(order);
-          // order.paid = true;
-          // await order.save();
-        }
+        await Promise.all(
+          orders.map(async order => {
+            const orderDate = moment(order.date, 'DD-MM-YYYY');
+
+            if (
+              orderDate.isSameOrAfter(startDate) &&
+              orderDate.isSameOrBefore(endDate)
+            ) {
+              thisWeeksOrders.push(order);
+              // order.paid = true;
+              // order.save();
+            }
+          })
+        );
+
+        const originalTotal = thisWeeksOrders.reduce(
+          (a, b) => a + b.orderTotal,
+          0
+        );
+
+        const totalWithoutDeliveryCharges = thisWeeksOrders.reduce(
+          (a, b) =>
+            b.deliveryCharges !== '0'
+              ? a + b.orderTotal - 30
+              : a + b.orderTotal,
+          0
+        );
+
+        const ourProfit = (
+          (percentage / 100) *
+          totalWithoutDeliveryCharges
+        ).toFixed();
+
+        const totalDeliveryCharges =
+          originalTotal - totalWithoutDeliveryCharges;
+
+        const totalToPayOwner = totalWithoutDeliveryCharges - +ourProfit;
+
+        const data = {
+          martName,
+          totalOrders: thisWeeksOrders.length,
+          originalTotal,
+          totalWithoutDeliveryCharges,
+          totalDeliveryCharges,
+          totalToPayOwner,
+          ourProfit,
+          data: thisWeeksOrders,
+        };
+
+        thisWeeksOrders = [];
+        return data;
       })
     );
 
-    const originalTotal = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
-
-    const totalWithoutDeliveryCharges = thisWeeksOrders.reduce(
-      (a, b) =>
-        b.deliveryCharges !== '0' ? a + b.orderTotal - 30 : a + b.orderTotal,
-      0
-    );
-
-    const ourProfit = (
-      (percentage / 100) *
-      totalWithoutDeliveryCharges
-    ).toFixed();
-
-    const totalDeliveryCharges = originalTotal - totalWithoutDeliveryCharges;
-
-    const totalToPayOwner = totalWithoutDeliveryCharges - +ourProfit;
-
     return res.json({
-      totalOrders: thisWeeksOrders.length,
-      originalTotal,
-      totalWithoutDeliveryCharges,
-      totalDeliveryCharges,
-      totalToPayOwner,
-      ourProfit,
       status: '200',
-      data: thisWeeksOrders,
+      data,
     });
   } catch (err) {
     return res.json({
@@ -700,46 +719,61 @@ router.post('/paidToOwner', async (req, res) => {
   }
 });
 
-router.post('/paidToRider', async (req, res) => {
+router.post('/paidToRiders', async (req, res) => {
   try {
-    let { riderId, startDate, endDate } = req.body;
-    const thisWeeksOrders = [];
+    let { riders, startDate, endDate } = req.body;
+    let thisWeeksOrders = [];
+    let total = 0;
 
-    const orders = await Orders.find({
-      riderId,
-      paidToRider: false,
-      orderType: 'Delivery',
-      status: { $in: ['Delivered', 'Rider Picked Up'] },
-    });
+    riders = JSON.parse(riders);
 
-    startDate = moment(startDate, 'DD-MM-YYYY');
+    const data = await Promise.all(
+      riders.map(async riderId => {
+        const { name } = await Users.findById(riderId);
 
-    endDate = moment(endDate, 'DD-MM-YYYY');
+        const orders = await Orders.find({
+          riderId,
+          paidToRider: false,
+          orderType: 'Delivery',
+          status: { $in: ['Delivered', 'Rider Picked Up'] },
+        });
 
-    await Promise.all(
-      orders.map(async order => {
-        const orderDate = moment(order.date, 'DD-MM-YYYY');
+        startDate = moment(startDate, 'DD-MM-YYYY');
+        endDate = moment(endDate, 'DD-MM-YYYY');
 
-        if (
-          orderDate.isSameOrAfter(startDate) &&
-          orderDate.isSameOrBefore(endDate)
-        ) {
-          thisWeeksOrders.push(order);
-          // order.paidToRider = true;
-          // await order.save();
-        }
+        await Promise.all(
+          orders.map(async order => {
+            const orderDate = moment(order.date, 'DD-MM-YYYY');
+
+            if (
+              orderDate.isSameOrAfter(startDate) &&
+              orderDate.isSameOrBefore(endDate)
+            ) {
+              thisWeeksOrders.push(order);
+              // order.paidToRider = true;
+              // await order.save();
+            }
+          })
+        );
+
+        total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+        const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
+
+        const data = {
+          name,
+          riderFare,
+          thisWeeksOrders,
+        };
+
+        thisWeeksOrders = [];
+        return data;
       })
     );
 
-    const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
-
-    const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
-
     return res.json({
-      total,
       status: '200',
-      data: thisWeeksOrders,
-      riderFare,
+      total,
+      data,
     });
   } catch (err) {
     return res.json({
