@@ -389,40 +389,31 @@ router.post('/dailyRiderCollections', async (req, res) => {
 
 router.get('/weeklyRidersFare', async (req, res) => {
   try {
-    const [startDate, endDate] = ['31-12-2020', '03-01-2021'];
-    let thisWeeksOrders = [];
+    let { startDate, endDate } = req.body;
     const dateRange = `${startDate} - ${endDate}`;
 
-    const start = moment(startDate, 'DD-MM-YYYY');
-    const end = moment(endDate, 'DD-MM-YYYY');
+    startDate = moment(startDate, 'DD-MM-YYYY');
+    endDate = moment(endDate, 'DD-MM-YYYY');
 
     const riders = await Orders.distinct('riderName', {
-      date: {
-        $in: ['31-12-2020', '01-01-2021', '02-01-2021', '03-01-2021'],
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
       },
     });
 
     const data = await Promise.all(
       riders.map(async riderName => {
-        const orders = await Orders.find({
+        const thisWeeksOrders = await Orders.find({
           riderName,
           paidToRider: { $in: [false, undefined] },
           orderType: 'Delivery',
           status: 'Delivered',
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
         });
-
-        await Promise.all(
-          orders.map(order => {
-            const orderDate = moment(order.date, 'DD-MM-YYYY');
-
-            if (
-              orderDate.isSameOrAfter(start) &&
-              orderDate.isSameOrBefore(end)
-            ) {
-              thisWeeksOrders.push(order);
-            }
-          })
-        );
 
         const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
         const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
@@ -435,7 +426,6 @@ router.get('/weeklyRidersFare', async (req, res) => {
           orders: thisWeeksOrders.length,
         };
 
-        thisWeeksOrders = [];
         return result;
       })
     );
