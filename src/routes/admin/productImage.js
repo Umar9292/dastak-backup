@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'express/lib/router';
 import { v2 } from 'cloudinary';
 import { IncomingForm } from 'formidable';
 import { unlinkSync } from 'fs';

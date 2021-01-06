@@ -1,6 +1,6 @@
-import { Router } from 'express';
+import Router from 'express/lib/router';
 import { orderBy } from 'lodash';
-import moment from 'moment-timezone';
+import moment from 'moment-timezone/moment-timezone';
 
 import Users from '../../models/userModel';
 import Products from '../../models/productsModel';

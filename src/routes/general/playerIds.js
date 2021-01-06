@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'express/lib/router';
 
 import Marts from '../../models/martsModel';
 import Users from '../../models/userModel';

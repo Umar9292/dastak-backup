@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'express/lib/router';
 import { compare, hash } from 'bcrypt';
 import { generateSecret, totp } from 'speakeasy';
 

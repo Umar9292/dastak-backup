@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import Router from 'express/lib/router';
 import moment from 'moment-timezone';
 
 import Orders from '../../models/ordersModel';
@@ -637,7 +637,6 @@ router.post('/changeOrderStatus', async (req, res) => {
 router.post('/paidToOwners', async (req, res) => {
   try {
     let { restaurants, startDate, endDate, percentage } = req.body;
-    let thisWeeksOrders = [];
 
     startDate = moment(startDate, 'DD-MM-YYYY');
     endDate = moment(endDate, 'DD-MM-YYYY');
@@ -645,27 +644,23 @@ router.post('/paidToOwners', async (req, res) => {
 
     const data = await Promise.all(
       restaurants.map(async martName => {
-        const orders = await Orders.find({
+        const thisWeeksOrders = await Orders.find({
           martName,
           paid: { $in: [false, undefined] },
           orderType: 'Delivery',
           status: { $in: ['Delivered', 'Rider Picked Up'] },
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
         });
 
-        await Promise.all(
-          orders.map(async order => {
-            const orderDate = moment(order.date, 'DD-MM-YYYY');
-
-            if (
-              orderDate.isSameOrAfter(startDate) &&
-              orderDate.isSameOrBefore(endDate)
-            ) {
-              thisWeeksOrders.push(order);
-              // order.paid = true;
-              // order.save();
-            }
+        /* await Promise.all(
+          thisWeeksOrders.map(async order => {
+            order.paid = true;
+            order.save();
           })
-        );
+        ); */
 
         const originalTotal = thisWeeksOrders.reduce(
           (a, b) => a + b.orderTotal,
@@ -701,7 +696,6 @@ router.post('/paidToOwners', async (req, res) => {
           data: thisWeeksOrders,
         };
 
-        thisWeeksOrders = [];
         return data;
       })
     );
@@ -722,39 +716,33 @@ router.post('/paidToOwners', async (req, res) => {
 router.post('/paidToRiders', async (req, res) => {
   try {
     let { riders, startDate, endDate } = req.body;
-    let thisWeeksOrders = [];
     let total = 0;
 
+    startDate = moment(startDate, 'DD-MM-YYYY');
+    endDate = moment(endDate, 'DD-MM-YYYY');
     riders = JSON.parse(riders);
 
     const data = await Promise.all(
       riders.map(async riderId => {
         const { name } = await Users.findById(riderId);
 
-        const orders = await Orders.find({
+        const thisWeeksOrders = await Orders.find({
           riderId,
           paidToRider: false,
           orderType: 'Delivery',
           status: { $in: ['Delivered', 'Rider Picked Up'] },
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
         });
 
-        startDate = moment(startDate, 'DD-MM-YYYY');
-        endDate = moment(endDate, 'DD-MM-YYYY');
-
-        await Promise.all(
-          orders.map(async order => {
-            const orderDate = moment(order.date, 'DD-MM-YYYY');
-
-            if (
-              orderDate.isSameOrAfter(startDate) &&
-              orderDate.isSameOrBefore(endDate)
-            ) {
-              thisWeeksOrders.push(order);
-              // order.paidToRider = true;
-              // await order.save();
-            }
+        /* await Promise.all(
+          thisWeeksOrders.map(async order => {
+            order.paidToRider = true;
+            order.save();
           })
-        );
+        ); */
 
         total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
         const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
@@ -765,7 +753,6 @@ router.post('/paidToRiders', async (req, res) => {
           thisWeeksOrders,
         };
 
-        thisWeeksOrders = [];
         return data;
       })
     );
