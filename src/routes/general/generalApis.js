@@ -1,18 +1,17 @@
-import { Router } from 'express';
-import moment from 'moment-timezone';
+import Router from 'express/lib/router';
+import moment from 'moment-timezone/moment-timezone';
 import Exceljs from 'exceljs';
 
-// import Users from '../../models/userModel';
-// import Products from '../../models/productsModel';
+import Users from '../../models/userModel';
+import Products from '../../models/productsModel';
 import Marts from '../../models/martsModel';
 import Orders from '../../models/ordersModel';
-// import { notifyUser } from '../../notificationHandler/handler';
+import { notifyUser } from '../../notificationHandler/handler';
 import { sendDailyCollection } from '../../emailHandler/dailyCollections/dailyCollections';
-// import notify from '../../notificationHandler/handler';
 
 const router = Router();
 
-/* router.get('/discount', async (req, res) => {
+router.get('/discount', async (req, res) => {
   try {
     const products = await Products.find({
       martId: '',
@@ -48,9 +47,9 @@ const router = Router();
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
-/* router.get('/notifications', async (req, res) => {
+router.get('/notifications', async (req, res) => {
   try {
     const users = await Users.find({
       type: 'user',
@@ -63,7 +62,7 @@ const router = Router();
 
     console.log(users.length);
 
-    const count = 0;
+    let count = 0;
 
     // const msg = `!Great News for Dastak Users! 😀\nFrom now on there will be no delivery charges on any order what so ever. Toh abhi mangwao abhi khao Dastak now. 😇`;
     // const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
@@ -89,9 +88,9 @@ const router = Router();
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
-/* router.get('/removeDiscount', async (req, res) => {
+router.get('/removeDiscount', async (req, res) => {
   try {
     const allUsers = await Users.find({ type: { $in: ['user', 'admin'] } });
 
@@ -125,7 +124,7 @@ const router = Router();
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 router.post('/collections', async (req, res) => {
   try {
@@ -162,9 +161,14 @@ router.post('/collections', async (req, res) => {
       total - ordersWithDeliveryCharges.length * 30;
     const deliveryCharges = ordersWithDeliveryCharges.length * 30;
     const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
+    const ourProfit =
+      +((12 / 100) * excludingDeliveryCharges).toFixed() +
+      deliveryCharges -
+      riderFare;
 
     return res.json({
       total,
+      ourProfit,
       deliveryCharges,
       excludingDeliveryCharges,
       riderFare,
@@ -385,7 +389,7 @@ router.post('/dailyRiderCollections', async (req, res) => {
 
 router.get('/weeklyRidersFare', async (req, res) => {
   try {
-    const [startDate, endDate] = ['24-12-2020', '30-12-2020'];
+    const [startDate, endDate] = ['31-12-2020', '03-01-2021'];
     let thisWeeksOrders = [];
     const dateRange = `${startDate} - ${endDate}`;
 
@@ -394,15 +398,7 @@ router.get('/weeklyRidersFare', async (req, res) => {
 
     const riders = await Orders.distinct('riderName', {
       date: {
-        $in: [
-          '24-12-2020',
-          '25-12-2020',
-          '26-12-2020',
-          '27-12-2020',
-          '28-12-2020',
-          '29-12-2020',
-          '30-12-2020',
-        ],
+        $in: ['31-12-2020', '01-01-2021', '02-01-2021', '03-01-2021'],
       },
     });
 
@@ -474,7 +470,6 @@ router.get('/weeklyRidersFare', async (req, res) => {
 router.post('/restaurantsCollections', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
-    let thisWeeksOrders = [];
     let percentage = 0;
     let dateRange;
 
@@ -482,16 +477,9 @@ router.post('/restaurantsCollections', async (req, res) => {
     const end = moment(endDate, 'DD-MM-YYYY');
 
     const restaurants = await Orders.distinct('martName', {
-      date: {
-        $in: [
-          '24-12-2020',
-          '25-12-2020',
-          '26-12-2020',
-          '27-12-2020',
-          '28-12-2020',
-          '29-12-2020',
-          '30-12-2020',
-        ],
+      createdAt: {
+        $gte: start,
+        $lte: end,
       },
     });
 
@@ -508,25 +496,16 @@ router.post('/restaurantsCollections', async (req, res) => {
           percentage = 15;
         }
 
-        const orders = await Orders.find({
+        const thisWeeksOrders = await Orders.find({
           martName,
           paid: { $in: [false, undefined] },
           orderType: 'Delivery',
           status: 'Delivered',
+          createdAt: {
+            $gte: start,
+            $lte: end,
+          },
         });
-
-        await Promise.all(
-          orders.map(order => {
-            const orderDate = moment(order.date, 'DD-MM-YYYY');
-
-            if (
-              orderDate.isSameOrAfter(start) &&
-              orderDate.isSameOrBefore(end)
-            ) {
-              thisWeeksOrders.push(order);
-            }
-          })
-        );
 
         const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
         const withoutDelivery = thisWeeksOrders.reduce(
@@ -551,7 +530,6 @@ router.post('/restaurantsCollections', async (req, res) => {
           totalOrders: thisWeeksOrders,
         };
 
-        thisWeeksOrders = [];
         return result;
       })
     );
@@ -590,6 +568,70 @@ router.post('/restaurantsCollections', async (req, res) => {
     await sendDailyCollection(`${dateRange}.xlsx`);
 
     return res.json({ status: '200', data });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.get('/aiAttempt', async (_req, res) => {
+  try {
+    const users = await Orders.distinct('userId', {
+      orderTotal: { $gte: 400 },
+    });
+    const data = [];
+
+    await Promise.all(
+      users.map(async userId => {
+        const user = await Users.findById(userId);
+
+        if (user) {
+          const restaurants = await Orders.distinct('martName', { userId });
+          const userOrderData = [];
+
+          await Promise.all(
+            restaurants.map(async martName => {
+              const [orderCount, orders] = await Promise.all([
+                Orders.countDocuments({
+                  martName,
+                  userId,
+                  orderTotal: { $gte: 400 },
+                }),
+                Orders.find({ martName, userId, orderTotal: { $gte: 400 } }),
+              ]);
+
+              let biggestOrder;
+
+              if (orders.length > 0) {
+                biggestOrder = orders.reduce((a, b) =>
+                  a.orderTotal > b.orderTotal ? a : b
+                );
+
+                const result = {
+                  restaurant: martName,
+                  orderCount,
+                  biggestOrder,
+                };
+
+                userOrderData.push(result);
+              }
+            })
+          );
+
+          const result = {
+            name: user.name,
+            userOrderData,
+          };
+
+          data.push(result);
+        }
+      })
+    );
+
+    return res.json({ data });
   } catch (err) {
     return res.json({
       status: '404',
