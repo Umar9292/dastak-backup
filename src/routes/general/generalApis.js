@@ -11,7 +11,7 @@ import { sendDailyCollection } from '../../emailHandler/dailyCollections/dailyCo
 
 const router = Router();
 
-router.get('/discount', async (req, res) => {
+router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
       martId: '',
@@ -20,9 +20,9 @@ router.get('/discount', async (req, res) => {
     await Promise.all(
       products.map(async product => {
         // if (product.category === 'Dastak Deals') {
-        const discountedPrice = ((15 / 100) * product.price).toFixed();
+        const percentage = ((20 / 100) * product.price).toFixed();
 
-        product.price = +discountedPrice + +product.price;
+        product.price = +percentage + +product.price;
         // product.discountedPrice = +(product.price - discountedPrice);
         // product.discount = 0;
         // }
@@ -129,29 +129,19 @@ router.get('/removeDiscount', async (req, res) => {
 router.post('/collections', async (req, res) => {
   try {
     let { startDate, endDate } = req.body;
-    const thisWeeksOrders = [];
 
-    const orders = await Orders.find({
+    startDate = moment(startDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+    endDate = moment(endDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+
+    const thisWeeksOrders = await Orders.find({
       paid: false,
       status: { $in: ['Delivered', 'Rider Picked Up'] },
       orderType: 'Delivery',
+      dateForSearching: {
+        $gte: startDate,
+        $lte: endDate,
+      },
     });
-
-    startDate = moment(startDate, 'DD-MM-YYYY');
-    endDate = moment(endDate, 'DD-MM-YYYY');
-
-    await Promise.all(
-      orders.map(async order => {
-        const orderDate = moment(order.date, 'DD-MM-YYYY');
-
-        if (
-          orderDate.isSameOrAfter(startDate) &&
-          orderDate.isSameOrBefore(endDate)
-        ) {
-          thisWeeksOrders.push(order);
-        }
-      })
-    );
 
     const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
     const ordersWithDeliveryCharges = thisWeeksOrders.filter(
@@ -346,12 +336,10 @@ router.post('/dailyRiderCollections', async (req, res) => {
 
         const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
 
-        const result = {
+        return {
           rider,
           collection,
         };
-
-        return result;
       })
     );
 
@@ -387,16 +375,16 @@ router.post('/dailyRiderCollections', async (req, res) => {
   }
 });
 
-router.get('/weeklyRidersFare', async (req, res) => {
+router.post('/weeklyRidersFare', async (req, res) => {
   try {
     let { startDate, endDate } = req.body;
     const dateRange = `${startDate} - ${endDate}`;
 
-    startDate = moment(startDate, 'DD-MM-YYYY');
-    endDate = moment(endDate, 'DD-MM-YYYY');
+    startDate = moment(startDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+    endDate = moment(endDate, 'DD-MM-YYYY').tz('Asia/Karachi');
 
     const riders = await Orders.distinct('riderName', {
-      createdAt: {
+      dateForSearching: {
         $gte: startDate,
         $lte: endDate,
       },
@@ -409,7 +397,7 @@ router.get('/weeklyRidersFare', async (req, res) => {
           paidToRider: { $in: [false, undefined] },
           orderType: 'Delivery',
           status: 'Delivered',
-          createdAt: {
+          dateForSearching: {
             $gte: startDate,
             $lte: endDate,
           },
@@ -418,15 +406,13 @@ router.get('/weeklyRidersFare', async (req, res) => {
         const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
         const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
 
-        const result = {
+        return {
           dateRange,
           riderName,
           total,
           riderFare,
-          orders: thisWeeksOrders.length,
+          orders: thisWeeksOrders,
         };
-
-        return result;
       })
     );
 
@@ -445,7 +431,7 @@ router.get('/weeklyRidersFare', async (req, res) => {
     worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
 
     await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
-    await sendDailyCollection(`${dateRange}.xlsx`);
+    sendDailyCollection(`${dateRange}.xlsx`);
 
     return res.json({ status: '200', data });
   } catch (err) {
@@ -459,29 +445,31 @@ router.get('/weeklyRidersFare', async (req, res) => {
 
 router.post('/restaurantsCollections', async (req, res) => {
   try {
-    const { startDate, endDate } = req.body;
+    let { startDate, endDate } = req.body;
     let percentage = 0;
     let dateRange;
 
-    const start = moment(startDate, 'DD-MM-YYYY');
-    const end = moment(endDate, 'DD-MM-YYYY');
+    startDate = moment(startDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+    endDate = moment(endDate, 'DD-MM-YYYY').tz('Asia/Karachi');
 
     const restaurants = await Orders.distinct('martName', {
-      createdAt: {
-        $gte: start,
-        $lte: end,
+      dateForSearching: {
+        $gte: startDate,
+        $lte: endDate,
       },
     });
 
     const data = await Promise.all(
       restaurants.map(async martName => {
-        if (
-          martName === 'Zam Zam Restaurant' ||
-          martName === 'De Fiesta Restaurant'
-        ) {
+        if (martName === 'De Fiesta Restaurant') {
           percentage = 10;
-        } else if (martName === "Moody's") {
+        } else if (
+          martName === "Moody's" ||
+          martName === 'Zam Zam Restaurant'
+        ) {
           percentage = 12;
+        } else if (martName === 'Mahar Murgh Pulao') {
+          percentage = 20;
         } else {
           percentage = 15;
         }
@@ -491,9 +479,9 @@ router.post('/restaurantsCollections', async (req, res) => {
           paid: { $in: [false, undefined] },
           orderType: 'Delivery',
           status: 'Delivered',
-          createdAt: {
-            $gte: start,
-            $lte: end,
+          dateForSearching: {
+            $gte: startDate,
+            $lte: endDate,
           },
         });
 
@@ -555,7 +543,7 @@ router.post('/restaurantsCollections', async (req, res) => {
     worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
 
     await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
-    await sendDailyCollection(`${dateRange}.xlsx`);
+    sendDailyCollection(`${dateRange}.xlsx`);
 
     return res.json({ status: '200', data });
   } catch (err) {
