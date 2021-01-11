@@ -4,6 +4,7 @@ import { urlencoded as _urlencoded, json as _json } from 'body-parser';
 import { get } from 'http';
 import cors from 'cors';
 import logger from 'morgan';
+import helmet from 'helmet';
 import { join } from 'path';
 import { config } from 'cloudinary';
 import './env';
@@ -26,6 +27,10 @@ const port = process.env.PORT || 8080;
 
 const app = express();
 
+app.disable('etag');
+app.disable('x-powered-by');
+
+app.use(helmet());
 app.use(cors());
 app.use(_urlencoded({ extended: false }));
 app.use(_json());
@@ -49,8 +54,8 @@ app.use(
 );
 
 const options = {
-  host: 'dastakbackend.herokuapp.com',
-  // host: 'martbackend.herokuapp.com',
+  // host: 'dastakbackend.herokuapp.com',
+  host: 'martbackend.herokuapp.com',
 };
 const request = () => {
   get(options, function(res) {
