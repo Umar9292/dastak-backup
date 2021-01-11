@@ -23,7 +23,7 @@ const router = Router();
 router.post('/placeOrder', async (req, res) => {
   try {
     let params = req.body;
-    const { orderTotal, martId, userId, products } = params;
+    const { orderTotal, martId, userId, products, date } = params;
 
     const mart = await Mart.findById(martId).select('-password -__v');
 
@@ -49,6 +49,7 @@ router.post('/placeOrder', async (req, res) => {
       martPhone: mart.phone,
       martAddress: mart.martAddress,
       time: formatedTime,
+      dateForSearching: moment(date, 'DD-MM-YYYY').tz('Asia/Karachi'),
     };
 
     const morningFareTime = moment('04:00', 'HH:mm:ssa').tz('Asia/karachi');
