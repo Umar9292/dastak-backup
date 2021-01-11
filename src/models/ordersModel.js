@@ -22,6 +22,7 @@ const ordersModel = Schema(
     },
     address: String,
     date: String,
+    dateForSearching: String,
     time: String,
     timeWhenDelivered: String,
     products: Object,
@@ -43,6 +44,7 @@ const ordersModel = Schema(
     longitude: String,
     martLatitude: String,
     martLongitude: String,
+    createdAt: Date,
   },
   {
     versionKey: false,
