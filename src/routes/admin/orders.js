@@ -636,10 +636,10 @@ router.post('/changeOrderStatus', async (req, res) => {
 
 router.post('/paidToOwners', async (req, res) => {
   try {
-    let { restaurants, startDate, endDate, percentage } = req.body;
+    let { restaurants, startDate, endDate } = req.body;
 
-    startDate = moment(startDate, 'DD-MM-YYYY');
-    endDate = moment(endDate, 'DD-MM-YYYY');
+    startDate = moment(startDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+    endDate = moment(endDate, 'DD-MM-YYYY').tz('Asia/Karachi');
     restaurants = JSON.parse(restaurants);
 
     const data = await Promise.all(
@@ -649,7 +649,7 @@ router.post('/paidToOwners', async (req, res) => {
           paid: { $in: [false, undefined] },
           orderType: 'Delivery',
           status: { $in: ['Delivered', 'Rider Picked Up'] },
-          createdAt: {
+          dateForSearching: {
             $gte: startDate,
             $lte: endDate,
           },
@@ -658,7 +658,7 @@ router.post('/paidToOwners', async (req, res) => {
         /* await Promise.all(
           thisWeeksOrders.map(async order => {
             order.paid = true;
-            order.save();
+            await order.save();
           })
         ); */
 
@@ -675,15 +675,8 @@ router.post('/paidToOwners', async (req, res) => {
           0
         );
 
-        const ourProfit = (
-          (percentage / 100) *
-          totalWithoutDeliveryCharges
-        ).toFixed();
-
         const totalDeliveryCharges =
           originalTotal - totalWithoutDeliveryCharges;
-
-        const totalToPayOwner = totalWithoutDeliveryCharges - +ourProfit;
 
         const data = {
           martName,
@@ -691,8 +684,6 @@ router.post('/paidToOwners', async (req, res) => {
           originalTotal,
           totalWithoutDeliveryCharges,
           totalDeliveryCharges,
-          totalToPayOwner,
-          ourProfit,
           data: thisWeeksOrders,
         };
 
@@ -718,42 +709,42 @@ router.post('/paidToRiders', async (req, res) => {
     let { riders, startDate, endDate } = req.body;
     let total = 0;
 
-    startDate = moment(startDate, 'DD-MM-YYYY');
-    endDate = moment(endDate, 'DD-MM-YYYY');
+    startDate = moment(startDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+    endDate = moment(endDate, 'DD-MM-YYYY').tz('Asia/Karachi');
     riders = JSON.parse(riders);
 
     const data = await Promise.all(
       riders.map(async riderId => {
-        const { name } = await Users.findById(riderId);
+        const [{ name }, thisWeeksOrders] = await Promise.all([
+          Users.findById(riderId),
 
-        const thisWeeksOrders = await Orders.find({
-          riderId,
-          paidToRider: false,
-          orderType: 'Delivery',
-          status: { $in: ['Delivered', 'Rider Picked Up'] },
-          createdAt: {
-            $gte: startDate,
-            $lte: endDate,
-          },
-        });
+          Orders.find({
+            riderId,
+            paidToRider: false,
+            orderType: 'Delivery',
+            status: { $in: ['Delivered', 'Rider Picked Up'] },
+            dateForSearching: {
+              $gte: startDate,
+              $lte: endDate,
+            },
+          }),
+        ]);
 
         /* await Promise.all(
           thisWeeksOrders.map(async order => {
             order.paidToRider = true;
-            order.save();
+            await order.save();
           })
         ); */
 
         total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
         const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
 
-        const data = {
+        return {
           name,
           riderFare,
           thisWeeksOrders,
         };
-
-        return data;
       })
     );
 
