@@ -1,5 +1,5 @@
 import Router from 'express/lib/router';
-import moment from 'moment-timezone/moment-timezone';
+import moment from 'moment-timezone';
 import Exceljs from 'exceljs';
 
 import Users from '../../models/userModel';
@@ -377,16 +377,22 @@ router.post('/dailyRiderCollections', async (req, res) => {
 
 router.post('/weeklyRidersFare', async (req, res) => {
   try {
-    let { startDate, endDate } = req.body;
+    const { startDate, endDate } = req.body;
     const dateRange = `${startDate} - ${endDate}`;
 
-    startDate = moment(startDate, 'DD-MM-YYYY').tz('Asia/Karachi');
-    endDate = moment(endDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .toISOString();
 
     const riders = await Orders.distinct('riderName', {
       dateForSearching: {
-        $gte: startDate,
-        $lte: endDate,
+        $gte: start,
+        $lte: end,
       },
     });
 
@@ -398,8 +404,8 @@ router.post('/weeklyRidersFare', async (req, res) => {
           orderType: 'Delivery',
           status: 'Delivered',
           dateForSearching: {
-            $gte: startDate,
-            $lte: endDate,
+            $gte: start,
+            $lte: end,
           },
         });
 
@@ -445,17 +451,23 @@ router.post('/weeklyRidersFare', async (req, res) => {
 
 router.post('/restaurantsCollections', async (req, res) => {
   try {
-    let { startDate, endDate } = req.body;
+    const { startDate, endDate } = req.body;
     let percentage = 0;
     let dateRange;
 
-    startDate = moment(startDate, 'DD-MM-YYYY').tz('Asia/Karachi');
-    endDate = moment(endDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .toISOString();
 
     const restaurants = await Orders.distinct('martName', {
       dateForSearching: {
-        $gte: startDate,
-        $lte: endDate,
+        $gte: start,
+        $lte: end,
       },
     });
 
@@ -480,8 +492,8 @@ router.post('/restaurantsCollections', async (req, res) => {
           orderType: 'Delivery',
           status: 'Delivered',
           dateForSearching: {
-            $gte: startDate,
-            $lte: endDate,
+            $gte: start,
+            $lte: end,
           },
         });
 

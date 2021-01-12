@@ -49,7 +49,10 @@ router.post('/placeOrder', async (req, res) => {
       martPhone: mart.phone,
       martAddress: mart.martAddress,
       time: formatedTime,
-      dateForSearching: moment(date, 'DD-MM-YYYY').tz('Asia/Karachi'),
+      dateForSearching: moment(date, 'DD-MM-YYYY')
+        .tz('Asia/Karachi')
+        .add(1, 'days')
+        .toISOString(),
     };
 
     const morningFareTime = moment('04:00', 'HH:mm:ssa').tz('Asia/karachi');
@@ -639,8 +642,15 @@ router.post('/paidToOwners', async (req, res) => {
   try {
     let { restaurants, startDate, endDate } = req.body;
 
-    startDate = moment(startDate, 'DD-MM-YYYY').tz('Asia/Karachi');
-    endDate = moment(endDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+    startDate = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .toISOString();
+    endDate = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .toISOString();
+
     restaurants = JSON.parse(restaurants);
 
     const data = await Promise.all(
@@ -710,9 +720,18 @@ router.post('/paidToRiders', async (req, res) => {
     let { riders, startDate, endDate } = req.body;
     let total = 0;
 
-    startDate = moment(startDate, 'DD-MM-YYYY').tz('Asia/Karachi');
-    endDate = moment(endDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+    startDate = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .toISOString();
+    endDate = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .toISOString();
+
     riders = JSON.parse(riders);
+
+    console.log(startDate, ' ', endDate);
 
     const data = await Promise.all(
       riders.map(async riderId => {
