@@ -22,7 +22,7 @@ const ordersModel = Schema(
     },
     address: String,
     date: String,
-    dateForSearching: String,
+    dateForSearching: Date,
     time: String,
     timeWhenDelivered: String,
     products: Object,
