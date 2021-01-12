@@ -54,8 +54,8 @@ app.use(
 );
 
 const options = {
-  host: 'dastakbackend.herokuapp.com',
-  // host: 'martbackend.herokuapp.com',
+  // host: 'dastakbackend.herokuapp.com',
+  host: 'martbackend.herokuapp.com',
 };
 const request = () => {
   get(options, function(res) {
@@ -86,10 +86,6 @@ connect(
     }
   }
 );
-
-const cpuCount = require('os').cpus().length;
-
-console.log(cpuCount);
 
 config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
