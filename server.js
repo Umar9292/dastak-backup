@@ -87,6 +87,10 @@ connect(
   }
 );
 
+const cpuCount = require('os').cpus().length;
+
+console.log(cpuCount);
+
 config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_KEY,
