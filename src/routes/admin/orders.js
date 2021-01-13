@@ -54,8 +54,6 @@ router.post('/placeOrder', async (req, res) => {
         .toISOString(),
     };
 
-    console.log(params.dateForSearching);
-
     const morningFareTime = moment('04:00', 'HH:mm:ssa').tz('Asia/karachi');
     const noonFareTime = moment('16:00', 'HH:mm:ssa').tz('Asia/karachi');
     const nightFareEndTime = moment('18:59', 'HH:mm:ssa').tz('Asia/karachi');
