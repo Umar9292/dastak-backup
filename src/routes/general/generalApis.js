@@ -631,4 +631,22 @@ router.get('/aiAttempt', async (_req, res) => {
   }
 });
 
+router.post('/test', async (req, res) => {
+  try {
+    const orders = await Orders.find();
+
+    console.log(orders[0].date);
+    const date = moment(orders[0].date, 'DD-MM-YYYY').tz('Asia/Karachi');
+    console.log(date);
+
+    return res.send('done');
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 export default router;
