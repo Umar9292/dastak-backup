@@ -636,7 +636,10 @@ router.post('/test', async (req, res) => {
     const orders = await Orders.find();
 
     console.log(orders[0].date);
-    const date = moment(orders[0].date, 'DD-MM-YYYY').tz('Asia/Karachi');
+    const date = moment(orders[0].date, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
     console.log(date);
 
     return res.send('done');
