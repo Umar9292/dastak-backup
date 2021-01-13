@@ -51,7 +51,6 @@ router.post('/placeOrder', async (req, res) => {
       time: formatedTime,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
-        .add(1, 'days')
         .toISOString(),
     };
 
