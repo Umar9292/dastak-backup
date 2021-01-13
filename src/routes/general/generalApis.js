@@ -631,16 +631,20 @@ router.get('/aiAttempt', async (_req, res) => {
   }
 });
 
-router.post('/test', async (req, res) => {
+router.post('/dateManipulationForOrders', async (req, res) => {
   try {
     const orders = await Orders.find();
 
-    console.log(orders[0].date);
-    const date = moment(orders[0].date, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
-      .toISOString();
+    // Subtracts a day on local server but is fine in Production.
+    await Promise.all(
+      orders.map(order => {
+        order.dateForSearching = moment(order.date, 'DD-MM-YYYY')
+          .tz('Asia/Karachi')
+          .toISOString();
 
-    console.log(date);
+        return order.save();
+      })
+    );
 
     return res.send('done');
   } catch (err) {
