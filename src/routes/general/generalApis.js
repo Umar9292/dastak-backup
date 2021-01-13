@@ -631,7 +631,7 @@ router.get('/aiAttempt', async (_req, res) => {
   }
 });
 
-router.post('/dateManipulationForOrders', async (req, res) => {
+router.post('/dateManipulationForOrders', async (_req, res) => {
   try {
     const orders = await Orders.find();
 
