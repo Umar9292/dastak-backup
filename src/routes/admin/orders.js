@@ -80,7 +80,7 @@ router.post('/placeOrder', async (req, res) => {
 
     const order = await new Orders(params).save();
 
-    /*  const adminMessage = 'You have a new order';
+    const adminMessage = 'You have a new order';
     const info = `New Order for ${params.martName} placed by ${order.name}`;
 
     const { playerIds: restaurantPlayerIds } = mart;
@@ -88,7 +88,7 @@ router.post('/placeOrder', async (req, res) => {
       await notifyAdmin(info, adminMessage, playerId, {
         flag: 'adminReceived',
       });
-    }); */
+    });
 
     res.json({
       status: '200',
@@ -96,7 +96,7 @@ router.post('/placeOrder', async (req, res) => {
       data: order,
     });
 
-    /*  const user = await Users.findById(userId).select('-password -__v');
+    const user = await Users.findById(userId).select('-password -__v');
 
     const count = params.products.reduce((a, b) => a + b.count, 0);
 
@@ -124,7 +124,7 @@ router.post('/placeOrder', async (req, res) => {
         params.products,
         count
       );
-    } */
+    }
   } catch (err) {
     console.error(err);
     return res.json({
