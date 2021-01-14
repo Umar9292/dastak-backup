@@ -382,11 +382,9 @@ router.post('/weeklyRidersFare', async (req, res) => {
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
-      .add(1, 'days')
       .toISOString();
     const end = moment(endDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
-      .add(1, 'days')
       .toISOString();
 
     const riders = await Orders.distinct('riderName', {
@@ -417,7 +415,7 @@ router.post('/weeklyRidersFare', async (req, res) => {
           riderName,
           total,
           riderFare,
-          orders: thisWeeksOrders,
+          orders: thisWeeksOrders.length,
         };
       })
     );
@@ -436,8 +434,8 @@ router.post('/weeklyRidersFare', async (req, res) => {
 
     worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
 
-    await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
-    sendDailyCollection(`${dateRange}.xlsx`);
+    // await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
+    // sendDailyCollection(`${dateRange}.xlsx`);
 
     return res.json({ status: '200', data });
   } catch (err) {
@@ -457,11 +455,9 @@ router.post('/restaurantsCollections', async (req, res) => {
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
-      .add(1, 'days')
       .toISOString();
     const end = moment(endDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
-      .add(1, 'days')
       .toISOString();
 
     const restaurants = await Orders.distinct('martName', {

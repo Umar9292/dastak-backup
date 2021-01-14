@@ -643,11 +643,9 @@ router.post('/paidToOwners', async (req, res) => {
 
     startDate = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
-      .add(1, 'days')
       .toISOString();
     endDate = moment(endDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
-      .add(1, 'days')
       .toISOString();
 
     restaurants = JSON.parse(restaurants);
@@ -721,16 +719,12 @@ router.post('/paidToRiders', async (req, res) => {
 
     startDate = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
-      .add(1, 'days')
       .toISOString();
     endDate = moment(endDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
-      .add(1, 'days')
       .toISOString();
 
     riders = JSON.parse(riders);
-
-    console.log(startDate, ' ', endDate);
 
     const data = await Promise.all(
       riders.map(async riderId => {
