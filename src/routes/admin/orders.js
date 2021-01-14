@@ -733,7 +733,7 @@ router.post('/paidToRiders', async (req, res) => {
 
           Orders.find({
             riderId,
-            paidToRider: true,
+            // paidToRider: true,
             orderType: 'Delivery',
             status: { $in: ['Delivered', 'Rider Picked Up'] },
             dateForSearching: {
