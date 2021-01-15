@@ -503,7 +503,7 @@ router.post('/restaurantsCollections', async (req, res) => {
         );
         const ourProfit = ((percentage / 100) * withoutDelivery).toFixed();
 
-        console.log(martName, ' ', ourProfit);
+        console.log(martName, ' ', percentage, ' ', ourProfit);
 
         const totalDeliveryCharges = total - withoutDelivery;
         const totalToPayOwner = withoutDelivery - +ourProfit;
