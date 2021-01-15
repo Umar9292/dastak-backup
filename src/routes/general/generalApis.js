@@ -450,8 +450,8 @@ router.post('/weeklyRidersFare', async (req, res) => {
 router.post('/restaurantsCollections', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
-    let percentage = 0;
     let dateRange;
+    let percentage = 0;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -461,6 +461,8 @@ router.post('/restaurantsCollections', async (req, res) => {
       .toISOString();
 
     const restaurants = await Orders.distinct('martName', {
+      paid: false,
+      status: 'Delivered',
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -480,20 +482,15 @@ router.post('/restaurantsCollections', async (req, res) => {
           },
         });
 
-        if (martName === 'De Fiesta Restaurant') {
-          percentage = 10;
-        } else if (
-          martName === "Moody's" ||
-          martName === 'Zam Zam Restaurant'
-        ) {
+        if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
           percentage = 12;
+        } else if (martName === 'De Fiesta Restaurant') {
+          percentage = 10;
         } else if (martName === 'Mahar Murgh Pulao') {
           percentage = 20;
         } else {
           percentage = 15;
         }
-
-        console.log(martName, ' ', percentage);
 
         const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
         const withoutDelivery = thisWeeksOrders.reduce(
@@ -504,14 +501,11 @@ router.post('/restaurantsCollections', async (req, res) => {
           0
         );
         const ourProfit = ((percentage / 100) * withoutDelivery).toFixed();
-
-        console.log(martName, ' ', percentage, ' ', ourProfit);
-
         const totalDeliveryCharges = total - withoutDelivery;
         const totalToPayOwner = withoutDelivery - +ourProfit;
         dateRange = `${startDate} - ${endDate}`;
 
-        const result = {
+        return {
           dateRange,
           martName,
           total,
@@ -520,8 +514,6 @@ router.post('/restaurantsCollections', async (req, res) => {
           totalDeliveryCharges,
           totalOrders: thisWeeksOrders,
         };
-
-        return result;
       })
     );
 
@@ -560,6 +552,7 @@ router.post('/restaurantsCollections', async (req, res) => {
 
     return res.json({ status: '200', data });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -644,6 +637,39 @@ router.post('/dateManipulationForOrders', async (_req, res) => {
           .toISOString();
 
         return order.save();
+      })
+    );
+
+    return res.send('done');
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.get('/restaurantPercentages', async (_req, res) => {
+  try {
+    const restaurants = await Marts.find({ shopType: 'restaurant' });
+
+    // Subtracts a day on local server but is fine in Production.
+    await Promise.all(
+      restaurants.map(restaurant => {
+        if (
+          restaurant.name === "Moody's" ||
+          restaurant.name === 'Zam Zam Restaurant' ||
+          restaurant.name === 'De Fiesta Restaurant'
+        ) {
+          restaurant.percentage = 12;
+        } else if (restaurant.name === 'Mahar Murgh Pulao') {
+          restaurant.percentage = 20;
+        } else {
+          restaurant.percentage = 15;
+        }
+
+        return restaurant.save();
       })
     );
 

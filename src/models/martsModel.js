@@ -21,6 +21,7 @@ const martsModel = Schema(
       type: Object,
       default: [],
     },
+    percentage: Number,
     shopType: String,
     minimumOrder: Number,
     deliveryCharges: String,
