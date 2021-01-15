@@ -712,15 +712,17 @@ router.post('/specificRestaurantDetails', async (req, res) => {
   }
 });
 
-router.get('/closeRestaurants', async (req, res) => {
+router.post('/closeRestaurants', async (req, res) => {
   try {
+    const { searchFlag, updateFlag } = req.body;
+
     await Marts.updateMany(
       {
         shopType: 'restaurant',
         status: 'active',
-        available: false,
+        available: searchFlag,
       },
-      { available: true }
+      { available: updateFlag }
     );
 
     return res.json('done');
