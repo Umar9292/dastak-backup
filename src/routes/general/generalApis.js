@@ -469,6 +469,17 @@ router.post('/restaurantsCollections', async (req, res) => {
 
     const data = await Promise.all(
       restaurants.map(async martName => {
+        const thisWeeksOrders = await Orders.find({
+          martName,
+          paid: { $in: [false, undefined] },
+          orderType: 'Delivery',
+          status: 'Delivered',
+          dateForSearching: {
+            $gte: start,
+            $lte: end,
+          },
+        });
+
         if (martName === 'De Fiesta Restaurant') {
           percentage = 10;
         } else if (
@@ -481,17 +492,6 @@ router.post('/restaurantsCollections', async (req, res) => {
         } else {
           percentage = 15;
         }
-
-        const thisWeeksOrders = await Orders.find({
-          martName,
-          paid: { $in: [false, undefined] },
-          orderType: 'Delivery',
-          status: 'Delivered',
-          dateForSearching: {
-            $gte: start,
-            $lte: end,
-          },
-        });
 
         console.log(martName, ' ', percentage);
 
