@@ -502,6 +502,9 @@ router.post('/restaurantsCollections', async (req, res) => {
           0
         );
         const ourProfit = ((percentage / 100) * withoutDelivery).toFixed();
+
+        console.log(martName, ' ', ourProfit);
+
         const totalDeliveryCharges = total - withoutDelivery;
         const totalToPayOwner = withoutDelivery - +ourProfit;
         dateRange = `${startDate} - ${endDate}`;
@@ -550,8 +553,8 @@ router.post('/restaurantsCollections', async (req, res) => {
 
     worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
 
-    await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
-    sendDailyCollection(`${dateRange}.xlsx`);
+    // await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
+    // sendDailyCollection(`${dateRange}.xlsx`);
 
     return res.json({ status: '200', data });
   } catch (err) {
