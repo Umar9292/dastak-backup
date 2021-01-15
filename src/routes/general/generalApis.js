@@ -547,8 +547,8 @@ router.post('/restaurantsCollections', async (req, res) => {
 
     worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
 
-    // await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
-    // sendDailyCollection(`${dateRange}.xlsx`);
+    await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
+    sendDailyCollection(`${dateRange}.xlsx`);
 
     return res.json({ status: '200', data });
   } catch (err) {
