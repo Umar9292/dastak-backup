@@ -493,6 +493,8 @@ router.post('/restaurantsCollections', async (req, res) => {
           },
         });
 
+        console.log(martName, ' ', percentage);
+
         const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
         const withoutDelivery = thisWeeksOrders.reduce(
           (a, b) =>
