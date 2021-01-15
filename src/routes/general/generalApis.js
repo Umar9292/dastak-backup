@@ -676,7 +676,7 @@ router.post('/specificRestaurantDetails', async (req, res) => {
     const data = await Promise.all(
       orders.map(order => {
         const totalWithoutdelivery =
-          order.deliveryCharges !== '0'
+          order.deliveryCharges === '0'
             ? order.orderTotal
             : order.orderTotal - 30;
 
@@ -703,6 +703,27 @@ router.post('/specificRestaurantDetails', async (req, res) => {
     sendDailyCollection(`${dateRange}.xlsx`);
 
     return res.json({ status: '200', data });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.get('/closeRestaurants', async (req, res) => {
+  try {
+    await Marts.updateMany(
+      {
+        shopType: 'restaurant',
+        status: 'active',
+        available: false,
+      },
+      { available: true }
+    );
+
+    return res.json('done');
   } catch (err) {
     return res.json({
       status: '404',
