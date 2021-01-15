@@ -650,30 +650,59 @@ router.post('/dateManipulationForOrders', async (_req, res) => {
   }
 });
 
-router.get('/restaurantPercentages', async (_req, res) => {
+router.post('/specificRestaurantDetails', async (req, res) => {
   try {
-    const restaurants = await Marts.find({ shopType: 'restaurant' });
+    const { startDate, endDate, martId } = req.body;
+    let dateRange;
 
-    // Subtracts a day on local server but is fine in Production.
-    await Promise.all(
-      restaurants.map(restaurant => {
-        if (
-          restaurant.name === "Moody's" ||
-          restaurant.name === 'Zam Zam Restaurant' ||
-          restaurant.name === 'De Fiesta Restaurant'
-        ) {
-          restaurant.percentage = 12;
-        } else if (restaurant.name === 'Mahar Murgh Pulao') {
-          restaurant.percentage = 20;
-        } else {
-          restaurant.percentage = 15;
-        }
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
 
-        return restaurant.save();
+    const orders = await Orders.find({
+      martId,
+      paid: false,
+      orderType: 'Delivery',
+      status: 'Delivered',
+      dateForSearching: {
+        $gte: start,
+        $lte: end,
+      },
+    });
+
+    const data = await Promise.all(
+      orders.map(order => {
+        const totalWithoutdelivery =
+          order.deliveryCharges !== '0'
+            ? order.orderTotal
+            : order.orderTotal - 30;
+
+        return {
+          date: order.date,
+          total: totalWithoutdelivery,
+        };
       })
     );
 
-    return res.send('done');
+    const workbook = new Exceljs.Workbook();
+    const worksheet = workbook.addWorksheet(dateRange);
+
+    worksheet.columns = [
+      { header: 'Date', key: 'date', width: 15 },
+      { header: 'Order Total', key: 'total', width: 15 },
+    ];
+
+    await Promise.all(data.map(doc => worksheet.addRow(doc)));
+
+    worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
+
+    await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
+    sendDailyCollection(`${dateRange}.xlsx`);
+
+    return res.json({ status: '200', data });
   } catch (err) {
     return res.json({
       status: '404',
