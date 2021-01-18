@@ -750,12 +750,12 @@ router.post('/paidToRiders', async (req, res) => {
           }),
         ]);
 
-        /* await Promise.all(
+        await Promise.all(
           thisWeeksOrders.map(async order => {
             order.paidToRider = true;
             await order.save();
           })
-        ); */
+        );
 
         total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
         const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
