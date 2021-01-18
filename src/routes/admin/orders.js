@@ -456,29 +456,16 @@ router.post('/assignRider', async (req, res) => {
       });
     }
 
-    const orderTime = moment(order.time, 'HH:mm')
+    const orderTime = moment(order.time, 'HH:mma')
       .tz('Asia/karachi')
       .subtract(5, 'hours');
 
-    const morningFareTime = moment('04:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const noonFareTime = moment('16:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const nightFareEndTime = moment('18:59', 'HH:mm:ssa').tz('Asia/karachi');
+    const morningFareTime = moment('04:00', 'HH:mm').tz('Asia/karachi');
+    const noonFareTime = moment('16:00', 'HH:mm').tz('Asia/karachi');
 
-    if (
-      orderTime.isBetween(
-        `${morningFareTime.toISOString()}`,
-        `${noonFareTime.toISOString()}`
-      )
-    ) {
+    if (orderTime.isBetween(morningFareTime, noonFareTime)) {
       req.body.riderFare = tillNoonFare;
-    }
-
-    if (
-      orderTime.isBetween(
-        `${noonFareTime.toISOString()}`,
-        `${nightFareEndTime.toISOString()}`
-      )
-    ) {
+    } else {
       req.body.riderFare = nightFare;
     }
 
