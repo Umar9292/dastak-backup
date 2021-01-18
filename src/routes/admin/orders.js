@@ -448,15 +448,18 @@ router.post('/assignRider', async (req, res) => {
       Users.findById(riderId),
     ]);
 
-    if (order.riderId)
+    if (order.riderId) {
       return res.json({
         status: '404',
         msg:
           'This order has already been assigned to another rider. Stay active another order might come your way.',
       });
+    }
 
-    const orderTime = moment(order.time, 'HH:mm').tz('Asia/karachi');
-    console.log(orderTime);
+    const orderTime = moment(order.time, 'HH:mm')
+      .tz('Asia/karachi')
+      .subtract(5, 'hours');
+
     const morningFareTime = moment('04:00', 'HH:mm:ssa').tz('Asia/karachi');
     const noonFareTime = moment('16:00', 'HH:mm:ssa').tz('Asia/karachi');
     const nightFareEndTime = moment('18:59', 'HH:mm:ssa').tz('Asia/karachi');
