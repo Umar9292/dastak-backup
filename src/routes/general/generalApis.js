@@ -14,18 +14,23 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '',
+      martId: '5ffd83438008eb10dd9a9520',
     });
 
     await Promise.all(
-      products.map(async product => {
-        // if (product.category === 'Dastak Deals') {
-        const percentage = ((20 / 100) * product.price).toFixed();
+      products.map(product => {
+        if (
+          product.category === 'Chicken Burgers' ||
+          product.category === 'Beef Burgers' ||
+          product.category === 'Special Burgers'
+        ) {
+          const percentage = ((50 / 100) * product.price).toFixed();
 
-        product.price = +percentage + +product.price;
-        // product.discountedPrice = +(product.price - discountedPrice);
-        // product.discount = 0;
-        // }
+          // product.price = +percentage + +product.price;
+          product.discountedPrice = +(product.price - percentage);
+          product.discount = 50;
+          console.log(product.price, product.discountedPrice, product.discount);
+        }
 
         // if (product.discount === '10') {
         // product.discount = '15';
@@ -34,8 +39,7 @@ router.get('/changePrices', async (req, res) => {
         // product.discount = '20';
         // }
 
-        await product.save();
-        return product;
+        return product.save();
       })
     );
 
@@ -726,6 +730,37 @@ router.post('/closeRestaurants', async (req, res) => {
     );
 
     return res.json('done');
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.get('/riderFares', async (_req, res) => {
+  try {
+    const riders = await Users.find({
+      type: 'rider',
+      status: { $ne: 'inactive' },
+    });
+
+    await Promise.all(
+      riders.map(async rider => {
+        if (rider.name === 'Amir Naveed' || rider.name === 'Ali Hashim') {
+          rider.tillNoonFare = 70;
+          rider.nightFare = 90;
+        } else {
+          rider.tillNoonFare = 60;
+          rider.nightFare = 80;
+        }
+
+        await rider.save();
+      })
+    );
+
+    return res.json({ riders });
   } catch (err) {
     return res.json({
       status: '404',
