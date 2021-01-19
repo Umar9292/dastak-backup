@@ -13,8 +13,6 @@ import { dbUrl } from './utils/dbUrls';
 import signUpRouter from './src/routes/user/signUp';
 import profileRouter from './src/routes/user/profle';
 import productsRouter from './src/routes/products/products';
-import pricingRouter from './src/routes/admin/productPricing';
-import addProductsRouter from './src/routes/admin/addProducts';
 import productImageRouter from './src/routes/admin/productImage';
 import ordersRouter from './src/routes/admin/orders';
 import logoutRouter from './src/routes/user/logout';
@@ -45,17 +43,11 @@ app.use('/admin', playerIdRouter);
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
-app.use(
-  '/products',
-  productsRouter,
-  pricingRouter,
-  addProductsRouter,
-  productImageRouter
-);
+app.use('/products', productsRouter, productImageRouter);
 
 const options = {
-  host: 'dastakbackend.herokuapp.com',
-  // host: 'martbackend.herokuapp.com',
+  // host: 'dastakbackend.herokuapp.com',
+  host: 'martbackend.herokuapp.com',
 };
 const request = () => {
   get(options, function(res) {
