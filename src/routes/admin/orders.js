@@ -463,8 +463,6 @@ router.post('/assignRider', async (req, res) => {
     const morningFareTime = moment('04:00', 'HH:mm').tz('Asia/karachi');
     const noonFareTime = moment('16:00', 'HH:mm').tz('Asia/karachi');
 
-    console.log(orderTime, morningFareTime, noonFareTime);
-
     if (orderTime.isBetween(morningFareTime, noonFareTime)) {
       req.body.riderFare = tillNoonFare;
     } else {
