@@ -250,7 +250,6 @@ router.post('/adminResponse', async (req, res) => {
       orderId,
       status,
       orderType,
-      shopType,
       customerNotified,
     } = req.body;
 
@@ -266,7 +265,7 @@ router.post('/adminResponse', async (req, res) => {
     const ridersMessage = `New order from ${shop.name}`;
 
     if (status === 'Rejected') {
-      const msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shopType} because ${reason}`;
+      const msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
 
       if (user.type === 'admin') {
         const { playerIds } = shop;
