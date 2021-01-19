@@ -54,28 +54,6 @@ router.post('/placeOrder', async (req, res) => {
         .toISOString(),
     };
 
-    const morningFareTime = moment('04:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const noonFareTime = moment('16:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const nightFareEndTime = moment('18:59', 'HH:mm:ssa').tz('Asia/karachi');
-
-    if (
-      orderTime.isBetween(
-        `${morningFareTime.toISOString()}`,
-        `${noonFareTime.toISOString()}`
-      )
-    ) {
-      params.riderFare = 60;
-    }
-
-    if (
-      orderTime.isBetween(
-        `${noonFareTime.toISOString()}`,
-        `${nightFareEndTime.toISOString()}`
-      )
-    ) {
-      params.riderFare = 80;
-    }
-
     const order = await new Orders(params).save();
 
     const adminMessage = 'You have a new order';
@@ -465,18 +443,34 @@ router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId } = req.body;
 
-    const order = await Orders.findById(orderId);
+    const [order, { tillNoonFare, nightFare }] = await Promise.all([
+      Orders.findById(orderId),
+      Users.findById(riderId),
+    ]);
 
-    if (order.riderId)
+    if (order.riderId) {
       return res.json({
         status: '404',
         msg:
           'This order has already been assigned to another rider. Stay active another order might come your way.',
       });
+    }
+
+    const orderTime = moment(order.time, 'HH:mma')
+      .tz('Asia/karachi')
+      .subtract(5, 'hours');
+
+    const morningFareTime = moment('04:00', 'HH:mm').tz('Asia/karachi');
+    const noonFareTime = moment('16:00', 'HH:mm').tz('Asia/karachi');
+
+    if (orderTime.isBetween(morningFareTime, noonFareTime)) {
+      req.body.riderFare = tillNoonFare;
+    } else {
+      req.body.riderFare = nightFare;
+    }
 
     await Promise.all([
       Orders.findByIdAndUpdate(orderId, { $set: req.body }),
-
       Users.findByIdAndUpdate(riderId, {
         status: 'on delivery',
       }),
