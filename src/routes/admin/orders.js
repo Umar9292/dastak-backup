@@ -481,7 +481,7 @@ router.post('/assignRider', async (req, res) => {
       msg: 'This order is now assigned to you.',
     });
 
-    /*   const { playerIds } = await Mart.findById(order.martId);
+    const { playerIds } = await Mart.findById(order.martId);
 
     const message = `Dastak rider ${riderName} is assigned to order# ${order.orderNum}.`;
     const info = `${riderName} is assigned to an order for ${order.martName} placed by ${order.name}`;
@@ -492,7 +492,7 @@ router.post('/assignRider', async (req, res) => {
       });
     });
 
-    orderStatusEmail(message); */
+    orderStatusEmail(message);
   } catch (err) {
     return res.json({
       status: '404',
