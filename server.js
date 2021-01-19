@@ -20,6 +20,7 @@ import martsRouter from './src/routes/marts/marts';
 import appVersionRouter from './src/routes/general/appVersion';
 import playerIdRouter from './src/routes/general/playerIds';
 import generalApisRouter from './src/routes/general/generalApis';
+import ordersManagementRouter from './src/routes/admin/dashboard/orderManagement';
 
 const port = process.env.PORT || 8080;
 
@@ -39,7 +40,7 @@ app.use(express.static(join(__dirname, 'views')));
 
 app.use('/user', signUpRouter, profileRouter, logoutRouter);
 app.use('/orders', ordersRouter);
-app.use('/admin', playerIdRouter);
+app.use('/admin', playerIdRouter, ordersManagementRouter);
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
