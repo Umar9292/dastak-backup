@@ -20,7 +20,7 @@ router.get('/allOrders', async (_req, res) => {
 
       Orders.find({ status: 'Rider Picked Up' }).sort({ createdAt: -1 }),
 
-      Orders.countDocuments({ date: today, status: { ne: 'Rejected' } }),
+      Orders.countDocuments({ date: today, status: { $ne: 'Rejected' } }),
     ]);
 
     return res.json({
