@@ -11,7 +11,6 @@ router.get('/allOrders', async (_req, res) => {
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
-    console.log(today);
     const [upcoming, accepted, picked, totalOrders] = await Promise.all([
       Orders.find({ status: 'Pending' }).sort({ createdAt: -1 }),
 
