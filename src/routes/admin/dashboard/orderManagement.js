@@ -1,4 +1,5 @@
 import Router from 'express/lib/router';
+import moment from 'moment-timezone';
 
 import Orders from '../../../models/ordersModel';
 
@@ -6,7 +7,12 @@ const router = Router();
 
 router.get('/allOrders', async (_req, res) => {
   try {
-    const [upcoming, accepted, picked] = await Promise.all([
+    const today = moment()
+      .tz('Asia/Karachi')
+      .format('DD-MM-YYYY');
+
+    console.log(today);
+    const [upcoming, accepted, picked, totalOrders] = await Promise.all([
       Orders.find({ status: 'Pending' }).sort({ createdAt: -1 }),
 
       Orders.find({
@@ -14,6 +20,8 @@ router.get('/allOrders', async (_req, res) => {
       }).sort({ createdAt: -1 }),
 
       Orders.find({ status: 'Rider Picked Up' }).sort({ createdAt: -1 }),
+
+      Orders.countDocuments({ date: today }),
     ]);
 
     return res.json({
@@ -21,6 +29,7 @@ router.get('/allOrders', async (_req, res) => {
       upcoming,
       accepted,
       picked,
+      totalOrders,
     });
   } catch (err) {
     return res.json({
