@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "pm2 start server.js -i 3",
+    "start": "pm2 start server.js",
     "heroku": "heroku logs -t --app martbackend",
     "herokuDev": "heroku logs -t --app dastakbackend"
   },
