@@ -338,7 +338,11 @@ router.post('/dailyRiderCollections', async (req, res) => {
 
     const data = await Promise.all(
       riders.map(async rider => {
-        const orders = await Orders.find({ riderName: rider, date });
+        const orders = await Orders.find({
+          riderName: rider,
+          date,
+          status: { $ne: 'Rejected' },
+        });
 
         const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
 
