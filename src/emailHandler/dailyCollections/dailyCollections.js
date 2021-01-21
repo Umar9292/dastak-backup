@@ -1,7 +1,7 @@
-import { createTransport } from 'nodemailer';
-import { unlinkSync } from 'fs';
+const { createTransport } = require('nodemailer');
+const { unlinkSync } = require('fs');
 
-export const sendDailyCollection = async name => {
+exports.sendDailyCollection = async name => {
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,

@@ -1,7 +1,7 @@
-import Router from 'express/lib/router';
-import { hash, compare } from 'bcrypt';
+const Router = require('express/lib/router');
+const { hash, compare } = require('bcrypt');
 
-import User from '../../models/userModel';
+const User = require('../../models/userModel');
 
 const router = Router();
 
@@ -76,4 +76,4 @@ router.post('/signIn', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

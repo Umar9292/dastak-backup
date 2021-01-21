@@ -1,7 +1,7 @@
-import { createTransport } from 'nodemailer';
-import hbs from 'nodemailer-express-handlebars';
+const { createTransport } = require('nodemailer');
+const hbs = require('nodemailer-express-handlebars');
 
-export const emailOrderDetails = async (
+exports.emailOrderDetails = async (
   shop,
   user,
   orderTime,
@@ -62,7 +62,7 @@ export const emailOrderDetails = async (
   });
 };
 
-export const notifyRestaurantByEmail = async restaurantEmail => {
+exports.notifyRestaurantByEmail = async restaurantEmail => {
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,

@@ -1,13 +1,15 @@
-import Router from 'express/lib/router';
-import moment from 'moment-timezone';
-import Exceljs from 'exceljs';
+const Router = require('express/lib/router');
+const moment = require('moment-timezone');
+const Exceljs = require('exceljs');
 
-import Users from '../../models/userModel';
-import Products from '../../models/productsModel';
-import Marts from '../../models/martsModel';
-import Orders from '../../models/ordersModel';
-import { notifyUser } from '../../notificationHandler/handler';
-import { sendDailyCollection } from '../../emailHandler/dailyCollections/dailyCollections';
+const Users = require('../../models/userModel');
+const Products = require('../../models/productsModel');
+const Marts = require('../../models/martsModel');
+const Orders = require('../../models/ordersModel');
+const { notifyUser } = require('../../notificationHandler/handler');
+const {
+  sendDailyCollection,
+} = require('../../emailHandler/dailyCollections/dailyCollections');
 
 const router = Router();
 
@@ -770,4 +772,4 @@ router.get('/riderFares', async (_req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

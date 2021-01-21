@@ -1,6 +1,6 @@
-import Router from 'express/lib/router';
+const Router = require('express/lib/router');
 
-import User from '../../models/userModel';
+const User = require('../../models/userModel');
 
 const router = Router();
 
@@ -18,4 +18,4 @@ router.post('/logout', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

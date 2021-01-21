@@ -1,6 +1,6 @@
-import { createTransport } from 'nodemailer';
+const { createTransport } = require('nodemailer');
 
-export const sendAcceptanceEmail = msg => {
+exports.sendAcceptanceEmail = msg => {
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,

@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+const { Schema, model } = require('mongoose');
 
 const optionsModel = Schema(
   {
@@ -12,4 +12,4 @@ const optionsModel = Schema(
   }
 );
 
-export default model('flavours and drinks', optionsModel);
+module.exports = model('flavours and drinks', optionsModel);

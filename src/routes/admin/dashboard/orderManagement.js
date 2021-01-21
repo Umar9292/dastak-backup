@@ -1,7 +1,7 @@
-import Router from 'express/lib/router';
-import moment from 'moment-timezone';
+const Router = require('express/lib/router');
+const moment = require('moment-timezone');
 
-import Orders from '../../../models/ordersModel';
+const Orders = require('../../../models/ordersModel');
 
 const router = Router();
 
@@ -39,4 +39,4 @@ router.get('/allOrders', async (_req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

@@ -1,6 +1,6 @@
-import { Client } from 'onesignal-node';
+const { Client } = require('onesignal-node');
 
-export const oneSignalClient = new Client({
+exports.oneSignalClient = new Client({
   userAuthKey: process.env.ONE_SIGNAL_USER_AUTH_KEY,
 
   app: {

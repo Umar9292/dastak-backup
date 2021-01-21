@@ -1,7 +1,7 @@
-import { createTransport } from 'nodemailer';
-import hbs from 'nodemailer-express-handlebars';
+const { createTransport } = require('nodemailer');
+const hbs = require('nodemailer-express-handlebars');
 
-export const emailOrderDetailsToCustomer = async (
+exports.emailOrderDetailsToCustomer = async (
   user,
   shop,
   date,

@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+const { Schema, model } = require('mongoose');
 
 const otpModel = Schema(
   {
@@ -13,4 +13,4 @@ const otpModel = Schema(
   }
 );
 
-export default model('otp keys', otpModel);
+module.exports = model('otp keys', otpModel);

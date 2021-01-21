@@ -1,6 +1,6 @@
-import { createTransport } from 'nodemailer';
+const { createTransport } = require('nodemailer');
 
-export const emailOrderDetailsToRider = async riderEmail => {
+exports.emailOrderDetailsToRider = async riderEmail => {
   const msg = 'You have got a new order';
 
   const transporter = createTransport({

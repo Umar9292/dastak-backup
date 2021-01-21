@@ -1,22 +1,30 @@
-import Router from 'express/lib/router';
-import moment from 'moment-timezone';
+const Router = require('express/lib/router');
+const moment = require('moment-timezone');
 
-import Orders from '../../models/ordersModel';
-import Users from '../../models/userModel';
-import Mart from '../../models/martsModel';
-import { emailOrderDetailsToCustomer } from '../../emailHandler/customerEmail/customerEmail';
-import { orderStatusEmail } from '../../emailHandler/orderConfirmationEmail/orderStatusEmail';
-import { emailOrderDetailsToRider } from '../../emailHandler/riderEmail/riderEmail';
-import { sendAcceptanceEmail } from '../../emailHandler/customerEmail/acceptanceEmail';
-import {
+const Orders = require('../../models/ordersModel');
+const Users = require('../../models/userModel');
+const Mart = require('../../models/martsModel');
+const {
+  orderStatusEmail,
+} = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
+const {
+  emailOrderDetailsToRider,
+} = require('../../emailHandler/riderEmail/riderEmail');
+const {
+  sendAcceptanceEmail,
+} = require('../../emailHandler/customerEmail/acceptanceEmail');
+const {
   emailOrderDetails,
   notifyRestaurantByEmail,
-} from '../../emailHandler/orderEmail/orderEmail';
-import {
+} = require('../../emailHandler/orderEmail/orderEmail');
+const {
+  emailOrderDetailsToCustomer,
+} = require('../../emailHandler/customerEmail/customerEmail');
+const {
   notifyUser,
   notifyAdmin,
   notifyRiders,
-} from '../../notificationHandler/handler';
+} = require('../../notificationHandler/handler');
 
 const router = Router();
 
@@ -768,4 +776,4 @@ router.post('/paidToRiders', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

@@ -1,7 +1,8 @@
-import Router from 'express/lib/router';
-import { v2 } from 'cloudinary';
-import { IncomingForm } from 'formidable';
-import { unlinkSync } from 'fs';
+const Router = require('express/lib/router');
+
+const { unlinkSync } = require('fs');
+const { IncomingForm } = require('formidable');
+const { v2 } = require('cloudinary');
 
 const router = Router();
 
@@ -41,4 +42,4 @@ router.post('/addImage', (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

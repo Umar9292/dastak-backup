@@ -1,6 +1,6 @@
-import { createTransport } from 'nodemailer';
+const { createTransport } = require('nodemailer');
 
-export const emailOtp = async (whomToSend, token) => {
+exports.emailOtp = async (whomToSend, token) => {
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,

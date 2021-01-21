@@ -1,4 +1,4 @@
-import Router from 'express/lib/router';
+const Router = require('express/lib/router');
 
 const router = Router();
 
@@ -46,4 +46,4 @@ router.post('/checkVersion', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

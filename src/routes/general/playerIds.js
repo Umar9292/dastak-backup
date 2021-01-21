@@ -1,7 +1,7 @@
-import Router from 'express/lib/router';
+const Router = require('express/lib/router');
 
-import Marts from '../../models/martsModel';
-import Users from '../../models/userModel';
+const Marts = require('../../models/martsModel');
+const Users = require('../../models/userModel');
 
 const router = Router();
 
@@ -123,4 +123,4 @@ router.post('/riderPlayerId', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

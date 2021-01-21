@@ -1,26 +1,26 @@
-import express, { json, urlencoded } from 'express';
-import { connect } from 'mongoose';
-import { urlencoded as _urlencoded, json as _json } from 'body-parser';
-import { get } from 'http';
-import cors from 'cors';
-import logger from 'morgan';
-import helmet from 'helmet';
-import { join } from 'path';
-import { config } from 'cloudinary';
-import './env';
+require('dotenv').config();
+const express = require('express');
+const { connect } = require('mongoose');
+const bodyParser = require('body-parser');
+const { get } = require('http');
+const cors = require('cors');
+const logger = require('morgan');
+const helmet = require('helmet');
+const { join } = require('path');
+const { config } = require('cloudinary');
 
-import { dbUrl } from './utils/dbUrls';
-import signUpRouter from './src/routes/user/signUp';
-import profileRouter from './src/routes/user/profle';
-import productsRouter from './src/routes/products/products';
-import productImageRouter from './src/routes/admin/productImage';
-import ordersRouter from './src/routes/admin/orders';
-import logoutRouter from './src/routes/user/logout';
-import martsRouter from './src/routes/marts/marts';
-import appVersionRouter from './src/routes/general/appVersion';
-import playerIdRouter from './src/routes/general/playerIds';
-import generalApisRouter from './src/routes/general/generalApis';
-import ordersManagementRouter from './src/routes/admin/dashboard/orderManagement';
+const { dbUrl } = require('./utils/dbUrls');
+const signUpRouter = require('./src/routes/user/signUp');
+const profileRouter = require('./src/routes/user/profle');
+const productsRouter = require('./src/routes/products/products');
+const productImageRouter = require('./src/routes/admin/productImage');
+const ordersRouter = require('./src/routes/admin/orders');
+const logoutRouter = require('./src/routes/user/logout');
+const martsRouter = require('./src/routes/marts/marts');
+const appVersionRouter = require('./src/routes/general/appVersion');
+const playerIdRouter = require('./src/routes/general/playerIds');
+const generalApisRouter = require('./src/routes/general/generalApis');
+const ordersManagementRouter = require('./src/routes/admin/dashboard/orderManagement');
 
 const port = process.env.PORT || 8080;
 
@@ -31,11 +31,11 @@ app.disable('x-powered-by');
 
 app.use(helmet());
 app.use(cors());
-app.use(_urlencoded({ extended: false }));
-app.use(_json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(logger('dev'));
-app.use(json());
-app.use(urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, 'views')));
 
 app.use('/user', signUpRouter, profileRouter, logoutRouter);
@@ -86,4 +86,4 @@ config({
   api_secret: process.env.CLOUDINARY_SECRET,
 });
 
-export default app;
+module.exports = app;

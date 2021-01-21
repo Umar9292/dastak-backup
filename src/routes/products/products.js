@@ -1,14 +1,14 @@
-import Router from 'express/lib/router';
-import { orderBy } from 'lodash';
-import moment from 'moment-timezone/moment-timezone';
+const Router = require('express/lib/router');
+const { orderBy } = require('lodash');
+const moment = require('moment-timezone/moment-timezone');
 
-import Users from '../../models/userModel';
-import Products from '../../models/productsModel';
-import Flavours from '../../models/flavoursAndDrinks';
-import Marts from '../../models/martsModel';
-import Offers from '../../models/offersModel';
-import Categories from '../../models/categoriesModel';
-import { notifyUser } from '../../notificationHandler/handler';
+const Users = require('../../models/userModel');
+const Products = require('../../models/productsModel');
+const Flavours = require('../../models/flavoursAndDrinks');
+const Marts = require('../../models/martsModel');
+const Offers = require('../../models/offersModel');
+const Categories = require('../../models/categoriesModel');
+const { notifyUser } = require('../../notificationHandler/handler');
 
 const router = Router();
 
@@ -366,4 +366,4 @@ router.get('/dastakDeals', async (_req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

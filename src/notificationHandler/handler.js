@@ -1,7 +1,7 @@
-import { Notification } from 'onesignal-node';
-import { oneSignalClient } from '../../utils/onSignalConfig';
+const { Notification } = require('onesignal-node');
+const { oneSignalClient } = require('../../utils/onSignalConfig');
 
-export const notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
+exports.notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
   const notification = new Notification({
     contents: {
       en: msg,
@@ -21,7 +21,7 @@ export const notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
   return data.id ? console.log(info) : console.log(data.errors[0]);
 };
 
-export const notifyUser = async (msg, whomToSend, toBeSentData) => {
+exports.notifyUser = async (msg, whomToSend, toBeSentData) => {
   const notification = new Notification({
     contents: {
       en: msg,
@@ -41,12 +41,7 @@ export const notifyUser = async (msg, whomToSend, toBeSentData) => {
   return data.id ? console.log('User Notified') : console.log(data.errors[0]);
 };
 
-export const notifyRiders = async (
-  riderName,
-  msg,
-  whomToSend,
-  toBeSentData
-) => {
+exports.notifyRiders = async (riderName, msg, whomToSend, toBeSentData) => {
   const notification = new Notification({
     contents: {
       en: msg,

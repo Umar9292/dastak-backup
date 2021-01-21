@@ -1,11 +1,11 @@
-import Router from 'express/lib/router';
-import { compare, hash } from 'bcrypt';
-import { generateSecret, totp } from 'speakeasy';
+const Router = require('express/lib/router');
+const { compare, hash } = require('bcrypt');
+const { generateSecret, totp } = require('speakeasy');
 
-import Users from '../../models/userModel';
-import Marts from '../../models/martsModel';
-import Otp from '../../models/otpModel';
-import { emailOtp } from '../../emailHandler/otpEmail/otpEmail';
+const Users = require('../../models/userModel');
+const Marts = require('../../models/martsModel');
+const Otp = require('../../models/otpModel');
+const { emailOtp } = require('../../emailHandler/otpEmail/otpEmail');
 
 const router = Router();
 
@@ -179,4 +179,4 @@ router.post('/forgotPassword', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;
