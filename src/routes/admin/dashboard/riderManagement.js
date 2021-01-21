@@ -10,6 +10,7 @@ router.get('/activeRiders', async (_req, res) => {
     const activeRiders = await Users.find({
       type: 'rider',
       status: { $ne: 'inactive' },
+      available: true,
     });
 
     return res.json({ status: '200', activeRiders });
