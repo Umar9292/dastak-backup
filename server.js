@@ -21,6 +21,7 @@ const appVersionRouter = require('./src/routes/general/appVersion');
 const playerIdRouter = require('./src/routes/general/playerIds');
 const generalApisRouter = require('./src/routes/general/generalApis');
 const ordersManagementRouter = require('./src/routes/admin/dashboard/orderManagement');
+const ridersManagementRouter = require('./src/routes/admin/dashboard/riderManagement');
 
 const port = process.env.PORT || 8080;
 
@@ -40,7 +41,12 @@ app.use(express.static(join(__dirname, 'views')));
 
 app.use('/user', signUpRouter, profileRouter, logoutRouter);
 app.use('/orders', ordersRouter);
-app.use('/admin', playerIdRouter, ordersManagementRouter);
+app.use(
+  '/admin',
+  playerIdRouter,
+  ordersManagementRouter,
+  ridersManagementRouter
+);
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
