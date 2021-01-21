@@ -261,6 +261,12 @@ router.post('/adminResponse', async (req, res) => {
       customerNotified,
     } = req.body;
 
+    const { status: orderStatus } = await Orders.findById(orderId);
+
+    if (orderStatus !== 'Pending' && status !== 'Rejected') {
+      return res.json({ status: '404', msg: 'Already Accepted' });
+    }
+
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
