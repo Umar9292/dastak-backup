@@ -1,0 +1,24 @@
+const Router = require('express/lib/router');
+
+const Users = require('../../../models/userModel');
+
+const router = Router();
+
+router.get('/activeRiders', async (_req, res) => {
+  try {
+    const activeRiders = await Users.find({
+      type: 'rider',
+      status: { $ne: 'inactive' },
+    });
+
+    return res.json({ status: '200', activeRiders });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+module.exports = router;
