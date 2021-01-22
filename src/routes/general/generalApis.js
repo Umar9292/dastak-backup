@@ -16,22 +16,21 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '5ffd83438008eb10dd9a9520',
+      martId: '5f86c9b53f5c6cc2a5c73f87',
     });
 
     await Promise.all(
       products.map(product => {
         if (
-          product.category === 'Chicken Burgers' ||
-          product.category === 'Beef Burgers' ||
-          product.category === 'Special Burgers'
+          product.category === 'Deals' ||
+          product.category === 'Exclusive Deals'
         ) {
-          const percentage = ((50 / 100) * product.price).toFixed();
-
-          // product.price = +percentage + +product.price;
-          product.discountedPrice = +(product.price - percentage);
-          product.discount = 50;
-          console.log(product.price, product.discountedPrice, product.discount);
+          const percentage = ((15 / 100) * product.price).toFixed();
+          console.log(product.price);
+          product.price = +percentage + +product.price;
+          // product.discountedPrice = +(product.price - percentage);
+          // product.discount = 50;
+          console.log(product.price);
         }
 
         // if (product.discount === '10') {
