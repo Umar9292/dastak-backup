@@ -25,9 +25,34 @@ router.get('/activeRiders', async (_req, res) => {
 
 router.post('/reAssignRider', async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, riderId } = req.body;
 
-    await Orders.findByIdAndUpdate(orderId, { $set: req.body });
+    const { riderId: currentlyAssignedRider } = await Orders.findByIdAndUpdate(
+      orderId,
+      {
+        $set: req.body,
+      }
+    );
+
+    const [
+      currentRidersOrders,
+      { status: newRidersStatus },
+    ] = await Promise.all([
+      Orders.countDocuments({
+        riderId: currentlyAssignedRider,
+        status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+      }),
+
+      Users.findById(riderId),
+    ]);
+
+    if (currentRidersOrders === 0) {
+      await Users.findByIdAndUpdate(currentlyAssignedRider, { status: 'idle' });
+    }
+
+    if (newRidersStatus === 'idle') {
+      await Users.findByIdAndUpdate(riderId, { status: 'on delivery' });
+    }
 
     return res.json({ status: '200', msg: 'This order has been re assigned' });
   } catch (err) {
