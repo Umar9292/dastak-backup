@@ -263,6 +263,10 @@ router.post('/adminResponse', async (req, res) => {
 
     const { status: orderStatus } = await Orders.findById(orderId);
 
+    if (orderStatus === 'Rejected') {
+      return res.json({ status: '404', msg: 'Already Rejected' });
+    }
+
     if (orderStatus !== 'Pending' && status !== 'Rejected') {
       return res.json({ status: '404', msg: 'Already Accepted' });
     }
@@ -298,10 +302,21 @@ router.post('/adminResponse', async (req, res) => {
       const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
       orderStatusEmail(adminMessage);
 
-      return res.json({
+      res.json({
         status: '200',
         msg: 'Order successfully rejected',
       });
+
+      if (order.riderId) {
+        const ongoingOrders = await Orders.countDocuments({
+          riderId: order.riderId,
+          status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+        });
+
+        if (ongoingOrders === 0) {
+          await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
+        }
+      }
     }
 
     if (status === 'Admin Accepted' && !customerNotified) {
