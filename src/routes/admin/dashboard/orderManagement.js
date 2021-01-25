@@ -39,4 +39,18 @@ router.get('/allOrders', async (_req, res) => {
   }
 });
 
+router.get('/ordersTillNow', async (_req, res) => {
+  try {
+    const orders = await Orders.find({ status: { $ne: 'Rejected' } }).lean();
+
+    return res.json({ status: '200', data: orders });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
