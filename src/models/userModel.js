@@ -6,6 +6,7 @@ const userModel = Schema(
       type: String,
       default: 'active',
     },
+    jazzCashNumber: String,
     orderFare: Number,
     dastakDeal: Boolean,
     fareType: String,
