@@ -11,7 +11,7 @@ router.get('/activeRiders', async (_req, res) => {
       type: 'rider',
       status: { $ne: 'inactive' },
       available: true,
-    });
+    }).lean();
 
     return res.json({ status: '200', activeRiders });
   } catch (err) {
