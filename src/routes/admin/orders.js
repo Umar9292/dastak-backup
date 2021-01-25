@@ -297,7 +297,7 @@ router.post('/adminResponse', async (req, res) => {
 
       order.reason = reason;
       order.orderNum = orderNum;
-      order.save();
+      await order.save();
 
       const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
       orderStatusEmail(adminMessage);
@@ -499,9 +499,8 @@ router.post('/assignRider', async (req, res) => {
 
     await Promise.all([
       Orders.findByIdAndUpdate(orderId, { $set: req.body }),
-      Users.findByIdAndUpdate(riderId, {
-        status: 'on delivery',
-      }),
+
+      Users.findByIdAndUpdate(riderId, { status: 'on delivery' }),
     ]);
 
     res.json({
@@ -614,7 +613,7 @@ router.post('/changeOrderStatus', async (req, res) => {
         status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
       };
 
-      const riderOrders = await Orders.find(query);
+      const riderOrders = await Orders.countDocuments(query);
 
       if (riderOrders.length === 0) {
         await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
