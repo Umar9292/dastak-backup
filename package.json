@@ -29,6 +29,7 @@
     "nodemailer-express-handlebars": "^4.0.0",
     "nodemon": "^2.0.2",
     "onesignal-node": "^2.0.1",
+    "socket.io": "^3.1.0",
     "speakeasy": "^2.0.0"
   },
   "devDependencies": {
