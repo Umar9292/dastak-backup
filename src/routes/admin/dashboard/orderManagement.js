@@ -55,4 +55,20 @@ router.get('/ordersTillNow', async (_req, res) => {
   }
 });
 
+router.post('/changeOrderType', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    await Orders.findByIdAndUpdate(orderId, { $set: req.body });
+
+    return res.json({ status: '200', msg: 'Order type changed successfully' });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
