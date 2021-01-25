@@ -619,7 +619,7 @@ router.post('/changeOrderStatus', async (req, res) => {
 
       const riderOrders = await Orders.countDocuments(query);
 
-      if (riderOrders.length === 0) {
+      if (riderOrders === 0) {
         await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
       }
 
