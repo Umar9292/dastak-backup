@@ -267,7 +267,10 @@ router.post('/adminResponse', async (req, res) => {
       return res.json({ status: '404', msg: 'Already Rejected' });
     }
 
-    if (orderStatus !== 'Pending' && status !== 'Rejected') {
+    if (
+      (orderStatus !== 'Pending' && status !== 'Rejected',
+      orderType !== 'PickUp')
+    ) {
       return res.json({ status: '404', msg: 'Already Accepted' });
     }
 
