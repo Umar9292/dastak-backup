@@ -41,7 +41,9 @@ router.get('/allOrders', async (_req, res) => {
 
 router.get('/ordersTillNow', async (_req, res) => {
   try {
-    const orders = await Orders.find({ status: { $ne: 'Rejected' } }).lean();
+    const orders = await Orders.find({ status: { $ne: 'Rejected' } })
+      .sort({ createdAt: -1 })
+      .lean();
 
     return res.json({ status: '200', data: orders });
   } catch (err) {
