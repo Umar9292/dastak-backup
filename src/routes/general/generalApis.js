@@ -775,4 +775,58 @@ router.get('/riderFares', async (_req, res) => {
   }
 });
 
+/* router.get('/test', async (_req, res) => {
+  try {
+    const restaurants = await Users.find({
+      type: 'restaurant',
+      status: { $ne: 'inactive' },
+    });
+
+    await Promise.all(
+      restaurants.map(async restaurant => {
+        restaurant.jazzCashNumber = '';
+        await restaurant.save();
+      })
+    );
+
+    return res.json({ restaurants });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+router.get('/test', async (_req, res) => {
+  try {
+    const workbook = new Exceljs.Workbook();
+
+    const sheet = workbook.xlsx.readFile(`${process.cwd()}/jazzCash.xlsx`);
+    const worksheet = (await sheet).getWorksheet('Sheet1');
+
+    const restaurants = worksheet.getColumn('A').values;
+    const numbers = worksheet.getColumn('B').values;
+
+    restaurants.shift();
+    numbers.shift();
+
+    for (const name of restaurants) {
+      for (const number of numbers) {
+        const restaurant = await Users.findOne({ name });
+        restaurant.jazzCashNumber = number;
+        console.log(restaurant.name, restaurant.jazzCashNumber);
+      }
+    }
+    return res.send('Done');
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
