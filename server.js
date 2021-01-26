@@ -54,11 +54,6 @@ app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 
-app.get('/api', (req, res) => {
-  const payload = 'Faster app which uses less bandwidth too ';
-  res.send(payload.repeat(1000));
-});
-
 const options = {
   host: 'dastakbackend.herokuapp.com',
   // host: 'martbackend.herokuapp.com',
