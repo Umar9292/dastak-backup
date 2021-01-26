@@ -84,7 +84,6 @@ router.post('/martDetails', async (req, res) => {
 router.get('/allRestaurants', async (req, res) => {
   try {
     const currentTime = moment().tz('Asia/Karachi');
-    console.log(currentTime);
 
     const query = {
       type: 'admin',
@@ -102,7 +101,6 @@ router.get('/allRestaurants', async (req, res) => {
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
 
-      console.log(restaurantOpening);
       if (currentTime.isSameOrAfter(restaurantOpening)) {
         return restaurant;
       }
