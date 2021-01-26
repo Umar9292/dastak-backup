@@ -39,9 +39,21 @@ router.get('/allOrders', async (_req, res) => {
   }
 });
 
-router.get('/ordersTillNow', async (_req, res) => {
+router.post('/ordersTillNow', async (req, res) => {
   try {
-    const orders = await Orders.find({ status: { $ne: 'Rejected' } })
+    const { startDate, endDate } = req.body;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    const orders = await Orders.find({
+      status: { $ne: 'Rejected' },
+      dateForSearching: { $gte: start, $lte: end },
+    })
       .sort({ createdAt: -1 })
       .lean();
 
