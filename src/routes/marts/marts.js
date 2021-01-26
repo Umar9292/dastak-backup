@@ -98,7 +98,10 @@ router.get('/allRestaurants', async (req, res) => {
       .select('-password -__v');
 
     const result = allRestaurants.filter(restaurant => {
-      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm');
+      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+
       console.log(restaurantOpening);
       if (restaurantOpening.isSameOrAfter(currentTime)) {
         return restaurant;
