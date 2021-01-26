@@ -31,7 +31,7 @@ const app = express();
 app.disable('etag');
 app.disable('x-powered-by');
 
-// app.use(compression());
+app.use(compression());
 app.use(helmet());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
