@@ -83,7 +83,7 @@ connect(
     } else {
       app.listen(port, () => console.log(`Listening on port ${port}\n`));
 
-      console.log('Connected to databse');
+      console.log('Connected to database');
     }
   }
 );

@@ -1,4 +1,5 @@
 const Router = require('express/lib/router');
+const moment = require('moment-timezone');
 
 const Marts = require('../../models/martsModel');
 
@@ -82,6 +83,9 @@ router.post('/martDetails', async (req, res) => {
 
 router.get('/allRestaurants', async (req, res) => {
   try {
+    const currentTime = moment().tz('Asia/Karachi');
+    console.log(currentTime);
+
     const query = {
       type: 'admin',
       status: 'active',
@@ -93,9 +97,17 @@ router.get('/allRestaurants', async (req, res) => {
       .sort({ position: -1 })
       .select('-password -__v');
 
+    const result = allRestaurants.filter(restaurant => {
+      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm');
+      console.log(restaurantOpening);
+      if (restaurantOpening.isSameOrAfter(currentTime)) {
+        return restaurant;
+      }
+    });
+
     return res.json({
       status: '200',
-      data: allRestaurants,
+      data: result,
     });
   } catch (err) {
     return res.json({
