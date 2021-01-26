@@ -480,16 +480,20 @@ router.post('/restaurantsCollections', async (req, res) => {
 
     const data = await Promise.all(
       restaurants.map(async martName => {
-        const thisWeeksOrders = await Orders.find({
-          martName,
-          paid: { $in: [false, undefined] },
-          orderType: 'Delivery',
-          status: 'Delivered',
-          dateForSearching: {
-            $gte: start,
-            $lte: end,
-          },
-        });
+        const [thisWeeksOrders, restaurant] = await Promise.all([
+          Orders.find({
+            martName,
+            paid: { $in: [false, undefined] },
+            orderType: 'Delivery',
+            status: 'Delivered',
+            dateForSearching: {
+              $gte: start,
+              $lte: end,
+            },
+          }),
+
+          Users.findOne({ name: martName }),
+        ]);
 
         if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
           percentage = 12;
@@ -522,6 +526,9 @@ router.post('/restaurantsCollections', async (req, res) => {
           ourProfit,
           totalDeliveryCharges,
           totalOrders: thisWeeksOrders,
+          jazzCashNumber: restaurant.jazzCashNumber
+            ? restaurant.jazzCashNumber
+            : 'No Number Given',
         };
       })
     );
@@ -550,6 +557,7 @@ router.post('/restaurantsCollections', async (req, res) => {
       { header: 'Delivery Charges', key: 'totalDeliveryCharges', width: 15 },
       { header: 'Total Amount', key: 'totalAmount', width: 15 },
       { header: 'Total Amount to Pay', key: 'amountToPay', width: 15 },
+      { header: 'Jazz Cash', key: 'jazzCashNumber', width: 15 },
     ];
 
     await Promise.all(data.map(doc => worksheet.addRow(doc)));
@@ -775,50 +783,25 @@ router.get('/riderFares', async (_req, res) => {
   }
 });
 
-/* router.get('/test', async (_req, res) => {
-  try {
-    const restaurants = await Users.find({
-      type: 'restaurant',
-      status: { $ne: 'inactive' },
-    });
-
-    await Promise.all(
-      restaurants.map(async restaurant => {
-        restaurant.jazzCashNumber = '';
-        await restaurant.save();
-      })
-    );
-
-    return res.json({ restaurants });
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-}); */
-
-router.get('/test', async (_req, res) => {
+router.get('/readExcelSheet', async (_req, res) => {
   try {
     const workbook = new Exceljs.Workbook();
 
     const sheet = workbook.xlsx.readFile(`${process.cwd()}/jazzCash.xlsx`);
     const worksheet = (await sheet).getWorksheet('Sheet1');
 
-    const restaurants = worksheet.getColumn('A').values;
-    const numbers = worksheet.getColumn('B').values;
+    worksheet.eachRow({ includeEmpty: false }, async row => {
+      const martName = row.getCell(`A`).value;
+      const phone = row.getCell(`B`).value;
 
-    restaurants.shift();
-    numbers.shift();
+      const restaurant = await Users.findOne({ name: martName });
 
-    for (const name of restaurants) {
-      for (const number of numbers) {
-        const restaurant = await Users.findOne({ name });
-        restaurant.jazzCashNumber = number;
-        console.log(restaurant.name, restaurant.jazzCashNumber);
+      if (restaurant) {
+        restaurant.jazzCashNumber = phone;
+        await restaurant.save();
       }
-    }
+    });
+
     return res.send('Done');
   } catch (err) {
     return res.json({
