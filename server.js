@@ -8,6 +8,7 @@ const logger = require('morgan');
 const helmet = require('helmet');
 const { join } = require('path');
 const { config } = require('cloudinary');
+const compression = require('compression');
 
 const { dbUrl } = require('./utils/dbUrls');
 const signUpRouter = require('./src/routes/user/signUp');
@@ -30,6 +31,7 @@ const app = express();
 app.disable('etag');
 app.disable('x-powered-by');
 
+// app.use(compression());
 app.use(helmet());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
@@ -52,9 +54,14 @@ app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 
+app.get('/api', (req, res) => {
+  const payload = 'Faster app which uses less bandwidth too ';
+  res.send(payload.repeat(1000));
+});
+
 const options = {
-  host: 'dastakbackend.herokuapp.com',
-  // host: 'martbackend.herokuapp.com',
+  // host: 'dastakbackend.herokuapp.com',
+  host: 'martbackend.herokuapp.com',
 };
 const request = () => {
   get(options, function(res) {
