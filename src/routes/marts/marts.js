@@ -103,7 +103,7 @@ router.get('/allRestaurants', async (req, res) => {
         .subtract(5, 'hours');
 
       console.log(restaurantOpening);
-      if (restaurantOpening.isSameOrAfter(currentTime)) {
+      if (currentTime.isSameOrAfter(restaurantOpening)) {
         return restaurant;
       }
     });
