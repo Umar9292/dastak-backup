@@ -239,9 +239,11 @@ router.post('/orderDetails', async (req, res) => {
 
 router.post('/specificUserOrders', async (req, res) => {
   try {
-    const orders = await Orders.find({ userId: req.body.userId }).sort({
-      createdAt: -1,
-    });
+    const orders = await Orders.find({ userId: req.body.userId })
+      .sort({
+        createdAt: -1,
+      })
+      .lean();
 
     return res.json({
       status: '200',

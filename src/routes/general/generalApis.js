@@ -812,4 +812,25 @@ router.get('/readExcelSheet', async (_req, res) => {
   }
 });
 
+router.get('/test', async (req, res) => {
+  try {
+    const products = await Products.find().select('drinks');
+
+    await Promise.all(
+      products.map(product => {
+        product.drinks = true;
+        return product.save();
+      })
+    );
+
+    return res.json('done');
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
