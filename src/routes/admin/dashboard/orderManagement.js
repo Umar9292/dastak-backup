@@ -43,10 +43,18 @@ router.post('/ordersTillNow', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
 
-    const start = moment(startDate, 'DD-MM-YYYY')
+    let end = moment().tz('Asia/Karachi');
+    let start = moment(end).subtract(30, 'days');
+
+    if (startDate !== '' && endDate !== '') {
+      start = startDate;
+      end = endDate;
+    }
+
+    start = moment(start, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
       .toISOString();
-    const end = moment(endDate, 'DD-MM-YYYY')
+    end = moment(end, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
       .toISOString();
 
