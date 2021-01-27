@@ -323,7 +323,7 @@ router.get('/dastakDeals', async (_req, res) => {
             martId,
             dastakDeal: true,
             available: 'in stock',
-          }).lean(),
+          }),
 
           Flavours.findOne({ martId }),
         ]);
