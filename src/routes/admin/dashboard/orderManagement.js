@@ -12,15 +12,24 @@ router.get('/allOrders', async (_req, res) => {
       .format('DD-MM-YYYY');
 
     const [upcoming, accepted, picked, totalOrders] = await Promise.all([
-      Orders.find({ status: 'Pending' }).sort({ createdAt: -1 }),
+      Orders.find({ status: 'Pending' })
+        .sort({ createdAt: -1 })
+        .lean(),
 
       Orders.find({
         status: { $in: ['Admin Accepted', 'Rider Accepted'] },
-      }).sort({ createdAt: -1 }),
+      })
+        .sort({ createdAt: -1 })
+        .lean(),
 
-      Orders.find({ status: 'Rider Picked Up' }).sort({ createdAt: -1 }),
+      Orders.find({ status: 'Rider Picked Up' })
+        .sort({ createdAt: -1 })
+        .lean(),
 
-      Orders.countDocuments({ date: today, status: { $ne: 'Rejected' } }),
+      Orders.countDocuments({
+        date: today,
+        status: { $ne: 'Rejected' },
+      }).lean(),
     ]);
 
     return res.json({

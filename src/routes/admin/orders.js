@@ -181,22 +181,28 @@ router.post('/allOrders', async (req, res) => {
     const { martId } = req.body;
 
     const [upcoming, accepted, delivered] = await Promise.all([
-      Orders.find({ martId, status: 'Pending' }).sort({ createdAt: -1 }),
+      Orders.find({ martId, status: 'Pending' })
+        .sort({ createdAt: -1 })
+        .lean(),
 
       Orders.find({
         martId,
         status: {
           $in: ['Admin Accepted', 'Rider Accepted', 'Rider Picked Up'],
         },
-      }).sort({ createdAt: -1 }),
+      })
+        .sort({ createdAt: -1 })
+        .lean(),
 
       Orders.find({
         martId,
         paid: { $in: [false, undefined] },
         status: 'Delivered',
-      }).sort({
-        createdAt: -1,
-      }),
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .lean(),
     ]);
 
     return res.json({
@@ -445,17 +451,21 @@ router.post('/adminAcceptedOrders', async (req, res) => {
         acceptedOrders = await Orders.find({
           status: 'Admin Accepted',
           orderType: 'Delivery',
-        }).sort({
-          createdAt: -1,
-        });
+        })
+          .sort({
+            createdAt: -1,
+          })
+          .lean();
       }
     } else {
       acceptedOrders = await Orders.find({
         status: 'Admin Accepted',
         orderType: 'Delivery',
-      }).sort({
-        createdAt: -1,
-      });
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .lean();
     }
 
     return res.json({

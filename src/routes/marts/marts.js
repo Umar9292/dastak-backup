@@ -94,7 +94,8 @@ router.get('/allRestaurants', async (req, res) => {
 
     const allRestaurants = await Marts.find(query)
       .sort({ position: -1 })
-      .select('-password -__v');
+      .select('-password -__v')
+      .lean();
 
     const result = allRestaurants.filter(restaurant => {
       const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')

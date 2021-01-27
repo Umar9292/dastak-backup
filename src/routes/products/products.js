@@ -33,7 +33,9 @@ router.post('/allProducts', async (req, res) => {
           available: 'in stock',
         };
 
-        const products = await Products.find(query).sort({ productName: 1 });
+        const products = await Products.find(query)
+          .sort({ productName: 1 })
+          .lean();
 
         const filteredProducts = products.filter(
           ({ type, drinks }) => type === 'deal' || drinks === true
@@ -323,7 +325,7 @@ router.get('/dastakDeals', async (_req, res) => {
             martId,
             dastakDeal: true,
             available: 'in stock',
-          }),
+          }).lean(),
 
           Flavours.findOne({ martId }),
         ]);
