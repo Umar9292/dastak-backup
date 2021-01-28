@@ -30,6 +30,7 @@ const productsModel = Schema(
     testDrinks: Boolean,
     testRegular: Boolean,
     testPrice: Number,
+    testRandomOffer: Number,
   },
   {
     versionKey: false,

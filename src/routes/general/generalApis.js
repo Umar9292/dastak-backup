@@ -815,20 +815,39 @@ router.get('/readExcelSheet', async (_req, res) => {
 
 router.get('/test', async (req, res) => {
   try {
-    const products = await Products.updateMany(
-      {
-        drinks: 'false',
-      },
-      { drinks: false }
-    ).select('drinks');
+    const products = await Products.find();
 
-    /*  await Promise.all(
+    await Promise.all(
       products.map(product => {
-        // console.log(typeof product.drinks);
-        product.drinks = true;
+        if (product.drinks && product.drinks === true) {
+          product.testDrinks = true;
+        }
+
+        if (product.drinks && product.drinks === false) {
+          product.testDrinks = false;
+        }
+
+        if (product.regular && product.regular === false) {
+          product.testRegular = false;
+        }
+
+        if (product.regular && product.regular === true) {
+          product.testRegular = true;
+        }
+
+        if (product.randomOffer && product.randomOffer === true) {
+          product.testRandomOffer = true;
+        }
+
+        if (product.randomOffer && product.randomOffer === false) {
+          product.testRandomOffer = false;
+        }
+
+        product.testPrice = +product.price;
+
         return product.save();
       })
-    ); */
+    );
 
     return res.json(products);
   } catch (err) {
