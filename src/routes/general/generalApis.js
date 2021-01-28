@@ -526,9 +526,10 @@ router.post('/restaurantsCollections', async (req, res) => {
           ourProfit,
           totalDeliveryCharges,
           totalOrders: thisWeeksOrders,
-          jazzCashNumber: restaurant.jazzCashNumber
-            ? restaurant.jazzCashNumber
-            : 'No Number Given',
+          jazzCashNumber:
+            restaurant && restaurant.jazzCashNumber
+              ? restaurant.jazzCashNumber
+              : 'No Number Given',
         };
       })
     );
@@ -814,16 +815,22 @@ router.get('/readExcelSheet', async (_req, res) => {
 
 router.get('/test', async (req, res) => {
   try {
-    const products = await Products.find().select('drinks');
+    const products = await Products.updateMany(
+      {
+        drinks: 'false',
+      },
+      { drinks: false }
+    ).select('drinks');
 
-    await Promise.all(
+    /*  await Promise.all(
       products.map(product => {
+        // console.log(typeof product.drinks);
         product.drinks = true;
         return product.save();
       })
-    );
+    ); */
 
-    return res.json('done');
+    return res.json(products);
   } catch (err) {
     return res.json({
       status: '404',
