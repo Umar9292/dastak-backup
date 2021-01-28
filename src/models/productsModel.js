@@ -27,10 +27,6 @@ const productsModel = Schema(
     randomOffer: Boolean,
     discount: String,
     discountedPrice: Number,
-    testDrinks: Boolean,
-    testRegular: Boolean,
-    testPrice: Number,
-    testRandomOffer: Number,
   },
   {
     versionKey: false,
