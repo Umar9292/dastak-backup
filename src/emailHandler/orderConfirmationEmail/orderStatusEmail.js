@@ -1,6 +1,6 @@
 const { createTransport } = require('nodemailer');
 
-exports.orderStatusEmail = adminMessage => {
+exports.orderStatusEmail = async adminMessage => {
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,

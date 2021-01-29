@@ -312,7 +312,7 @@ router.post('/adminResponse', async (req, res) => {
       await order.save();
 
       const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
-      orderStatusEmail(adminMessage);
+      await orderStatusEmail(adminMessage);
 
       res.json({
         status: '200',
@@ -334,7 +334,7 @@ router.post('/adminResponse', async (req, res) => {
     if (status === 'Admin Accepted' && !customerNotified) {
       if (orderType === 'PickUp') {
         const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
-        sendAcceptanceEmail(msg);
+        await sendAcceptanceEmail(msg);
 
         if (user.type === 'admin') {
           const { playerIds } = user;
@@ -347,7 +347,7 @@ router.post('/adminResponse', async (req, res) => {
         }
 
         const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
-        orderStatusEmail(adminMessage);
+        await orderStatusEmail(adminMessage);
 
         return res.json({
           status: '200',
@@ -357,7 +357,7 @@ router.post('/adminResponse', async (req, res) => {
 
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
-      sendAcceptanceEmail(msg);
+      await sendAcceptanceEmail(msg);
 
       const idleRiders = await Users.find({
         type: 'rider',
@@ -376,7 +376,7 @@ router.post('/adminResponse', async (req, res) => {
           });
 
           if (email && email !== '' && email.includes('@')) {
-            emailOrderDetailsToRider(email);
+            await emailOrderDetailsToRider(email);
           }
         });
       }
@@ -389,7 +389,7 @@ router.post('/adminResponse', async (req, res) => {
         });
 
         if (email && email !== '' && email.includes('@')) {
-          emailOrderDetailsToRider(email);
+          await emailOrderDetailsToRider(email);
         }
       });
 
@@ -402,7 +402,7 @@ router.post('/adminResponse', async (req, res) => {
       });
 
       const adminMessage = `The order number ${orderNum} has been Accepted by ${shop.name}`;
-      orderStatusEmail(adminMessage);
+      await orderStatusEmail(adminMessage);
     }
 
     if (status === 'Admin Accepted' && customerNotified) {
@@ -535,7 +535,7 @@ router.post('/assignRider', async (req, res) => {
       });
     });
 
-    orderStatusEmail(message);
+    await orderStatusEmail(message);
   } catch (err) {
     return res.json({
       status: '404',
