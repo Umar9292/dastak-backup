@@ -15,6 +15,8 @@ exports.emailOrderDetailsToRider = async riderEmail => {
     tls: {
       rejectUnauthorized: false,
     },
+  }).catch(err => {
+    console.log(err);
   });
 
   const mailOptions = {
