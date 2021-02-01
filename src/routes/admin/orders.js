@@ -331,7 +331,7 @@ router.post('/adminResponse', async (req, res) => {
       }
     }
 
-    if (status === 'Admin Accepted' && !customerNotified) {
+    if (status === 'Admin Accepted') {
       if (orderType === 'PickUp') {
         const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
         await sendAcceptanceEmail(msg);
@@ -405,7 +405,7 @@ router.post('/adminResponse', async (req, res) => {
       await orderStatusEmail(adminMessage);
     }
 
-    if (status === 'Admin Accepted' && customerNotified) {
+    /* if (status === 'Admin Accepted' && customerNotified) {
       const msg = `Dear ${user.name} your order# ${orderNum} for ${shop.name} is now ready. Kindly pick it up`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
@@ -413,7 +413,7 @@ router.post('/adminResponse', async (req, res) => {
         status: '200',
         msg: 'Customer has been notified',
       });
-    }
+    } */
 
     if (status === 'Delivered') {
       const msg = `Dear ${user.name} thankyou for your order from ${shop.name}`;
