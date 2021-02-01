@@ -6,9 +6,7 @@ const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
 const Flavours = require('../../models/flavoursAndDrinks');
 const Marts = require('../../models/martsModel');
-const Offers = require('../../models/offersModel');
 const Categories = require('../../models/categoriesModel');
-const { notifyUser } = require('../../notificationHandler/handler');
 
 const router = Router();
 
@@ -228,7 +226,7 @@ router.get('/addAvailability', async (req, res) => {
 
 router.post('/updateProductsAvailability', async (req, res) => {
   try {
-    const { category, martId, available } = req.body;
+    const { category, martId } = req.body;
 
     const query = {
       category,
@@ -237,24 +235,10 @@ router.post('/updateProductsAvailability', async (req, res) => {
 
     await Products.updateMany(query, { $set: req.body });
 
-    res.json({
+    return res.json({
       status: '200',
       msg: 'Status successfully updated',
     });
-
-    if (available === 'in stock') {
-      const { offers } = await Offers.findOne({ martId });
-
-      offers.forEach(async offer => {
-        if (offer.name === category) {
-          const users = await Users.find({ type: 'user' });
-
-          users.forEach(async user => {
-            await notifyUser(offer.text, user.playerId, { flag: 'offer' });
-          });
-        }
-      });
-    }
   } catch (err) {
     return res.json({
       status: '404',

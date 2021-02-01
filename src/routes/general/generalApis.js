@@ -56,7 +56,7 @@ router.get('/changePrices', async (req, res) => {
 
 router.get('/notifications', async (req, res) => {
   try {
-    const users = await Users.find({
+    /*  const users = await Users.find({
       type: 'user',
       $or: [
         { playerId: { $ne: '' } },
@@ -67,25 +67,25 @@ router.get('/notifications', async (req, res) => {
 
     console.log(users.length);
 
-    let count = 0;
+    let count = 0; */
 
     // const msg = `!Great News for Dastak Users! 😀\nFrom now on there will be no delivery charges on any order what so ever. Toh abhi mangwao abhi khao Dastak now. 😇`;
     // const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
     // const msg = `Dear Umar to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
+    const msg = 'Sunain Mailk G Kiya Hal Hain Ap ki Dhui k.. 😘';
+    await notifyUser(msg, '076adc9b-a05d-442c-9d0b-f77b496bd32d', {});
 
-    // await notifyUser(msg, '3b45ad7e-5e0e-49c3-b7ae-ef81c8ae09bd', {});
-
-    for (const user of users) {
+    /*  for (const user of users) {
       if (user.playerId && user.player !== '') {
         const msg = `Dear ${user.name} to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
         await notifyUser(msg, user.playerId, {});
 
         count += 1;
       }
-    }
+    } */
 
-    console.log(count);
-    return res.status(200).send(count, 'count');
+    // console.log(count);
+    return res.status(200).send('done');
   } catch (err) {
     return res.json({
       status: '404',
