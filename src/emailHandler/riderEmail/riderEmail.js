@@ -15,8 +15,14 @@ exports.emailOrderDetailsToRider = async riderEmail => {
     tls: {
       rejectUnauthorized: false,
     },
-  }).catch(err => {
-    console.log(err);
+  });
+
+  transporter.verify(error => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Server is ready to take our messages');
+    }
   });
 
   const mailOptions = {
