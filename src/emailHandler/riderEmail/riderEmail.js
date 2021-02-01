@@ -7,6 +7,7 @@ exports.emailOrderDetailsToRider = async riderEmail => {
     host: process.env.MAIL_HOST,
     port: 465,
     secure: true,
+    pool: true,
     auth: {
       user: process.env.MAIL_USER_NAME,
       pass: process.env.MAIL_PASSWORD,
