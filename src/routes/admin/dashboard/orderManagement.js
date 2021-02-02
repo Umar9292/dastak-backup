@@ -86,7 +86,11 @@ router.post('/ordersTillNow', async (req, res) => {
 
 router.post('/updateOrder', async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, products } = req.body;
+
+    if (products) {
+      req.body.products = JSON.parse(products);
+    }
 
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
