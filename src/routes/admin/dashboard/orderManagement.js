@@ -84,7 +84,7 @@ router.post('/ordersTillNow', async (req, res) => {
   }
 });
 
-router.post('/changeOrderType', async (req, res) => {
+router.post('/updateOrder', async (req, res) => {
   try {
     const { orderId } = req.body;
 
