@@ -334,7 +334,7 @@ router.post('/adminResponse', async (req, res) => {
     if (status === 'Admin Accepted') {
       if (orderType === 'PickUp') {
         const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
-        await sendAcceptanceEmail(msg);
+        sendAcceptanceEmail(user.email ? user.email : '', msg);
 
         if (user.type === 'admin') {
           const { playerIds } = user;
@@ -347,7 +347,7 @@ router.post('/adminResponse', async (req, res) => {
         }
 
         const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
-        await orderStatusEmail(adminMessage);
+        orderStatusEmail(adminMessage);
 
         return res.json({
           status: '200',

@@ -1,6 +1,6 @@
 const { createTransport } = require('nodemailer');
 
-exports.sendAcceptanceEmail = async msg => {
+exports.sendAcceptanceEmail = async (email, msg) => {
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
@@ -17,7 +17,7 @@ exports.sendAcceptanceEmail = async msg => {
 
   const mailOptions = {
     from: 'no-reply@dastak.store',
-    to: 'support@dastak.store',
+    to: email,
     subject: 'Order Status',
     text: msg,
   };
