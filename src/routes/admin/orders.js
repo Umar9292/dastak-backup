@@ -334,7 +334,7 @@ router.post('/adminResponse', async (req, res) => {
     if (status === 'Admin Accepted') {
       if (orderType === 'PickUp') {
         const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
-        sendAcceptanceEmail(user.email ? user.email : '', msg);
+        sendAcceptanceEmail(user.email !== '' ? user.email : '', msg);
 
         if (user.type === 'admin') {
           const { playerIds } = user;
@@ -357,7 +357,7 @@ router.post('/adminResponse', async (req, res) => {
 
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
-      await sendAcceptanceEmail(msg);
+      sendAcceptanceEmail(user.email !== '' ? user.email : '', msg);
 
       const idleRiders = await Users.find({
         type: 'rider',
@@ -368,30 +368,34 @@ router.post('/adminResponse', async (req, res) => {
       const allRiders = await Users.find({ type: 'rider', available: true });
 
       if (idleRiders.length === 0) {
-        allRiders.forEach(async rider => {
+        const riderEmails = await Promise.all(
+          allRiders.map(async rider => {
+            const { name, email, playerId } = rider;
+
+            await notifyRiders(name, ridersMessage, playerId, {
+              flag: 'riderNotified',
+            });
+
+            return email;
+          })
+        );
+
+        emailOrderDetailsToRider(riderEmails);
+      }
+
+      const riderEmails = await Promise.all(
+        idleRiders.map(async rider => {
           const { name, email, playerId } = rider;
 
           await notifyRiders(name, ridersMessage, playerId, {
             flag: 'riderNotified',
           });
 
-          if (email && email !== '' && email.includes('@')) {
-            await emailOrderDetailsToRider(email);
-          }
-        });
-      }
+          return email;
+        })
+      );
 
-      idleRiders.forEach(async rider => {
-        const { name, email, playerId } = rider;
-
-        await notifyRiders(name, ridersMessage, playerId, {
-          flag: 'riderNotified',
-        });
-
-        if (email && email !== '' && email.includes('@')) {
-          await emailOrderDetailsToRider(email);
-        }
-      });
+      emailOrderDetailsToRider(riderEmails);
 
       order.orderNum = orderNum;
       order.save();

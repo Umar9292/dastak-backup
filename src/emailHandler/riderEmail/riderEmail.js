@@ -1,6 +1,6 @@
 const { createTransport } = require('nodemailer');
 
-exports.emailOrderDetailsToRider = async riderEmail => {
+exports.emailOrderDetailsToRider = async riderEmails => {
   const msg = 'You have got a new order';
 
   const transporter = createTransport({
@@ -16,11 +16,9 @@ exports.emailOrderDetailsToRider = async riderEmail => {
     },
   });
 
-  const mailList = ['umarpromd@gmail.com', 'umar@healthrix.com'];
-
   const mailOptions = {
     from: 'no-reply@dastak.store',
-    to: mailList,
+    to: riderEmails,
     subject: 'Order Status',
     text: msg,
   };
