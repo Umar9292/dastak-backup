@@ -331,7 +331,7 @@ router.post('/adminResponse', async (req, res) => {
       }
     }
 
-    if (status === 'Admin Accepted') {
+    if (status === 'Admin Accepted' && !customerNotified) {
       if (orderType === 'PickUp') {
         const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
         sendAcceptanceEmail(user.email !== '' ? user.email : '', msg);
