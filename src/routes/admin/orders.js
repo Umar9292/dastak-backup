@@ -312,7 +312,7 @@ router.post('/adminResponse', async (req, res) => {
       await order.save();
 
       const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
-      await orderStatusEmail(adminMessage);
+      orderStatusEmail(adminMessage);
 
       res.json({
         status: '200',
@@ -409,15 +409,17 @@ router.post('/adminResponse', async (req, res) => {
       orderStatusEmail(adminMessage);
     }
 
-    /* if (status === 'Admin Accepted' && customerNotified) {
+    if (status === 'Admin Accepted' && customerNotified) {
       const msg = `Dear ${user.name} your order# ${orderNum} for ${shop.name} is now ready. Kindly pick it up`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
+
+      sendAcceptanceEmail(user.email !== '' ? user.email : '', msg);
 
       return res.json({
         status: '200',
         msg: 'Customer has been notified',
       });
-    } */
+    }
 
     if (status === 'Delivered') {
       const msg = `Dear ${user.name} thankyou for your order from ${shop.name}`;
