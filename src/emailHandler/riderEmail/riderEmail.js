@@ -7,8 +7,6 @@ exports.emailOrderDetailsToRider = async riderEmail => {
     host: process.env.MAIL_HOST,
     port: 465,
     secure: true,
-    pool: true,
-    maxConnections: 1,
     auth: {
       user: process.env.MAIL_USER_NAME,
       pass: process.env.MAIL_PASSWORD,
@@ -18,23 +16,18 @@ exports.emailOrderDetailsToRider = async riderEmail => {
     },
   });
 
-  transporter.verify(error => {
-    if (error) {
-      console.log('here');
-      console.log(error);
-    } else {
-      const mailOptions = {
-        from: 'no-reply@dastak.store',
-        to: riderEmail,
-        subject: 'Order Status',
-        text: msg,
-      };
+  const mailList = ['umarpromd@gmail.com', 'umar@healthrix.com'];
 
-      transporter.sendMail(mailOptions, function(err) {
-        if (err) {
-          console.log(err);
-        }
-      });
+  const mailOptions = {
+    from: 'no-reply@dastak.store',
+    to: mailList,
+    subject: 'Order Status',
+    text: msg,
+  };
+
+  transporter.sendMail(mailOptions, function(err) {
+    if (err) {
+      console.log(err);
     }
   });
 };
