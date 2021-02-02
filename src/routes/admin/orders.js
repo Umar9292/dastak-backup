@@ -541,7 +541,7 @@ router.post('/assignRider', async (req, res) => {
       });
     });
 
-    await orderStatusEmail(message);
+    orderStatusEmail(message);
   } catch (err) {
     return res.json({
       status: '404',
