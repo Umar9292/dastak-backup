@@ -406,7 +406,7 @@ router.post('/adminResponse', async (req, res) => {
       });
 
       const adminMessage = `The order number ${orderNum} has been Accepted by ${shop.name}`;
-      await orderStatusEmail(adminMessage);
+      orderStatusEmail(adminMessage);
     }
 
     /* if (status === 'Admin Accepted' && customerNotified) {
