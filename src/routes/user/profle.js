@@ -90,7 +90,7 @@ router.post('/sendOtp', async (req, res) => {
     }
 
     const secret = Speakeasy.generateSecret({ length: 20 }).base32;
-    const token = Speakeasy.totp({ secret });
+    const token = Speakeasy.totp({ secret, encoding: 'base32' });
 
     await new Otp({
       userId: user._id,
@@ -133,6 +133,8 @@ router.post('/validateOtp', async (req, res) => {
       token,
       window: 300,
     });
+
+    console.log(verified);
 
     if (!verified) {
       return res.json({
