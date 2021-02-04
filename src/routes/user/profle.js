@@ -127,19 +127,21 @@ router.post('/validateOtp', async (req, res) => {
       });
     }
 
-    const verification = totp.verify({
+    const verified = Speakeasy.totp.verify({
       secret: otp.secret,
       encoding: 'base32',
       token,
       window: 300,
     });
 
-    if (verification === true) return res.json({ status: '200' });
+    if (!verified) {
+      return res.json({
+        status: '404',
+        msg: 'Your code is no longer valid. Kindly resend the code',
+      });
+    }
 
-    return res.json({
-      status: '404',
-      msg: 'Your code is no longer valid. Kindly resend the code',
-    });
+    return res.json({ status: '200' });
   } catch (err) {
     return res.json({
       status: '404',
