@@ -1,6 +1,6 @@
 const Router = require('express/lib/router');
 const { compare, hash } = require('bcrypt');
-const { generateSecret, totp } = require('speakeasy');
+const Speakeasy = require('speakeasy');
 
 const Users = require('../../models/userModel');
 const Marts = require('../../models/martsModel');
@@ -89,22 +89,19 @@ router.post('/sendOtp', async (req, res) => {
       });
     }
 
-    const secret = generateSecret({ length: 20 });
-    const token = totp({
-      secret: secret.base32,
-      encoding: 'base32',
-    });
+    const secret = Speakeasy.generateSecret({ length: 20 }).base32;
+    const token = Speakeasy.totp({ secret });
 
     await new Otp({
       userId: user._id,
       email,
-      secret: secret.base32,
+      secret,
       token,
     }).save();
 
     emailOtp(user.email, token);
 
-    res.json({
+    return res.json({
       status: '200',
       msg: `A verification code has been sent to ${user.email}.`,
     });
