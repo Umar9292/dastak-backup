@@ -1,10 +1,10 @@
 const Router = require('express/lib/router');
 // const axios = require('axios');
-const Speakeasy = require('speakeasy');
+// const Speakeasy = require('speakeasy');
 const { hash, compare } = require('bcrypt');
 
 const User = require('../../models/userModel');
-const Otp = require('../../models/otpModel');
+// const Otp = require('../../models/otpModel');
 
 const router = Router();
 
@@ -25,7 +25,7 @@ router.post('/signUp', async (req, res) => {
 
     const newUser = await new User(params).save();
 
-    const secret = Speakeasy.generateSecret({ length: 20 }).base32;
+    /*  const secret = Speakeasy.generateSecret({ length: 20 }).base32;
     const otp = Speakeasy.totp({ secret, encoding: 'base32' });
 
     await new Otp({
@@ -35,7 +35,7 @@ router.post('/signUp', async (req, res) => {
       token: otp,
     }).save();
 
-    /* const msg = `Your Dastak code is ${otp}`;
+    const msg = `Your Dastak code is ${otp}`;
     await axios.get(`${process.env.SMS_URL}&mobile=${phone}&message=${msg}`); */
 
     return res.json({
