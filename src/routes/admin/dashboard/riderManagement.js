@@ -23,6 +23,20 @@ router.get('/activeRiders', async (_req, res) => {
   }
 });
 
+router.get('/allRiders', async (_req, res) => {
+  try {
+    const allRiders = await Users.find({ type: 'rider' }).lean();
+
+    return res.json({ status: '200', allRiders });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 router.post('/reAssignRider', async (req, res) => {
   try {
     const { orderId, riderId } = req.body;
