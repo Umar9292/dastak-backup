@@ -1,5 +1,6 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
+const axios = require('axios');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
@@ -79,6 +80,11 @@ router.post('/placeOrder', async (req, res) => {
       msg: `Order Received`,
       data: order,
     });
+
+    const msg = 'You have a new order.';
+    await axios.get(
+      `${process.env.SMS_URL}&mobile=${mart.phone}&message=${msg}`
+    );
 
     const user = await Users.findById(userId).select('-password -__v');
 
@@ -297,6 +303,10 @@ router.post('/adminResponse', async (req, res) => {
     if (status === 'Rejected') {
       const msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
 
+      await axios.get(
+        `${process.env.SMS_URL}&mobile=${user.phone}&message=${msg}`
+      );
+
       if (user.type === 'admin') {
         const { playerIds } = shop;
 
@@ -348,6 +358,10 @@ router.post('/adminResponse', async (req, res) => {
 
         const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
         orderStatusEmail(adminMessage);
+
+        await axios.get(
+          `${process.env.SMS_URL}&mobile=${user.phone}&message=${msg}`
+        );
 
         return res.json({
           status: '200',
@@ -656,6 +670,10 @@ router.post('/changeOrderStatus', async (req, res) => {
 
     const pickUpMsg =
       'Your order has been picked up by dastak rider and will be delivered to you shortly';
+
+    await axios.get(
+      `${process.env.SMS_URL}&mobile=${order.phone}&message=${pickUpMsg}`
+    );
 
     if (user.type === 'admin') {
       const { playerIds } = await Mart.findById(order.userId);
