@@ -1,6 +1,7 @@
 const Router = require('express/lib/router');
-const { compare, hash } = require('bcrypt');
+const axios = require('axios');
 const Speakeasy = require('speakeasy');
+const { compare, hash } = require('bcrypt');
 
 const Users = require('../../models/userModel');
 const Marts = require('../../models/martsModel');
@@ -78,14 +79,20 @@ router.post('/changePassword', async (req, res) => {
 
 router.post('/sendOtp', async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, phone } = req.body;
+    let user;
 
-    const user = await Users.findOne({ email });
+    if (email !== '') {
+      user = await Users.findOne({ email });
+    } else {
+      user = await Users.findOne({ phone });
+    }
 
     if (!user) {
       return res.json({
         status: '404',
-        msg: 'The email you entered is not associated with any account',
+        msg:
+          'The email or phone you entered is not associated with any account',
       });
     }
 
@@ -99,7 +106,12 @@ router.post('/sendOtp', async (req, res) => {
       token,
     }).save();
 
-    emailOtp(user.email, token);
+    if (email !== '') {
+      emailOtp(user.email, token);
+    } else {
+      const msg = `Your Dastak code is ${token}`;
+      await axios.get(`${process.env.SMS_URL}&mobile=${phone}&message=${msg}`);
+    }
 
     return res.json({
       status: '200',
@@ -116,9 +128,14 @@ router.post('/sendOtp', async (req, res) => {
 
 router.post('/validateOtp', async (req, res) => {
   try {
-    const { email, token } = req.body;
+    const { email, phone, token } = req.body;
+    let otp;
 
-    const otp = await Otp.findOne({ email, token });
+    if (email !== '') {
+      otp = await Otp.findOne({ email, token }).select('secret');
+    } else {
+      otp = await Otp.findOne({ phone, token }).select('secret');
+    }
 
     if (!otp) {
       return res.json({
@@ -134,8 +151,6 @@ router.post('/validateOtp', async (req, res) => {
       window: 300,
     });
 
-    console.log(verified);
-
     if (!verified) {
       return res.json({
         status: '404',
@@ -148,34 +163,6 @@ router.post('/validateOtp', async (req, res) => {
     return res.json({
       status: '404',
       msg: 'Looks like an error occurred on our side. Kindly try again',
-    });
-  }
-});
-
-router.post('/forgotPassword', async (req, res) => {
-  try {
-    const { newPassword, email } = req.body;
-
-    const user = await Users.findOne({ email });
-    if (!user) {
-      return res.json({
-        status: '404',
-        msg: 'There was no user found with that email',
-      });
-    }
-
-    const hashedPassword = await hash(newPassword, 10);
-    user.password = hashedPassword;
-    await user.save();
-
-    return res.json({
-      status: '200',
-      msg: 'Password successfully updated.',
-    });
-  } catch (err) {
-    return res.json({
-      status: '404',
-      msg: 'Looks like something went wrong on our side. Kindly try again',
     });
   }
 });
