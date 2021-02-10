@@ -43,11 +43,11 @@ router.get('/manageRiders', async (_req, res) => {
   try {
     const [activeRiders, inactiveRiders] = await Promise.all([
       Users.find({ type: 'rider', status: { $ne: 'inactive' } })
-        .sort({ name: 1 })
+        .sort({ available: -1 })
         .lean(),
 
       Users.find({ type: 'rider', status: 'inactive' })
-        .sort({ name: 1 })
+        .sort({ available: -1 })
         .lean(),
     ]);
 
