@@ -11,7 +11,7 @@ const router = Router();
 router.post('/signUp', async (req, res) => {
   try {
     const params = req.body;
-    const { phone, password } = params;
+    const { phone, password, type } = params;
 
     const user = await User.findOne({ phone });
     if (user) {
@@ -25,18 +25,20 @@ router.post('/signUp', async (req, res) => {
 
     const newUser = await new User(params).save();
 
-    /*  const secret = Speakeasy.generateSecret({ length: 20 }).base32;
-    const otp = Speakeasy.totp({ secret, encoding: 'base32' });
+    /* if (type === 'user') {
+      const secret = Speakeasy.generateSecret({ length: 20 }).base32;
+      const otp = Speakeasy.totp({ secret, encoding: 'base32' });
 
-    await new Otp({
-      userId: newUser._id,
-      phone,
-      secret,
-      token: otp,
-    }).save();
+      await new Otp({
+        userId: newUser._id,
+        phone,
+        secret,
+        token: otp,
+      }).save();
 
-    const msg = `Your Dastak code is ${otp}`;
-    await axios.get(`${process.env.SMS_URL}&mobile=${phone}&message=${msg}`); */
+      const msg = `Your Dastak code is ${otp}`;
+      await axios.get(`${process.env.SMS_URL}&mobile=${phone}&message=${msg}`);
+    } */
 
     return res.json({
       status: '200',
