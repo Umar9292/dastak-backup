@@ -23,6 +23,7 @@ const playerIdRouter = require('./src/routes/general/playerIds');
 const generalApisRouter = require('./src/routes/general/generalApis');
 const ordersManagementRouter = require('./src/routes/admin/dashboard/orderManagement');
 const ridersManagementRouter = require('./src/routes/admin/dashboard/riderManagement');
+const restaurantsManagementRouter = require('./src/routes/admin/dashboard/restaurantManagement');
 
 const port = process.env.PORT || 8080;
 
@@ -47,7 +48,8 @@ app.use(
   '/admin',
   playerIdRouter,
   ordersManagementRouter,
-  ridersManagementRouter
+  ridersManagementRouter,
+  restaurantsManagementRouter
 );
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
