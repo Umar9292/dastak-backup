@@ -11,7 +11,7 @@ const router = Router();
 router.post('/signUp', async (req, res) => {
   try {
     const params = req.body;
-    const { phone, password, type } = params;
+    const { phone, password } = params;
 
     const user = await User.findOne({ phone });
     if (user) {
