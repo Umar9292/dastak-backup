@@ -784,7 +784,7 @@ router.get('/riderFares', async (_req, res) => {
   }
 });
 
-router.get('/readExcelSheet', async (_req, res) => {
+router.get('/readRiderExcelSheet', async (_req, res) => {
   try {
     const workbook = new Exceljs.Workbook();
 
@@ -802,6 +802,61 @@ router.get('/readExcelSheet', async (_req, res) => {
         await restaurant.save();
       }
     });
+
+    return res.send('Done');
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/readRestaurantExcelSheet', async (req, res) => {
+  try {
+    let { startDate, endDate } = req.body;
+
+    startDate = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    endDate = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    const workbook = new Exceljs.Workbook();
+
+    const sheet = workbook.xlsx.readFile(`${process.cwd()}/sheets.xlsx`);
+    const worksheet = (await sheet).getWorksheet('sheet1');
+
+    const marts = [];
+
+    worksheet.eachRow({ includeEmpty: false }, async row => {
+      const martName = row.getCell(`C`).value;
+      marts.push(martName);
+    });
+
+    await Promise.all(
+      marts.map(async martName => {
+        const thisWeeksOrders = await Orders.find({
+          martName,
+          paid: { $in: [false, undefined] },
+          orderType: 'Delivery',
+          status: { $in: ['Delivered', 'Rider Picked Up'] },
+          dateForSearching: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        });
+
+        await Promise.all(
+          thisWeeksOrders.map(async order => {
+            order.paid = true;
+            await order.save();
+          })
+        );
+      })
+    );
 
     return res.send('Done');
   } catch (err) {
