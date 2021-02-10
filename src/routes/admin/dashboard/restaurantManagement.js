@@ -11,13 +11,17 @@ router.get('/manageRestaurants', async (_req, res) => {
         type: 'admin',
         shopType: 'restaurant',
         status: 'active',
-      }).lean(),
+      })
+        .sort({ name: 1 })
+        .lean(),
 
       Users.find({
         type: 'admin',
         shopType: 'restaurant',
         status: 'inactive',
-      }).lean(),
+      })
+        .sort({ name: 1 })
+        .lean(),
     ]);
 
     return res.json({ status: '200', activeRestaurants, inactiveRestaurants });

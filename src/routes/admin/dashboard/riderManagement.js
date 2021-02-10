@@ -25,7 +25,9 @@ router.get('/activeRiders', async (_req, res) => {
 
 router.get('/allRiders', async (_req, res) => {
   try {
-    const allRiders = await Users.find({ type: 'rider' }).lean();
+    const allRiders = await Users.find({ type: 'rider' })
+      .sort({ name: 1 })
+      .lean();
 
     return res.json({ status: '200', allRiders });
   } catch (err) {
@@ -40,8 +42,13 @@ router.get('/allRiders', async (_req, res) => {
 router.get('/manageRiders', async (_req, res) => {
   try {
     const [activeRiders, inactiveRiders] = await Promise.all([
-      Users.find({ type: 'rider', status: { $ne: 'inactive' } }).lean(),
-      Users.find({ type: 'rider', status: 'inactive' }).lean(),
+      Users.find({ type: 'rider', status: { $ne: 'inactive' } })
+        .sort({ name: 1 })
+        .lean(),
+
+      Users.find({ type: 'rider', status: 'inactive' })
+        .sort({ name: 1 })
+        .lean(),
     ]);
 
     return res.json({ status: '200', activeRiders, inactiveRiders });
