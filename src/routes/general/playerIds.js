@@ -1,7 +1,6 @@
 const Router = require('express/lib/router');
 
-const Marts = require('../../models/martsModel');
-const Users = require('../../models/userModel');
+const Users = require('../../models/martsModel');
 
 const router = Router();
 
@@ -9,7 +8,7 @@ router.post('/adminPlayerId', async (req, res) => {
   try {
     const { userId, playerId } = req.body;
 
-    const admin = await Marts.findById(userId);
+    const admin = await Users.findById(userId);
 
     const { playerIds, status } = admin;
 

@@ -1,7 +1,7 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
 
-const Marts = require('../../models/martsModel');
+const Users = require('../../models/userModel');
 
 const router = Router();
 
@@ -14,14 +14,14 @@ router.post('/addMart', async (req, res) => {
       location: params.location,
     };
 
-    const mart = await Marts.findOne(query);
+    const mart = await Users.findOne(query);
     if (mart)
       return res.json({
         status: '404',
         msg: 'This Mart is already registered',
       });
 
-    await new Marts(req.body).save();
+    await new Users(req.body).save();
 
     return res.json({
       status: '200',
@@ -45,7 +45,7 @@ router.get('/allMarts', async (req, res) => {
       shopType: 'mart',
     };
 
-    const allMarts = await Marts.find(query)
+    const allMarts = await Users.find(query)
       .sort({ name: 1 })
       .select('-password -__v');
 
@@ -66,7 +66,7 @@ router.post('/martDetails', async (req, res) => {
   try {
     const { id } = req.body;
 
-    const shop = await Marts.findById(id).select('-password -__v');
+    const shop = await Users.findById(id).select('-password -__v');
 
     return res.json({
       status: '200',
@@ -92,7 +92,7 @@ router.get('/allRestaurants', async (req, res) => {
       shopType: 'restaurant',
     };
 
-    const allRestaurants = await Marts.find(query)
+    const allRestaurants = await Users.find(query)
       .sort({ position: -1 })
       .select('-password -__v')
       .lean();
@@ -124,7 +124,7 @@ router.post('/availabilityStatus', async (req, res) => {
   try {
     const { martId } = req.body;
 
-    const shop = await Marts.findByIdAndUpdate(
+    const shop = await Users.findByIdAndUpdate(
       martId,
       {
         $set: req.body,

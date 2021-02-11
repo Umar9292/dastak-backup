@@ -4,7 +4,6 @@ const moment = require('moment-timezone');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
-const Mart = require('../../models/martsModel');
 const {
   orderStatusEmail,
 } = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
@@ -34,7 +33,7 @@ router.post('/placeOrder', async (req, res) => {
     let params = req.body;
     const { orderTotal, martId, userId, products, date } = params;
 
-    const mart = await Mart.findById(martId).select('-password -__v');
+    const mart = await Users.findById(martId).select('-password -__v');
 
     if (!mart.available) {
       return res.json({
@@ -131,7 +130,7 @@ router.post('/checkTime', async (req, res) => {
 
     const orderTime = moment().tz('Asia/karachi');
 
-    let { openingTime, closingTime, shopType, name } = await Mart.findById(
+    let { openingTime, closingTime, shopType, name } = await Users.findById(
       martId
     ).select('-password -__v');
 
@@ -295,7 +294,7 @@ router.post('/adminResponse', async (req, res) => {
 
     const [user, shop] = await Promise.all([
       Users.findById(order.userId),
-      Mart.findById(order.martId),
+      Users.findById(order.martId),
     ]);
 
     const ridersMessage = `New order from ${shop.name}`;
@@ -544,7 +543,7 @@ router.post('/assignRider', async (req, res) => {
       msg: 'This order is now assigned to you.',
     });
 
-    const { playerIds } = await Mart.findById(order.martId);
+    const { playerIds } = await Users.findById(order.martId);
 
     const message = `Dastak rider ${riderName} is assigned to order# ${order.orderNum}.`;
     const info = `${riderName} is assigned to an order for ${order.martName} placed by ${order.name}`;
@@ -609,7 +608,7 @@ router.post('/riderOrders', async (req, res) => {
       accepted.map(async order => {
         const { martId } = order;
 
-        const { latitude, longitude } = await Mart.findById(martId);
+        const { latitude, longitude } = await Users.findById(martId);
 
         order.martLatitude = latitude;
         order.martLongitude = longitude;
@@ -676,7 +675,7 @@ router.post('/changeOrderStatus', async (req, res) => {
     ); */
 
     if (user.type === 'admin') {
-      const { playerIds } = await Mart.findById(order.userId);
+      const { playerIds } = await Users.findById(order.userId);
 
       playerIds.forEach(async playerId => {
         await notifyUser(pickUpMsg, playerId, { flag: 'orderPickedUp' });

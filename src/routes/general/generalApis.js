@@ -4,7 +4,6 @@ const Exceljs = require('exceljs');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
-const Marts = require('../../models/martsModel');
 const Orders = require('../../models/ordersModel');
 const { notifyUser } = require('../../notificationHandler/handler');
 const {
@@ -264,7 +263,7 @@ router.post('/riderCollections', async (req, res) => {
         })
       );
   
-      const users = await Marts.find({
+      const users = await Users.find({
         shopType: 'restaurant',
         status: 'active',
       });
@@ -310,7 +309,7 @@ router.post('/riderCollections', async (req, res) => {
 
 router.get('/deliveryCharges', async (req, res) => {
   try {
-    const allUsers = await Marts.find({ shopType: 'restaurant' });
+    const allUsers = await Users.find({ shopType: 'restaurant' });
 
     await Promise.all(
       allUsers.map(async user => {
@@ -734,7 +733,7 @@ router.post('/closeRestaurants', async (req, res) => {
   try {
     const { searchFlag, updateFlag } = req.body;
 
-    await Marts.updateMany(
+    await Users.updateMany(
       {
         shopType: 'restaurant',
         status: 'active',

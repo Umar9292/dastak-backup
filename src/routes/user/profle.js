@@ -4,7 +4,6 @@ const Speakeasy = require('speakeasy');
 const { compare, hash } = require('bcrypt');
 
 const Users = require('../../models/userModel');
-const Marts = require('../../models/martsModel');
 const Otp = require('../../models/otpModel');
 const { emailOtp } = require('../../emailHandler/otpEmail/otpEmail');
 
@@ -16,7 +15,7 @@ router.post('/editProfile', async (req, res) => {
     let user;
 
     if (type === 'admin') {
-      user = await Marts.findByIdAndUpdate(
+      user = await Users.findByIdAndUpdate(
         req.body.userId,
         { $set: req.body },
         { new: true }

@@ -5,7 +5,6 @@ const moment = require('moment-timezone/moment-timezone');
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
 const Flavours = require('../../models/flavoursAndDrinks');
-const Marts = require('../../models/martsModel');
 const Categories = require('../../models/categoriesModel');
 
 const router = Router();
@@ -17,7 +16,7 @@ router.post('/allProducts', async (req, res) => {
 
     const [{ categories }, { shopType, name }, options] = await Promise.all([
       Categories.findOne({ martId }),
-      Marts.findById(martId),
+      Users.findById(martId),
       Flavours.findOne({ martId }),
     ]);
 
@@ -261,7 +260,7 @@ router.get('/dastakDeals', async (_req, res) => {
       });
     }
 
-    const restaurants = await Marts.find({
+    const restaurants = await Users.find({
       shopType: 'restaurant',
       available: true,
       dastakDeal: true,
