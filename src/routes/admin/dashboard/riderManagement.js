@@ -1,4 +1,5 @@
 const Router = require('express/lib/router');
+const moment = require('moment-timezone');
 
 const Users = require('../../../models/userModel');
 const Orders = require('../../../models/ordersModel');
@@ -93,6 +94,46 @@ router.post('/reAssignRider', async (req, res) => {
     }
 
     return res.json({ status: '200', msg: 'This order has been re assigned' });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/weeklyRiderFare', async (req, res) => {
+  try {
+    const { startDate, endDate, riderId } = req.body;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    const thisWeeksOrders = await Orders.find({
+      riderId,
+      paidToRider: { $in: [false, undefined] },
+      orderType: 'Delivery',
+      status: 'Delivered',
+      dateForSearching: {
+        $gte: start,
+        $lte: end,
+      },
+    }).select('date orderTotal paidToRider riderFare');
+
+    const collection = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+    const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
+
+    return res.json({
+      status: '200',
+      collection,
+      riderFare,
+      orders: thisWeeksOrders,
+    });
   } catch (err) {
     return res.json({
       status: '404',

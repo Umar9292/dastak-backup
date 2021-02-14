@@ -86,10 +86,17 @@ router.post('/ordersTillNow', async (req, res) => {
 
 router.post('/updateOrder', async (req, res) => {
   try {
-    const { orderId, products } = req.body;
+    const { orderId, products, orderType } = req.body;
 
     if (products) {
       req.body.products = JSON.parse(products);
+    }
+
+    if (orderType === 'Delivery') {
+      req.body.deliveryCharges = '30';
+      const order = await Orders.findById(orderId).select('orderTotal');
+      order.orderTotal += 60;
+      order.save();
     }
 
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
