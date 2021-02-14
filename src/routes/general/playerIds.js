@@ -1,6 +1,6 @@
 const Router = require('express/lib/router');
 
-const Users = require('../../models/martsModel');
+const Users = require('../../models/userModel');
 
 const router = Router();
 
