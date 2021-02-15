@@ -15,7 +15,7 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '601ab4285a334e0a35e5156d',
+      martId: '602a38c9fa35e9092c3c2922',
     });
 
     await Promise.all(
