@@ -103,9 +103,9 @@ router.post('/reAssignRider', async (req, res) => {
   }
 });
 
-router.post('/weeklyRiderFare', async (req, res) => {
+router.post('/weeklyRidersFare', async (req, res) => {
   try {
-    const { startDate, endDate, riderId } = req.body;
+    const { startDate, endDate } = req.body;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -114,26 +114,45 @@ router.post('/weeklyRiderFare', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    const thisWeeksOrders = await Orders.find({
-      riderId,
-      paidToRider: { $in: [false, undefined] },
-      orderType: 'Delivery',
-      status: 'Delivered',
+    const riders = await Orders.distinct('riderName', {
       dateForSearching: {
         $gte: start,
         $lte: end,
       },
-    }).select('date orderTotal paidToRider riderFare');
-
-    const collection = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
-    const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
-
-    return res.json({
-      status: '200',
-      collection,
-      riderFare,
-      orders: thisWeeksOrders,
     });
+
+    const data = await Promise.all(
+      riders.map(async riderName => {
+        const [orders, { name, phone, _id }] = await Promise.all([
+          Orders.find({
+            riderName,
+            paidToRider: { $in: [false, undefined] },
+            orderType: 'Delivery',
+            status: 'Delivered',
+            dateForSearching: {
+              $gte: start,
+              $lte: end,
+            },
+          }),
+
+          Users.findOne({ name: riderName }),
+        ]);
+
+        const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
+        const riderFare = orders.reduce((a, b) => a + b.riderFare, 0);
+
+        return {
+          _id,
+          name,
+          phone,
+          collection,
+          riderFare,
+          orders,
+        };
+      })
+    );
+
+    return res.json({ status: '200', data });
   } catch (err) {
     return res.json({
       status: '404',
