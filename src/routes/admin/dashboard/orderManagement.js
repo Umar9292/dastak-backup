@@ -2,6 +2,12 @@ const Router = require('express/lib/router');
 const moment = require('moment-timezone');
 
 const Orders = require('../../../models/ordersModel');
+const Users = require('../../../models/userModel');
+
+const { notifyRiders } = require('../../../notificationHandler/handler');
+const {
+  emailOrderDetailsToRider,
+} = require('../../../emailHandler/riderEmail/riderEmail');
 
 const router = Router();
 
@@ -93,17 +99,65 @@ router.post('/updateOrder', async (req, res) => {
     }
 
     if (orderType === 'Delivery') {
+      const order = await Orders.findById(orderId).select(
+        'orderTotal martName'
+      );
+
       req.body.deliveryCharges = '30';
-      const order = await Orders.findById(orderId).select('orderTotal');
       order.orderTotal += 30;
       order.save();
+
+      const idleRiders = await Users.find({
+        type: 'rider',
+        status: 'idle',
+        available: true,
+      });
+
+      const allRiders = await Users.find({ type: 'rider', available: true });
+
+      const ridersMessage = `New order from ${order.martName}`;
+
+      if (idleRiders.length === 0) {
+        const riderEmails = await Promise.all(
+          allRiders.map(async rider => {
+            const { name, email, playerId } = rider;
+
+            await notifyRiders(name, ridersMessage, playerId, {
+              flag: 'riderNotified',
+            });
+
+            return email;
+          })
+        );
+
+        emailOrderDetailsToRider(riderEmails);
+      }
+
+      const riderEmails = await Promise.all(
+        idleRiders.map(async rider => {
+          const { name, email, playerId } = rider;
+
+          await notifyRiders(name, ridersMessage, playerId, {
+            flag: 'riderNotified',
+          });
+
+          return email;
+        })
+      );
+
+      emailOrderDetailsToRider(riderEmails);
     }
 
     if (orderType === 'PickUp') {
       req.body.deliveryCharges = '0';
-      const order = await Orders.findById(orderId).select('orderTotal');
-      order.orderTotal -= 30;
-      order.save();
+      const order = await Orders.findById(orderId).select(
+        'orderTotal orderType'
+      );
+
+      if (order.orderType === 'Delivery') {
+        order.orderTotal -= 30;
+        order.save();
+      }
     }
 
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
