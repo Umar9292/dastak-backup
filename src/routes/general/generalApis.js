@@ -15,31 +15,15 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '5f86c9b53f5c6cc2a5c73f87',
+      martId: '601ab4285a334e0a35e5156d',
     });
 
     await Promise.all(
       products.map(product => {
-        if (
-          product.category === 'Deals' ||
-          product.category === 'Exclusive Deals'
-        ) {
-          const percentage = ((15 / 100) * product.price).toFixed();
-          console.log(product.price);
-          product.price = +percentage + +product.price;
-          // product.discountedPrice = +(product.price - percentage);
-          // product.discount = 50;
-          console.log(product.price);
-        }
-
-        // if (product.discount === '10') {
-        // product.discount = '15';
-        // const discountedPrice = ((20 / 100) * product.price).toFixed();
-        // product.discountedPrice = +(product.price - discountedPrice);
-        // product.discount = '20';
-        // }
-
-        return product.save();
+        let discountedPrice = ((15 / 100) * product.price).toFixed();
+        discountedPrice = Math.round(discountedPrice / 5) * 5;
+        product.price = +(product.price + discountedPrice);
+        // return product.save();
       })
     );
 
