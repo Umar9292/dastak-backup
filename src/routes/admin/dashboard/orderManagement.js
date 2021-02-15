@@ -99,6 +99,13 @@ router.post('/updateOrder', async (req, res) => {
       order.save();
     }
 
+    if (orderType === 'PickUp') {
+      req.body.deliveryCharges = '0';
+      const order = await Orders.findById(orderId).select('orderTotal');
+      order.orderTotal -= 30;
+      order.save();
+    }
+
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
     return res.json({ status: '200', msg: 'Order type changed successfully' });
