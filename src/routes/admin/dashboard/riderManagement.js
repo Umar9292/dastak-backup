@@ -162,4 +162,68 @@ router.post('/weeklyRidersFare', async (req, res) => {
   }
 });
 
+router.post('/paidToRiders', async (req, res) => {
+  try {
+    let { riders, startDate, endDate } = req.body;
+    let total = 0;
+
+    startDate = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    endDate = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    riders = JSON.parse(riders);
+
+    const data = await Promise.all(
+      riders.map(async ({ id }) => {
+        const [{ name }, thisWeeksOrders] = await Promise.all([
+          Users.findById(id),
+
+          Orders.find({
+            riderId: id,
+            paidToRider: false,
+            orderType: 'Delivery',
+            status: { $in: ['Delivered', 'Rider Picked Up'] },
+            dateForSearching: {
+              $gte: startDate,
+              $lte: endDate,
+            },
+          }),
+        ]);
+
+        await Promise.all(
+          thisWeeksOrders.map(async order => {
+            order.paidToRider = true;
+            await order.save();
+          })
+        );
+
+        total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+        const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
+
+        return {
+          name,
+          riderFare,
+          thisWeeksOrders,
+        };
+      })
+    );
+
+    return res.json({
+      status: '200',
+      msg: 'Riders have been paid successfully',
+      total,
+      data,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
