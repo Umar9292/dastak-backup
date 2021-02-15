@@ -95,7 +95,7 @@ router.post('/updateOrder', async (req, res) => {
     if (orderType === 'Delivery') {
       req.body.deliveryCharges = '30';
       const order = await Orders.findById(orderId).select('orderTotal');
-      order.orderTotal += 60;
+      order.orderTotal += 30;
       order.save();
     }
 
