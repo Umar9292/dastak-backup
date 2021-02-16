@@ -170,7 +170,6 @@ router.post('/weeklyRidersFare', async (req, res) => {
 router.post('/paidToRiders', async (req, res) => {
   try {
     let { riders, startDate, endDate } = req.body;
-    let total = 0;
 
     console.log(req.body);
 
@@ -185,9 +184,9 @@ router.post('/paidToRiders', async (req, res) => {
     console.log(riders);
     console.log(startDate, endDate);
 
-    const data = await Promise.all(
+    await Promise.all(
       riders.map(async ({ id }) => {
-        const [{ name }, thisWeeksOrders] = await Promise.all([
+        await Promise.all([
           Users.findById(id),
 
           Orders.updateMany(
@@ -204,23 +203,12 @@ router.post('/paidToRiders', async (req, res) => {
             { paidToRider: true }
           ),
         ]);
-
-        total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
-        const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
-
-        return {
-          name,
-          riderFare,
-          thisWeeksOrders,
-        };
       })
     );
 
     return res.json({
       status: '200',
       msg: 'Riders have been paid successfully',
-      total,
-      data,
     });
   } catch (err) {
     console.log(err);
