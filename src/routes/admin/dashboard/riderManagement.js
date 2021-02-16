@@ -107,7 +107,10 @@ router.post('/dailyRiderCollections', async (req, res) => {
   try {
     const { date } = req.body;
 
-    const riders = await Orders.distinct('riderId', { date });
+    const riders = await Orders.distinct('riderId', {
+      date,
+      paidToRider: false,
+    });
 
     const data = await Promise.all(
       riders.map(async riderId => {
@@ -117,6 +120,7 @@ router.post('/dailyRiderCollections', async (req, res) => {
             date,
             status: 'Delivered',
             orderType: 'Delivery',
+            paidToRider: false,
           }),
 
           Users.findById(riderId).select('pendingCollection'),
@@ -142,6 +146,7 @@ router.post('/dailyRiderCollections', async (req, res) => {
       status: '200',
     });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
