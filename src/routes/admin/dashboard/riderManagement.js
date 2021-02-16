@@ -123,6 +123,10 @@ router.post('/weeklyRidersFare', async (req, res) => {
       orderType: 'Delivery',
     });
 
+    console.log(riders);
+    console.log(start);
+    console.log(end);
+
     const data = await Promise.all(
       riders.map(async riderName => {
         const orders = await Orders.find({
