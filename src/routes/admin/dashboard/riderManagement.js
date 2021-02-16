@@ -103,6 +103,53 @@ router.post('/reAssignRider', async (req, res) => {
   }
 });
 
+router.post('/dailyRiderCollections', async (req, res) => {
+  try {
+    const { date } = req.body;
+
+    const riders = await Orders.distinct('riderId', { date });
+
+    const data = await Promise.all(
+      riders.map(async riderId => {
+        const [orders, { pendingCollection }] = await Promise.all([
+          Orders.find({
+            riderId,
+            date,
+            status: 'Delivered',
+            orderType: 'Delivery',
+          }),
+
+          Users.findById(riderId).select('pendingCollection'),
+        ]);
+
+        const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
+
+        return {
+          riderId,
+          name: orders[0].riderName,
+          phone: orders[0].phone,
+          collection,
+          pendingCollection,
+        };
+      })
+    );
+
+    const totalCollection = data.reduce((a, b) => a + b.collection, 0);
+
+    return res.json({
+      totalCollection,
+      data,
+      status: '200',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 router.post('/weeklyRidersFare', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
