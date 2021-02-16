@@ -384,6 +384,9 @@ router.post('/weeklyRidersFare', async (req, res) => {
         $gte: start,
         $lte: end,
       },
+      status: 'Delivered',
+      orderType: 'Delivery',
+      paidToRider: false,
     });
 
     const data = await Promise.all(
