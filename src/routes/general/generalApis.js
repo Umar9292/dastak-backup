@@ -15,15 +15,17 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '602a38c9fa35e9092c3c2922',
+      martId: '5fd76886d7bcdc082b781a27',
     });
 
     await Promise.all(
       products.map(product => {
-        let discountedPrice = ((15 / 100) * product.price).toFixed();
-        discountedPrice = Math.round(discountedPrice / 5) * 5;
-        product.price = +(product.price + discountedPrice);
-        // return product.save();
+        if (product.category === "Pizza's" && product.quantity === 'Large') {
+          let discountedPrice = ((40 / 100) * product.price).toFixed();
+          discountedPrice = Math.round(discountedPrice / 5) * 5;
+          product.discountedPrice = +product.price - discountedPrice;
+          return product.save();
+        }
       })
     );
 
@@ -813,7 +815,7 @@ router.post('/readRestaurantExcelSheet', async (req, res) => {
     const workbook = new Exceljs.Workbook();
 
     const sheet = workbook.xlsx.readFile(`${process.cwd()}/sheets.xlsx`);
-    const worksheet = (await sheet).getWorksheet('sheet1');
+    const worksheet = (await sheet).getWorksheet('04-02-2021 - 10-02-2021');
 
     const marts = [];
 
@@ -822,7 +824,9 @@ router.post('/readRestaurantExcelSheet', async (req, res) => {
       marts.push(martName);
     });
 
-    await Promise.all(
+    console.log(marts.length);
+
+    /* await Promise.all(
       marts.map(async martName => {
         const thisWeeksOrders = await Orders.find({
           martName,
@@ -842,7 +846,7 @@ router.post('/readRestaurantExcelSheet', async (req, res) => {
           })
         );
       })
-    );
+    ); */
 
     return res.send('Done');
   } catch (err) {

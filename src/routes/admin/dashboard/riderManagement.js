@@ -201,7 +201,6 @@ router.post('/paidToRiders', async (req, res) => {
       msg: 'Riders have been paid successfully',
     });
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
