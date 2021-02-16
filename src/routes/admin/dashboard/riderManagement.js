@@ -119,24 +119,24 @@ router.post('/weeklyRidersFare', async (req, res) => {
         $gte: start,
         $lte: end,
       },
+      status: 'Delivered',
+      orderType: 'Delivery',
     });
 
     const data = await Promise.all(
       riders.map(async riderName => {
-        const [orders, { name, phone, _id }] = await Promise.all([
-          Orders.find({
-            riderName,
-            paidToRider: { $in: [false, undefined] },
-            orderType: 'Delivery',
-            status: 'Delivered',
-            dateForSearching: {
-              $gte: start,
-              $lte: end,
-            },
-          }),
+        const orders = await Orders.find({
+          riderName,
+          paidToRider: { $in: [false, undefined] },
+          orderType: 'Delivery',
+          status: 'Delivered',
+          dateForSearching: {
+            $gte: start,
+            $lte: end,
+          },
+        });
 
-          Users.findOne({ name: riderName }),
-        ]);
+        const { name, phone, _id } = await Users.findOne({ name: riderName });
 
         const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
         const riderFare = orders.reduce((a, b) => a + b.riderFare, 0);

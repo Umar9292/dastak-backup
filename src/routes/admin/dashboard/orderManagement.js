@@ -98,11 +98,9 @@ router.post('/updateOrder', async (req, res) => {
       req.body.products = JSON.parse(products);
     }
 
-    if (orderType === 'Delivery') {
-      const order = await Orders.findById(orderId).select(
-        'orderTotal martName'
-      );
+    const order = await Orders.findById(orderId).select('orderTotal martName');
 
+    if (orderType === 'Delivery' && order.orderType !== 'Delivery') {
       req.body.deliveryCharges = '30';
       order.orderTotal += 30;
       order.save();
@@ -148,16 +146,10 @@ router.post('/updateOrder', async (req, res) => {
       emailOrderDetailsToRider(riderEmails);
     }
 
-    if (orderType === 'PickUp') {
+    if (orderType === 'PickUp' && order.orderType !== 'PickUp') {
       req.body.deliveryCharges = '0';
-      const order = await Orders.findById(orderId).select(
-        'orderTotal orderType'
-      );
-
-      if (order.orderType === 'Delivery') {
-        order.orderTotal -= 30;
-        order.save();
-      }
+      order.orderTotal -= 30;
+      order.save();
     }
 
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
