@@ -568,7 +568,7 @@ router.post('/riderOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
-    const [{ fareType }, accepted] = await Promise.all([
+    const [{ fareType, pendingCollection }, accepted] = await Promise.all([
       Users.findById(riderId),
 
       Orders.find({
@@ -601,7 +601,7 @@ router.post('/riderOrders', async (req, res) => {
     }
 
     const totalRidersFare = delivered.reduce((a, b) => a + b.riderFare, 0);
-    const totalOrdersAmount = delivered.reduce((a, b) => a + b.orderTotal, 0);
+    const totalOrdersAmount = pendingCollection;
     delivered = delivered.filter(order => order.reason === '');
 
     await Promise.all(
@@ -648,7 +648,13 @@ router.post('/changeOrderStatus', async (req, res) => {
         status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
       };
 
-      const riderOrders = await Orders.countDocuments(query);
+      const [riderOrders, rider] = await Promise.all([
+        Orders.countDocuments(query),
+        Users.findById(order.riderId),
+      ]);
+
+      rider.pendingCollection += order.orderTotal;
+      rider.save();
 
       if (riderOrders === 0) {
         await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
