@@ -824,29 +824,23 @@ router.post('/readRestaurantExcelSheet', async (req, res) => {
       marts.push(martName);
     });
 
-    console.log(marts.length);
-
-    /* await Promise.all(
+    await Promise.all(
       marts.map(async martName => {
-        const thisWeeksOrders = await Orders.find({
-          martName,
-          paid: { $in: [false, undefined] },
-          orderType: 'Delivery',
-          status: { $in: ['Delivered', 'Rider Picked Up'] },
-          dateForSearching: {
-            $gte: startDate,
-            $lte: endDate,
+        await Orders.updateMany(
+          {
+            martName,
+            paid: { $in: [false, undefined] },
+            orderType: 'Delivery',
+            status: { $in: ['Delivered', 'Rider Picked Up'] },
+            dateForSearching: {
+              $gte: startDate,
+              $lte: endDate,
+            },
           },
-        });
-
-        await Promise.all(
-          thisWeeksOrders.map(async order => {
-            order.paid = true;
-            await order.save();
-          })
+          { paid: true }
         );
       })
-    ); */
+    );
 
     return res.send('Done');
   } catch (err) {
