@@ -182,22 +182,27 @@ router.post('/paidToRiders', async (req, res) => {
       .toISOString();
 
     riders = JSON.parse(riders);
+    console.log(riders);
+    console.log(startDate, endDate);
 
     const data = await Promise.all(
       riders.map(async ({ id }) => {
         const [{ name }, thisWeeksOrders] = await Promise.all([
           Users.findById(id),
 
-          Orders.find({
-            riderId: id,
-            paidToRider: false,
-            orderType: 'Delivery',
-            status: { $in: ['Delivered', 'Rider Picked Up'] },
-            dateForSearching: {
-              $gte: startDate,
-              $lte: endDate,
+          Orders.updateMany(
+            {
+              riderId: id,
+              paidToRider: false,
+              orderType: 'Delivery',
+              status: { $in: ['Delivered', 'Rider Picked Up'] },
+              dateForSearching: {
+                $gte: startDate,
+                $lte: endDate,
+              },
             },
-          }),
+            { paidToRider: true }
+          ),
         ]);
 
         await Promise.all(
