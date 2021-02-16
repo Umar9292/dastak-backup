@@ -200,7 +200,7 @@ router.post('/paidToRiders', async (req, res) => {
                 $lte: endDate,
               },
             },
-            { paidToRider: true }
+            { $set: { paidToRider: true } }
           ),
         ]);
       })
