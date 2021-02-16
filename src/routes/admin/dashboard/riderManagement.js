@@ -114,7 +114,7 @@ router.post('/weeklyRidersFare', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    const riders = await Orders.distinct('riderName', {
+    const riders = await Orders.distinct('riderId', {
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -124,32 +124,26 @@ router.post('/weeklyRidersFare', async (req, res) => {
       paidToRider: false,
     });
 
-    console.log(start, end);
-
     const data = await Promise.all(
-      riders.map(async riderName => {
-        const [orders, { name, phone, _id }] = await Promise.all([
-          Orders.find({
-            riderName,
-            paidToRider: { $in: [false, undefined] },
-            orderType: 'Delivery',
-            status: 'Delivered',
-            dateForSearching: {
-              $gte: start,
-              $lte: end,
-            },
-          }),
-
-          Users.findOne({ name: riderName }),
-        ]);
+      riders.map(async riderId => {
+        const orders = await Orders.find({
+          riderId,
+          paidToRider: { $in: [false, undefined] },
+          orderType: 'Delivery',
+          status: 'Delivered',
+          dateForSearching: {
+            $gte: start,
+            $lte: end,
+          },
+        });
 
         const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
         const riderFare = orders.reduce((a, b) => a + b.riderFare, 0);
 
         return {
-          _id,
-          name,
-          phone,
+          _id: riderId,
+          name: orders[0].riderName,
+          phone: orders[0].riderPhone,
           collection,
           riderFare,
           orders,
@@ -170,9 +164,6 @@ router.post('/weeklyRidersFare', async (req, res) => {
 router.post('/paidToRiders', async (req, res) => {
   try {
     let { riders, startDate, endDate } = req.body;
-    let total = 0;
-
-    console.log(req.body);
 
     startDate = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -182,43 +173,26 @@ router.post('/paidToRiders', async (req, res) => {
       .toISOString();
 
     riders = JSON.parse(riders);
-    console.log(riders);
-    console.log(startDate, endDate);
 
-    const data = await Promise.all(
+    await Promise.all(
       riders.map(async ({ id }) => {
-        const [{ name }, thisWeeksOrders] = await Promise.all([
+        await Promise.all([
           Users.findById(id),
 
-          Orders.find({
-            riderId: id,
-            paidToRider: false,
-            orderType: 'Delivery',
-            status: { $in: ['Delivered', 'Rider Picked Up'] },
-            dateForSearching: {
-              $gte: startDate,
-              $lte: endDate,
+          Orders.updateMany(
+            {
+              riderId: id,
+              paidToRider: false,
+              orderType: 'Delivery',
+              status: { $in: ['Delivered', 'Rider Picked Up'] },
+              dateForSearching: {
+                $gte: startDate,
+                $lte: endDate,
+              },
             },
-          }),
+            { paidToRider: true }
+          ),
         ]);
-
-        console.log(thisWeeksOrders.length);
-
-        /* await Promise.all(
-          thisWeeksOrders.map(async order => {
-            order.paidToRider = true;
-            await order.save();
-          })
-        ); */
-
-        total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
-        const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
-
-        return {
-          name,
-          riderFare,
-          thisWeeksOrders,
-        };
       })
     );
 
