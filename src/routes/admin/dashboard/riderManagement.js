@@ -124,6 +124,8 @@ router.post('/weeklyRidersFare', async (req, res) => {
       paidToRider: false,
     });
 
+    console.log(start, end);
+
     const data = await Promise.all(
       riders.map(async riderName => {
         const [orders, { name, phone, _id }] = await Promise.all([
@@ -169,6 +171,8 @@ router.post('/paidToRiders', async (req, res) => {
   try {
     let { riders, startDate, endDate } = req.body;
     let total = 0;
+
+    console.log(req.body);
 
     startDate = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
