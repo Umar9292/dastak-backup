@@ -170,6 +170,7 @@ router.post('/weeklyRidersFare', async (req, res) => {
 router.post('/paidToRiders', async (req, res) => {
   try {
     let { riders, startDate, endDate } = req.body;
+    let total = 0;
 
     console.log(req.body);
 
@@ -184,25 +185,40 @@ router.post('/paidToRiders', async (req, res) => {
     console.log(riders);
     console.log(startDate, endDate);
 
-    await Promise.all(
+    const data = await Promise.all(
       riders.map(async ({ id }) => {
-        await Promise.all([
+        const [{ name }, thisWeeksOrders] = await Promise.all([
           Users.findById(id),
 
-          Orders.updateMany(
-            {
-              riderId: id,
-              paidToRider: false,
-              orderType: 'Delivery',
-              status: { $in: ['Delivered', 'Rider Picked Up'] },
-              dateForSearching: {
-                $gte: startDate,
-                $lte: endDate,
-              },
+          Orders.find({
+            riderId: id,
+            paidToRider: false,
+            orderType: 'Delivery',
+            status: { $in: ['Delivered', 'Rider Picked Up'] },
+            dateForSearching: {
+              $gte: startDate,
+              $lte: endDate,
             },
-            { $set: { paidToRider: true } }
-          ),
+          }),
         ]);
+
+        console.log(thisWeeksOrders.length);
+
+        /* await Promise.all(
+          thisWeeksOrders.map(async order => {
+            order.paidToRider = true;
+            await order.save();
+          })
+        ); */
+
+        total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
+        const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
+
+        return {
+          name,
+          riderFare,
+          thisWeeksOrders,
+        };
       })
     );
 
