@@ -15,7 +15,7 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '602baeafc4da00045a131e49',
+      martId: '602d057cc4da00045a131ef1',
     });
 
     await Promise.all(
@@ -358,81 +358,6 @@ router.post('/dailyRiderCollections', async (req, res) => {
       data,
       status: '200',
     });
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
-router.post('/weeklyRidersFare', async (req, res) => {
-  try {
-    const { startDate, endDate } = req.body;
-    const dateRange = `${startDate} - ${endDate}`;
-
-    const start = moment(startDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
-      .toISOString();
-    const end = moment(endDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
-      .toISOString();
-
-    const riders = await Orders.distinct('riderName', {
-      dateForSearching: {
-        $gte: start,
-        $lte: end,
-      },
-      status: 'Delivered',
-      orderType: 'Delivery',
-      paidToRider: false,
-    });
-
-    const data = await Promise.all(
-      riders.map(async riderName => {
-        const thisWeeksOrders = await Orders.find({
-          riderName,
-          paidToRider: { $in: [false, undefined] },
-          orderType: 'Delivery',
-          status: 'Delivered',
-          dateForSearching: {
-            $gte: start,
-            $lte: end,
-          },
-        });
-
-        const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
-        const riderFare = thisWeeksOrders.reduce((a, b) => a + b.riderFare, 0);
-
-        return {
-          dateRange,
-          riderName,
-          total,
-          riderFare,
-          orders: thisWeeksOrders.length,
-        };
-      })
-    );
-
-    const workbook = new Exceljs.Workbook();
-    const worksheet = workbook.addWorksheet(dateRange);
-
-    worksheet.columns = [
-      { header: 'Date Range', key: 'dateRange', width: 15 },
-      { header: 'Rider Name', key: 'riderName', width: 15 },
-      { header: 'Total Collection', key: 'total', width: 15 },
-      { header: 'Rider Fare', key: 'riderFare', width: 15 },
-    ];
-
-    await Promise.all(data.map(doc => worksheet.addRow(doc)));
-
-    worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
-
-    await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
-    sendDailyCollection(`${dateRange}.xlsx`);
-
-    return res.json({ status: '200', data });
   } catch (err) {
     return res.json({
       status: '404',

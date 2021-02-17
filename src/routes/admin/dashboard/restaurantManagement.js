@@ -1,6 +1,9 @@
 const Router = require('express/lib/router');
+const moment = require('moment-timezone');
+const { orderBy } = require('lodash');
 
 const Users = require('../../../models/userModel');
+const Orders = require('../../../models/ordersModel');
 
 const router = Router();
 
@@ -25,6 +28,147 @@ router.get('/manageRestaurants', async (_req, res) => {
     ]);
 
     return res.json({ status: '200', activeRestaurants, inactiveRestaurants });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/restaurantCollections', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+    let percentage = 0;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    const restaurants = await Orders.distinct('martId', {
+      paid: false,
+      status: 'Delivered',
+      dateForSearching: {
+        $gte: start,
+        $lte: end,
+      },
+    });
+
+    let data = await Promise.all(
+      restaurants.map(async martId => {
+        const [orders, { name: martName, phone }] = await Promise.all([
+          Orders.find({
+            martId,
+            paid: false,
+            status: 'Delivered',
+            dateForSearching: {
+              $gte: start,
+              $lte: end,
+            },
+          }),
+
+          Users.findById(martId)
+            .select('name phone')
+            .lean(),
+        ]);
+
+        if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
+          percentage = 12;
+        } else if (martName === 'De Fiesta Restaurant') {
+          percentage = 10;
+        } else if (martName === 'Mahar Murgh Pulao') {
+          percentage = 20;
+        } else {
+          percentage = 15;
+        }
+
+        const deliveryOrders = orders.filter(
+          ({ orderType }) => orderType === 'Delivery'
+        );
+
+        const pickupOrders = orders.filter(
+          ({ orderType }) => orderType === 'PickUp'
+        );
+
+        const totalToPay = deliveryOrders.reduce(
+          (a, b) =>
+            b.deliveryCharges !== '0'
+              ? a + b.orderTotal - 30
+              : a + b.orderTotal,
+          0
+        );
+
+        const ourProfit = +((percentage / 100) * totalToPay).toFixed();
+
+        return {
+          martId,
+          martName,
+          phone,
+          ourProfit,
+          totalToPay,
+          deliveryOrders,
+          pickupOrders,
+        };
+      })
+    );
+
+    const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
+
+    data = orderBy(data, ['totalToPay'], ['desc']);
+
+    return res.json({ status: '200', data, totalProfit });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/paidToOwners', async (req, res) => {
+  try {
+    let { restaurants, startDate, endDate } = req.body;
+
+    startDate = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    endDate = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    restaurants = JSON.parse(restaurants);
+
+    await Promise.all(
+      restaurants.map(async ({ id }) => {
+        await Promise.all([
+          Users.findById(id),
+
+          Orders.updateMany(
+            {
+              martId: id,
+              paid: false,
+              orderType: 'Delivery',
+              status: { $in: ['Delivered', 'Rider Picked Up'] },
+              dateForSearching: {
+                $gte: startDate,
+                $lte: endDate,
+              },
+            },
+            { paid: true }
+          ),
+        ]);
+      })
+    );
+
+    return res.json({
+      status: '200',
+      msg: 'Restaurants have been paid successfully',
+    });
   } catch (err) {
     return res.json({
       status: '404',
