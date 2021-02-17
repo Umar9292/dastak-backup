@@ -31,7 +31,7 @@ router.get('/allRiders', async (_req, res) => {
 
 router.get('/activeRiders', async (_req, res) => {
   try {
-    const riders = await Users.find({
+    const activeRiders = await Users.find({
       type: 'rider',
       status: { $ne: 'inactive' },
       available: true,
@@ -39,7 +39,7 @@ router.get('/activeRiders', async (_req, res) => {
       .sort({ name: 1 })
       .lean();
 
-    return res.json({ status: '200', riders });
+    return res.json({ status: '200', activeRiders });
   } catch (err) {
     console.log(err);
     return res.json({
