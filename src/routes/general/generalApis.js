@@ -15,17 +15,15 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '5fd76886d7bcdc082b781a27',
+      martId: '602baeafc4da00045a131e49',
     });
 
     await Promise.all(
       products.map(product => {
-        if (product.category === "Pizza's" && product.quantity === 'Large') {
-          let discountedPrice = ((40 / 100) * product.price).toFixed();
-          discountedPrice = Math.round(discountedPrice / 5) * 5;
-          product.discountedPrice = +product.price - discountedPrice;
-          return product.save();
-        }
+        let discountedPrice = ((15 / 100) * product.price).toFixed();
+        discountedPrice = Math.round(discountedPrice / 5) * 5;
+        product.price = +product.price + discountedPrice;
+        return product.save();
       })
     );
 

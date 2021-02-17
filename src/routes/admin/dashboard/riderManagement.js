@@ -6,16 +6,21 @@ const Orders = require('../../../models/ordersModel');
 
 const router = Router();
 
-router.get('/activeRiders', async (_req, res) => {
+router.get('/allRiders', async (_req, res) => {
   try {
-    const activeRiders = await Users.find({
+    const riders = await Users.find({
       type: 'rider',
       status: { $ne: 'inactive' },
-      available: true,
-    }).lean();
+      pendingCollection: { $gt: 0 },
+    })
+      .sort({ pendingCollection: -1 })
+      .lean();
 
-    return res.json({ status: '200', activeRiders });
+    const totalCollection = riders.reduce((a, b) => a + b.pendingCollection, 0);
+
+    return res.json({ status: '200', totalCollection, riders });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -24,14 +29,19 @@ router.get('/activeRiders', async (_req, res) => {
   }
 });
 
-router.get('/allRiders', async (_req, res) => {
+router.get('/activeRiders', async (_req, res) => {
   try {
-    const allRiders = await Users.find({ type: 'rider' })
+    const riders = await Users.find({
+      type: 'rider',
+      status: { $ne: 'inactive' },
+      available: true,
+    })
       .sort({ name: 1 })
       .lean();
 
-    return res.json({ status: '200', allRiders });
+    return res.json({ status: '200', riders });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
