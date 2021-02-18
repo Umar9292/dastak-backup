@@ -15,7 +15,7 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '602d057cc4da00045a131ef1',
+      martId: '6017bd54cb96440569fc8ded',
     });
 
     await Promise.all(
@@ -23,7 +23,7 @@ router.get('/changePrices', async (req, res) => {
         let discountedPrice = ((15 / 100) * product.price).toFixed();
         discountedPrice = Math.round(discountedPrice / 5) * 5;
         product.price = +product.price + discountedPrice;
-        return product.save();
+        // return product.save();
       })
     );
 
