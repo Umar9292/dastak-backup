@@ -37,7 +37,10 @@ const userModel = Schema(
       type: Boolean,
       default: false,
     },
-    pendingCollection: Number,
+    pendingCollection: {
+      type: Number,
+      default: 0,
+    },
     percentage: Number,
     shopType: String,
     minimumOrder: Number,
