@@ -60,7 +60,7 @@ router.post('/restaurantCollections', async (req, res) => {
 
     let data = await Promise.all(
       restaurants.map(async martId => {
-        const [orders, { name: martName, phone }] = await Promise.all([
+        const [orders, restaurant] = await Promise.all([
           Orders.find({
             martId,
             paid: false,
@@ -75,6 +75,8 @@ router.post('/restaurantCollections', async (req, res) => {
             .select('name phone')
             .lean(),
         ]);
+
+        const { name: martName } = restaurant;
 
         if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
           percentage = 12;
@@ -107,11 +109,13 @@ router.post('/restaurantCollections', async (req, res) => {
         return {
           martId,
           martName,
-          phone,
           ourProfit,
           totalToPay,
           deliveryOrders,
           pickupOrders,
+          phone: restaurant.jazzCashNumber
+            ? restaurant.jazzCashNumber
+            : 'No Number Given',
         };
       })
     );
