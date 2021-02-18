@@ -635,10 +635,11 @@ router.post('/changeOrderStatus', async (req, res) => {
   try {
     const { orderId, status } = req.body;
 
+    const currentTime = moment().tz('Asia/karachi');
+
     const order = await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
     if (status === 'Delivered') {
-      const currentTime = moment().tz('Asia/karachi');
       const timeWhenDelivered = moment(currentTime, 'hh:mm').format('hh:mm a');
       order.timeWhenDelivered = timeWhenDelivered;
       order.save();
@@ -668,6 +669,10 @@ router.post('/changeOrderStatus', async (req, res) => {
         msg: 'Order successfully delivered',
       });
     }
+
+    const pickUpTime = moment(currentTime, 'hh:mm').format('hh:mm a');
+    order.pickUpTime = pickUpTime;
+    order.save();
 
     res.json({ status: '200' });
 
