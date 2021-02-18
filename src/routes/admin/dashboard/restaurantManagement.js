@@ -72,7 +72,7 @@ router.post('/restaurantCollections', async (req, res) => {
           }),
 
           Users.findById(martId)
-            .select('name phone')
+            .select('name phone jazzCashNumber')
             .lean(),
         ]);
 

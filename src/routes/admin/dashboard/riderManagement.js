@@ -165,7 +165,7 @@ router.post('/dailyRiderCollections', async (req, res) => {
   }
 });
 
-router.post('/weeklyRidersFare', async (req, res) => {
+router.post('/ridersFare', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
 
@@ -213,7 +213,9 @@ router.post('/weeklyRidersFare', async (req, res) => {
       })
     );
 
-    return res.json({ status: '200', data });
+    const riderEarnings = data.reduce((a, b) => a + b.riderFare, 0);
+
+    return res.json({ status: '200', data, riderEarnings });
   } catch (err) {
     return res.json({
       status: '404',
