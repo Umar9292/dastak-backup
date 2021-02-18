@@ -96,11 +96,16 @@ router.post('/restaurantCollections', async (req, res) => {
           ({ orderType }) => orderType === 'PickUp'
         );
 
-        const totalWithoutDelivery = deliveryOrders.reduce(
+        const totalWithoutDelivery = orders.reduce(
           (a, b) =>
             b.deliveryCharges !== '0'
               ? a + b.orderTotal - 30
               : a + b.orderTotal,
+          0
+        );
+
+        const totalOfDeliveryOrders = deliveryOrders.reduce(
+          (a, b) => a + b.orderTotal,
           0
         );
 
@@ -109,7 +114,7 @@ router.post('/restaurantCollections', async (req, res) => {
           totalWithoutDelivery
         ).toFixed();
 
-        const totalToPay = totalWithoutDelivery - ourProfit;
+        const totalToPay = totalOfDeliveryOrders - ourProfit;
 
         return {
           martId,
