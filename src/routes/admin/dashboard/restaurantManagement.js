@@ -96,7 +96,7 @@ router.post('/restaurantCollections', async (req, res) => {
           ({ orderType }) => orderType === 'PickUp'
         );
 
-        const totalToPay = deliveryOrders.reduce(
+        const totalWithoutDelivery = deliveryOrders.reduce(
           (a, b) =>
             b.deliveryCharges !== '0'
               ? a + b.orderTotal - 30
@@ -104,8 +104,12 @@ router.post('/restaurantCollections', async (req, res) => {
           0
         );
 
-        const ourProfit = +((percentage / 100) * totalToPay).toFixed();
+        const ourProfit = +(
+          (percentage / 100) *
+          totalWithoutDelivery
+        ).toFixed();
 
+        const totalToPay = totalWithoutDelivery - ourProfit;
         return {
           martId,
           martName,
