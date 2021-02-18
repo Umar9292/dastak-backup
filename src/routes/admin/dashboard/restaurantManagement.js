@@ -110,6 +110,7 @@ router.post('/restaurantCollections', async (req, res) => {
         ).toFixed();
 
         const totalToPay = totalWithoutDelivery - ourProfit;
+
         return {
           martId,
           martName,
