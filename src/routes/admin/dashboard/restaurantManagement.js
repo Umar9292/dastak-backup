@@ -120,7 +120,8 @@ router.post('/restaurantCollections', async (req, res) => {
 
         console.log(totalOfDeliveryOrders, martName, ourProfit);
 
-        const totalToPay = totalOfDeliveryOrders - ourProfit;
+        const totalToPay =
+          totalOfDeliveryOrders > 0 && totalOfDeliveryOrders - ourProfit;
 
         return {
           martId,
