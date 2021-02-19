@@ -185,7 +185,17 @@ router.post('/allOrders', async (req, res) => {
   try {
     const { martId } = req.body;
 
-    const [upcoming, accepted, delivered] = await Promise.all([
+    const [
+      { name: martName },
+      upcoming,
+      accepted,
+      delivered,
+      unpaidOrders,
+    ] = await Promise.all([
+      Users.findById(martId)
+        .select('name')
+        .lean(),
+
       Orders.find({ martId, status: 'Pending' })
         .sort({ createdAt: -1 })
         .lean(),
@@ -201,20 +211,62 @@ router.post('/allOrders', async (req, res) => {
 
       Orders.find({
         martId,
-        paid: { $in: [false, undefined] },
+        paid: false,
         status: 'Delivered',
       })
         .sort({
           createdAt: -1,
         })
         .lean(),
+
+      Orders.find({
+        martId,
+        paid: false,
+        status: 'Delivered',
+      })
+        .select('orderTotal deliveryCharges')
+        .lean(),
     ]);
+
+    let percentage = 0;
+
+    if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
+      percentage = 12;
+    } else if (martName === 'De Fiesta Restaurant') {
+      percentage = 10;
+    } else if (martName === 'Mahar Murgh Pulao') {
+      percentage = 20;
+    } else {
+      percentage = 15;
+    }
+
+    const totalAmount = unpaidOrders.reduce((a, b) => a + b.orderTotal, 0);
+
+    const amountWithoutDelivery = unpaidOrders.reduce(
+      (a, b) =>
+        b.deliveryCharges !== '0' ? a + b.orderTotal - 30 : a + b.orderTotal,
+      0
+    );
+
+    const deliveryCharges = unpaidOrders.reduce(
+      (a, b) => b.deliveryCharges !== '0' && a + 30,
+      0
+    );
+
+    const ourPercentage = +(
+      (percentage / 100) *
+      amountWithoutDelivery
+    ).toFixed();
+
+    const totalToPay = totalAmount - (deliveryCharges + ourPercentage);
 
     return res.json({
       status: '200',
       upcoming,
       accepted,
       delivered,
+      amountWithoutDelivery,
+      totalToPay,
     });
   } catch (err) {
     return res.json({
