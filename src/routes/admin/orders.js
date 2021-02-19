@@ -637,12 +637,16 @@ router.post('/changeOrderStatus', async (req, res) => {
 
     const currentTime = moment().tz('Asia/karachi');
 
-    const order = await Orders.findByIdAndUpdate(orderId, { $set: req.body });
+    const order = await Orders.findByIdAndUpdate(
+      orderId,
+      { $set: req.body },
+      { new: true }
+    );
 
     if (status === 'Delivered') {
       const timeWhenDelivered = moment(currentTime, 'hh:mm').format('hh:mm a');
       order.timeWhenDelivered = timeWhenDelivered;
-      order.save();
+      await order.save();
 
       const query = {
         riderId: order.riderId,
@@ -672,9 +676,9 @@ router.post('/changeOrderStatus', async (req, res) => {
 
     const pickUpTime = moment(currentTime, 'hh:mm').format('hh:mm a');
     order.pickUpTime = pickUpTime;
-    order.save();
+    await order.save();
 
-    res.json({ status: '200' });
+    res.json({ status: '200', data: order });
 
     const user = await Users.findById(order.userId);
 
