@@ -11,7 +11,7 @@ const router = Router();
 
 router.post('/allProducts', async (req, res) => {
   try {
-    const { martId } = req.body;
+    const { martId, userId } = req.body;
     let finalData = [];
 
     const [{ categories }, { shopType, name }, options] = await Promise.all([
@@ -20,7 +20,12 @@ router.post('/allProducts', async (req, res) => {
       Flavours.findOne({ martId }),
     ]);
 
-    console.log(`${name} has been opened`);
+    if (userId !== '') {
+      const customer = await Users.findById(userId).select('name');
+      console.log(`${customer.name} opened ${name}`);
+    } else {
+      console.log(`${name} has been opened`);
+    }
 
     if (shopType === 'restaurant') {
       for (const category of categories) {

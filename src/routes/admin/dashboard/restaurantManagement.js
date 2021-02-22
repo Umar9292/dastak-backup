@@ -197,4 +197,117 @@ router.post('/paidToOwners', async (req, res) => {
   }
 });
 
+router.post('/expensesTillNow', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+    let percentage = 0;
+
+    console.log(req.body);
+
+    let end = moment().tz('Asia/Karachi');
+    let start = moment(end).subtract(30, 'days');
+
+    if (startDate !== '' && endDate !== '') {
+      start = startDate;
+      end = endDate;
+    }
+
+    start = moment(start, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    end = moment(end, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    const restaurants = await Orders.distinct('martId', {
+      status: 'Delivered',
+      dateForSearching: {
+        $gte: start,
+        $lte: end,
+      },
+    });
+
+    const data = await Promise.all(
+      restaurants.map(async martId => {
+        const orders = await Orders.find({
+          status: { $ne: 'Rejected' },
+          martId,
+          dateForSearching: { $gte: start, $lte: end },
+        })
+          .select('riderFare orderTotal deliveryCharges martName')
+          .sort({ createdAt: -1 })
+          .lean();
+
+        const { martName } = orders[0];
+
+        if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
+          percentage = 12;
+        } else if (martName === 'De Fiesta Restaurant') {
+          percentage = 10;
+        } else if (martName === 'Mahar Murgh Pulao') {
+          percentage = 20;
+        } else {
+          percentage = 15;
+        }
+
+        const deliveryOrders = orders.filter(
+          ({ orderType }) => orderType === 'Delivery'
+        );
+
+        const totalWithoutDelivery = orders.reduce(
+          (a, b) =>
+            b.deliveryCharges !== '0'
+              ? a + b.orderTotal - 30
+              : a + b.orderTotal,
+          0
+        );
+
+        const totalOfDeliveryOrders = deliveryOrders.reduce(
+          (a, b) => a + b.orderTotal,
+          0
+        );
+
+        const deliveryCharges = orders.reduce(
+          (a, b) => b.deliveryCharges !== '0' && a + 30,
+          0
+        );
+
+        const ourProfit =
+          +((percentage / 100) * totalWithoutDelivery).toFixed() +
+          deliveryCharges;
+
+        const totalPaid =
+          totalOfDeliveryOrders > 0 ? totalOfDeliveryOrders - ourProfit : 0;
+
+        const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
+
+        return {
+          martName,
+          ourProfit,
+          totalPaid,
+          ridersFare,
+        };
+      })
+    );
+
+    const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
+    const paidToRiders = data.reduce((a, b) => a + b.ridersFare, 0);
+    const paidToRestaurants = data.reduce((a, b) => a + b.totalToPay, 0);
+
+    return res.json({
+      status: '200',
+      data,
+      totalProfit,
+      paidToRiders,
+      paidToRestaurants,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;

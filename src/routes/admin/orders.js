@@ -126,7 +126,7 @@ router.post('/placeOrder', async (req, res) => {
 
 router.post('/checkTime', async (req, res) => {
   try {
-    const { martId } = req.body;
+    const { martId, userId } = req.body;
 
     const orderTime = moment().tz('Asia/karachi');
 
@@ -166,7 +166,12 @@ router.post('/checkTime', async (req, res) => {
       });
     }
 
-    console.log(`${name} is closed`);
+    if (userId === '') {
+      console.log(`${name} is closed`);
+    } else {
+      const { name: userName } = await Users.findById(userId).select('name');
+      console.log(`${userName} ordered but ${name} is closed`);
+    }
 
     return res.json({
       status: '404',
