@@ -57,7 +57,7 @@ router.get('/notifications', async (req, res) => {
     // const msg = `Dear Umar to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
     const msg =
       'Dear Hamza Kindly use 123456789 as your password to login and then change your password once you are in the app. Untill we fix the problem. Thankyou';
-    await notifyUser(msg, '71702f80-0ff7-4679-9999-43a15b721d79', {});
+    await notifyUser(msg, '9c878054-f9ea-48f5-99bc-d52e5f68d487', {});
 
     /*  for (const user of users) {
       if (user.playerId && user.player !== '') {

@@ -166,4 +166,26 @@ router.post('/validateOtp', async (req, res) => {
   }
 });
 
+router.post('/forgotPassword', async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  const user = await Users.findOne({ email });
+  if (!user) {
+    return res.json({
+      status: '404',
+      msg: 'User not found',
+    });
+  }
+
+  const hashNewPassword = await hash(newPassword, 10);
+  user.password = hashNewPassword;
+
+  await user.save();
+
+  return res.json({
+    status: '200',
+    msg: 'Your password is updated successfully',
+  });
+});
+
 module.exports = router;
