@@ -202,8 +202,6 @@ router.post('/expensesTillNow', async (req, res) => {
     const { startDate, endDate } = req.body;
     let percentage = 0;
 
-    console.log(req.body);
-
     let end = moment().tz('Asia/Karachi');
     let start = moment(end).subtract(30, 'days');
 
@@ -234,7 +232,7 @@ router.post('/expensesTillNow', async (req, res) => {
           martId,
           dateForSearching: { $gte: start, $lte: end },
         })
-          .select('riderFare orderTotal deliveryCharges martName')
+          .select('riderFare orderTotal deliveryCharges martName orderType')
           .sort({ createdAt: -1 })
           .lean();
 
@@ -290,9 +288,10 @@ router.post('/expensesTillNow', async (req, res) => {
       })
     );
 
-    const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
+    let totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
     const paidToRiders = data.reduce((a, b) => a + b.ridersFare, 0);
-    const paidToRestaurants = data.reduce((a, b) => a + b.totalToPay, 0);
+    totalProfit -= paidToRiders;
+    const paidToRestaurants = data.reduce((a, b) => a + b.totalPaid, 0);
 
     return res.json({
       status: '200',
