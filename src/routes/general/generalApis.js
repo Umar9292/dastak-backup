@@ -55,8 +55,9 @@ router.get('/notifications', async (req, res) => {
     // const msg = `!Great News for Dastak Users! 😀\nFrom now on there will be no delivery charges on any order what so ever. Toh abhi mangwao abhi khao Dastak now. 😇`;
     // const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
     // const msg = `Dear Umar to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
-    const msg = 'Sunain Mailk G Kiya Hal Hain Ap ki Dhui k.. 😘';
-    await notifyUser(msg, '076adc9b-a05d-442c-9d0b-f77b496bd32d', {});
+    const msg =
+      'Dear Hamza Kindly use 123456789 as your password to login and then change your password once you are in the app. Untill we fix the problem. Thankyou';
+    await notifyUser(msg, '71702f80-0ff7-4679-9999-43a15b721d79', {});
 
     /*  for (const user of users) {
       if (user.playerId && user.player !== '') {
@@ -324,6 +325,8 @@ router.post('/dailyRiderCollections', async (req, res) => {
           riderName: rider,
           date,
           status: { $ne: 'Rejected' },
+          paidToRider: false,
+          orderType: 'Delivery',
         });
 
         const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
