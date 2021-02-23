@@ -228,18 +228,20 @@ router.post('/expensesTillNow', async (req, res) => {
 
     let data = await Promise.all(
       restaurants.map(async martId => {
-        const orders = await Orders.find({
-          paid: true,
-          paidToRider: true,
-          status: 'Delivered',
-          martId,
-          dateForSearching: { $gte: start, $lte: end },
-        })
-          .select('riderFare orderTotal deliveryCharges martName orderType')
-          .sort({ createdAt: -1 })
-          .lean();
+        const [orders, { name: martName }] = await Promise.all([
+          Orders.find({
+            paid: true,
+            paidToRider: true,
+            status: 'Delivered',
+            martId,
+            dateForSearching: { $gte: start, $lte: end },
+          })
+            .select('riderFare orderTotal deliveryCharges martName orderType')
+            .sort({ createdAt: -1 })
+            .lean(),
 
-        const { martName } = orders[0];
+          Users.findById(martId),
+        ]);
 
         if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
           percentage = 12;
