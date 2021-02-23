@@ -265,7 +265,7 @@ router.post('/expensesTillNow', async (req, res) => {
           0
         );
 
-        let totalOfDeliveryOrders = deliveryOrders.reduce(
+        const totalOfDeliveryOrders = deliveryOrders.reduce(
           (a, b) => a + b.orderTotal,
           0
         );
@@ -275,16 +275,16 @@ router.post('/expensesTillNow', async (req, res) => {
           0
         );
 
-        totalOfDeliveryOrders -= deliveryCharges;
-
-        const ourProfit =
+        const ourPercentage =
           +((percentage / 100) * totalWithoutDelivery).toFixed() +
           deliveryCharges;
 
         const totalPaid =
-          totalOfDeliveryOrders > 0 ? totalOfDeliveryOrders - ourProfit : 0;
+          totalOfDeliveryOrders > 0 ? totalOfDeliveryOrders - ourPercentage : 0;
 
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
+
+        const ourProfit = ourPercentage - ridersFare;
 
         return {
           martName,
