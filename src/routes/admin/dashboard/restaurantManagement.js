@@ -136,10 +136,11 @@ router.post('/restaurantCollections', async (req, res) => {
     );
 
     const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
+    const amountToPay = data.reduce((a, b) => a + b.totalToPay, 0);
 
     data = orderBy(data, ['totalToPay'], ['desc']);
 
-    return res.json({ status: '200', data, totalProfit });
+    return res.json({ status: '200', data, totalProfit, amountToPay });
   } catch (err) {
     return res.json({
       status: '404',
@@ -225,7 +226,7 @@ router.post('/expensesTillNow', async (req, res) => {
       },
     });
 
-    const data = await Promise.all(
+    let data = await Promise.all(
       restaurants.map(async martId => {
         const orders = await Orders.find({
           status: { $ne: 'Rejected' },
@@ -292,6 +293,8 @@ router.post('/expensesTillNow', async (req, res) => {
     const paidToRiders = data.reduce((a, b) => a + b.ridersFare, 0);
     totalProfit -= paidToRiders;
     const paidToRestaurants = data.reduce((a, b) => a + b.totalPaid, 0);
+
+    data = orderBy(data, ['ourProfit'], ['desc']);
 
     return res.json({
       status: '200',
