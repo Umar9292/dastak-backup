@@ -60,4 +60,6 @@ const userModel = Schema(
   }
 );
 
+userModel.index({ name: 'text' });
+
 module.exports = model('users', userModel);
