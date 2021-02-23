@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const { connect } = require('mongoose');
+const { connect, connection } = require('mongoose');
 const bodyParser = require('body-parser');
-const { get } = require('http');
+const { get, createServer } = require('http');
 const cors = require('cors');
 const logger = require('morgan');
 const helmet = require('helmet');
@@ -24,10 +24,15 @@ const generalApisRouter = require('./src/routes/general/generalApis');
 const ordersManagementRouter = require('./src/routes/admin/dashboard/orderManagement');
 const ridersManagementRouter = require('./src/routes/admin/dashboard/riderManagement');
 const restaurantsManagementRouter = require('./src/routes/admin/dashboard/restaurantManagement');
+const usersManagementRouter = require('./src/routes/admin/dashboard/userManagement');
 
 const port = process.env.PORT || 8080;
 
 const app = express();
+
+const server = createServer(app);
+// eslint-disable-next-line import/order
+const io = require('socket.io')(server);
 
 app.disable('etag');
 app.disable('x-powered-by');
@@ -49,7 +54,8 @@ app.use(
   playerIdRouter,
   ordersManagementRouter,
   ridersManagementRouter,
-  restaurantsManagementRouter
+  restaurantsManagementRouter,
+  usersManagementRouter
 );
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
@@ -57,8 +63,8 @@ app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 
 const options = {
-  host: 'dastakbackend.herokuapp.com',
-  // host: 'martbackend.herokuapp.com',
+  // host: 'dastakbackend.herokuapp.com',
+  host: 'martbackend.herokuapp.com',
 };
 const request = () => {
   get(options, function(res) {
@@ -83,12 +89,38 @@ connect(
     if (err) {
       console.log(err);
     } else {
-      app.listen(port, () => console.log(`Listening on port ${port}\n`));
+      server.listen(port, () => console.log(`Listening on port ${port}\n`));
 
       console.log('Connected to database');
     }
   }
 );
+
+io.on('connection', socket => {
+  console.log(`user connected to ${socket.id}`);
+
+  socket.on('disconnect', () => {
+    console.log('A user disconected');
+  });
+});
+
+connection.once('open', () => {
+  console.log('Setting change streams');
+  const ordersChangeStream = connection.collection('orders').watch();
+
+  ordersChangeStream.on('change', change => {
+    if (change.operationType === 'insert') {
+      const { fullDocument } = change;
+      io.emit('newOrder', fullDocument);
+    }
+
+    // if (change.operationType === 'update') {
+    //   const { documentKey, updateDescription } = change;
+    //   console.log(documentKey, updateDescription.updatedFields);
+    //   io.emit('newOrder', documentKey, updateDescription);
+    // }
+  });
+});
 
 config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
