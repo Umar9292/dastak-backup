@@ -229,7 +229,9 @@ router.post('/expensesTillNow', async (req, res) => {
     let data = await Promise.all(
       restaurants.map(async martId => {
         const orders = await Orders.find({
-          status: { $ne: 'Rejected' },
+          paid: true,
+          paidToRider: true,
+          status: 'Delivered',
           martId,
           dateForSearching: { $gte: start, $lte: end },
         })
@@ -261,7 +263,7 @@ router.post('/expensesTillNow', async (req, res) => {
           0
         );
 
-        const totalOfDeliveryOrders = deliveryOrders.reduce(
+        let totalOfDeliveryOrders = deliveryOrders.reduce(
           (a, b) => a + b.orderTotal,
           0
         );
@@ -270,6 +272,8 @@ router.post('/expensesTillNow', async (req, res) => {
           (a, b) => b.deliveryCharges !== '0' && a + 30,
           0
         );
+
+        totalOfDeliveryOrders -= deliveryCharges;
 
         const ourProfit =
           +((percentage / 100) * totalWithoutDelivery).toFixed() +
