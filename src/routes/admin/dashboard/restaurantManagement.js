@@ -220,6 +220,8 @@ router.post('/expensesTillNow', async (req, res) => {
 
     const restaurants = await Orders.distinct('martId', {
       status: 'Delivered',
+      paid: true,
+      paidToRider: true,
       dateForSearching: {
         $gte: start,
         $lte: end,
