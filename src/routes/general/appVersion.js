@@ -22,7 +22,7 @@ router.post('/checkVersion', async (req, res) => {
       });
     }
 
-    if (platform === 'android' && version === '1.5.4')
+    if (platform === 'android' && version === '1.5.5')
       return res.json({ status: '200' });
 
     /* if (platform === 'android' && version !== '1.4.4') {
@@ -31,7 +31,7 @@ router.post('/checkVersion', async (req, res) => {
       });
     } */
 
-    if (platform === 'android' && version !== '1.5.4') {
+    if (platform === 'android' && version !== '1.5.5') {
       return res.json({
         status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
