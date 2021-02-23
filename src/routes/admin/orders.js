@@ -166,7 +166,7 @@ router.post('/checkTime', async (req, res) => {
       });
     }
 
-    if (userId === '') {
+    if (!userId || userId === '') {
       console.log(`${name} is closed`);
     } else {
       const { name: userName } = await Users.findById(userId).select('name');
