@@ -20,7 +20,6 @@ router.get('/allRiders', async (_req, res) => {
 
     return res.json({ status: '200', totalCollection, riders });
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
