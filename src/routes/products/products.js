@@ -20,7 +20,7 @@ router.post('/allProducts', async (req, res) => {
       Flavours.findOne({ martId }),
     ]);
 
-    if (userId !== '') {
+    if (userId && userId !== '') {
       const customer = await Users.findById(userId).select('name');
       console.log(`${customer.name} opened ${name}`);
     } else {
@@ -105,6 +105,7 @@ router.post('/allProducts', async (req, res) => {
       data: finalData,
     });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
