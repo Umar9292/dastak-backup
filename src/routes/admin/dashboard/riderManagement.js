@@ -182,14 +182,14 @@ router.post('/ridersFare', async (req, res) => {
       },
       status: 'Delivered',
       orderType: 'Delivery',
-      paidToRider: false,
+      paidToRider: true,
     });
 
     const data = await Promise.all(
       riders.map(async riderId => {
         const orders = await Orders.find({
           riderId,
-          paidToRider: { $in: [false, undefined] },
+          paidToRider: true,
           orderType: 'Delivery',
           status: 'Delivered',
           dateForSearching: {
