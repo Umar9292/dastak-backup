@@ -295,9 +295,8 @@ router.post('/expensesTillNow', async (req, res) => {
       })
     );
 
-    let totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
+    const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
     const paidToRiders = data.reduce((a, b) => a + b.ridersFare, 0);
-    totalProfit -= paidToRiders;
     const paidToRestaurants = data.reduce((a, b) => a + b.totalPaid, 0);
 
     data = orderBy(data, ['ourProfit'], ['desc']);
