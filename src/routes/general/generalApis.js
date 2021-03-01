@@ -778,4 +778,77 @@ router.post('/readRestaurantExcelSheet', async (req, res) => {
   }
 });
 
+router.get('/test', async (_req, res) => {
+  try {
+    const restaurants = await Users.find({
+      shopType: 'restaurant',
+      status: 'active',
+      latitude: { $ne: undefined },
+    });
+
+    await Promise.all(
+      restaurants.map(async restaurant => {
+        restaurant.geometry = {
+          type: 'Point',
+          coordinates: [restaurant.latitude, restaurant.longitude],
+        };
+
+        await restaurant.save();
+      })
+    );
+
+    return res.json({ restaurants });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.get('/test1', async (req, res) => {
+  try {
+    let { lat, long } = req.body;
+
+    lat = JSON.parse(lat);
+    long = JSON.parse(long);
+
+    const restaurants = await Users.aggregate([
+      {
+        $geoNear: {
+          near: { type: 'Point', coordinates: [lat, long] },
+          distanceField: 'dist',
+          maxDistance: 3000,
+          spherical: true,
+        },
+      },
+    ]);
+
+    return res.json({ restaurants });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.get('/test2', async (req, res) => {
+  try {
+    const currentTime = moment().tz('Asia/Karachi');
+
+    return res.json({ currentTime });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
