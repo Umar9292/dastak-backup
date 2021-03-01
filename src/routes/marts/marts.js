@@ -102,7 +102,10 @@ router.get('/allRestaurants', async (req, res) => {
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
 
-      if (currentTime.isSameOrAfter(restaurantOpening)) {
+      if (
+        currentTime.isSameOrAfter(restaurantOpening) &&
+        currentTime.isBefore(restaurant.closingTime)
+      ) {
         return restaurant;
       }
     });
