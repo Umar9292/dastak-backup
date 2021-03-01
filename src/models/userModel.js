@@ -1,7 +1,19 @@
 const { Schema, model } = require('mongoose');
 
+const GeoSchema = Schema({
+  type: {
+    type: String,
+    default: 'Point',
+  },
+  coordinates: {
+    type: [Number],
+    index: '2dsphere',
+  },
+});
+
 const userModel = Schema(
   {
+    geometry: GeoSchema,
     status: {
       type: String,
       default: 'active',
