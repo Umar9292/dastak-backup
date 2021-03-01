@@ -213,7 +213,7 @@ router.post('/ridersFare', async (req, res) => {
     );
 
     const riderEarnings = data.reduce((a, b) => a + b.riderFare, 0);
-    const totalCollection = data.reduce((a, b) => a + b.orderTotal, 0);
+    const totalCollection = data.reduce((a, b) => a + b.collection, 0);
 
     return res.json({ status: '200', data, riderEarnings, totalCollection });
   } catch (err) {
