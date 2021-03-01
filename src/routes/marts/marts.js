@@ -101,10 +101,13 @@ router.get('/allRestaurants', async (req, res) => {
       const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
+      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
 
       if (
         currentTime.isSameOrAfter(restaurantOpening) &&
-        currentTime.isBefore(restaurant.closingTime)
+        currentTime.isBefore(restaurantClosing)
       ) {
         return restaurant;
       }
