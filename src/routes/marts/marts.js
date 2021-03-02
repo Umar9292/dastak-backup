@@ -130,7 +130,14 @@ router.post('/martDetails', async (req, res) => {
 
 router.get('/allRestaurants', async (req, res) => {
   try {
-    const currentTime = moment().tz('Asia/Karachi');
+    let currentTime = moment()
+      .tz('Asia/Karachi')
+      .format('HH:mm');
+
+    currentTime = moment(currentTime, 'HH:mm')
+      .tz('Asia/Karachi')
+      .add(5, 'hours')
+      .toISOString();
 
     console.log(currentTime);
 
