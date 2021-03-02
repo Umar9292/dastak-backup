@@ -132,6 +132,7 @@ router.get('/allRestaurants', async (req, res) => {
   try {
     const currentTime = moment()
       .tz('Asia/Karachi')
+      .add(5, 'hours')
       .toISOString();
 
     console.log(currentTime);
