@@ -838,9 +838,49 @@ router.get('/test1', async (req, res) => {
 
 router.get('/test2', async (req, res) => {
   try {
-    const currentTime = moment().tz('Asia/Karachi');
+    const restaurants = await Users.find({
+      shopType: 'restaurant',
+      status: 'active',
+      latitude: { $ne: undefined },
+    });
 
-    return res.json({ currentTime });
+    await Promise.all(
+      restaurants.map(restaurant => {
+        const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
+          .tz('Asia/Karachi')
+          .add(5, 'hours')
+          .toISOString();
+        let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+          .tz('Asia/Karachi')
+          .add(5, 'hours')
+          .toISOString();
+
+        const openingTimeOffSet = moment(
+          restaurant.openingTime,
+          'HH:mm:ssa'
+        ).format('a');
+        const closingTimeOffSet = moment(
+          restaurant.closingTime,
+          'HH:mm:ssa'
+        ).format('a');
+
+        console.log(restaurant.name, openingTimeOffSet, closingTimeOffSet);
+
+        if (
+          (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+          (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+        ) {
+          restaurantClosing = moment(restaurantClosing).add(1, 'days');
+        }
+
+        restaurant.opening = restaurantOpening;
+        restaurant.closing = restaurantClosing;
+
+        return restaurant.save();
+      })
+    );
+
+    return res.json('done');
   } catch (err) {
     console.log(err);
     return res.json({

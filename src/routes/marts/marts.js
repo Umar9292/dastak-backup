@@ -81,9 +81,11 @@ router.post('/martDetails', async (req, res) => {
   }
 });
 
-router.get('/allRestaurants', async (req, res) => {
+/* router.get('/allRestaurants', async (req, res) => {
   try {
     const currentTime = moment().tz('Asia/Karachi');
+
+    console.log(currentTime);
 
     const query = {
       type: 'admin',
@@ -116,6 +118,41 @@ router.get('/allRestaurants', async (req, res) => {
     return res.json({
       status: '200',
       data: result,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      data: 'Looks like an error occurred on our side. Kindly try again',
+      error: err.toString(),
+    });
+  }
+}); */
+
+router.get('/allRestaurants', async (req, res) => {
+  try {
+    const currentTime = moment()
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    console.log(currentTime);
+
+    const query = {
+      type: 'admin',
+      status: 'active',
+      available: true,
+      shopType: 'restaurant',
+      opening: { $gte: currentTime },
+      closing: { $lt: currentTime },
+    };
+
+    const allRestaurants = await Users.find(query)
+      .sort({ position: -1 })
+      .select('-password -__v')
+      .lean();
+
+    return res.json({
+      status: '200',
+      allRestaurants,
     });
   } catch (err) {
     return res.json({

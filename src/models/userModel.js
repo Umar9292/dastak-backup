@@ -65,6 +65,8 @@ const userModel = Schema(
     martAddress: String,
     latitude: String,
     longitude: String,
+    opening: Date,
+    closing: Date,
   },
   {
     versionKey: false,
