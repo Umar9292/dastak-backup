@@ -254,7 +254,7 @@ router.post('/allOrders', async (req, res) => {
     );
 
     const deliveryCharges = unpaidOrders.reduce(
-      (a, b) => b.deliveryCharges !== '0' && a + 30,
+      (a, b) => (b.deliveryCharges !== '0' ? a + 30 : a),
       0
     );
 
