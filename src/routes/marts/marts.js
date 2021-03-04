@@ -81,7 +81,7 @@ router.post('/martDetails', async (req, res) => {
   }
 });
 
-router.get('/allRestaurants', async (req, res) => {
+/* router.get('/allRestaurants', async (req, res) => {
   try {
     const currentTime = moment().tz('Asia/Karachi');
 
@@ -124,14 +124,11 @@ router.get('/allRestaurants', async (req, res) => {
       error: err.toString(),
     });
   }
-});
+}); */
 
-/* router.post('/allRestaurants', async (req, res) => {
+router.post('/allRestaurants', async (req, res) => {
   try {
-    let { lat, long } = req.body;
-
-    lat = JSON.parse(lat);
-    long = JSON.parse(long);
+    const { lat, long } = req.body;
 
     const currentTime = moment().tz('Asia/Karachi');
 
@@ -141,7 +138,9 @@ router.get('/allRestaurants', async (req, res) => {
         status: 'active',
         available: true,
         featured: true,
-      }),
+      })
+        .sort({ name: -1 })
+        .lean(),
 
       Users.aggregate([
         {
@@ -199,7 +198,7 @@ router.get('/allRestaurants', async (req, res) => {
       status: '200',
       allRestaurants,
       data1,
-      label1: 'featured',
+      label1: 'Featured',
     });
   } catch (err) {
     console.log(err);
@@ -209,7 +208,7 @@ router.get('/allRestaurants', async (req, res) => {
       error: err.toString(),
     });
   }
-}); */
+});
 
 /* router.post('/specificRestaurants', async (req, res) => {
   try {
