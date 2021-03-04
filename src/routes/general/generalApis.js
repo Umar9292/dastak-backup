@@ -778,7 +778,7 @@ router.post('/readRestaurantExcelSheet', async (req, res) => {
   }
 });
 
-router.get('/test', async (_req, res) => {
+/* router.get('/test', async (_req, res) => {
   try {
     const restaurants = await Users.find({
       shopType: 'restaurant',
@@ -889,6 +889,6 @@ router.get('/test2', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 module.exports = router;
