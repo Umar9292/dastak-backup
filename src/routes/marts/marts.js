@@ -85,8 +85,6 @@ router.get('/allRestaurants', async (req, res) => {
   try {
     const currentTime = moment().tz('Asia/Karachi');
 
-    console.log(currentTime);
-
     const query = {
       type: 'admin',
       status: 'active',
