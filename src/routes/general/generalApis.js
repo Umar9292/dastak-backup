@@ -783,7 +783,7 @@ router.get('/test', async (_req, res) => {
     const restaurants = await Users.find({
       shopType: 'restaurant',
       status: 'active',
-      latitude: { $ne: undefined },
+      latitude: { $ne: '' },
     });
 
     await Promise.all(
