@@ -7,7 +7,7 @@ router.post('/checkVersion', async (req, res) => {
     const { platform, version } = req.body;
 
     if (platform === 'ios' && version === '1.5.5')
-      return res.json({ status: '200' });
+      return res.json({ status: '200', showCategories: 'false' });
 
     /*   if (platform === 'ios' && version !== '1.4.5') {
       return res.json({
@@ -23,7 +23,7 @@ router.post('/checkVersion', async (req, res) => {
     }
 
     if (platform === 'android' && version === '1.5.5')
-      return res.json({ status: '200' });
+      return res.json({ status: '200', showCategories: 'false' });
 
     /* if (platform === 'android' && version !== '1.4.4') {
       return res.json({

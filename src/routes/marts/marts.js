@@ -128,37 +128,103 @@ router.post('/martDetails', async (req, res) => {
   }
 }); */
 
-router.get('/allRestaurants', async (req, res) => {
+router.post('/allRestaurants', async (req, res) => {
   try {
-    let currentTime = moment()
-      .tz('Asia/Karachi')
-      .format('HH:mm');
+    let { lat, long } = req.body;
 
-    currentTime = moment(currentTime, 'HH:mm')
-      .tz('Asia/Karachi')
-      .add(5, 'hours')
-      .toISOString();
+    lat = JSON.parse(lat);
+    long = JSON.parse(long);
 
-    console.log(currentTime);
+    const currentTime = moment().tz('Asia/Karachi');
 
-    const query = {
-      type: 'admin',
-      status: 'active',
-      available: true,
-      shopType: 'restaurant',
-      opening: { $gte: currentTime },
-      closing: { $lt: currentTime },
-    };
+    let [data1, allRestaurants] = await Promise.all([
+      Users.find({
+        shopType: 'restaurant',
+        status: 'active',
+        available: true,
+        featured: true,
+      }),
 
-    const allRestaurants = await Users.find(query)
-      .sort({ position: -1 })
-      .select('-password -__v')
-      .lean();
+      Users.aggregate([
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [lat, long] },
+            distanceField: 'dist',
+            maxDistance: 3000,
+            spherical: true,
+          },
+        },
+        {
+          $match: {
+            available: true,
+            type: 'admin',
+            status: 'active',
+            shopType: 'restaurant',
+          },
+        },
+      ]),
+    ]);
+
+    allRestaurants = allRestaurants.filter(restaurant => {
+      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+
+      if (
+        currentTime.isSameOrAfter(restaurantOpening) &&
+        currentTime.isBefore(restaurantClosing)
+      ) {
+        return restaurant;
+      }
+    });
+
+    data1 = data1.filter(restaurant => {
+      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+
+      if (
+        currentTime.isSameOrAfter(restaurantOpening) &&
+        currentTime.isBefore(restaurantClosing)
+      ) {
+        return restaurant;
+      }
+    });
 
     return res.json({
       status: '200',
       allRestaurants,
+      data1,
+      label1: 'featured',
     });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      data: 'Looks like an error occurred on our side. Kindly try again',
+      error: err.toString(),
+    });
+  }
+});
+
+router.post('/specificRestaurants', async (req, res) => {
+  try {
+    const { category } = req.body;
+
+    const restaurants = await Users.find({
+      shopType: 'restaurant',
+      status: 'active',
+      available: true,
+      $text: { $search: category },
+    });
+
+    return res.json({ status: '200', restaurants });
   } catch (err) {
     return res.json({
       status: '404',

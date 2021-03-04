@@ -56,8 +56,8 @@ router.get('/notifications', async (req, res) => {
     // const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
     // const msg = `Dear Umar to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
     const msg =
-      'Dear Hamza Kindly use 123456789 as your password to login and then change your password once you are in the app. Untill we fix the problem. Thankyou';
-    await notifyUser(msg, '9c878054-f9ea-48f5-99bc-d52e5f68d487', {});
+      'Dear Aliza your current number is not working kindly contact Dastak rider whose number is given in your app.';
+    await notifyUser(msg, '134573b5-822d-402f-823f-71742208b6ce', {});
 
     /*  for (const user of users) {
       if (user.playerId && user.player !== '') {
@@ -807,7 +807,7 @@ router.get('/test', async (_req, res) => {
   }
 });
 
-router.get('/test1', async (req, res) => {
+router.post('/test1', async (req, res) => {
   try {
     let { lat, long } = req.body;
 

@@ -14,6 +14,9 @@ const GeoSchema = Schema({
 const userModel = Schema(
   {
     geometry: GeoSchema,
+    category: String,
+    new: Boolean,
+    featured: Boolean,
     status: {
       type: String,
       default: 'active',
@@ -74,6 +77,6 @@ const userModel = Schema(
   }
 );
 
-userModel.index({ name: 'text' });
+userModel.index({ '$**': 'text' });
 
 module.exports = model('users', userModel);
