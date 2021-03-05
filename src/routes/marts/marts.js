@@ -145,30 +145,30 @@ router.post('/allRestaurants', async (req, res) => {
       Users.aggregate([
         {
           $geoNear: {
-            near: { type: 'Point', coordinates: [lat, long] },
+            near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 3000,
+            maxDistance: 3500,
+            query: {
+              available: true,
+              type: 'admin',
+              status: 'active',
+              shopType: 'restaurant',
+            },
             spherical: true,
-          },
-        },
-        {
-          $match: {
-            available: true,
-            type: 'admin',
-            status: 'active',
-            shopType: 'restaurant',
           },
         },
       ]),
     ]);
 
     allRestaurants = allRestaurants.filter(restaurant => {
-      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
+      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm').tz(
+        'Asia/Karachi'
+      );
+      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm').tz(
+        'Asia/Karachi'
+      );
+
+      console.log(restaurantOpening, restaurantClosing);
 
       if (
         currentTime.isSameOrAfter(restaurantOpening) &&
@@ -179,12 +179,12 @@ router.post('/allRestaurants', async (req, res) => {
     });
 
     data1 = data1.filter(restaurant => {
-      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
+      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm').tz(
+        'Asia/Karachi'
+      );
+      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm').tz(
+        'Asia/Karachi'
+      );
 
       if (
         currentTime.isSameOrAfter(restaurantOpening) &&
