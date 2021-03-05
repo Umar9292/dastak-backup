@@ -168,8 +168,6 @@ router.post('/allRestaurants', async (req, res) => {
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
 
-      console.log(restaurant.name, restaurantOpening, restaurantClosing);
-
       if (
         currentTime.isSameOrAfter(restaurantOpening) &&
         currentTime.isBefore(restaurantClosing)
@@ -179,12 +177,12 @@ router.post('/allRestaurants', async (req, res) => {
     });
 
     data1 = data1.filter(restaurant => {
-      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm').tz(
-        'Asia/Karachi'
-      );
-      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm').tz(
-        'Asia/Karachi'
-      );
+      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
 
       if (
         currentTime.isSameOrAfter(restaurantOpening) &&
