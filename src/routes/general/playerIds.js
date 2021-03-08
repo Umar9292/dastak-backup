@@ -1,6 +1,7 @@
 const Router = require('express/lib/router');
 
 const Users = require('../../models/userModel');
+const UniqueUsers = require('../../models/uniqueUsersModel');
 
 const router = Router();
 
@@ -73,10 +74,17 @@ router.post('/userPlayerId', async (req, res) => {
 
     console.log(`${user.name} came into the app`);
 
-    return res.json({
+    res.json({
       status: '200',
       data: user,
     });
+
+    const unique = await UniqueUsers.findOne();
+    if (!unique.users.includes(user._id)) {
+      unique.users.push(user._id);
+      unique.userCount += 1;
+      return unique.save();
+    }
   } catch (err) {
     return res.json({
       error: err.toString(),
