@@ -101,9 +101,19 @@ router.get('/allRestaurants', async (req, res) => {
       const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
-      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
+
+      const openingTimeOffSet = moment(restaurantOpening).format('a');
+      const closingTimeOffSet = moment(restaurantClosing).format('a');
+
+      if (
+        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+      ) {
+        restaurantClosing = moment(restaurantClosing).add(1, 'days');
+      }
 
       if (
         currentTime.isSameOrAfter(restaurantOpening) &&
@@ -128,10 +138,7 @@ router.get('/allRestaurants', async (req, res) => {
 
 /* router.post('/allRestaurants', async (req, res) => {
   try {
-    let { lat, long } = req.body;
-
-    lat = JSON.parse(lat);
-    long = JSON.parse(long);
+    const { lat, long } = req.body;
 
     const currentTime = moment().tz('Asia/Karachi');
 
@@ -141,23 +148,23 @@ router.get('/allRestaurants', async (req, res) => {
         status: 'active',
         available: true,
         featured: true,
-      }),
+      })
+        .sort({ name: -1 })
+        .lean(),
 
       Users.aggregate([
         {
           $geoNear: {
-            near: { type: 'Point', coordinates: [lat, long] },
+            near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 3000,
+            maxDistance: 3500,
+            query: {
+              available: true,
+              type: 'admin',
+              status: 'active',
+              shopType: 'restaurant',
+            },
             spherical: true,
-          },
-        },
-        {
-          $match: {
-            available: true,
-            type: 'admin',
-            status: 'active',
-            shopType: 'restaurant',
           },
         },
       ]),
@@ -199,7 +206,7 @@ router.get('/allRestaurants', async (req, res) => {
       status: '200',
       allRestaurants,
       data1,
-      label1: 'featured',
+      label1: 'Featured',
     });
   } catch (err) {
     console.log(err);

@@ -427,7 +427,10 @@ router.post('/adminResponse', async (req, res) => {
 
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
-      sendAcceptanceEmail(user.email !== '' ? user.email : '', msg);
+
+      if (user.email !== '') {
+        sendAcceptanceEmail(user.email, msg);
+      }
 
       const idleRiders = await Users.find({
         type: 'rider',
@@ -483,7 +486,9 @@ router.post('/adminResponse', async (req, res) => {
       const msg = `Dear ${user.name} your order# ${orderNum} for ${shop.name} is now ready. Kindly pick it up`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
-      sendAcceptanceEmail(user.email !== '' ? user.email : '', msg);
+      if (user.email !== '') {
+        sendAcceptanceEmail(user.email, msg);
+      }
 
       return res.json({
         status: '200',
