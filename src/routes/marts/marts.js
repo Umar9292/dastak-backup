@@ -81,7 +81,7 @@ router.post('/martDetails', async (req, res) => {
   }
 });
 
-/* router.get('/allRestaurants', async (req, res) => {
+router.get('/allRestaurants', async (req, res) => {
   try {
     const currentTime = moment().tz('Asia/Karachi');
 
@@ -101,9 +101,19 @@ router.post('/martDetails', async (req, res) => {
       const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
-      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
+
+      const openingTimeOffSet = moment(restaurantOpening).format('a');
+      const closingTimeOffSet = moment(restaurantClosing).format('a');
+
+      if (
+        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+      ) {
+        restaurantClosing = moment(restaurantClosing).add(1, 'days');
+      }
 
       if (
         currentTime.isSameOrAfter(restaurantOpening) &&
@@ -124,9 +134,9 @@ router.post('/martDetails', async (req, res) => {
       error: err.toString(),
     });
   }
-}); */
+});
 
-router.post('/allRestaurants', async (req, res) => {
+/* router.post('/allRestaurants', async (req, res) => {
   try {
     const { lat, long } = req.body;
 
@@ -206,7 +216,7 @@ router.post('/allRestaurants', async (req, res) => {
       error: err.toString(),
     });
   }
-});
+}); */
 
 /* router.post('/specificRestaurants', async (req, res) => {
   try {
