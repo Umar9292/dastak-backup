@@ -40,7 +40,6 @@ router.get('/manageRestaurants', async (_req, res) => {
 router.post('/restaurantCollections', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
-    let percentage = 0;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -76,17 +75,7 @@ router.post('/restaurantCollections', async (req, res) => {
             .lean(),
         ]);
 
-        const { name: martName } = restaurant;
-
-        if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
-          percentage = 12;
-        } else if (martName === 'De Fiesta Restaurant') {
-          percentage = 10;
-        } else if (martName === 'Mahar Murgh Pulao') {
-          percentage = 20;
-        } else {
-          percentage = 15;
-        }
+        const { name: martName, percentage } = restaurant;
 
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
@@ -125,6 +114,7 @@ router.post('/restaurantCollections', async (req, res) => {
           martId,
           martName,
           ourProfit,
+          totalOfDeliveryOrders,
           totalToPay,
           deliveryOrders,
           pickupOrders,
@@ -137,10 +127,20 @@ router.post('/restaurantCollections', async (req, res) => {
 
     const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
     const amountToPay = data.reduce((a, b) => a + b.totalToPay, 0);
+    const totalCollection = data.reduce(
+      (a, b) => a + b.totalOfDeliveryOrders,
+      0
+    );
 
     data = orderBy(data, ['totalToPay'], ['desc']);
 
-    return res.json({ status: '200', data, totalProfit, amountToPay });
+    return res.json({
+      status: '200',
+      data,
+      totalProfit,
+      amountToPay,
+      totalCollection,
+    });
   } catch (err) {
     return res.json({
       status: '404',
@@ -201,7 +201,6 @@ router.post('/paidToOwners', async (req, res) => {
 router.post('/expensesTillNow', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
-    let percentage = 0;
 
     let end = moment().tz('Asia/Karachi');
     let start = moment(end).subtract(30, 'days');
@@ -230,7 +229,7 @@ router.post('/expensesTillNow', async (req, res) => {
 
     let data = await Promise.all(
       restaurants.map(async martId => {
-        const [orders, { name: martName }] = await Promise.all([
+        const [orders, { name: martName, percentage }] = await Promise.all([
           Orders.find({
             paid: true,
             paidToRider: true,
@@ -244,16 +243,6 @@ router.post('/expensesTillNow', async (req, res) => {
 
           Users.findById(martId),
         ]);
-
-        if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
-          percentage = 12;
-        } else if (martName === 'De Fiesta Restaurant') {
-          percentage = 10;
-        } else if (martName === 'Mahar Murgh Pulao') {
-          percentage = 20;
-        } else {
-          percentage = 15;
-        }
 
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
