@@ -77,8 +77,6 @@ router.post('/restaurantCollections', async (req, res) => {
 
         const { name: martName, percentage } = restaurant;
 
-        console.log(martName, percentage);
-
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
         );
