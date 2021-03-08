@@ -71,11 +71,13 @@ router.post('/restaurantCollections', async (req, res) => {
           }),
 
           Users.findById(martId)
-            .select('name phone jazzCashNumber')
+            .select('name phone jazzCashNumber percentage')
             .lean(),
         ]);
 
         const { name: martName, percentage } = restaurant;
+
+        console.log(martName, percentage);
 
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
