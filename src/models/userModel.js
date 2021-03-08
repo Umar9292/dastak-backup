@@ -22,6 +22,7 @@ const userModel = Schema(
       default: 'active',
     },
     available: Boolean,
+    percentage: Number,
     jazzCashNumber: String,
     orderFare: Number,
     dastakDeal: Boolean,
