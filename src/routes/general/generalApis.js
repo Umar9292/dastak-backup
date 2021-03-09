@@ -13,7 +13,7 @@ const {
 
 const router = Router();
 
-const client = redis.createClient(6379);
+// const client = redis.createClient(6379);
 
 router.get('/changePrices', async (req, res) => {
   try {
