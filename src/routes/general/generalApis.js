@@ -1,7 +1,7 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
 const Exceljs = require('exceljs');
-const redis = require('redis');
+// const redis = require('redis');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
@@ -917,7 +917,7 @@ router.get('/addGeometry', async (_req, res) => {
   }
 });
 
-router.get('/redisTest', async (_req, res) => {
+/* router.get('/redisTest', async (_req, res) => {
   try {
     client.get('allUsers', async (err, data) => {
       if (err) console.log(err);
@@ -940,6 +940,6 @@ router.get('/redisTest', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 module.exports = router;
