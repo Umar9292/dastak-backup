@@ -1,6 +1,7 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
 const Exceljs = require('exceljs');
+const redis = require('redis');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
@@ -11,6 +12,8 @@ const {
 } = require('../../emailHandler/dailyCollections/dailyCollections');
 
 const router = Router();
+
+const client = redis.createClient(6379);
 
 router.get('/changePrices', async (req, res) => {
   try {
@@ -890,5 +893,53 @@ router.get('/test2', async (req, res) => {
     });
   }
 }); */
+
+router.get('/addGeometry', async (_req, res) => {
+  try {
+    const restaurant = await Users.findById({
+      _id: '5faa6c719edca7328fb28aa1',
+    });
+
+    restaurant.geometry = {
+      type: 'Point',
+      coordinates: [72.68556726962318, 32.06091058989394],
+    };
+
+    await restaurant.save();
+
+    return res.json('done');
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.get('/redisTest', async (_req, res) => {
+  try {
+    client.get('allUsers', async (err, data) => {
+      if (err) console.log(err);
+
+      if (data !== null) {
+        return res.json(JSON.parse(data));
+      }
+
+      const users = await Users.find({}).limit(30);
+
+      client.setex('allUsers', 30, JSON.stringify(users));
+
+      res.json(users);
+    });
+  } catch (err) {
+    console.error(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
 
 module.exports = router;
