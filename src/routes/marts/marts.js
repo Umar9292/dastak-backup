@@ -1,5 +1,6 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
+const { time } = require('speakeasy');
 
 const Users = require('../../models/userModel');
 
@@ -144,6 +145,8 @@ router.post('/allRestaurants', async (req, res) => {
     const timeLimit = moment('11:00', 'HH:mm')
       .tz('Asia/Karachi')
       .subtract(5, 'hours');
+
+    console.log(currentTime, timeLimit);
 
     let [data1, allRestaurants] = await Promise.all([
       Users.find({
