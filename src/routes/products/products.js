@@ -256,15 +256,6 @@ router.post('/updateProductsAvailability', async (req, res) => {
 router.get('/dastakDeals', async (_req, res) => {
   try {
     const currentTime = moment().tz('Asia/karachi');
-    const dealsTimeStart = moment('06:00', 'HH:mm:ssa').tz('Asia/karachi');
-    const dealsTimeEnd = moment('18:59', 'HH:mm:ssa').tz('Asia/karachi');
-
-    if (!currentTime.isBetween(dealsTimeStart, dealsTimeEnd)) {
-      return res.json({
-        status: '404',
-        msg: 'Dastak deals are available from 11am to 12pm',
-      });
-    }
 
     const restaurants = await Users.find({
       shopType: 'restaurant',
