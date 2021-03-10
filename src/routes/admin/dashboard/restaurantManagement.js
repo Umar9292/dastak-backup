@@ -77,10 +77,6 @@ router.post('/restaurantCollections', async (req, res) => {
 
         const { name: martName, percentage } = restaurant;
 
-        if (martName === 'Zam Zam Restaurant') {
-          console.log(orders.length);
-        }
-
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
         );

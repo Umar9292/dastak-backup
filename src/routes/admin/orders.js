@@ -233,9 +233,11 @@ router.post('/allOrders', async (req, res) => {
         .lean(),
     ]);
 
-    console.log(unpaidOrders.length);
+    const deliveryOrders = unpaidOrders.filter(
+      ({ orderType }) => orderType === 'Delivery'
+    );
 
-    const totalAmount = unpaidOrders.reduce((a, b) => a + b.orderTotal, 0);
+    const totalAmount = deliveryOrders.reduce((a, b) => a + b.orderTotal, 0);
 
     const amountWithoutDelivery = unpaidOrders.reduce(
       (a, b) =>
