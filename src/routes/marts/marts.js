@@ -142,7 +142,7 @@ router.post('/allRestaurants', async (req, res) => {
     const { lat, long } = req.body;
 
     const currentTime = moment().tz('Asia/Karachi');
-    const timeLimit = moment('11:00', 'HH:mm')
+    const timeLimit = moment('23:00', 'HH:mm')
       .tz('Asia/Karachi')
       .subtract(5, 'hours');
 
