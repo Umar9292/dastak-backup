@@ -1,6 +1,5 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
-const { time } = require('speakeasy');
 
 const Users = require('../../models/userModel');
 
@@ -180,9 +179,19 @@ router.post('/allRestaurants', async (req, res) => {
       const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
-      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
+
+      const openingTimeOffSet = moment(restaurantOpening).format('a');
+      const closingTimeOffSet = moment(restaurantClosing).format('a');
+
+      if (
+        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+      ) {
+        restaurantClosing = moment(restaurantClosing).add(1, 'days');
+      }
 
       if (
         currentTime.isSameOrAfter(restaurantOpening) &&
@@ -196,9 +205,19 @@ router.post('/allRestaurants', async (req, res) => {
       const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
-      const restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
+
+      const openingTimeOffSet = moment(restaurantOpening).format('a');
+      const closingTimeOffSet = moment(restaurantClosing).format('a');
+
+      if (
+        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+      ) {
+        restaurantClosing = moment(restaurantClosing).add(1, 'days');
+      }
 
       if (
         currentTime.isSameOrAfter(restaurantOpening) &&
