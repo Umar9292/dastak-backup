@@ -77,6 +77,10 @@ router.post('/restaurantCollections', async (req, res) => {
 
         const { name: martName, percentage } = restaurant;
 
+        if (martName === 'Zam Zam Restaurant') {
+          console.log(orders.length);
+        }
+
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
         );
@@ -111,7 +115,6 @@ router.post('/restaurantCollections', async (req, res) => {
           totalOfDeliveryOrders > 0 ? totalOfDeliveryOrders - ourProfit : 0;
 
         return {
-          totalOrders: orders.length,
           martId,
           martName,
           ourProfit,
@@ -127,14 +130,11 @@ router.post('/restaurantCollections', async (req, res) => {
     );
 
     const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
-    const ordersLength = data.reduce((a, b) => a + b.totalOrders, 0);
     const amountToPay = data.reduce((a, b) => a + b.totalToPay, 0);
     const totalCollection = data.reduce(
       (a, b) => a + b.totalOfDeliveryOrders,
       0
     );
-
-    console.log(ordersLength);
 
     data = orderBy(data, ['totalToPay'], ['desc']);
 
