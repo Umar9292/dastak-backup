@@ -233,6 +233,8 @@ router.post('/allOrders', async (req, res) => {
         .lean(),
     ]);
 
+    console.log(unpaidOrders.length);
+
     const totalAmount = unpaidOrders.reduce((a, b) => a + b.orderTotal, 0);
 
     const amountWithoutDelivery = unpaidOrders.reduce(
