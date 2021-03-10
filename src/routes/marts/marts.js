@@ -81,7 +81,7 @@ router.post('/martDetails', async (req, res) => {
   }
 });
 
-router.get('/allRestaurants', async (req, res) => {
+/* router.get('/allRestaurants', async (req, res) => {
   try {
     const currentTime = moment().tz('Asia/Karachi');
 
@@ -134,13 +134,14 @@ router.get('/allRestaurants', async (req, res) => {
       error: err.toString(),
     });
   }
-});
+}); */
 
-/* router.post('/allRestaurants', async (req, res) => {
+router.post('/allRestaurants', async (req, res) => {
   try {
     const { lat, long } = req.body;
 
     const currentTime = moment().tz('Asia/Karachi');
+    const timeLimit = moment('11:00', 'HH:mm').tz('Asia/Karachi');
 
     let [data1, allRestaurants] = await Promise.all([
       Users.find({
@@ -205,32 +206,49 @@ router.get('/allRestaurants', async (req, res) => {
     return res.json({
       status: '200',
       allRestaurants,
-      data1,
-      label1: 'Featured',
+      data1: currentTime.isAfter(timeLimit) ? undefined : data1,
+      label1: currentTime.isAfter(timeLimit) ? undefined : 'Featured',
     });
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       data: 'Looks like an error occurred on our side. Kindly try again',
       error: err.toString(),
     });
   }
-}); */
+});
 
 /* router.post('/specificRestaurants', async (req, res) => {
   try {
     const { category } = req.body;
+    console.log(req.body);
 
-    const restaurants = await Users.find({
-      shopType: 'restaurant',
-      status: 'active',
-      available: true,
-      $text: { $search: category },
+    const [allRestaurants, featured] = await Promise.all([
+      Users.find({
+        shopType: 'restaurant',
+        status: 'active',
+        available: true,
+        $text: { $search: category },
+      }),
+
+      Users.find({
+        shopType: 'restaurant',
+        status: 'active',
+        available: true,
+        featured: true,
+      })
+        .sort({ name: -1 })
+        .lean(),
+    ]);
+
+    return res.json({
+      status: '200',
+      allRestaurants,
+      label1: 'Featured',
+      data1: featured,
     });
-
-    return res.json({ status: '200', restaurants });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       data: 'Looks like an error occurred on our side. Kindly try again',
