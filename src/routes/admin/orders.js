@@ -229,7 +229,7 @@ router.post('/allOrders', async (req, res) => {
         paid: false,
         status: 'Delivered',
       })
-        .select('orderTotal deliveryCharges')
+        .select('orderTotal deliveryCharges orderType')
         .lean(),
     ]);
 

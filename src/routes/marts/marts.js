@@ -81,7 +81,7 @@ router.post('/martDetails', async (req, res) => {
   }
 });
 
-/* router.get('/allRestaurants', async (req, res) => {
+router.get('/allRestaurants', async (req, res) => {
   try {
     const currentTime = moment().tz('Asia/Karachi');
 
@@ -134,9 +134,9 @@ router.post('/martDetails', async (req, res) => {
       error: err.toString(),
     });
   }
-}); */
+});
 
-router.post('/allRestaurants', async (req, res) => {
+/* router.post('/allRestaurants', async (req, res) => {
   try {
     const { lat, long } = req.body;
 
@@ -216,7 +216,7 @@ router.post('/allRestaurants', async (req, res) => {
       error: err.toString(),
     });
   }
-});
+}); */
 
 /* router.post('/specificRestaurants', async (req, res) => {
   try {
