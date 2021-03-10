@@ -191,14 +191,14 @@ router.post('/allOrders', async (req, res) => {
     const { martId } = req.body;
 
     const [
-      { name: martName },
+      { percentage },
       upcoming,
       accepted,
       delivered,
       unpaidOrders,
     ] = await Promise.all([
       Users.findById(martId)
-        .select('name')
+        .select('name percentage')
         .lean(),
 
       Orders.find({ martId, status: 'Pending' })
@@ -232,18 +232,6 @@ router.post('/allOrders', async (req, res) => {
         .select('orderTotal deliveryCharges')
         .lean(),
     ]);
-
-    let percentage = 0;
-
-    if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
-      percentage = 12;
-    } else if (martName === 'De Fiesta Restaurant') {
-      percentage = 10;
-    } else if (martName === 'Mahar Murgh Pulao') {
-      percentage = 20;
-    } else {
-      percentage = 15;
-    }
 
     const totalAmount = unpaidOrders.reduce((a, b) => a + b.orderTotal, 0);
 

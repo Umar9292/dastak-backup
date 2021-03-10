@@ -99,7 +99,7 @@ router.post('/restaurantCollections', async (req, res) => {
         );
 
         const deliveryCharges = orders.reduce(
-          (a, b) => b.deliveryCharges !== '0' && a + 30,
+          (a, b) => (b.deliveryCharges !== '0' ? a + 30 : a),
           0
         );
 
