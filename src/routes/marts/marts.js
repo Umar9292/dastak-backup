@@ -269,7 +269,7 @@ router.post('/reviews', async (req, res) => {
 
     return res.json({
       status: '200',
-      allReviews: !allReviews ? [] : allReviews.reviews,
+      allReviews: allReviews === null ? [] : allReviews.reviews,
       eligible,
     });
   } catch (err) {
