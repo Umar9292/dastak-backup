@@ -256,12 +256,18 @@ router.post('/reviews', async (req, res) => {
     ]);
 
     if (orders > 0) {
-      const { reviews } = allReviews;
+      if (allReviews !== null) {
+        const { reviews } = allReviews;
 
-      const allreadyReviewed = reviews.some(review => review.userId === userId);
+        const allreadyReviewed = reviews.some(
+          review => review.userId === userId
+        );
 
-      if (allreadyReviewed) {
-        eligible = false;
+        if (allreadyReviewed) {
+          eligible = false;
+        } else {
+          eligible = true;
+        }
       } else {
         eligible = true;
       }
