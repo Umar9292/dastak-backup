@@ -19,6 +19,7 @@ router.post('/checkVersion', async (req, res) => {
       return res.json({
         status: '200',
         msg: `A new update is now available. kindly update your App to get the best experience`,
+        showCategories: 'false',
       });
     }
 
@@ -35,6 +36,7 @@ router.post('/checkVersion', async (req, res) => {
       return res.json({
         status: '200',
         msg: `A new update is now available. kindly update your App to get the best experience`,
+        showCategories: 'false',
       });
     }
   } catch (err) {
