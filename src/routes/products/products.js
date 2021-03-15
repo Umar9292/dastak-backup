@@ -346,4 +346,111 @@ router.get('/dastakDeals', async (_req, res) => {
   }
 });
 
+/* router.post('/dastakDeals', async (req, res) => {
+  try {
+    const { lat, long } = req.body;
+
+    const currentTime = moment().tz('Asia/karachi');
+
+    const restaurants = await Users.aggregate([
+      {
+        $geoNear: {
+          near: { type: 'Point', coordinates: [long, lat] },
+          distanceField: 'dist',
+          maxDistance: 3500,
+          query: {
+            available: true,
+            dastakDeal: true,
+            type: 'admin',
+            status: 'active',
+            shopType: 'restaurant',
+          },
+          spherical: true,
+        },
+      },
+    ]);
+
+    const openRestaurants = await Promise.all(
+      restaurants.map(restaurant => {
+        let { openingTime: opening, closingTime: closing, _id } = restaurant;
+
+        [opening, closing] = [
+          moment(opening, 'HH:mm:ssa').tz('Asia/Karachi'),
+          moment(closing, 'HH:mm:ssa').tz('Asia/Karachi'),
+        ];
+
+        let [openingTime, closingTime, openingOffSet, closingOffSet] = [
+          moment(opening).subtract(5, 'hours'),
+          moment(closing).subtract(5, 'hours'),
+          moment(opening).format('a'),
+          moment(closing).format('a'),
+        ];
+
+        if (
+          (openingOffSet === 'pm' && closingOffSet === 'am') ||
+          (openingTime === 'am' && closingOffSet === 'am')
+        ) {
+          closingTime = moment(closingTime).add(1, 'days');
+        }
+
+        if (currentTime.isBetween(openingTime, closingTime)) {
+          return _id;
+        }
+      })
+    );
+
+    let dastakDeals = [];
+
+    await Promise.all(
+      openRestaurants.map(async martId => {
+        const [restaurant, products, options] = await Promise.all([
+          Users.findById(martId),
+
+          Products.find({
+            martId,
+            dastakDeal: true,
+            available: 'in stock',
+          }),
+
+          Flavours.findOne({ martId }),
+        ]);
+
+        if (products.length > 0) {
+          for (const product of products) {
+            const { regular, drinks, type } = product;
+
+            if (
+              (type === 'deal' && !regular) ||
+              (type === 'deal' && regular === undefined)
+            ) {
+              product.flavours = options.flavours;
+            }
+
+            if (type === 'deal' && regular === true) {
+              product.flavours = options.regularFlavours;
+            }
+
+            if (drinks === true) {
+              product.allDrinks = options.drinks;
+            }
+
+            product.restaurant = restaurant;
+            dastakDeals = [...dastakDeals, product];
+          }
+        }
+      })
+    );
+
+    return res.json({
+      status: '200',
+      data: dastakDeals,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
 module.exports = router;
