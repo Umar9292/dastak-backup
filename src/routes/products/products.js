@@ -253,7 +253,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 });
 
-router.get('/dastakDeals', async (_req, res) => {
+/* router.get('/dastakDeals', async (_req, res) => {
   try {
     const currentTime = moment().tz('Asia/karachi');
 
@@ -344,9 +344,9 @@ router.get('/dastakDeals', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
-/* router.post('/dastakDeals', async (req, res) => {
+router.post('/dastakDeals', async (req, res) => {
   try {
     const { lat, long } = req.body;
 
@@ -451,6 +451,6 @@ router.get('/dastakDeals', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 module.exports = router;
