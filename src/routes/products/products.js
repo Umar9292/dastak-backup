@@ -398,6 +398,8 @@ router.post('/dastakDeals', async (req, res) => {
 
     let dastakDeals = [];
 
+    console.log(openRestaurants);
+
     await Promise.all(
       openRestaurants.map(async martId => {
         const [restaurant, products, options] = await Promise.all([
