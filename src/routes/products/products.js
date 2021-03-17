@@ -370,34 +370,31 @@ router.post('/dastakDeals', async (req, res) => {
       },
     ]);
 
-    const openRestaurants = await Promise.all(
-      restaurants.map(restaurant => {
-        let { openingTime: opening, closingTime: closing, _id } = restaurant;
+    const openRestaurants = restaurants.filter(restaurant => {
+      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
 
-        [opening, closing] = [
-          moment(opening, 'HH:mm:ssa').tz('Asia/Karachi'),
-          moment(closing, 'HH:mm:ssa').tz('Asia/Karachi'),
-        ];
+      const openingTimeOffSet = moment(restaurantOpening).format('a');
+      const closingTimeOffSet = moment(restaurantClosing).format('a');
 
-        let [openingTime, closingTime, openingOffSet, closingOffSet] = [
-          moment(opening).subtract(5, 'hours'),
-          moment(closing).subtract(5, 'hours'),
-          moment(opening).format('a'),
-          moment(closing).format('a'),
-        ];
+      if (
+        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+      ) {
+        restaurantClosing = moment(restaurantClosing).add(1, 'days');
+      }
 
-        if (
-          (openingOffSet === 'pm' && closingOffSet === 'am') ||
-          (openingTime === 'am' && closingOffSet === 'am')
-        ) {
-          closingTime = moment(closingTime).add(1, 'days');
-        }
-
-        if (currentTime.isBetween(openingTime, closingTime)) {
-          return _id;
-        }
-      })
-    );
+      if (
+        currentTime.isSameOrAfter(restaurantOpening) &&
+        currentTime.isBefore(restaurantClosing)
+      ) {
+        return restaurant;
+      }
+    });
 
     let dastakDeals = [];
 
