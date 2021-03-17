@@ -394,13 +394,11 @@ router.post('/dastakDeals', async (req, res) => {
         currentTime.isSameOrAfter(restaurantOpening) &&
         currentTime.isBefore(restaurantClosing)
       ) {
-        return restaurant._id;
+        openRestaurants.push(restaurant._id);
       }
     });
 
     let dastakDeals = [];
-
-    console.log(openRestaurants);
 
     await Promise.all(
       openRestaurants.map(async martId => {
