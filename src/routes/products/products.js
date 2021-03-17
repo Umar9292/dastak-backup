@@ -370,8 +370,6 @@ router.post('/dastakDeals', async (req, res) => {
       },
     ]);
 
-    // console.log(restaurants);
-
     const openRestaurants = restaurants.filter(restaurant => {
       const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
         .tz('Asia/Karachi')
@@ -382,9 +380,6 @@ router.post('/dastakDeals', async (req, res) => {
 
       const openingTimeOffSet = moment(restaurantOpening).format('a');
       const closingTimeOffSet = moment(restaurantClosing).format('a');
-
-      /*  console.log(restaurantOpening);
-      console.log(restaurantClosing); */
 
       if (
         (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
@@ -397,7 +392,7 @@ router.post('/dastakDeals', async (req, res) => {
         currentTime.isSameOrAfter(restaurantOpening) &&
         currentTime.isBefore(restaurantClosing)
       ) {
-        return restaurant;
+        return restaurant._id;
       }
     });
 

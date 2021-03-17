@@ -902,7 +902,7 @@ router.get('/addGeometry', async (_req, res) => {
 
     restaurant.geometry = {
       type: 'Point',
-      coordinates: [72.69057980964908, 32.09529095294058],
+      coordinates: [72.69059918418903, 32.09541352947324],
     };
 
     await restaurant.save();
