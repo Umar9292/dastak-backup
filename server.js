@@ -97,13 +97,13 @@ connect(
   }
 );
 
-io.on('connection', socket => {
+/* io.on('connection', socket => {
   console.log(`user connected to ${socket.id}`);
 
   socket.on('disconnect', () => {
     console.log('A user disconected');
   });
-});
+}); */
 
 connection.once('open', () => {
   console.log('Setting change streams');
