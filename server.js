@@ -90,20 +90,20 @@ connect(
     if (err) {
       console.log(err);
     } else {
-      server.listen(port, () => console.log(`Listening on port ${port}\n`));
+      app.listen(port, () => console.log(`Listening on port ${port}\n`));
 
       console.log('Connected to database');
     }
   }
 );
 
-/* io.on('connection', socket => {
+io.on('connection', socket => {
   console.log(`user connected to ${socket.id}`);
 
   socket.on('disconnect', () => {
     console.log('A user disconected');
   });
-}); */
+});
 
 connection.once('open', () => {
   console.log('Setting change streams');
