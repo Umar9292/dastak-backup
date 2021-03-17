@@ -897,12 +897,12 @@ router.get('/test2', async (req, res) => {
 router.get('/addGeometry', async (_req, res) => {
   try {
     const restaurant = await Users.findById({
-      _id: '5faa6c719edca7328fb28aa1',
+      _id: '6050be5cdb3823034cdd041c',
     });
 
     restaurant.geometry = {
       type: 'Point',
-      coordinates: [72.68556726962318, 32.06091058989394],
+      coordinates: [72.69988575395253, 32.060877129229596],
     };
 
     await restaurant.save();
