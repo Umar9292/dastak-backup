@@ -25,6 +25,7 @@ const ordersManagementRouter = require('./src/routes/admin/dashboard/orderManage
 const ridersManagementRouter = require('./src/routes/admin/dashboard/riderManagement');
 const restaurantsManagementRouter = require('./src/routes/admin/dashboard/restaurantManagement');
 const usersManagementRouter = require('./src/routes/admin/dashboard/userManagement');
+const usersReviewRouter = require('./src/routes/user/addReview');
 
 const port = process.env.PORT || 8080;
 
@@ -47,7 +48,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, 'views')));
 
-app.use('/user', signUpRouter, profileRouter, logoutRouter);
+app.use('/user', signUpRouter, profileRouter, logoutRouter, usersReviewRouter);
 app.use('/orders', ordersRouter);
 app.use(
   '/admin',

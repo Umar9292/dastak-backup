@@ -253,7 +253,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 });
 
-router.get('/dastakDeals', async (_req, res) => {
+/* router.get('/dastakDeals', async (_req, res) => {
   try {
     const currentTime = moment().tz('Asia/karachi');
 
@@ -291,6 +291,110 @@ router.get('/dastakDeals', async (_req, res) => {
         }
       })
     );
+
+    let dastakDeals = [];
+
+    await Promise.all(
+      openRestaurants.map(async martId => {
+        const [restaurant, products, options] = await Promise.all([
+          Users.findById(martId),
+
+          Products.find({
+            martId,
+            dastakDeal: true,
+            available: 'in stock',
+          }),
+
+          Flavours.findOne({ martId }),
+        ]);
+
+        if (products.length > 0) {
+          for (const product of products) {
+            const { regular, drinks, type } = product;
+
+            if (
+              (type === 'deal' && !regular) ||
+              (type === 'deal' && regular === undefined)
+            ) {
+              product.flavours = options.flavours;
+            }
+
+            if (type === 'deal' && regular === true) {
+              product.flavours = options.regularFlavours;
+            }
+
+            if (drinks === true) {
+              product.allDrinks = options.drinks;
+            }
+
+            product.restaurant = restaurant;
+            dastakDeals = [...dastakDeals, product];
+          }
+        }
+      })
+    );
+
+    return res.json({
+      status: '200',
+      data: dastakDeals,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+router.post('/dastakDeals', async (req, res) => {
+  try {
+    const { lat, long } = req.body;
+
+    const currentTime = moment().tz('Asia/karachi');
+
+    const restaurants = await Users.aggregate([
+      {
+        $geoNear: {
+          near: { type: 'Point', coordinates: [long, lat] },
+          distanceField: 'dist',
+          maxDistance: 3500,
+          query: {
+            available: true,
+            dastakDeal: true,
+            type: 'admin',
+            status: 'active',
+            shopType: 'restaurant',
+          },
+          spherical: true,
+        },
+      },
+    ]);
+
+    const openRestaurants = restaurants.filter(restaurant => {
+      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+
+      const openingTimeOffSet = moment(restaurantOpening).format('a');
+      const closingTimeOffSet = moment(restaurantClosing).format('a');
+
+      if (
+        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+      ) {
+        restaurantClosing = moment(restaurantClosing).add(1, 'days');
+      }
+
+      if (
+        currentTime.isSameOrAfter(restaurantOpening) &&
+        currentTime.isBefore(restaurantClosing)
+      ) {
+        return restaurant;
+      }
+    });
 
     let dastakDeals = [];
 

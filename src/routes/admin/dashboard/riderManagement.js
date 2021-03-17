@@ -10,7 +10,6 @@ router.get('/allRiders', async (_req, res) => {
   try {
     const riders = await Users.find({
       type: 'rider',
-      status: { $ne: 'inactive' },
       pendingCollection: { $gt: 0 },
     })
       .sort({ pendingCollection: -1 })

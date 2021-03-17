@@ -2,6 +2,8 @@ const Router = require('express/lib/router');
 const moment = require('moment-timezone');
 
 const Users = require('../../models/userModel');
+const Reviews = require('../../models/reviewsModel');
+const Orders = require('../../models/ordersModel');
 
 const router = Router();
 
@@ -81,7 +83,7 @@ router.post('/martDetails', async (req, res) => {
   }
 });
 
-router.get('/allRestaurants', async (req, res) => {
+/* router.get('/allRestaurants', async (req, res) => {
   try {
     const currentTime = moment().tz('Asia/Karachi');
 
@@ -134,9 +136,9 @@ router.get('/allRestaurants', async (req, res) => {
       error: err.toString(),
     });
   }
-});
+}); */
 
-/* router.post('/allRestaurants', async (req, res) => {
+router.post('/allRestaurants', async (req, res) => {
   try {
     const { lat, long } = req.body;
 
@@ -238,9 +240,55 @@ router.get('/allRestaurants', async (req, res) => {
       error: err.toString(),
     });
   }
-}); */
+});
 
-/* router.post('/specificRestaurants', async (req, res) => {
+router.post('/reviews', async (req, res) => {
+  try {
+    const { martId, userId } = req.body;
+    let eligible = false;
+
+    const [allReviews, orders] = await Promise.all([
+      Reviews.findOne({ martId })
+        .select('reviews')
+        .lean(),
+
+      Orders.countDocuments({ userId, martId }),
+    ]);
+
+    if (orders > 0) {
+      if (allReviews !== null) {
+        const { reviews } = allReviews;
+
+        const allreadyReviewed = reviews.some(
+          review => review.userId === userId
+        );
+
+        if (allreadyReviewed) {
+          eligible = false;
+        } else {
+          eligible = true;
+        }
+      } else {
+        eligible = true;
+      }
+    }
+
+    return res.json({
+      status: '200',
+      allReviews: allReviews === null ? [] : allReviews.reviews,
+      eligible,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      msg: 'Looks like an error occurred on our side. Kindly try again',
+      error: err.toString(),
+    });
+  }
+});
+
+router.post('/specificRestaurants', async (req, res) => {
   try {
     const { category } = req.body;
     console.log(req.body);
@@ -277,7 +325,7 @@ router.get('/allRestaurants', async (req, res) => {
       error: err.toString(),
     });
   }
-}); */
+});
 
 router.post('/availabilityStatus', async (req, res) => {
   try {

@@ -17,7 +17,7 @@ router.post('/checkVersion', async (req, res) => {
 
     if (platform === 'ios' && version !== '1.5.6') {
       return res.json({
-        status: '200',
+        status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
         showCategories: 'false',
       });
@@ -34,7 +34,7 @@ router.post('/checkVersion', async (req, res) => {
 
     if (platform === 'android' && version !== '1.5.6') {
       return res.json({
-        status: '200',
+        status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
         showCategories: 'false',
       });

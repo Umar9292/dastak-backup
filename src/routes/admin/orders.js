@@ -560,10 +560,17 @@ router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId } = req.body;
 
-    const [order, { tillNoonFare, nightFare }] = await Promise.all([
-      Orders.findById(orderId),
-      Users.findById(riderId),
-    ]);
+    const [
+      order,
+      { tillNoonFare, nightFare, pendingCollection, name },
+    ] = await Promise.all([Orders.findById(orderId), Users.findById(riderId)]);
+
+    if (pendingCollection > 4000) {
+      return res.json({
+        status: '404',
+        msg: `Dear ${name} your collection limit has been exceeded. Kindly deposit the previous amount to accept any further orders.`,
+      });
+    }
 
     if (order.riderId) {
       return res.json({
