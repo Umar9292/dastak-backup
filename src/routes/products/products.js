@@ -370,7 +370,9 @@ router.post('/dastakDeals', async (req, res) => {
       },
     ]);
 
-    const openRestaurants = restaurants.filter(restaurant => {
+    const openRestaurants = [];
+
+    restaurants.filter(restaurant => {
       const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
