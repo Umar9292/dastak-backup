@@ -443,6 +443,7 @@ router.post('/dastakDeals', async (req, res) => {
       data: dastakDeals,
     });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
