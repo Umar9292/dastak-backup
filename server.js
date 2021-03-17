@@ -27,6 +27,8 @@ const restaurantsManagementRouter = require('./src/routes/admin/dashboard/restau
 const usersManagementRouter = require('./src/routes/admin/dashboard/userManagement');
 const usersReviewRouter = require('./src/routes/user/addReview');
 
+const Orders = require('./src/models/ordersModel');
+
 const port = process.env.PORT || 8080;
 
 const app = express();
@@ -64,8 +66,8 @@ app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 
 const options = {
-  host: 'dastakbackend.herokuapp.com',
-  // host: 'martbackend.herokuapp.com',
+  // host: 'dastakbackend.herokuapp.com',
+  host: 'martbackend.herokuapp.com',
 };
 const request = () => {
   get(options, function(res) {
@@ -109,17 +111,21 @@ connection.once('open', () => {
   console.log('Setting change streams');
   const ordersChangeStream = connection.collection('orders').watch();
 
-  ordersChangeStream.on('change', change => {
-    if (change.operationType === 'insert') {
+  ordersChangeStream.on('change', async change => {
+    /* if (change.operationType === 'insert') {
       const { fullDocument } = change;
-      io.emit('newOrder', fullDocument);
-    }
 
-    // if (change.operationType === 'update') {
-    //   const { documentKey, updateDescription } = change;
-    //   console.log(documentKey, updateDescription.updatedFields);
-    //   io.emit('newOrder', documentKey, updateDescription);
-    // }
+      io.emit('newOrder', fullDocument);
+    } */
+
+    if (change.operationType === 'update') {
+      const { documentKey, updateDescription } = change;
+
+      if (updateDescription.updatedFields.status === 'Admin Accepted') {
+        const newOrder = await Orders.findById(documentKey._id).lean();
+        io.emit('newOrder', newOrder);
+      }
+    }
   });
 });
 
