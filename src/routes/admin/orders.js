@@ -578,10 +578,10 @@ router.post('/assignRider', async (req, res) => {
 
     const [
       order,
-      { tillNoonFare, nightFare, pendingCollection, name },
+      { tillNoonFare, nightFare, pendingCollection, name, paymentLimit },
     ] = await Promise.all([Orders.findById(orderId), Users.findById(riderId)]);
 
-    if (pendingCollection > 4000) {
+    if (pendingCollection > paymentLimit) {
       return res.json({
         status: '404',
         msg: `Dear ${name} your collection limit has been exceeded. Kindly deposit the previous amount to accept any further orders.`,
