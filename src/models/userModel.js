@@ -58,6 +58,10 @@ const userModel = Schema(
       type: Number,
       default: 0,
     },
+    paymentLimit: {
+      type: Number,
+      default: 4000,
+    },
     percentage: Number,
     shopType: String,
     minimumOrder: Number,
