@@ -143,9 +143,6 @@ router.post('/allRestaurants', async (req, res) => {
     const { lat, long } = req.body;
 
     const currentTime = moment().tz('Asia/Karachi');
-    const timeLimit = moment('23:00', 'HH:mm')
-      .tz('Asia/Karachi')
-      .subtract(5, 'hours');
 
     let [data1, allRestaurants] = await Promise.all([
       Users.find({
@@ -230,8 +227,8 @@ router.post('/allRestaurants', async (req, res) => {
     return res.json({
       status: '200',
       allRestaurants,
-      data1: currentTime.isAfter(timeLimit) ? undefined : data1,
-      label1: currentTime.isAfter(timeLimit) ? undefined : 'Featured',
+      data1,
+      label1: 'Featured',
     });
   } catch (err) {
     return res.json({
