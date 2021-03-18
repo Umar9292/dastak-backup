@@ -1,6 +1,6 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
-// const axios = require('axios');
+const axios = require('axios');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
@@ -31,7 +31,15 @@ const router = Router();
 router.post('/placeOrder', async (req, res) => {
   try {
     let params = req.body;
-    const { orderTotal, martId, userId, products, date } = params;
+    const {
+      orderTotal,
+      martId,
+      userId,
+      products,
+      date,
+      latitude,
+      longitude,
+    } = params;
 
     const mart = await Users.findById(martId).select('-password -__v');
 
@@ -48,6 +56,14 @@ router.post('/placeOrder', async (req, res) => {
 
     const orderTime = moment().tz('Asia/karachi');
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
+
+    if (params.address === 'Current Location') {
+      const result = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&sensor=true&key=${process.env.GOOGLE_API_KEY}`
+      );
+
+      params.address = result.data.results[0].formatted_address;
+    }
 
     params = {
       ...params,
