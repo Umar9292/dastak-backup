@@ -39,6 +39,7 @@ router.post('/placeOrder', async (req, res) => {
       date,
       latitude,
       longitude,
+      employee,
     } = params;
 
     const mart = await Users.findById(martId).select('-password -__v');
@@ -73,6 +74,7 @@ router.post('/placeOrder', async (req, res) => {
       martPhone: mart.phone,
       martAddress: mart.martAddress,
       time: formatedTime,
+      deliverCharges: employee ? '0' : params.deliverCharges,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
         .toISOString(),
