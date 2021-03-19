@@ -23,6 +23,7 @@ const userModel = Schema(
       type: String,
       default: 'active',
     },
+    employee: Boolean,
     available: Boolean,
     jazzCashNumber: String,
     orderFare: Number,
