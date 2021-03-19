@@ -1,13 +1,13 @@
 require('dotenv').config();
 const express = require('express');
-const { connect, connection } = require('mongoose');
+const { connect } = require('mongoose');
 const bodyParser = require('body-parser');
-const { get, createServer } = require('http');
+const { get } = require('http');
 const cors = require('cors');
 const logger = require('morgan');
 const helmet = require('helmet');
 const { join } = require('path');
-const { config } = require('cloudinary');
+// const { config } = require('cloudinary');
 const compression = require('compression');
 
 const { dbUrl } = require('./utils/dbUrls');
@@ -27,15 +27,9 @@ const restaurantsManagementRouter = require('./src/routes/admin/dashboard/restau
 const usersManagementRouter = require('./src/routes/admin/dashboard/userManagement');
 const usersReviewRouter = require('./src/routes/user/addReview');
 
-const Orders = require('./src/models/ordersModel');
-
 const port = process.env.PORT || 8080;
 
 const app = express();
-
-const server = createServer(app);
-// eslint-disable-next-line import/order
-const io = require('socket.io')(server);
 
 app.disable('etag');
 app.disable('x-powered-by');
@@ -92,31 +86,23 @@ connect(
     if (err) {
       console.log(err);
     } else {
-      server.listen(port, () => console.log(`Listening on port ${port}\n`));
+      app.listen(port, () => console.log(`Listening on port ${port}\n`));
 
       console.log('Connected to database');
     }
   }
 );
 
-io.on('connection', socket => {
-  console.log(`user connected to ${socket.id}`);
-
-  socket.on('disconnect', () => {
-    console.log('A user disconected');
-  });
-});
-
-connection.once('open', () => {
+/* connection.once('open', () => {
   console.log('Setting change streams');
   const ordersChangeStream = connection.collection('orders').watch();
 
   ordersChangeStream.on('change', async change => {
-    /* if (change.operationType === 'insert') {
+    if (change.operationType === 'insert') {
       const { fullDocument } = change;
 
       io.emit('newOrder', fullDocument);
-    } */
+    }
 
     if (change.operationType === 'update') {
       const { documentKey, updateDescription } = change;
@@ -127,12 +113,12 @@ connection.once('open', () => {
       }
     }
   });
-});
+}); */
 
-config({
+/* config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
-});
+}); */
 
 module.exports = app;

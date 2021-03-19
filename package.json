@@ -33,7 +33,6 @@
     "object-sizeof": "^1.6.1",
     "onesignal-node": "^2.0.1",
     "redis": "^3.0.2",
-    "socket.io": "^3.1.0",
     "speakeasy": "^2.0.0"
   },
   "devDependencies": {
