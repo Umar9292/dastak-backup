@@ -23,8 +23,12 @@ router.post('/checkVersion', async (req, res) => {
       });
     }
 
-    if (platform === 'android' && version === '1.5.6')
+    if (
+      platform === 'android' &&
+      (version === '1.5.6' || version === '1.5.7')
+    ) {
       return res.json({ status: '200', showCategories: 'false' });
+    }
 
     /* if (platform === 'android' && version !== '1.4.4') {
       return res.json({
@@ -32,7 +36,10 @@ router.post('/checkVersion', async (req, res) => {
       });
     } */
 
-    if (platform === 'android' && version !== '1.5.6') {
+    if (
+      platform === 'android' &&
+      (version !== '1.5.6' || version !== '1.5.7')
+    ) {
       return res.json({
         status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
