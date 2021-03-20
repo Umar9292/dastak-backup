@@ -109,7 +109,9 @@ connect(
 
       if (updateDescription.updatedFields.status === 'Admin Accepted') {
         const newOrder = await Orders.findById(documentKey._id).lean();
-        io.emit('newOrder', newOrder);
+        if (newOrder.orderType === 'Delivery') {
+          io.emit('newOrder', newOrder);
+        }
       }
     }
   });
