@@ -38,7 +38,7 @@ router.post('/addReview', async (req, res) => {
       const avgRating = sumOfRatings / allReviews.reviews.length;
 
       await Users.findByIdAndUpdate(martId, {
-        rating: avgRating.toFixed(),
+        rating: avgRating.toFixed(1),
         reviews: allReviews.reviews.length,
       });
     }
