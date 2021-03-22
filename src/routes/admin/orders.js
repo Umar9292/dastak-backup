@@ -81,6 +81,7 @@ router.post('/placeOrder', async (req, res) => {
       martPhone: mart.phone,
       martAddress: mart.martAddress,
       time: formatedTime,
+      orderTotal: customer.employee ? orderTotal - 30 : orderTotal,
       deliveryCharges: customer.employee ? '0' : params.deliveryCharges,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
