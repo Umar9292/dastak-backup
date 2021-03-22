@@ -41,7 +41,7 @@ router.post('/placeOrder', async (req, res) => {
       longitude,
     } = params;
 
-    const [mart, { employee }] = await Promise.all([
+    const [mart, customer] = await Promise.all([
       Users.findById(martId).select('-password -__v'),
       Users.findById(userId).select('employee'),
     ]);
@@ -76,7 +76,7 @@ router.post('/placeOrder', async (req, res) => {
       martPhone: mart.phone,
       martAddress: mart.martAddress,
       time: formatedTime,
-      deliverCharges: employee ? '0' : params.deliverCharges,
+      deliveryCharges: customer.employee ? '0' : params.deliveryCharges,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
         .toISOString(),
