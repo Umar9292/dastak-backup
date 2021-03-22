@@ -211,6 +211,8 @@ router.post('/ridersFare', async (req, res) => {
       })
     );
 
+    console.log(data.length);
+
     const riderEarnings = data.reduce((a, b) => a + b.riderFare, 0);
     const totalCollection = data.reduce((a, b) => a + b.collection, 0);
 
