@@ -39,10 +39,12 @@ router.post('/placeOrder', async (req, res) => {
       date,
       latitude,
       longitude,
-      employee,
     } = params;
 
-    const mart = await Users.findById(martId).select('-password -__v');
+    const [mart, { employee }] = await Promise.all([
+      Users.findById(martId).select('-password -__v'),
+      Users.findById(userId).select('employee'),
+    ]);
 
     if (!mart.available) {
       return res.json({
