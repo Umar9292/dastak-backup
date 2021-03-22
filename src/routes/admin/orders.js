@@ -42,8 +42,13 @@ router.post('/placeOrder', async (req, res) => {
     } = params;
 
     const [mart, customer] = await Promise.all([
-      Users.findById(martId).select('-password -__v'),
-      Users.findById(userId).select('employee'),
+      Users.findById(martId)
+        .select('-password -__v')
+        .lean(),
+
+      Users.findById(userId)
+        .select('employee')
+        .lean(),
     ]);
 
     if (!mart.available) {
