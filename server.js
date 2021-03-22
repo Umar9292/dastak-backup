@@ -46,6 +46,10 @@ app.use(express.static(join(__dirname, 'views')));
 
 app.use('/user', signUpRouter, profileRouter, logoutRouter, usersReviewRouter);
 app.use('/orders', ordersRouter);
+app.use('/marts', martsRouter);
+app.use('/app', appVersionRouter);
+app.use('/general', playerIdRouter, generalApisRouter);
+app.use('/products', productsRouter, productImageRouter);
 app.use(
   '/admin',
   playerIdRouter,
@@ -54,10 +58,6 @@ app.use(
   restaurantsManagementRouter,
   usersManagementRouter
 );
-app.use('/marts', martsRouter);
-app.use('/app', appVersionRouter);
-app.use('/general', playerIdRouter, generalApisRouter);
-app.use('/products', productsRouter, productImageRouter);
 
 const options = {
   // host: 'dastakbackend.herokuapp.com',
