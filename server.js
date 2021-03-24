@@ -60,8 +60,8 @@ app.use(
 );
 
 const options = {
-  // host: 'dastakbackend.herokuapp.com',
-  host: 'martbackend.herokuapp.com',
+  host: 'dastakbackend.herokuapp.com',
+  // host: 'martbackend.herokuapp.com',
 };
 const request = () => {
   get(options, function(res) {
