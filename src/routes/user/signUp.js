@@ -73,18 +73,24 @@ router.post('/signIn', async (req, res) => {
       });
     }
 
-    const result = await compare(password, user.password);
-    if (!result) {
+    if (user.type !== 'rider') {
+      const result = await compare(password, user.password);
+      if (!result) {
+        return res.json({
+          status: '404',
+          msg: `Number or password is invalid`,
+        });
+      }
+    }
+
+    if (user.type === 'rider' && user.password !== password) {
       return res.json({
         status: '404',
         msg: `Number or password is invalid`,
       });
     }
 
-    if (!(user.type === 'admin')) {
-      user.playerId = '';
-      await user.save();
-    }
+    user.password = null;
 
     return res.json({
       status: '200',
