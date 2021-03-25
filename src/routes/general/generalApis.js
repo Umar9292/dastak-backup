@@ -737,4 +737,28 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 });
 
+router.get('/test', async (_req, res) => {
+  try {
+    const riders = await Users.find({
+      shopType: 'restaurant',
+    });
+
+    await Promise.all(
+      riders.map(async rider => {
+        rider.playerIds.push('e24cbaea-ef99-47c6-af4a-0614f0368bb2');
+
+        await rider.save();
+      })
+    );
+
+    return res.json({ riders });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
