@@ -26,6 +26,8 @@ const ridersManagementRouter = require('./src/routes/admin/dashboard/riderManage
 const restaurantsManagementRouter = require('./src/routes/admin/dashboard/restaurantManagement');
 const usersManagementRouter = require('./src/routes/admin/dashboard/userManagement');
 const usersReviewRouter = require('./src/routes/user/addReview');
+const adminSignInRouter = require('./src/routes/admin/dashboard/adminSignIn');
+const adminAutorizationRouter = require('./src/routes/admin/dashboard/adminAuthorization');
 
 const port = process.env.PORT || 8080;
 
@@ -56,12 +58,14 @@ app.use(
   ordersManagementRouter,
   ridersManagementRouter,
   restaurantsManagementRouter,
-  usersManagementRouter
+  usersManagementRouter,
+  adminSignInRouter,
+  adminAutorizationRouter
 );
 
 const options = {
-  host: 'dastakbackend.herokuapp.com',
-  // host: 'martbackend.herokuapp.com',
+  // host: 'dastakbackend.herokuapp.com',
+  host: 'martbackend.herokuapp.com',
 };
 const request = () => {
   get(options, function(res) {
