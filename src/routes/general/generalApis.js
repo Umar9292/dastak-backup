@@ -1,6 +1,7 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
 const Exceljs = require('exceljs');
+const { randomBytes } = require('crypto');
 // const redis = require('redis');
 
 const Users = require('../../models/userModel');
@@ -713,5 +714,27 @@ router.post('/readRestaurantExcelSheet', async (req, res) => {
     });
   }
 }); */
+
+router.get('/createRidersPassword', async (_req, res) => {
+  try {
+    const riders = await Users.find({ type: 'rider' });
+
+    await Promise.all(
+      riders.map(async rider => {
+        const newPassword = randomBytes(4);
+        rider.password = newPassword.toString('hex');
+        await rider.save();
+      })
+    );
+
+    return res.json({ riders });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
 
 module.exports = router;
