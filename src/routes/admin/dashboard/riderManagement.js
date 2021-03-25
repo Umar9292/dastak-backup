@@ -3,6 +3,7 @@ const moment = require('moment-timezone');
 
 const Users = require('../../../models/userModel');
 const Orders = require('../../../models/ordersModel');
+const { notifyRiders } = require('../../../notificationHandler/handler');
 
 const router = Router();
 
@@ -102,6 +103,49 @@ router.post('/reAssignRider', async (req, res) => {
     }
 
     return res.json({ status: '200', msg: 'This order has been re assigned' });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/removeRider', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    const order = await Orders.findByIdAndUpdate(
+      { _id: orderId },
+      {
+        $unset: { riderId: '', riderName: '', riderPhone: '' },
+        status: 'Admin Accepted',
+      }
+    );
+
+    const currentRidersOrders = await Orders.countDocuments({
+      riderId: order.riderId,
+      status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+    });
+
+    if (currentRidersOrders === 0) {
+      await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
+    }
+
+    res.json({ status: '200', msg: 'Rider has bee removed from this order.' });
+
+    const availableRiders = await Users.find({
+      type: 'rider',
+      status: 'idle',
+      available: true,
+    });
+
+    const msg = `New Order from ${order.martName}`;
+
+    availableRiders.forEach(rider =>
+      notifyRiders(rider.name, rider.playerId, msg, { flag: 'riderNotified' })
+    );
   } catch (err) {
     return res.json({
       status: '404',
