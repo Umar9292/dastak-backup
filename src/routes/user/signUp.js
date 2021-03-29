@@ -11,7 +11,7 @@ const router = Router();
 router.post('/signUp', async (req, res) => {
   try {
     const params = req.body;
-    const { phone, password } = params;
+    const { phone, password, type } = params;
 
     const user = await User.findOne({ phone });
     if (user) {
@@ -21,7 +21,9 @@ router.post('/signUp', async (req, res) => {
       });
     }
 
-    params.password = await hash(password, 10);
+    if (type !== 'rider') {
+      params.password = await hash(password, 10);
+    }
 
     const newUser = await new User(params).save();
 
