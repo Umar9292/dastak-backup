@@ -656,14 +656,16 @@ router.post('/riderOrders', async (req, res) => {
     const { riderId } = req.body;
 
     const [{ fareType, pendingCollection }, accepted] = await Promise.all([
-      Users.findById(riderId),
+      Users.findById(riderId).lean(),
 
       Orders.find({
         riderId,
         status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
-      }).sort({
-        createdAt: -1,
-      }),
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .lean(),
     ]);
 
     let delivered;
@@ -682,9 +684,11 @@ router.post('/riderOrders', async (req, res) => {
         paidToRider: false,
         riderFare: { $gt: 0 },
         status: 'Delivered',
-      }).sort({
-        createdAt: -1,
-      });
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .lean();
     }
 
     const totalRidersFare = delivered.reduce((a, b) => a + b.riderFare, 0);
@@ -695,7 +699,9 @@ router.post('/riderOrders', async (req, res) => {
       accepted.map(async order => {
         const { martId } = order;
 
-        const { latitude, longitude } = await Users.findById(martId);
+        const { latitude, longitude } = await Users.findById(martId)
+          .select('latitude longitude')
+          .lean();
 
         order.martLatitude = latitude;
         order.martLongitude = longitude;
