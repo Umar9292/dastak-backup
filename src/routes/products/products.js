@@ -1,11 +1,14 @@
 const Router = require('express/lib/router');
 const { orderBy } = require('lodash');
 const moment = require('moment-timezone/moment-timezone');
+// const redis = require('redis');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
 const Flavours = require('../../models/flavoursAndDrinks');
 const Categories = require('../../models/categoriesModel');
+
+// const client = redis.createClient(6379);
 
 const router = Router();
 
@@ -112,6 +115,120 @@ router.post('/allProducts', async (req, res) => {
     });
   }
 });
+
+/* router.post('/allProducts', async (req, res) => {
+  try {
+    const { martId, userId } = req.body;
+    let finalData = [];
+
+    client.get(martId, async (err, data) => {
+      if (err) console.log(err);
+
+      if (data !== null) {
+        return res.json({ status: '200', data: JSON.parse(data) });
+      }
+
+      const [{ categories }, { shopType, name }, options] = await Promise.all([
+        Categories.findOne({ martId }),
+        Users.findById(martId),
+        Flavours.findOne({ martId }),
+      ]);
+
+      if (userId && userId !== '') {
+        const customer = await Users.findById(userId).select('name');
+        console.log(`${customer.name} opened ${name}`);
+      } else {
+        console.log(`${name} has been opened`);
+      }
+
+      if (shopType === 'restaurant') {
+        for (const category of categories) {
+          const query = {
+            category,
+            martId,
+            available: 'in stock',
+          };
+
+          const products = await Products.find(query).sort({ productName: 1 });
+
+          const filteredProducts = products.filter(
+            ({ type, drinks }) => type === 'deal' || drinks === true
+          );
+
+          if (filteredProducts.length > 0) {
+            for (const product of filteredProducts) {
+              const { type, regular, drinks } = product;
+
+              if (
+                (type === 'deal' && !regular) ||
+                (type === 'deal' && regular === undefined)
+              ) {
+                product.flavours = options.flavours;
+              }
+
+              if (type === 'deal' && regular) {
+                product.flavours = options.regularFlavours;
+              }
+
+              if (drinks === true) {
+                product.allDrinks = options.drinks;
+              }
+            }
+          }
+
+          const data = {
+            category: query.category,
+            data: products,
+          };
+
+          finalData = [...finalData, data];
+        }
+
+        client.setex(martId, 30, JSON.stringify(finalData));
+
+        return res.json({
+          status: '200',
+          data: finalData,
+        });
+      }
+
+      await Promise.all(
+        categories.map(async ac => {
+          const query = {
+            category: ac,
+            martId,
+            available: 'in stock',
+          };
+
+          const martProducts = await Products.find(query).sort({
+            productName: 1,
+          });
+
+          const data = {
+            category: ac,
+            data: martProducts,
+          };
+
+          await Promise.resolve(data);
+          finalData.push(data);
+        })
+      );
+
+      finalData = orderBy(finalData, ['category'], ['asc']);
+
+      return res.json({
+        status: '200',
+        data: finalData,
+      });
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
 
 router.post('/allRestaurantProducts', async (req, res) => {
   try {
