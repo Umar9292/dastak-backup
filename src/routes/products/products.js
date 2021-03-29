@@ -8,11 +8,11 @@ const Products = require('../../models/productsModel');
 const Flavours = require('../../models/flavoursAndDrinks');
 const Categories = require('../../models/categoriesModel');
 
-// const client = createClient(process.env.REDIS_URL);
+const client = createClient(process.env.REDIS_URL);
 
 const router = Router();
 
-router.post('/allProducts', async (req, res) => {
+/* router.post('/allProducts', async (req, res) => {
   try {
     const { martId, userId } = req.body;
     let finalData = [];
@@ -114,9 +114,9 @@ router.post('/allProducts', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
-/* router.post('/allProducts', async (req, res) => {
+router.post('/allProducts', async (req, res) => {
   try {
     const { martId, userId } = req.body;
     let finalData = [];
@@ -228,7 +228,7 @@ router.post('/allProducts', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 router.post('/allRestaurantProducts', async (req, res) => {
   try {
