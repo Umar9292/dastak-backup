@@ -1,18 +1,18 @@
 const Router = require('express/lib/router');
 const { orderBy } = require('lodash');
 const moment = require('moment-timezone/moment-timezone');
-// const redis = require('redis');
+const { createClient } = require('redis');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
 const Flavours = require('../../models/flavoursAndDrinks');
 const Categories = require('../../models/categoriesModel');
 
-// const client = redis.createClient(6379);
+const client = createClient(process.env.REDIS_TLS_URL);
 
 const router = Router();
 
-router.post('/allProducts', async (req, res) => {
+/* router.post('/allProducts', async (req, res) => {
   try {
     const { martId, userId } = req.body;
     let finalData = [];
@@ -114,9 +114,9 @@ router.post('/allProducts', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
-/* router.post('/allProducts', async (req, res) => {
+router.post('/allProducts', async (req, res) => {
   try {
     const { martId, userId } = req.body;
     let finalData = [];
@@ -184,7 +184,7 @@ router.post('/allProducts', async (req, res) => {
           finalData = [...finalData, data];
         }
 
-        client.setex(martId, 30, JSON.stringify(finalData));
+        client.setex(martId, 60, JSON.stringify(finalData));
 
         return res.json({
           status: '200',
@@ -228,7 +228,7 @@ router.post('/allProducts', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 router.post('/allRestaurantProducts', async (req, res) => {
   try {
