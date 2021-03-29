@@ -90,6 +90,9 @@ router.post('/signIn', async (req, res) => {
       });
     }
 
+    user.playerId = '';
+    await user.save();
+
     user.password = null;
 
     return res.json({
