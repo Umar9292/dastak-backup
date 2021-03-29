@@ -60,14 +60,17 @@ router.post('/userPlayerId', async (req, res) => {
       });
     }
 
-    if (type === 'admin') return res.json({ status: '200', data: user });
+    if (type === 'admin') {
+      return res.json({ status: '200', data: user });
+    }
 
-    if (user.playerId !== playerId && user.playerId)
+    if (user.playerId !== playerId && user.playerId) {
       return res.json({
         status: '404',
         msg:
           'You have been logged out from this device, because you logged in on another device. If that was not you, please log in again and reset your Password.',
       });
+    }
 
     user.playerId = playerId;
     await user.save();
