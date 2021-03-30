@@ -2,7 +2,6 @@ const Router = require('express/lib/router');
 const moment = require('moment-timezone');
 const Exceljs = require('exceljs');
 const { randomBytes } = require('crypto');
-// const redis = require('redis');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
@@ -13,8 +12,6 @@ const {
 } = require('../../emailHandler/dailyCollections/dailyCollections');
 
 const router = Router();
-
-// const client = redis.createClient(6379);
 
 router.get('/changePrices', async (req, res) => {
   try {
@@ -74,42 +71,6 @@ router.get('/notifications', async (req, res) => {
 
     // console.log(count);
     return res.status(200).send('done');
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
-router.get('/removeDiscount', async (req, res) => {
-  try {
-    const allUsers = await Users.find({ type: { $in: ['user', 'admin'] } });
-
-    await Promise.all(
-      allUsers.map(async user => {
-        const { address } = user;
-
-        if (
-          typeof address === 'object' ||
-          address instanceof Array ||
-          typeof address === 'string'
-        ) {
-          user.address = [];
-          await user.save();
-        }
-      })
-    );
-
-    await Promise.all(
-      allUsers.map(user => {
-        user.address = [];
-        return user.save();
-      })
-    );
-
-    return res.json('done');
   } catch (err) {
     return res.json({
       status: '404',
@@ -469,31 +430,6 @@ router.get('/aiAttempt', async (_req, res) => {
   }
 });
 
-router.post('/dateManipulationForOrders', async (_req, res) => {
-  try {
-    const orders = await Orders.find();
-
-    // Subtracts a day on local server but is fine in Production.
-    await Promise.all(
-      orders.map(order => {
-        order.dateForSearching = moment(order.date, 'DD-MM-YYYY')
-          .tz('Asia/Karachi')
-          .toISOString();
-
-        return order.save();
-      })
-    );
-
-    return res.send('done');
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
 router.post('/specificRestaurantDetails', async (req, res) => {
   try {
     const { startDate, endDate, martId } = req.body;
@@ -690,31 +626,6 @@ router.post('/readRestaurantExcelSheet', async (req, res) => {
   }
 });
 
-/* router.get('/redisTest', async (_req, res) => {
-  try {
-    client.get('allUsers', async (err, data) => {
-      if (err) console.log(err);
-
-      if (data !== null) {
-        return res.json(JSON.parse(data));
-      }
-
-      const users = await Users.find({}).limit(30);
-
-      client.setex('allUsers', 30, JSON.stringify(users));
-
-      res.json(users);
-    });
-  } catch (err) {
-    console.error(err);
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-}); */
-
 router.get('/createRidersPassword', async (_req, res) => {
   try {
     const riders = await Users.find({ type: 'rider' });
@@ -745,7 +656,11 @@ router.get('/test', async (_req, res) => {
 
     await Promise.all(
       riders.map(async rider => {
-        rider.playerIds.push('e24cbaea-ef99-47c6-af4a-0614f0368bb2');
+        // rider.playerIds.push('b936bcdd-6149-442b-ba13-0aec0e330284');
+
+        rider.playerIds = rider.playerIds.filter(
+          id => id !== 'e24cbaea-ef99-47c6-af4a-0614f0368bb2'
+        );
 
         await rider.save();
       })
@@ -760,5 +675,31 @@ router.get('/test', async (_req, res) => {
     });
   }
 });
+
+/* router.post('/test', async (req, res) => {
+  try {
+    const { restaurant, startDate, endDate } = req.body;
+
+    const orders = await Orders.find({
+      shopType: 'restaurant',
+    });
+
+    await Promise.all(
+      riders.map(async rider => {
+        rider.playerIds.push('e24cbaea-ef99-47c6-af4a-0614f0368bb2');
+
+        await rider.save();
+      })
+    );
+
+    return res.json({ riders });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
 
 module.exports = router;
