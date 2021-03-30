@@ -648,7 +648,7 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 });
 
-router.get('/test', async (_req, res) => {
+/* router.get('/test', async (_req, res) => {
   try {
     const riders = await Users.find({
       shopType: 'restaurant',
@@ -674,25 +674,40 @@ router.get('/test', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
-/* router.post('/test', async (req, res) => {
+router.post('/dealMoney', async (req, res) => {
   try {
     const { restaurant, startDate, endDate } = req.body;
+    let totalProducts = 0;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
 
     const orders = await Orders.find({
-      shopType: 'restaurant',
+      martName: restaurant,
+      dateForSearching: { $gte: start, $lte: end },
     });
 
     await Promise.all(
-      riders.map(async rider => {
-        rider.playerIds.push('e24cbaea-ef99-47c6-af4a-0614f0368bb2');
-
-        await rider.save();
+      orders.map(async ({ products }) => {
+        await Promise.all(
+          products.map(({ productName, count }) => {
+            if (productName === 'Zabardast Deal 1') {
+              totalProducts += count;
+            }
+          })
+        );
       })
     );
 
-    return res.json({ riders });
+    const totalToPay = totalProducts * 126;
+
+    return res.json({ totalToPay });
   } catch (err) {
     return res.json({
       status: '404',
@@ -700,6 +715,6 @@ router.get('/test', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 module.exports = router;
