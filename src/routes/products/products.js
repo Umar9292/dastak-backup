@@ -2,6 +2,7 @@ const Router = require('express/lib/router');
 const { orderBy } = require('lodash');
 const moment = require('moment-timezone/moment-timezone');
 const { createClient } = require('redis');
+const { yellow } = require('chalk');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
@@ -127,6 +128,8 @@ router.post('/allProducts', async (req, res) => {
       if (data !== null) {
         return res.json({ status: '200', data: JSON.parse(data) });
       }
+
+      console.log(yellow('Hello %s'), 'I am here');
 
       const [{ categories }, { shopType, name }, options] = await Promise.all([
         Categories.findOne({ martId }),
