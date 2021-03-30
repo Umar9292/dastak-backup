@@ -24,6 +24,7 @@ const userModel = Schema(
       type: String,
       default: 'active',
     },
+    riderAddress: String,
     employee: Boolean,
     available: Boolean,
     jazzCashNumber: String,
