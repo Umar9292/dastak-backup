@@ -690,6 +690,7 @@ router.post('/dealMoney', async (req, res) => {
 
     const orders = await Orders.find({
       martName: restaurant,
+      status: 'Delivered',
       dateForSearching: { $gte: start, $lte: end },
     });
 
