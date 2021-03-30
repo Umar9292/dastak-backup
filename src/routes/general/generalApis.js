@@ -707,7 +707,7 @@ router.post('/dealMoney', async (req, res) => {
 
     const totalToPay = totalProducts * 126;
 
-    return res.json({ totalToPay });
+    return res.json({ totalProducts, totalToPay });
   } catch (err) {
     return res.json({
       status: '404',
