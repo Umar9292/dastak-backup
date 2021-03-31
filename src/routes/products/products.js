@@ -184,7 +184,7 @@ router.post('/allProducts', async (req, res) => {
           finalData = [...finalData, data];
         }
 
-        client.setex(martId, 60, JSON.stringify(finalData));
+        client.setex(martId, 300, JSON.stringify(finalData));
 
         return res.json({
           status: '200',

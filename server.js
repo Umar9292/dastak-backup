@@ -63,7 +63,7 @@ app.use(
   adminAutorizationRouter
 );
 
-const options = {
+/* const options = {
   host: 'dastakbackend.herokuapp.com',
   // host: 'martbackend.herokuapp.com',
 };
@@ -76,7 +76,7 @@ const request = () => {
     console.log(`Got error: ${e.message}`);
   });
 };
-setInterval(request, 1500000);
+setInterval(request, 1500000); */
 
 connect(
   dbUrl,
