@@ -1,5 +1,4 @@
 const Router = require('express/lib/router');
-const { orderBy } = require('lodash');
 const moment = require('moment-timezone/moment-timezone');
 const { createClient } = require('redis');
 
@@ -128,10 +127,16 @@ router.post('/allProducts', async (req, res) => {
         return res.json({ status: '200', data: JSON.parse(data) });
       }
 
-      const [{ categories }, { shopType, name }, options] = await Promise.all([
-        Categories.findOne({ martId }),
-        Users.findById(martId),
-        Flavours.findOne({ martId }),
+      const [{ categories }, { name }, options] = await Promise.all([
+        Categories.findOne({ martId })
+          .select('categories')
+          .lean(),
+
+        Users.findById(martId)
+          .select('name')
+          .lean(),
+
+        Flavours.findOne({ martId }).lean(),
       ]);
 
       if (userId && userId !== '') {
@@ -141,85 +146,54 @@ router.post('/allProducts', async (req, res) => {
         console.log(`${name} has been opened`);
       }
 
-      if (shopType === 'restaurant') {
-        for (const category of categories) {
-          const query = {
-            category,
-            martId,
-            available: 'in stock',
-          };
+      for (const category of categories) {
+        const query = {
+          category,
+          martId,
+          available: 'in stock',
+        };
 
-          const products = await Products.find(query).sort({ productName: 1 });
+        const products = await Products.find(query).sort({ productName: 1 });
 
-          const filteredProducts = products.filter(
-            ({ type, drinks }) => type === 'deal' || drinks === true
-          );
+        const filteredProducts = products.filter(
+          ({ type, drinks }) => type === 'deal' || drinks === true
+        );
 
-          if (filteredProducts.length > 0) {
-            for (const product of filteredProducts) {
-              const { type, regular, drinks } = product;
+        if (filteredProducts.length > 0) {
+          for (const product of filteredProducts) {
+            const { type, regular, drinks } = product;
 
-              if (
-                (type === 'deal' && !regular) ||
-                (type === 'deal' && regular === undefined)
-              ) {
-                product.flavours = options.flavours;
-              }
+            if (
+              (type === 'deal' && !regular) ||
+              (type === 'deal' && regular === undefined)
+            ) {
+              product.flavours = options.flavours;
+            }
 
-              if (type === 'deal' && regular) {
-                product.flavours = options.regularFlavours;
-              }
+            if (type === 'deal' && regular) {
+              product.flavours = options.regularFlavours;
+            }
 
-              if (drinks === true) {
-                product.allDrinks = options.drinks;
-              }
+            if (drinks === true) {
+              product.allDrinks = options.drinks;
             }
           }
-
-          const data = {
-            category: query.category,
-            data: products,
-          };
-
-          finalData = [...finalData, data];
         }
 
-        client.setex(martId, 300, JSON.stringify(finalData));
+        const data = {
+          category: query.category,
+          data: products,
+        };
 
-        return res.json({
-          status: '200',
-          data: finalData,
-        });
+        finalData = [...finalData, data];
       }
 
-      await Promise.all(
-        categories.map(async ac => {
-          const query = {
-            category: ac,
-            martId,
-            available: 'in stock',
-          };
-
-          const martProducts = await Products.find(query).sort({
-            productName: 1,
-          });
-
-          const data = {
-            category: ac,
-            data: martProducts,
-          };
-
-          await Promise.resolve(data);
-          finalData.push(data);
-        })
-      );
-
-      finalData = orderBy(finalData, ['category'], ['asc']);
-
-      return res.json({
+      res.json({
         status: '200',
         data: finalData,
       });
+
+      client.setex(martId, 300, JSON.stringify(finalData));
     });
   } catch (err) {
     console.log(err);
