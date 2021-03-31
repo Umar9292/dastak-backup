@@ -716,6 +716,7 @@ router.post('/dealMoney', async (req, res) => {
     if (restaurant === 'De Fiesta Restaurant') {
       let totalAmount = 0;
       let dealCount = 0;
+      let ourPercentage = 0;
 
       const orders = await Orders.find({
         martName: restaurant,
@@ -734,13 +735,16 @@ router.post('/dealMoney', async (req, res) => {
                 const tenPercent = ((10 / 100) * net).toFixed();
                 totalAmount += net + +tenPercent;
                 dealCount += count;
+              } else {
+                const tenPercent = ((10 / 100) * net).toFixed();
+                ourPercentage += +tenPercent;
               }
             })
           );
         })
       );
 
-      return res.json({ totalAmount, dealCount });
+      return res.json({ totalAmount, dealCount, ourPercentage });
     }
   } catch (err) {
     return res.json({
