@@ -57,8 +57,8 @@ router.get('/notifications', async (req, res) => {
     // const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
     // const msg = `Dear Umar to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
     const msg =
-      'Dear Aliza your current number is not working kindly contact Dastak rider whose number is given in your app.';
-    await notifyUser(msg, '134573b5-822d-402f-823f-71742208b6ce', {});
+      'Hello. The number that you have given is powred off. Kindly contact dastak rider or your order will be cancelled';
+    await notifyUser(msg, 'cb712449-673d-4867-aab5-2ff36f118549', {});
 
     /*  for (const user of users) {
       if (user.playerId && user.player !== '') {
@@ -679,7 +679,6 @@ router.get('/createRidersPassword', async (_req, res) => {
 router.post('/dealMoney', async (req, res) => {
   try {
     const { restaurant, startDate, endDate } = req.body;
-    let totalProducts = 0;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -688,27 +687,61 @@ router.post('/dealMoney', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    const orders = await Orders.find({
-      martName: restaurant,
-      status: 'Delivered',
-      dateForSearching: { $gte: start, $lte: end },
-    });
+    if (restaurant === 'Pizza Vizza Hut') {
+      let totalProducts = 0;
 
-    await Promise.all(
-      orders.map(async ({ products }) => {
-        await Promise.all(
-          products.map(({ productName, count }) => {
-            if (productName === 'Zabardast Deal 1') {
-              totalProducts += count;
-            }
-          })
-        );
+      const orders = await Orders.find({
+        martName: restaurant,
+        status: 'Delivered',
+        dateForSearching: { $gte: start, $lte: end },
+      });
+
+      await Promise.all(
+        orders.map(async ({ products }) => {
+          await Promise.all(
+            products.map(({ productName, count }) => {
+              if (productName === 'Zabardast Deal 1') {
+                totalProducts += count;
+              }
+            })
+          );
+        })
+      );
+
+      const totalToPay = totalProducts * 126;
+
+      return res.json({ totalProducts, totalToPay });
+    }
+
+    if (restaurant === 'De Fiesta Restaurant') {
+      let totalAmount = 0;
+      let dealCount = 0;
+
+      const orders = await Orders.find({
+        martName: restaurant,
+        status: 'Delivered',
+        orderType: 'Delivery',
+        dateForSearching: { $gte: start, $lte: end },
       })
-    );
+        .select('products orderTotal')
+        .lean();
 
-    const totalToPay = totalProducts * 126;
+      await Promise.all(
+        orders.map(async ({ products }) => {
+          await Promise.all(
+            products.map(({ productName, net, count }) => {
+              if (productName.includes('Discounted Deal')) {
+                const tenPercent = ((10 / 100) * net).toFixed();
+                totalAmount += net + +tenPercent;
+                dealCount += count;
+              }
+            })
+          );
+        })
+      );
 
-    return res.json({ totalProducts, totalToPay });
+      return res.json({ totalAmount, dealCount });
+    }
   } catch (err) {
     return res.json({
       status: '404',
