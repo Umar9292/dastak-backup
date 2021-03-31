@@ -744,7 +744,9 @@ router.post('/dealMoney', async (req, res) => {
         })
       );
 
-      return res.json({ totalAmount, dealCount, ourPercentage });
+      const amountToPay = totalAmount - ourPercentage;
+
+      return res.json({ totalAmount, dealCount, ourPercentage, amountToPay });
     }
   } catch (err) {
     return res.json({
