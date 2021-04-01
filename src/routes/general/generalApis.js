@@ -716,7 +716,7 @@ router.post('/dealMoney', async (req, res) => {
     if (restaurant === 'De Fiesta Restaurant') {
       let totalAmount = 0;
       let dealCount = 0;
-      let ourPercentage = 0;
+      const ourPercentage = 0;
 
       const [orders, pickupOrders] = await Promise.all([
         Orders.find({
@@ -761,22 +761,17 @@ router.post('/dealMoney', async (req, res) => {
 
                 totalAmount += finalAmount;
                 dealCount += count;
-              } else {
-                const tenPercent = ((10 / 100) * net).toFixed();
-                ourPercentage += +tenPercent;
               }
             })
           );
         })
       );
 
-      const amountToPay = totalAmount - ourPercentage;
-
       return res.json({
         totalAmount,
         dealCount,
         ourPercentage,
-        amountToPay,
+        amountToPay: totalAmount,
         pickupOrders,
       });
     }
