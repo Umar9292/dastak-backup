@@ -696,8 +696,13 @@ router.post('/dealMoney', async (req, res) => {
         dateForSearching: { $gte: start, $lte: end },
       });
 
+      const pickupOrders = orders.filter(order => order.orderType === 'PickUp');
+      const deliveryOrders = orders.filter(
+        order => order.orderType === 'Delivery'
+      );
+
       await Promise.all(
-        orders.map(async ({ products }) => {
+        deliveryOrders.map(async ({ products }) => {
           await Promise.all(
             products.map(({ productName, count }) => {
               if (productName === 'Zabardast Deal 1') {
@@ -707,8 +712,6 @@ router.post('/dealMoney', async (req, res) => {
           );
         })
       );
-
-      const pickupOrders = orders.filter(order => order.orderType === 'PickUp');
 
       const totalOfPickupOrders = pickupOrders.length * 27;
 
