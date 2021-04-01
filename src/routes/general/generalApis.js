@@ -718,22 +718,48 @@ router.post('/dealMoney', async (req, res) => {
       let dealCount = 0;
       let ourPercentage = 0;
 
-      const orders = await Orders.find({
-        martName: restaurant,
-        status: 'Delivered',
-        orderType: 'Delivery',
-        dateForSearching: { $gte: start, $lte: end },
-      })
-        .select('products orderTotal')
-        .lean();
+      const [orders, pickupOrders] = await Promise.all([
+        Orders.find({
+          martName: restaurant,
+          status: 'Delivered',
+          orderType: 'Delivery',
+          dateForSearching: { $gte: start, $lte: end },
+        })
+          .select('products orderTotal martId')
+          .lean(),
+
+        Orders.countDocuments({
+          martName: restaurant,
+          status: 'Delivered',
+          orderType: 'PickUp',
+          dateForSearching: { $gte: start, $lte: end },
+        }),
+      ]);
 
       await Promise.all(
-        orders.map(async ({ products }) => {
+        orders.map(async ({ products, martId }) => {
           await Promise.all(
-            products.map(({ productName, net, count }) => {
+            products.map(async ({ productName, net, count }) => {
               if (productName.includes('Discounted Deal')) {
-                const tenPercent = ((10 / 100) * net).toFixed();
-                totalAmount += net + +tenPercent;
+                const { price } = await Products.findOne({
+                  martId,
+                  productName,
+                })
+                  .select('price')
+                  .lean();
+
+                const thirtyPercent = ((30 / 100) * price).toFixed();
+                const priceAfterSubtracting = price - +thirtyPercent;
+
+                const tenPercentOfSubtracted = (
+                  (10 / 100) *
+                  priceAfterSubtracting
+                ).toFixed();
+
+                const finalAmount =
+                  priceAfterSubtracting + +tenPercentOfSubtracted;
+
+                totalAmount += finalAmount;
                 dealCount += count;
               } else {
                 const tenPercent = ((10 / 100) * net).toFixed();
@@ -746,9 +772,16 @@ router.post('/dealMoney', async (req, res) => {
 
       const amountToPay = totalAmount - ourPercentage;
 
-      return res.json({ totalAmount, dealCount, ourPercentage, amountToPay });
+      return res.json({
+        totalAmount,
+        dealCount,
+        ourPercentage,
+        amountToPay,
+        pickupOrders,
+      });
     }
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
