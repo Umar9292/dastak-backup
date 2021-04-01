@@ -687,7 +687,7 @@ router.post('/dealMoney', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    if (restaurant === 'Pizza Vizza Hut') {
+    if (restaurant === 'Pizza Vizza Hut' || restaurant === 'What a Pizza') {
       let totalProducts = 0;
 
       const orders = await Orders.find({
