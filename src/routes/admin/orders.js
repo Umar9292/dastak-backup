@@ -369,7 +369,10 @@ router.post('/adminResponse', async (req, res) => {
 
     const [user, shop] = await Promise.all([
       Users.findById(order.userId),
-      Users.findById(order.martId),
+
+      Users.findById(order.martId)
+        .select('name shopType playerIds')
+        .lean(),
     ]);
 
     const ridersMessage = `New order from ${shop.name}`;
@@ -450,16 +453,27 @@ router.post('/adminResponse', async (req, res) => {
         sendAcceptanceEmail(user.email, msg);
       }
 
-      const idleRiders = await Users.find({
-        type: 'rider',
-        status: 'idle',
-        available: true,
-      });
+      const [idleRiders, allRiders] = await Promise.all([
+        Users.find({
+          type: 'rider',
+          status: 'idle',
+          available: true,
+        })
+          .select('name email playerId')
+          .lean(),
 
-      const allRiders = await Users.find({ type: 'rider', available: true });
+        Users.find({
+          type: 'rider',
+          available: true,
+        })
+          .select('name email playerId')
+          .lean(),
+      ]);
+
+      let riderEmails = [];
 
       if (idleRiders.length === 0) {
-        const riderEmails = await Promise.all(
+        await Promise.all(
           allRiders.map(async rider => {
             const { name, email, playerId } = rider;
 
@@ -467,14 +481,16 @@ router.post('/adminResponse', async (req, res) => {
               flag: 'riderNotified',
             });
 
-            return email;
+            if (email !== '') {
+              riderEmails = [...riderEmails, email];
+            }
           })
         );
 
         emailOrderDetailsToRider(riderEmails);
       }
 
-      const riderEmails = await Promise.all(
+      await Promise.all(
         idleRiders.map(async rider => {
           const { name, email, playerId } = rider;
 
@@ -482,7 +498,9 @@ router.post('/adminResponse', async (req, res) => {
             flag: 'riderNotified',
           });
 
-          return email;
+          if (email !== '') {
+            riderEmails = [...riderEmails, email];
+          }
         })
       );
 
@@ -538,9 +556,11 @@ router.post('/adminAcceptedOrders', async (req, res) => {
     const { riderId } = req.body;
 
     const [idleRiders, { status, name }] = await Promise.all([
-      Users.find({ type: 'rider', status: 'idle', available: true }),
+      Users.find({ type: 'rider', status: 'idle', available: true })
+        .select('status name')
+        .lean(),
 
-      Users.findById(riderId),
+      Users.findById(riderId).lean(),
     ]);
 
     console.log(`${name} refreshed`);
