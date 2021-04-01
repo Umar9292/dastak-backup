@@ -708,9 +708,13 @@ router.post('/dealMoney', async (req, res) => {
         })
       );
 
+      const pickupOrders = orders.filter(order => order.orderType === 'PickUp');
+
+      const totalOfPickupOrders = pickupOrders.length * 27;
+
       const totalToPay = totalProducts * 126;
 
-      return res.json({ totalProducts, totalToPay });
+      return res.json({ totalProducts, totalToPay, totalOfPickupOrders });
     }
 
     if (restaurant === 'De Fiesta Restaurant') {
