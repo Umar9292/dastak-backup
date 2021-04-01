@@ -739,7 +739,7 @@ router.post('/dealMoney', async (req, res) => {
       await Promise.all(
         orders.map(async ({ products, martId }) => {
           await Promise.all(
-            products.map(async ({ productName, net, count }) => {
+            products.map(async ({ productName, count }) => {
               if (productName.includes('Discounted Deal')) {
                 const { price } = await Products.findOne({
                   martId,
@@ -751,15 +751,7 @@ router.post('/dealMoney', async (req, res) => {
                 const thirtyPercent = ((30 / 100) * price).toFixed();
                 const priceAfterSubtracting = price - +thirtyPercent;
 
-                const tenPercentOfSubtracted = (
-                  (10 / 100) *
-                  priceAfterSubtracting
-                ).toFixed();
-
-                const finalAmount =
-                  priceAfterSubtracting + +tenPercentOfSubtracted;
-
-                totalAmount += finalAmount;
+                totalAmount += priceAfterSubtracting;
                 dealCount += count;
               }
             })
