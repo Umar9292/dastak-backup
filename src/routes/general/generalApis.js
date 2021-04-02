@@ -688,7 +688,8 @@ router.post('/dealMoney', async (req, res) => {
       .toISOString();
 
     if (restaurant === 'Pizza Vizza Hut' || restaurant === 'What a Pizza') {
-      let totalProducts = 0;
+      let totalDeliveryProducts = 0;
+      let totalPickupProducts = 0;
 
       const orders = await Orders.find({
         martName: restaurant,
@@ -701,23 +702,37 @@ router.post('/dealMoney', async (req, res) => {
         order => order.orderType === 'Delivery'
       );
 
-      await Promise.all(
+      await Promise.all([
         deliveryOrders.map(async ({ products }) => {
           await Promise.all(
             products.map(({ productName, count }) => {
               if (productName === 'Zabardast Deal 1') {
-                totalProducts += count;
+                totalDeliveryProducts += count;
               }
             })
           );
-        })
-      );
+        }),
+
+        pickupOrders.map(async ({ products }) => {
+          await Promise.all(
+            products.map(({ productName, count }) => {
+              if (productName === 'Zabardast Deal 1') {
+                totalPickupProducts += count;
+              }
+            })
+          );
+        }),
+      ]);
 
       const totalOfPickupOrders = pickupOrders.length * 27;
+      const totalToPay = totalDeliveryProducts * 126;
 
-      const totalToPay = totalProducts * 126;
-
-      return res.json({ totalProducts, totalToPay, totalOfPickupOrders });
+      return res.json({
+        totalDeliveryProducts,
+        totalPickupProducts,
+        totalToPay,
+        totalOfPickupOrders,
+      });
     }
 
     if (restaurant === 'De Fiesta Restaurant') {
