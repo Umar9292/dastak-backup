@@ -786,7 +786,7 @@ router.post('/dealMoney', async (req, res) => {
                   productName,
                   price,
                   count,
-                  net,
+                  net: priceIntoCount,
                   priceAfterSubtracting,
                 };
 
