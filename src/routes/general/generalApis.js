@@ -763,7 +763,7 @@ router.post('/dealMoney', async (req, res) => {
       await Promise.all(
         orders.map(async ({ products, martId, orderNum }) => {
           await Promise.all(
-            products.map(async ({ productName, count, net }) => {
+            products.map(async ({ productName, count }) => {
               if (productName.includes('Discounted Deal')) {
                 const { price } = await Products.findOne({
                   martId,
@@ -798,7 +798,7 @@ router.post('/dealMoney', async (req, res) => {
       );
 
       const workbook = new Exceljs.Workbook();
-      const worksheet = workbook.addWorksheet(`${startDate - endDate}`);
+      const worksheet = workbook.addWorksheet(`${startDate} - ${endDate}`);
 
       worksheet.columns = [
         { header: 'Date', key: 'date', width: 15 },
