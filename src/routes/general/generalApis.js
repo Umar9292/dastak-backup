@@ -812,6 +812,7 @@ router.post('/dealMoney', async (req, res) => {
         { header: 'Order#', key: 'orderNum', width: 15 },
         { header: 'Product Name', key: 'productName', width: 15 },
         { header: 'Original Price', key: 'price', width: 15 },
+        { header: 'Count', key: 'count', width: 15 },
         { header: 'Net', key: 'net', width: 15 },
         { header: 'After 30%', key: 'priceAfterSubtracting', width: 15 },
       ];
