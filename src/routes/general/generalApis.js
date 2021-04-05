@@ -747,7 +747,7 @@ router.post('/dealMoney', async (req, res) => {
           orderType: 'Delivery',
           dateForSearching: { $gte: start, $lte: end },
         })
-          .select('products orderTotal martId')
+          .select('products orderTotal martId orderNum')
           .lean(),
 
         Orders.countDocuments({
