@@ -790,6 +790,8 @@ router.post('/dealMoney', async (req, res) => {
         })
       );
 
+      console.log(data);
+
       const workbook = new Exceljs.Workbook();
       const worksheet = workbook.addWorksheet(`${startDate - endDate}`);
 
