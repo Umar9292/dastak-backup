@@ -774,8 +774,10 @@ router.post('/dealMoney', async (req, res) => {
 
                 const priceIntoCount = price * count;
 
+                console.log(price, count, priceIntoCount);
+
                 const thirtyPercent = ((30 / 100) * priceIntoCount).toFixed();
-                const priceAfterSubtracting = price - +thirtyPercent;
+                const priceAfterSubtracting = priceIntoCount - +thirtyPercent;
 
                 totalAmount += priceAfterSubtracting;
                 dealCount += count;
