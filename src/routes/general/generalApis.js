@@ -758,10 +758,10 @@ router.post('/dealMoney', async (req, res) => {
         }),
       ]);
 
-      await Promise.all(
+      const data = await Promise.all(
         orders.map(async ({ products, martId }) => {
           await Promise.all(
-            products.map(async ({ productName, count, net }) => {
+            products.map(async ({ productName, count, net, orderNum }) => {
               if (productName.includes('Discounted Deal')) {
                 const { price } = await Products.findOne({
                   martId,
@@ -773,15 +773,41 @@ router.post('/dealMoney', async (req, res) => {
                 const thirtyPercent = ((30 / 100) * price).toFixed();
                 const priceAfterSubtracting = price - +thirtyPercent;
 
-                console.log({ productName, net, price, priceAfterSubtracting });
-
                 totalAmount += priceAfterSubtracting;
                 dealCount += count;
+
+                return {
+                  date: `${startDate - endDate}`,
+                  orderNum,
+                  productName,
+                  price,
+                  net,
+                  priceAfterSubtracting,
+                };
               }
             })
           );
         })
       );
+
+      const workbook = new Exceljs.Workbook();
+      const worksheet = workbook.addWorksheet(`${startDate - endDate}`);
+
+      worksheet.columns = [
+        { header: 'Date', key: 'date', width: 15 },
+        { header: 'Order#', key: 'orderNum', width: 15 },
+        { header: 'Product Name', key: 'productName', width: 15 },
+        { header: 'Original Price', key: 'price', width: 15 },
+        { header: 'Net', key: 'net', width: 15 },
+        { header: 'After 30%', key: 'priceAfterSubtracting', width: 15 },
+      ];
+
+      await Promise.all(data.map(doc => worksheet.addRow(doc)));
+
+      worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
+
+      await workbook.xlsx.writeFile(`${startDate - endDate}.xlsx`);
+      sendDailyCollection(`${startDate - endDate}.xlsx`);
 
       return res.json({
         totalAmount,
