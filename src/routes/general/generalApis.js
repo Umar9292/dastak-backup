@@ -758,12 +758,12 @@ router.post('/dealMoney', async (req, res) => {
         }),
       ]);
 
-      let data;
+      let data = [];
 
       await Promise.all(
-        orders.map(async ({ products, martId }) => {
-          data = await Promise.all(
-            products.map(async ({ productName, count, net, orderNum }) => {
+        orders.map(async ({ products, martId, orderNum }) => {
+          await Promise.all(
+            products.map(async ({ productName, count, net }) => {
               if (productName.includes('Discounted Deal')) {
                 const { price } = await Products.findOne({
                   martId,
@@ -778,14 +778,16 @@ router.post('/dealMoney', async (req, res) => {
                 totalAmount += priceAfterSubtracting;
                 dealCount += count;
 
-                return {
-                  date: `${startDate - endDate}`,
+                const result = {
+                  date: `${startDate} - ${endDate}`,
                   orderNum,
                   productName,
                   price,
                   net,
                   priceAfterSubtracting,
                 };
+
+                data = [...data, result];
               }
             })
           );
