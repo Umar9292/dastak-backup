@@ -792,6 +792,7 @@ router.post('/dealMoney', async (req, res) => {
                   orderNum,
                   productName,
                   price,
+                  count,
                   net,
                   priceAfterSubtracting,
                 };
@@ -803,7 +804,7 @@ router.post('/dealMoney', async (req, res) => {
         })
       );
 
-      /*  const workbook = new Exceljs.Workbook();
+      const workbook = new Exceljs.Workbook();
       const worksheet = workbook.addWorksheet(`${startDate - endDate}`);
 
       worksheet.columns = [
@@ -820,7 +821,7 @@ router.post('/dealMoney', async (req, res) => {
       worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
 
       await workbook.xlsx.writeFile(`${startDate - endDate}.xlsx`);
-      sendDailyCollection(`${startDate - endDate}.xlsx`); */
+      sendDailyCollection(`${startDate - endDate}.xlsx`);
 
       return res.json({
         totalAmount,
