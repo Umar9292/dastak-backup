@@ -506,7 +506,7 @@ router.post('/closeRestaurants', async (req, res) => {
       { available: updateFlag }
     );
 
-    return res.json('done');
+    return res.json({ status: '200', msg: 'done' });
   } catch (err) {
     return res.json({
       status: '404',
