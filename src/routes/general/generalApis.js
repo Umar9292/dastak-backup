@@ -733,12 +733,12 @@ router.post('/dealMoney', async (req, res) => {
       let totalOfPickupOrders = 0;
 
       if (restaurant === 'Khan Baba Foods') {
-        totalOfPickupOrders = totalPickupProducts * 27;
+        totalOfPickupOrders = totalPickupProducts * 6;
         totalToPay = totalDeliveryProducts * 105;
+      } else {
+        totalOfPickupOrders = totalPickupProducts * 27;
+        totalToPay = totalDeliveryProducts * 126;
       }
-
-      totalOfPickupOrders = totalPickupProducts * 27;
-      totalToPay = totalDeliveryProducts * 126;
 
       return res.json({
         totalDeliveryProducts,
