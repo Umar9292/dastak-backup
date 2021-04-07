@@ -163,15 +163,19 @@ router.post('/allProducts', async (req, res) => {
           for (const product of filteredProducts) {
             const { type, regular, drinks } = product;
 
-            if (
-              (type === 'deal' && !regular) ||
-              (type === 'deal' && regular === undefined)
-            ) {
-              product.flavours = options.flavours;
-            }
+            if (product.dealFlavours) {
+              product.flavours = options.dealFlavours;
+            } else {
+              if (
+                (type === 'deal' && !regular) ||
+                (type === 'deal' && regular === undefined)
+              ) {
+                product.flavours = options.flavours;
+              }
 
-            if (type === 'deal' && regular) {
-              product.flavours = options.regularFlavours;
+              if (type === 'deal' && regular) {
+                product.flavours = options.regularFlavours;
+              }
             }
 
             if (drinks === true) {
