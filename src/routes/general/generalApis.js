@@ -688,11 +688,7 @@ router.post('/dealMoney', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    if (
-      restaurant === 'Pizza Vizza Hut' ||
-      restaurant === 'What a Pizza' ||
-      restaurant === 'Khan Baba Foods'
-    ) {
+    if (restaurant === 'Pizza Vizza Hut' || restaurant === 'What a Pizza') {
       let totalDeliveryProducts = 0;
       let totalPickupProducts = 0;
 
@@ -729,16 +725,56 @@ router.post('/dealMoney', async (req, res) => {
         }),
       ]);
 
-      let totalToPay = 0;
-      let totalOfPickupOrders = 0;
+      const totalOfPickupOrders = totalPickupProducts * 27;
+      const totalToPay = totalDeliveryProducts * 126;
 
-      if (restaurant === 'Khan Baba Foods') {
-        totalOfPickupOrders = totalPickupProducts * 6;
-        totalToPay = totalDeliveryProducts * 105;
-      } else {
-        totalOfPickupOrders = totalPickupProducts * 27;
-        totalToPay = totalDeliveryProducts * 126;
-      }
+      return res.json({
+        totalDeliveryProducts,
+        totalPickupProducts,
+        totalToPay,
+        totalOfPickupOrders,
+      });
+    }
+
+    if (restaurant === 'Khan Baba Foods') {
+      let totalDeliveryProducts = 0;
+      let totalPickupProducts = 0;
+
+      const orders = await Orders.find({
+        martName: restaurant,
+        status: 'Delivered',
+        dateForSearching: { $gte: start, $lte: end },
+      });
+
+      const pickupOrders = orders.filter(order => order.orderType === 'PickUp');
+      const deliveryOrders = orders.filter(
+        order => order.orderType === 'Delivery'
+      );
+
+      await Promise.all([
+        deliveryOrders.map(async ({ products }) => {
+          await Promise.all(
+            products.map(({ productName, count }) => {
+              if (productName === 'Discounted Deal') {
+                totalDeliveryProducts += count;
+              }
+            })
+          );
+        }),
+
+        pickupOrders.map(async ({ products }) => {
+          await Promise.all(
+            products.map(({ productName, count }) => {
+              if (productName === 'Discounted Deal') {
+                totalPickupProducts += count;
+              }
+            })
+          );
+        }),
+      ]);
+
+      const totalOfPickupOrders = totalPickupProducts * 6;
+      const totalToPay = totalDeliveryProducts * 105;
 
       return res.json({
         totalDeliveryProducts,
