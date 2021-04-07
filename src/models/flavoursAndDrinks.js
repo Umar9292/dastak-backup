@@ -5,6 +5,7 @@ const optionsModel = Schema(
     martId: String,
     flavours: Object,
     regularFlavours: Object,
+    dealFlavours: Object,
     drinks: Object,
   },
   {
