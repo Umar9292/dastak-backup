@@ -755,7 +755,7 @@ router.post('/dealMoney', async (req, res) => {
         deliveryOrders.map(async ({ products }) => {
           await Promise.all(
             products.map(({ productName, count }) => {
-              if (productName === 'Discounted Deal') {
+              if (productName.includes('Discounted Deal')) {
                 totalDeliveryProducts += count;
               }
             })
@@ -765,7 +765,7 @@ router.post('/dealMoney', async (req, res) => {
         pickupOrders.map(async ({ products }) => {
           await Promise.all(
             products.map(({ productName, count }) => {
-              if (productName === 'Discounted Deal') {
+              if (productName.includes('Discounted Deal')) {
                 totalPickupProducts += count;
               }
             })
