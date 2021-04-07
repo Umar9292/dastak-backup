@@ -16,15 +16,16 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '6017bd54cb96440569fc8ded',
+      martId: '605214791957afb57196c843',
     });
 
     await Promise.all(
       products.map(product => {
-        let discountedPrice = ((15 / 100) * product.price).toFixed();
+        let discountedPrice = ((10 / 100) * product.price).toFixed();
         discountedPrice = Math.round(discountedPrice / 5) * 5;
-        product.price = +product.price + discountedPrice;
-        // return product.save();
+        product.discountedPrice = +product.price - discountedPrice;
+        product.discount = '10';
+        return product.save();
       })
     );
 
@@ -687,7 +688,11 @@ router.post('/dealMoney', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    if (restaurant === 'Pizza Vizza Hut' || restaurant === 'What a Pizza') {
+    if (
+      restaurant === 'Pizza Vizza Hut' ||
+      restaurant === 'What a Pizza' ||
+      restaurant === 'Khan Baba Foods'
+    ) {
       let totalDeliveryProducts = 0;
       let totalPickupProducts = 0;
 
@@ -724,8 +729,16 @@ router.post('/dealMoney', async (req, res) => {
         }),
       ]);
 
-      const totalOfPickupOrders = pickupOrders.length * 27;
-      const totalToPay = totalDeliveryProducts * 126;
+      let totalToPay = 0;
+      let totalOfPickupOrders = 0;
+
+      if (restaurant === 'Khan Baba Foods') {
+        totalOfPickupOrders = totalPickupProducts * 27;
+        totalToPay = totalDeliveryProducts * 105;
+      }
+
+      totalOfPickupOrders = totalPickupProducts * 27;
+      totalToPay = totalDeliveryProducts * 126;
 
       return res.json({
         totalDeliveryProducts,
@@ -797,7 +810,7 @@ router.post('/dealMoney', async (req, res) => {
         })
       );
 
-      const workbook = new Exceljs.Workbook();
+      /*       const workbook = new Exceljs.Workbook();
       const worksheet = workbook.addWorksheet(`${startDate} - ${endDate}`);
 
       worksheet.columns = [
@@ -815,7 +828,7 @@ router.post('/dealMoney', async (req, res) => {
       worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
 
       await workbook.xlsx.writeFile(`${startDate - endDate}.xlsx`);
-      sendDailyCollection(`${startDate - endDate}.xlsx`);
+      sendDailyCollection(`${startDate - endDate}.xlsx`); */
 
       return res.json({
         totalAmount,
