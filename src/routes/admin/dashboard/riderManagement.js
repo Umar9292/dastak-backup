@@ -38,6 +38,17 @@ router.get('/activeRiders', async (_req, res) => {
       .sort({ name: 1 })
       .lean();
 
+    await Promise.all(
+      activeRiders.map(async rider => {
+        const activeOrders = await Orders.countDocuments({
+          riderId: rider._id,
+          status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+        });
+
+        rider.activeOrders = activeOrders;
+      })
+    );
+
     return res.json({ status: '200', activeRiders });
   } catch (err) {
     console.log(err);
