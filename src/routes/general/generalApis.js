@@ -1,45 +1,45 @@
-const Router = require('express/lib/router');
-const moment = require('moment-timezone');
-const Exceljs = require('exceljs');
-const { randomBytes } = require('crypto');
+const Router = require("express/lib/router");
+const moment = require("moment-timezone");
+const Exceljs = require("exceljs");
+const { randomBytes } = require("crypto");
 
-const Users = require('../../models/userModel');
-const Products = require('../../models/productsModel');
-const Orders = require('../../models/ordersModel');
-const { notifyUser } = require('../../notificationHandler/handler');
+const Users = require("../../models/userModel");
+const Products = require("../../models/productsModel");
+const Orders = require("../../models/ordersModel");
+const { notifyUser } = require("../../notificationHandler/handler");
 const {
   sendDailyCollection,
-} = require('../../emailHandler/dailyCollections/dailyCollections');
+} = require("../../emailHandler/dailyCollections/dailyCollections");
 
 const router = Router();
 
-router.get('/changePrices', async (req, res) => {
+router.get("/changePrices", async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '605214791957afb57196c843',
+      martId: "605214791957afb57196c843",
     });
 
     await Promise.all(
-      products.map(product => {
+      products.map((product) => {
         let discountedPrice = ((10 / 100) * product.price).toFixed();
         discountedPrice = Math.round(discountedPrice / 5) * 5;
         product.discountedPrice = +product.price - discountedPrice;
-        product.discount = '10';
+        product.discount = "10";
         return product.save();
       })
     );
 
-    return res.json('done');
+    return res.json("done");
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.get('/notifications', async (req, res) => {
+router.get("/notifications", async (req, res) => {
   try {
     /*  const users = await Users.find({
       type: 'user',
@@ -58,8 +58,8 @@ router.get('/notifications', async (req, res) => {
     // const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
     // const msg = `Dear Umar to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
     const msg =
-      'Hello. The number that you have given is powred off. Kindly contact dastak rider or your order will be cancelled';
-    await notifyUser(msg, 'cb712449-673d-4867-aab5-2ff36f118549', {});
+      "Hello. The number that you have given is powred off. Kindly contact dastak rider or your order will be cancelled";
+    await notifyUser(msg, "cb712449-673d-4867-aab5-2ff36f118549", {});
 
     /*  for (const user of users) {
       if (user.playerId && user.player !== '') {
@@ -71,27 +71,27 @@ router.get('/notifications', async (req, res) => {
     } */
 
     // console.log(count);
-    return res.status(200).send('done');
+    return res.status(200).send("done");
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.post('/collections', async (req, res) => {
+router.post("/collections", async (req, res) => {
   try {
     let { startDate, endDate } = req.body;
 
-    startDate = moment(startDate, 'DD-MM-YYYY').tz('Asia/Karachi');
-    endDate = moment(endDate, 'DD-MM-YYYY').tz('Asia/Karachi');
+    startDate = moment(startDate, "DD-MM-YYYY").tz("Asia/Karachi");
+    endDate = moment(endDate, "DD-MM-YYYY").tz("Asia/Karachi");
 
     const thisWeeksOrders = await Orders.find({
       paid: false,
-      status: { $in: ['Delivered', 'Rider Picked Up'] },
-      orderType: 'Delivery',
+      status: { $in: ["Delivered", "Rider Picked Up"] },
+      orderType: "Delivery",
       dateForSearching: {
         $gte: startDate,
         $lte: endDate,
@@ -100,7 +100,7 @@ router.post('/collections', async (req, res) => {
 
     const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
     const ordersWithDeliveryCharges = thisWeeksOrders.filter(
-      order => order.deliveryCharges !== '0'
+      (order) => order.deliveryCharges !== "0"
     );
     const excludingDeliveryCharges =
       total - ordersWithDeliveryCharges.length * 30;
@@ -117,25 +117,25 @@ router.post('/collections', async (req, res) => {
       deliveryCharges,
       excludingDeliveryCharges,
       riderFare,
-      status: '200',
+      status: "200",
     });
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.post('/riderCollections', async (req, res) => {
+router.post("/riderCollections", async (req, res) => {
   try {
     const { date } = req.body;
 
-    const riders = await Orders.distinct('riderName', { date });
+    const riders = await Orders.distinct("riderName", { date });
 
     const data = await Promise.all(
-      riders.map(async rider => {
+      riders.map(async (rider) => {
         const orders = await Orders.find({ riderName: rider, date });
 
         const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
@@ -155,52 +155,52 @@ router.post('/riderCollections', async (req, res) => {
       riders,
       totalCollection,
       data,
-      status: '200',
+      status: "200",
     });
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.get('/deliveryCharges', async (req, res) => {
+router.get("/deliveryCharges", async (req, res) => {
   try {
-    const allUsers = await Users.find({ shopType: 'restaurant' });
+    const allUsers = await Users.find({ shopType: "restaurant" });
 
     await Promise.all(
-      allUsers.map(async user => {
-        user.deliveryCharges = '30';
+      allUsers.map(async (user) => {
+        user.deliveryCharges = "30";
         await user.save();
       })
     );
 
-    return res.json('done');
+    return res.json("done");
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.post('/dailyRiderCollections', async (req, res) => {
+router.post("/dailyRiderCollections", async (req, res) => {
   try {
     const { date } = req.body;
 
-    const riders = await Orders.distinct('riderName', { date });
+    const riders = await Orders.distinct("riderName", { date });
 
     const data = await Promise.all(
-      riders.map(async rider => {
+      riders.map(async (rider) => {
         const orders = await Orders.find({
           riderName: rider,
           date,
-          status: { $ne: 'Rejected' },
+          status: { $ne: "Rejected" },
           paidToRider: false,
-          orderType: 'Delivery',
+          orderType: "Delivery",
         });
 
         const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
@@ -216,13 +216,13 @@ router.post('/dailyRiderCollections', async (req, res) => {
     const worksheet = workbook.addWorksheet(`${date}`);
 
     worksheet.columns = [
-      { header: 'Rider', key: 'rider', width: 15 },
-      { header: 'Collection', key: 'collection', width: 15 },
+      { header: "Rider", key: "rider", width: 15 },
+      { header: "Collection", key: "collection", width: 15 },
     ];
 
-    await Promise.all(data.map(doc => worksheet.addRow(doc)));
+    await Promise.all(data.map((doc) => worksheet.addRow(doc)));
 
-    worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
+    worksheet.getRow(1).eachCell((cell) => (cell.font = { bold: true }));
 
     await workbook.xlsx.writeFile(`${date}.xlsx`);
     await sendDailyCollection(`${date}.xlsx`);
@@ -233,33 +233,33 @@ router.post('/dailyRiderCollections', async (req, res) => {
       riders,
       totalCollection,
       data,
-      status: '200',
+      status: "200",
     });
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.post('/restaurantsCollections', async (req, res) => {
+router.post("/restaurantsCollections", async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
     let dateRange;
     let percentage = 0;
 
-    const start = moment(startDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
+    const start = moment(startDate, "DD-MM-YYYY")
+      .tz("Asia/Karachi")
       .toISOString();
-    const end = moment(endDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
+    const end = moment(endDate, "DD-MM-YYYY")
+      .tz("Asia/Karachi")
       .toISOString();
 
-    const restaurants = await Orders.distinct('martName', {
+    const restaurants = await Orders.distinct("martName", {
       paid: false,
-      status: 'Delivered',
+      status: "Delivered",
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -267,13 +267,13 @@ router.post('/restaurantsCollections', async (req, res) => {
     });
 
     const data = await Promise.all(
-      restaurants.map(async martName => {
+      restaurants.map(async (martName) => {
         const [thisWeeksOrders, restaurant] = await Promise.all([
           Orders.find({
             martName,
             paid: { $in: [false, undefined] },
-            orderType: 'Delivery',
-            status: 'Delivered',
+            orderType: "Delivery",
+            status: "Delivered",
             dateForSearching: {
               $gte: start,
               $lte: end,
@@ -283,11 +283,11 @@ router.post('/restaurantsCollections', async (req, res) => {
           Users.findOne({ name: martName }),
         ]);
 
-        if (martName === "Moody's" || martName === 'Zam Zam Restaurant') {
+        if (martName === "Moody's" || martName === "Zam Zam Restaurant") {
           percentage = 12;
-        } else if (martName === 'De Fiesta Restaurant') {
+        } else if (martName === "De Fiesta Restaurant") {
           percentage = 10;
-        } else if (martName === 'Mahar Murgh Pulao') {
+        } else if (martName === "Mahar Murgh Pulao") {
           percentage = 20;
         } else {
           percentage = 15;
@@ -296,7 +296,7 @@ router.post('/restaurantsCollections', async (req, res) => {
         const total = thisWeeksOrders.reduce((a, b) => a + b.orderTotal, 0);
         const withoutDelivery = thisWeeksOrders.reduce(
           (a, b) =>
-            b.deliveryCharges !== '0'
+            b.deliveryCharges !== "0"
               ? a + b.orderTotal - 30
               : a + b.orderTotal,
           0
@@ -317,7 +317,7 @@ router.post('/restaurantsCollections', async (req, res) => {
           jazzCashNumber:
             restaurant && restaurant.jazzCashNumber
               ? restaurant.jazzCashNumber
-              : 'No Number Given',
+              : "No Number Given",
         };
       })
     );
@@ -328,7 +328,7 @@ router.post('/restaurantsCollections', async (req, res) => {
     ];
 
     await Promise.all(
-      data.map(doc => {
+      data.map((doc) => {
         doc.totalAmount = totalAmount;
         doc.amountToPay = amountToPay;
       })
@@ -338,52 +338,52 @@ router.post('/restaurantsCollections', async (req, res) => {
     const worksheet = workbook.addWorksheet(dateRange);
 
     worksheet.columns = [
-      { header: 'Date Range', key: 'dateRange', width: 15 },
-      { header: 'Total Amount', key: 'total', width: 15 },
-      { header: 'Restaurant Name', key: 'martName', width: 15 },
-      { header: 'After Percentage', key: 'totalToPayOwner', width: 15 },
-      { header: 'Profit', key: 'ourProfit', width: 15 },
-      { header: 'Delivery Charges', key: 'totalDeliveryCharges', width: 15 },
-      { header: 'Total Amount', key: 'totalAmount', width: 15 },
-      { header: 'Total Amount to Pay', key: 'amountToPay', width: 15 },
-      { header: 'Jazz Cash', key: 'jazzCashNumber', width: 15 },
+      { header: "Date Range", key: "dateRange", width: 15 },
+      { header: "Total Amount", key: "total", width: 15 },
+      { header: "Restaurant Name", key: "martName", width: 15 },
+      { header: "After Percentage", key: "totalToPayOwner", width: 15 },
+      { header: "Profit", key: "ourProfit", width: 15 },
+      { header: "Delivery Charges", key: "totalDeliveryCharges", width: 15 },
+      { header: "Total Amount", key: "totalAmount", width: 15 },
+      { header: "Total Amount to Pay", key: "amountToPay", width: 15 },
+      { header: "Jazz Cash", key: "jazzCashNumber", width: 15 },
     ];
 
-    await Promise.all(data.map(doc => worksheet.addRow(doc)));
+    await Promise.all(data.map((doc) => worksheet.addRow(doc)));
 
-    worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
+    worksheet.getRow(1).eachCell((cell) => (cell.font = { bold: true }));
 
     await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
     sendDailyCollection(`${dateRange}.xlsx`);
 
-    return res.json({ status: '200', data });
+    return res.json({ status: "200", data });
   } catch (err) {
     console.log(err);
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.get('/aiAttempt', async (_req, res) => {
+router.get("/aiAttempt", async (_req, res) => {
   try {
-    const users = await Orders.distinct('userId', {
+    const users = await Orders.distinct("userId", {
       orderTotal: { $gte: 400 },
     });
     const data = [];
 
     await Promise.all(
-      users.map(async userId => {
+      users.map(async (userId) => {
         const user = await Users.findById(userId);
 
         if (user) {
-          const restaurants = await Orders.distinct('martName', { userId });
+          const restaurants = await Orders.distinct("martName", { userId });
           const userOrderData = [];
 
           await Promise.all(
-            restaurants.map(async martName => {
+            restaurants.map(async (martName) => {
               const [orderCount, orders] = await Promise.all([
                 Orders.countDocuments({
                   martName,
@@ -424,30 +424,30 @@ router.get('/aiAttempt', async (_req, res) => {
     return res.json({ data });
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.post('/specificRestaurantDetails', async (req, res) => {
+router.post("/specificRestaurantDetails", async (req, res) => {
   try {
     const { startDate, endDate, martId } = req.body;
     let dateRange;
 
-    const start = moment(startDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
+    const start = moment(startDate, "DD-MM-YYYY")
+      .tz("Asia/Karachi")
       .toISOString();
-    const end = moment(endDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
+    const end = moment(endDate, "DD-MM-YYYY")
+      .tz("Asia/Karachi")
       .toISOString();
 
     const orders = await Orders.find({
       martId,
       paid: false,
-      orderType: 'Delivery',
-      status: 'Delivered',
+      orderType: "Delivery",
+      status: "Delivered",
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -455,9 +455,9 @@ router.post('/specificRestaurantDetails', async (req, res) => {
     });
 
     const data = await Promise.all(
-      orders.map(order => {
+      orders.map((order) => {
         const totalWithoutdelivery =
-          order.deliveryCharges === '0'
+          order.deliveryCharges === "0"
             ? order.orderTotal
             : order.orderTotal - 30;
 
@@ -472,60 +472,60 @@ router.post('/specificRestaurantDetails', async (req, res) => {
     const worksheet = workbook.addWorksheet(dateRange);
 
     worksheet.columns = [
-      { header: 'Date', key: 'date', width: 15 },
-      { header: 'Order Total', key: 'total', width: 15 },
+      { header: "Date", key: "date", width: 15 },
+      { header: "Order Total", key: "total", width: 15 },
     ];
 
-    await Promise.all(data.map(doc => worksheet.addRow(doc)));
+    await Promise.all(data.map((doc) => worksheet.addRow(doc)));
 
-    worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
+    worksheet.getRow(1).eachCell((cell) => (cell.font = { bold: true }));
 
     await workbook.xlsx.writeFile(`${dateRange}.xlsx`);
     sendDailyCollection(`${dateRange}.xlsx`);
 
-    return res.json({ status: '200', data });
+    return res.json({ status: "200", data });
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.post('/closeRestaurants', async (req, res) => {
+router.post("/closeRestaurants", async (req, res) => {
   try {
     const { searchFlag, updateFlag } = req.body;
 
     await Users.updateMany(
       {
-        shopType: 'restaurant',
-        status: 'active',
+        shopType: "restaurant",
+        status: "active",
         available: searchFlag,
       },
       { available: updateFlag }
     );
 
-    return res.json({ status: '404', msg: 'done' });
+    return res.json({ status: "200", msg: "done" });
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.get('/riderFares', async (_req, res) => {
+router.get("/riderFares", async (_req, res) => {
   try {
     const riders = await Users.find({
-      type: 'rider',
-      status: { $ne: 'inactive' },
+      type: "rider",
+      status: { $ne: "inactive" },
     });
 
     await Promise.all(
-      riders.map(async rider => {
-        if (rider.name === 'Amir Naveed' || rider.name === 'Ali Hashim') {
+      riders.map(async (rider) => {
+        if (rider.name === "Amir Naveed" || rider.name === "Ali Hashim") {
           rider.tillNoonFare = 70;
           rider.nightFare = 90;
         } else {
@@ -540,21 +540,21 @@ router.get('/riderFares', async (_req, res) => {
     return res.json({ riders });
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.get('/readRiderExcelSheet', async (_req, res) => {
+router.get("/readRiderExcelSheet", async (_req, res) => {
   try {
     const workbook = new Exceljs.Workbook();
 
     const sheet = workbook.xlsx.readFile(`${process.cwd()}/jazzCash.xlsx`);
-    const worksheet = (await sheet).getWorksheet('Sheet1');
+    const worksheet = (await sheet).getWorksheet("Sheet1");
 
-    worksheet.eachRow({ includeEmpty: false }, async row => {
+    worksheet.eachRow({ includeEmpty: false }, async (row) => {
       const martName = row.getCell(`A`).value;
       const phone = row.getCell(`B`).value;
 
@@ -566,47 +566,47 @@ router.get('/readRiderExcelSheet', async (_req, res) => {
       }
     });
 
-    return res.send('Done');
+    return res.send("Done");
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.post('/readRestaurantExcelSheet', async (req, res) => {
+router.post("/readRestaurantExcelSheet", async (req, res) => {
   try {
     let { startDate, endDate } = req.body;
 
-    startDate = moment(startDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
+    startDate = moment(startDate, "DD-MM-YYYY")
+      .tz("Asia/Karachi")
       .toISOString();
-    endDate = moment(endDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
+    endDate = moment(endDate, "DD-MM-YYYY")
+      .tz("Asia/Karachi")
       .toISOString();
 
     const workbook = new Exceljs.Workbook();
 
     const sheet = workbook.xlsx.readFile(`${process.cwd()}/sheets.xlsx`);
-    const worksheet = (await sheet).getWorksheet('04-02-2021 - 10-02-2021');
+    const worksheet = (await sheet).getWorksheet("04-02-2021 - 10-02-2021");
 
     const marts = [];
 
-    worksheet.eachRow({ includeEmpty: false }, async row => {
+    worksheet.eachRow({ includeEmpty: false }, async (row) => {
       const martName = row.getCell(`C`).value;
       marts.push(martName);
     });
 
     await Promise.all(
-      marts.map(async martName => {
+      marts.map(async (martName) => {
         await Orders.updateMany(
           {
             martName,
             paid: { $in: [false, undefined] },
-            orderType: 'Delivery',
-            status: { $in: ['Delivered', 'Rider Picked Up'] },
+            orderType: "Delivery",
+            status: { $in: ["Delivered", "Rider Picked Up"] },
             dateForSearching: {
               $gte: startDate,
               $lte: endDate,
@@ -617,24 +617,24 @@ router.post('/readRestaurantExcelSheet', async (req, res) => {
       })
     );
 
-    return res.send('Done');
+    return res.send("Done");
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
 });
 
-router.get('/createRidersPassword', async (_req, res) => {
+router.get("/createRidersPassword", async (_req, res) => {
   try {
-    const riders = await Users.find({ type: 'rider' });
+    const riders = await Users.find({ type: "rider" });
 
     await Promise.all(
-      riders.map(async rider => {
+      riders.map(async (rider) => {
         const newPassword = randomBytes(4);
-        rider.password = newPassword.toString('hex');
+        rider.password = newPassword.toString("hex");
         await rider.save();
       })
     );
@@ -642,7 +642,7 @@ router.get('/createRidersPassword', async (_req, res) => {
     return res.json({ riders });
   } catch (err) {
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
@@ -677,37 +677,39 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-router.post('/dealMoney', async (req, res) => {
+router.post("/dealMoney", async (req, res) => {
   try {
     const { restaurant, startDate, endDate } = req.body;
 
-    const start = moment(startDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
+    const start = moment(startDate, "DD-MM-YYYY")
+      .tz("Asia/Karachi")
       .toISOString();
-    const end = moment(endDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
+    const end = moment(endDate, "DD-MM-YYYY")
+      .tz("Asia/Karachi")
       .toISOString();
 
-    if (restaurant === 'Pizza Vizza Hut' || restaurant === 'What a Pizza') {
+    if (restaurant === "Pizza Vizza Hut" || restaurant === "What a Pizza") {
       let totalDeliveryProducts = 0;
       let totalPickupProducts = 0;
 
       const orders = await Orders.find({
         martName: restaurant,
-        status: 'Delivered',
+        status: "Delivered",
         dateForSearching: { $gte: start, $lte: end },
       });
 
-      const pickupOrders = orders.filter(order => order.orderType === 'PickUp');
+      const pickupOrders = orders.filter(
+        (order) => order.orderType === "PickUp"
+      );
       const deliveryOrders = orders.filter(
-        order => order.orderType === 'Delivery'
+        (order) => order.orderType === "Delivery"
       );
 
       await Promise.all([
         deliveryOrders.map(async ({ products }) => {
           await Promise.all(
             products.map(({ productName, count }) => {
-              if (productName === 'Zabardast Deal 1') {
+              if (productName === "Zabardast Deal 1") {
                 totalDeliveryProducts += count;
               }
             })
@@ -717,7 +719,7 @@ router.post('/dealMoney', async (req, res) => {
         pickupOrders.map(async ({ products }) => {
           await Promise.all(
             products.map(({ productName, count }) => {
-              if (productName === 'Zabardast Deal 1') {
+              if (productName === "Zabardast Deal 1") {
                 totalPickupProducts += count;
               }
             })
@@ -736,26 +738,28 @@ router.post('/dealMoney', async (req, res) => {
       });
     }
 
-    if (restaurant === 'Khan Baba Foods') {
+    if (restaurant === "Khan Baba Foods") {
       let totalDeliveryProducts = 0;
       let totalPickupProducts = 0;
 
       const orders = await Orders.find({
         martName: restaurant,
-        status: 'Delivered',
+        status: "Delivered",
         dateForSearching: { $gte: start, $lte: end },
       });
 
-      const pickupOrders = orders.filter(order => order.orderType === 'PickUp');
+      const pickupOrders = orders.filter(
+        (order) => order.orderType === "PickUp"
+      );
       const deliveryOrders = orders.filter(
-        order => order.orderType === 'Delivery'
+        (order) => order.orderType === "Delivery"
       );
 
       await Promise.all([
         deliveryOrders.map(async ({ products }) => {
           await Promise.all(
             products.map(({ productName, count }) => {
-              if (productName.includes('Discounted Deal')) {
+              if (productName.includes("Discounted Deal")) {
                 totalDeliveryProducts += count;
               }
             })
@@ -765,7 +769,7 @@ router.post('/dealMoney', async (req, res) => {
         pickupOrders.map(async ({ products }) => {
           await Promise.all(
             products.map(({ productName, count }) => {
-              if (productName.includes('Discounted Deal')) {
+              if (productName.includes("Discounted Deal")) {
                 totalPickupProducts += count;
               }
             })
@@ -784,7 +788,7 @@ router.post('/dealMoney', async (req, res) => {
       });
     }
 
-    if (restaurant === 'De Fiesta Restaurant') {
+    if (restaurant === "De Fiesta Restaurant") {
       let totalAmount = 0;
       let dealCount = 0;
       const ourPercentage = 0;
@@ -792,17 +796,17 @@ router.post('/dealMoney', async (req, res) => {
       const [orders, pickupOrders] = await Promise.all([
         Orders.find({
           martName: restaurant,
-          status: 'Delivered',
-          orderType: 'Delivery',
+          status: "Delivered",
+          orderType: "Delivery",
           dateForSearching: { $gte: start, $lte: end },
         })
-          .select('products orderTotal martId orderNum')
+          .select("products orderTotal martId orderNum")
           .lean(),
 
         Orders.countDocuments({
           martName: restaurant,
-          status: 'Delivered',
-          orderType: 'PickUp',
+          status: "Delivered",
+          orderType: "PickUp",
           dateForSearching: { $gte: start, $lte: end },
         }),
       ]);
@@ -813,12 +817,12 @@ router.post('/dealMoney', async (req, res) => {
         orders.map(async ({ products, martId, orderNum }) => {
           await Promise.all(
             products.map(async ({ productName, count }) => {
-              if (productName.includes('Discounted Deal')) {
+              if (productName.includes("Discounted Deal")) {
                 const { price } = await Products.findOne({
                   martId,
                   productName,
                 })
-                  .select('price')
+                  .select("price")
                   .lean();
 
                 const priceIntoCount = price * count;
@@ -877,7 +881,7 @@ router.post('/dealMoney', async (req, res) => {
   } catch (err) {
     console.log(err);
     return res.json({
-      status: '404',
+      status: "404",
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
