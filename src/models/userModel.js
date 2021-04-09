@@ -52,7 +52,10 @@ const userModel = Schema(
       default: 'user',
     },
     position: Number,
-    orderCount: Number,
+    orderCount: {
+      type: Number,
+      default: 0,
+    },
     useAsCustomer: {
       type: Boolean,
       default: false,
