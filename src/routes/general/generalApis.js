@@ -784,6 +784,34 @@ router.post('/dealMoney', async (req, res) => {
       });
     }
 
+    if (restaurant === 'Cafe Crew') {
+      const { products } = await Orders.find({
+        martName: restaurant,
+        status: 'Delivered',
+        orderType: 'Delivery',
+        dateForSearching: { $gte: start, $lte: end },
+      })
+        .select('products')
+        .lean();
+
+      let productCount = 0;
+
+      await Promise.all(
+        products.map(({ productName, count }) => {
+          if (productName.includes('Discounted Deal')) {
+            productCount += count;
+          }
+        })
+      );
+
+      const amountToPay = productCount * 99;
+
+      return res.json({
+        productCount,
+        amountToPay,
+      });
+    }
+
     if (restaurant === 'De Fiesta Restaurant') {
       let totalAmount = 0;
       let dealCount = 0;
