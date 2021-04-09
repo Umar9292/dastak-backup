@@ -785,7 +785,7 @@ router.post('/dealMoney', async (req, res) => {
     }
 
     if (restaurant === 'Cafe Crew') {
-      const { products } = await Orders.find({
+      const orders = await Orders.find({
         martName: restaurant,
         status: 'Delivered',
         orderType: 'Delivery',
@@ -795,10 +795,14 @@ router.post('/dealMoney', async (req, res) => {
       let productCount = 0;
 
       await Promise.all(
-        products.map(({ productName, count }) => {
-          if (productName.includes('Discounted Deal')) {
-            productCount += count;
-          }
+        orders.map(async ({ products }) => {
+          await Promise.all(
+            products.map(({ productName, count }) => {
+              if (productName.includes('Discounted Deal')) {
+                productCount += count;
+              }
+            })
+          );
         })
       );
 
