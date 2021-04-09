@@ -604,12 +604,27 @@ router.post('/adminAcceptedOrders', async (req, res) => {
 
 router.post('/assignRider', async (req, res) => {
   try {
-    const { orderId, riderName, riderId } = req.body;
+    const { orderId, riderName, riderId, admin } = req.body;
 
     const [
       order,
-      { tillNoonFare, nightFare, pendingCollection, name, paymentLimit },
-    ] = await Promise.all([Orders.findById(orderId), Users.findById(riderId)]);
+      {
+        tillNoonFare,
+        nightFare,
+        pendingCollection,
+        name,
+        paymentLimit,
+        orderCount,
+      },
+    ] = await Promise.all([
+      Orders.findById(orderId).lean(),
+
+      Users.findById(riderId)
+        .select(
+          'tillNoonFare nightFare pendingCollection name paymentLimit orderCount'
+        )
+        .lean(),
+    ]);
 
     if (pendingCollection > paymentLimit) {
       return res.json({
@@ -623,6 +638,14 @@ router.post('/assignRider', async (req, res) => {
         status: '404',
         msg:
           'This order has already been assigned to another rider. Stay active another order might come your way.',
+      });
+    }
+
+    if (!admin && orderCount >= 3) {
+      return res.json({
+        status: '404',
+        msg:
+          'You cannot accept this order untill you deliver your previous orders.',
       });
     }
 
@@ -642,7 +665,10 @@ router.post('/assignRider', async (req, res) => {
     await Promise.all([
       Orders.findByIdAndUpdate(orderId, { $set: req.body }),
 
-      Users.findByIdAndUpdate(riderId, { status: 'on delivery' }),
+      Users.findByIdAndUpdate(riderId, {
+        status: 'on delivery',
+        orderCount: orderCount + 1,
+      }),
     ]);
 
     res.json({
@@ -663,6 +689,7 @@ router.post('/assignRider', async (req, res) => {
 
     orderStatusEmail(message);
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -768,14 +795,17 @@ router.post('/changeOrderStatus', async (req, res) => {
 
       const [riderOrders, rider] = await Promise.all([
         Orders.countDocuments(query),
-        Users.findById(order.riderId),
+        Users.findById(order.riderId).lean(),
       ]);
 
       rider.pendingCollection += order.orderTotal;
       rider.save();
 
       if (riderOrders === 0) {
-        await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
+        await Users.findByIdAndUpdate(order.riderId, {
+          status: 'idle',
+          orderCount: rider.orderCount - 1,
+        });
       }
 
       const message = `Order# ${order.orderNum} has been delivered by ${order.riderName}`;

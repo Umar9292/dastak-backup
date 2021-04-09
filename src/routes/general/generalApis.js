@@ -790,9 +790,7 @@ router.post('/dealMoney', async (req, res) => {
         status: 'Delivered',
         orderType: 'Delivery',
         dateForSearching: { $gte: start, $lte: end },
-      })
-        .select('products')
-        .lean();
+      });
 
       let productCount = 0;
 
