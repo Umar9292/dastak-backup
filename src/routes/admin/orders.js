@@ -415,6 +415,10 @@ router.post('/adminResponse', async (req, res) => {
         if (ongoingOrders === 0) {
           await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
         }
+
+        const rider = await Users.findById(order.riderId).select('orderCount');
+        rider.orderCount -= 1;
+        await rider.save();
       }
     }
 
