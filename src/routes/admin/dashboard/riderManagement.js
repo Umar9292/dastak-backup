@@ -86,32 +86,48 @@ router.post('/reAssignRider', async (req, res) => {
   try {
     const { orderId, riderId } = req.body;
 
-    const { riderId: currentlyAssignedRider } = await Orders.findByIdAndUpdate(
-      orderId,
-      {
-        $set: req.body,
-      }
-    );
+    const {
+      riderId: currentlyAssignedRidersId,
+    } = await Orders.findByIdAndUpdate(orderId, {
+      $set: req.body,
+    });
 
     const [
       currentRidersOrders,
-      { status: newRidersStatus },
+      { status: newRidersStatus, orderCount: newRidersOrderCount },
+      { orderCount: currentRidersOrderCount },
     ] = await Promise.all([
       Orders.countDocuments({
-        riderId: currentlyAssignedRider,
+        riderId: currentlyAssignedRidersId,
         status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
       }),
 
-      Users.findById(riderId),
+      Users.findById(riderId)
+        .select('status orderCount')
+        .lean(),
+
+      Users.findById(currentlyAssignedRidersId)
+        .select('orderCount')
+        .lean(),
     ]);
 
     if (currentRidersOrders === 0) {
-      await Users.findByIdAndUpdate(currentlyAssignedRider, { status: 'idle' });
+      await Users.findByIdAndUpdate(currentlyAssignedRidersId, {
+        status: 'idle',
+      });
     }
 
     if (newRidersStatus === 'idle') {
       await Users.findByIdAndUpdate(riderId, { status: 'on delivery' });
     }
+
+    await Promise.all([
+      Users.findByIdAndUpdate(riderId, { orderCount: newRidersOrderCount + 1 }),
+
+      Users.findByIdAndUpdate(currentlyAssignedRidersId, {
+        orderCount: currentRidersOrderCount + 1,
+      }),
+    ]);
 
     return res.json({ status: '200', msg: 'This order has been re assigned' });
   } catch (err) {
@@ -143,6 +159,9 @@ router.post('/removeRider', async (req, res) => {
     if (currentRidersOrders === 0) {
       await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
     }
+
+    const rider = await Users.findById(order.riderId).select('orderCount');
+    rider.orderCount -= 1;
 
     res.json({ status: '200', msg: 'Rider has bee removed from this order.' });
 
