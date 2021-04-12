@@ -125,7 +125,7 @@ router.post('/reAssignRider', async (req, res) => {
       Users.findByIdAndUpdate(riderId, { orderCount: newRidersOrderCount + 1 }),
 
       Users.findByIdAndUpdate(currentlyAssignedRidersId, {
-        orderCount: currentRidersOrderCount + 1,
+        orderCount: currentRidersOrderCount - 1,
       }),
     ]);
 
