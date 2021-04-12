@@ -641,7 +641,7 @@ router.post('/assignRider', async (req, res) => {
       });
     }
 
-    if (!admin && orderCount >= 3) {
+    if (!admin && orderCount >= 2) {
       return res.json({
         status: '404',
         msg:
@@ -689,7 +689,6 @@ router.post('/assignRider', async (req, res) => {
 
     orderStatusEmail(message);
   } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
@@ -795,7 +794,7 @@ router.post('/changeOrderStatus', async (req, res) => {
 
       const [riderOrders, rider] = await Promise.all([
         Orders.countDocuments(query),
-        Users.findById(order.riderId).lean(),
+        Users.findById(order.riderId),
       ]);
 
       rider.pendingCollection += order.orderTotal;
@@ -804,9 +803,12 @@ router.post('/changeOrderStatus', async (req, res) => {
       if (riderOrders === 0) {
         await Users.findByIdAndUpdate(order.riderId, {
           status: 'idle',
-          orderCount: rider.orderCount - 1,
         });
       }
+
+      await Users.findByIdAndUpdate(order.riderId, {
+        orderCount: rider.orderCount - 1,
+      });
 
       const message = `Order# ${order.orderNum} has been delivered by ${order.riderName}`;
       orderStatusEmail(message);
