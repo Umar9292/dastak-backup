@@ -878,7 +878,7 @@ router.post('/dealMoney', async (req, res) => {
         })
       );
 
-      totalAmount = dealCount * 255;
+      totalAmount = dealCount * 225;
 
       /*       const workbook = new Exceljs.Workbook();
       const worksheet = workbook.addWorksheet(`${startDate} - ${endDate}`);
