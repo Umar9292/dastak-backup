@@ -68,7 +68,7 @@ router.post('/allRestaurants', async (req, res) => {
 
     const currentTime = moment().tz('Asia/Karachi');
 
-    let [data1, allRestaurants] = await Promise.all([
+    let [data1, data2, allRestaurants] = await Promise.all([
       Users.find({
         available: true,
         status: 'active',
@@ -77,6 +77,24 @@ router.post('/allRestaurants', async (req, res) => {
       })
         .sort({ name: -1 })
         .lean(),
+
+      Users.aggregate([
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [long, lat] },
+            distanceField: 'dist',
+            maxDistance: 3100,
+            query: {
+              available: true,
+              type: 'admin',
+              status: 'active',
+              shopType: 'restaurant',
+              category: 'Home Chef',
+            },
+            spherical: true,
+          },
+        },
+      ]),
 
       Users.aggregate([
         {
@@ -148,11 +166,39 @@ router.post('/allRestaurants', async (req, res) => {
       }
     });
 
+    data2 = data2.filter(restaurant => {
+      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+
+      const openingTimeOffSet = moment(restaurantOpening).format('a');
+      const closingTimeOffSet = moment(restaurantClosing).format('a');
+
+      if (
+        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+      ) {
+        restaurantClosing = moment(restaurantClosing).add(1, 'days');
+      }
+
+      if (
+        currentTime.isSameOrAfter(restaurantOpening) &&
+        currentTime.isBefore(restaurantClosing)
+      ) {
+        return restaurant;
+      }
+    });
+
     return res.json({
       status: '200',
       allRestaurants,
-      data1,
       label1: 'Featured',
+      data1,
+      label2: 'Home Chefs',
+      data2,
     });
   } catch (err) {
     return res.json({
