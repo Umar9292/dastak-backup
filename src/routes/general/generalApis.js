@@ -837,14 +837,16 @@ router.post('/dealMoney', async (req, res) => {
         }),
       ]);
 
-      let data = [];
+      const data = [];
 
       await Promise.all(
         orders.map(async ({ products, martId, orderNum }) => {
           await Promise.all(
             products.map(async ({ productName, count }) => {
               if (productName.includes('Discounted Deal')) {
-                const { price } = await Products.findOne({
+                dealCount += count;
+
+                /* const { price } = await Products.findOne({
                   martId,
                   productName,
                 })
@@ -869,12 +871,14 @@ router.post('/dealMoney', async (req, res) => {
                   priceAfterSubtracting,
                 };
 
-                data = [...data, result];
+                data = [...data, result]; */
               }
             })
           );
         })
       );
+
+      totalAmount = dealCount * 255;
 
       /*       const workbook = new Exceljs.Workbook();
       const worksheet = workbook.addWorksheet(`${startDate} - ${endDate}`);
