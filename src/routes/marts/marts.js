@@ -195,9 +195,9 @@ router.post('/allRestaurants', async (req, res) => {
     return res.json({
       status: '200',
       allRestaurants,
-      label1: 'Featured',
+      label1: data1 !== [] ? 'Featured' : undefined,
       data1,
-      label2: 'Home Chefs',
+      label2: data2 !== [] ? 'Home Chefs' : undefined,
       data2,
     });
   } catch (err) {
