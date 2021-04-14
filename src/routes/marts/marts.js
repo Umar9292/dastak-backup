@@ -195,10 +195,10 @@ router.post('/allRestaurants', async (req, res) => {
     return res.json({
       status: '200',
       allRestaurants,
-      label1: data1 !== [] ? 'Featured' : undefined,
-      data1,
+      label1: data2.length !== 0 ? 'Featured' : undefined,
+      data1: data1.length !== 0 ? data1 : undefined,
       label2: data2.length !== 0 ? 'Home Chefs' : undefined,
-      data2,
+      data2: data2.length !== 0 ? data2 : undefined,
     });
   } catch (err) {
     return res.json({
