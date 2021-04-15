@@ -155,41 +155,43 @@ router.post('/allProducts', async (req, res) => {
 
         const products = await Products.find(query).sort({ productName: 1 });
 
-        const filteredProducts = products.filter(
-          ({ type, drinks }) => type === 'deal' || drinks === true
-        );
+        if (products.length > 0) {
+          const filteredProducts = products.filter(
+            ({ type, drinks }) => type === 'deal' || drinks === true
+          );
 
-        if (filteredProducts.length > 0) {
-          for (const product of filteredProducts) {
-            const { type, regular, drinks } = product;
+          if (filteredProducts.length > 0) {
+            for (const product of filteredProducts) {
+              const { type, regular, drinks } = product;
 
-            if (product.dealFlavours) {
-              product.flavours = options.dealFlavours;
-            } else {
-              if (
-                (type === 'deal' && !regular) ||
-                (type === 'deal' && regular === undefined)
-              ) {
-                product.flavours = options.flavours;
+              if (product.dealFlavours) {
+                product.flavours = options.dealFlavours;
+              } else {
+                if (
+                  (type === 'deal' && !regular) ||
+                  (type === 'deal' && regular === undefined)
+                ) {
+                  product.flavours = options.flavours;
+                }
+
+                if (type === 'deal' && regular) {
+                  product.flavours = options.regularFlavours;
+                }
               }
 
-              if (type === 'deal' && regular) {
-                product.flavours = options.regularFlavours;
+              if (drinks === true) {
+                product.allDrinks = options.drinks;
               }
-            }
-
-            if (drinks === true) {
-              product.allDrinks = options.drinks;
             }
           }
+
+          const data = {
+            category: query.category,
+            data: products,
+          };
+
+          finalData = [...finalData, data];
         }
-
-        const data = {
-          category: query.category,
-          data: products,
-        };
-
-        finalData = [...finalData, data];
       }
 
       res.json({
