@@ -36,10 +36,13 @@ router.post('/placeOrder', async (req, res) => {
       martId,
       userId,
       products,
-      date,
       latitude,
       longitude,
     } = params;
+
+    const date = moment()
+      .tz('Asia/Karachi')
+      .format('DD-MM-YYYY');
 
     const [mart, customer] = await Promise.all([
       Users.findById(martId)
@@ -83,6 +86,7 @@ router.post('/placeOrder', async (req, res) => {
       time: formatedTime,
       orderTotal: customer.employee ? orderTotal - 30 : orderTotal,
       deliveryCharges: customer.employee ? '0' : params.deliveryCharges,
+      date,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
         .toISOString(),
@@ -610,6 +614,10 @@ router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
 
+    const date = moment()
+      .tz('Asia/Karachi')
+      .format('DD-MM-YYYY');
+
     const [
       order,
       {
@@ -620,6 +628,7 @@ router.post('/assignRider', async (req, res) => {
         paymentLimit,
         orderCount,
       },
+      todaysOrders,
     ] = await Promise.all([
       Orders.findById(orderId).lean(),
 
@@ -628,9 +637,16 @@ router.post('/assignRider', async (req, res) => {
           'tillNoonFare nightFare pendingCollection name paymentLimit orderCount'
         )
         .lean(),
+
+      Orders.find({ riderId, date })
+        .select('orderTotal')
+        .lean(),
     ]);
 
-    if (pendingCollection > paymentLimit) {
+    if (
+      pendingCollection > paymentLimit ||
+      (todaysOrders.length === 0 && pendingCollection > 0)
+    ) {
       return res.json({
         status: '404',
         msg: `Dear ${name} your collection limit has been exceeded. Kindly deposit the previous amount to accept any further orders.`,
