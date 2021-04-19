@@ -644,7 +644,7 @@ router.post('/assignRider', async (req, res) => {
     ]);
 
     if (
-      pendingCollection > paymentLimit ||
+      pendingCollection >= paymentLimit ||
       (todaysOrders.length === 0 && pendingCollection > 0)
     ) {
       return res.json({
