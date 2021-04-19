@@ -16,15 +16,15 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '607057d727c97002e9799505',
+      martId: '5ffc52f0ae4f9b02e5ba52be',
     });
 
     await Promise.all(
       products.map(product => {
-        let discountedPrice = ((30 / 100) * product.price).toFixed();
+        let discountedPrice = ((70 / 100) * product.price).toFixed();
         discountedPrice = Math.round(discountedPrice / 5) * 5;
         product.discountedPrice = +product.price - discountedPrice;
-        product.discount = '30';
+        product.discount = '70';
         return product.save();
       })
     );
