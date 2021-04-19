@@ -638,7 +638,7 @@ router.post('/assignRider', async (req, res) => {
         )
         .lean(),
 
-      Orders.find({ riderId, date })
+      Orders.find({ riderId, date, status: 'Delivered' })
         .select('orderTotal')
         .lean(),
     ]);
