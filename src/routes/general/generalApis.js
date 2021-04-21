@@ -736,7 +736,7 @@ router.post('/dealMoney', async (req, res) => {
       });
     }
 
-    if (restaurant === 'Khan Baba Foods') {
+    if (restaurant === 'Khan Baba Hotel') {
       let totalDeliveryProducts = 0;
       let totalPickupProducts = 0;
 
