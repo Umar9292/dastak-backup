@@ -6,6 +6,7 @@ const ordersModel = Schema(
       type: Boolean,
       default: false,
     },
+    assignedBy: String,
     userId: String,
     martId: String,
     orderNum: String,

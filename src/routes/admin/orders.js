@@ -630,7 +630,7 @@ router.post('/assignRider', async (req, res) => {
       },
       todaysOrders,
     ] = await Promise.all([
-      Orders.findById(orderId).lean(),
+      Orders.findById(orderId),
 
       Users.findById(riderId)
         .select(
@@ -669,6 +669,12 @@ router.post('/assignRider', async (req, res) => {
       });
     }
 
+    if (!admin) {
+      order.assignedBy = name;
+    } else {
+      order.assignedBy = 'admin';
+    }
+
     const orderTime = moment(order.time, 'HH:mma')
       .tz('Asia/karachi')
       .subtract(5, 'hours');
@@ -695,6 +701,8 @@ router.post('/assignRider', async (req, res) => {
       status: '200',
       msg: 'This order is now assigned to you.',
     });
+
+    await order.save();
 
     const { playerIds } = await Users.findById(order.martId);
 
