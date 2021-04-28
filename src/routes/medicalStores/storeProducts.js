@@ -45,9 +45,9 @@ router.post('/allProducts', async (req, res) => {
           available: 'in stock',
         };
 
-        const products = await StoreProducts.find(query)
-          .sort({ productName: 1 })
-          .lean();
+        const products = await StoreProducts.find(query).sort({
+          productName: 1,
+        });
 
         const data = {
           category: query.category,
