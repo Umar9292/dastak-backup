@@ -2,7 +2,7 @@ const Router = require('express/lib/router');
 const { createClient } = require('redis');
 
 const Users = require('../../models/userModel');
-const StoreProducts = require('../../models/MedicalStoreProducts');
+const StoreProducts = require('../../models/storeProducts');
 const Categories = require('../../models/categoriesModel');
 
 const client = createClient(process.env.REDIS_URL);
