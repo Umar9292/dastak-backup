@@ -28,6 +28,8 @@ const usersManagementRouter = require('./src/routes/admin/dashboard/userManageme
 const usersReviewRouter = require('./src/routes/user/addReview');
 const adminSignInRouter = require('./src/routes/admin/dashboard/adminSignIn');
 const adminAutorizationRouter = require('./src/routes/admin/dashboard/adminAuthorization');
+const medicalStoresRouter = require('./src/routes/medicalStores/medicalStores');
+const storeProductsRouter = require('./src/routes/medicalStores/storeProducts');
 
 const port = process.env.PORT || 8080;
 
@@ -52,6 +54,7 @@ app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
+app.use('/stores', medicalStoresRouter, storeProductsRouter);
 app.use(
   '/admin',
   playerIdRouter,
