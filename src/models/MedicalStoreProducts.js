@@ -23,4 +23,4 @@ const medicalStoreProducts = Schema(
   }
 );
 
-module.exports = model('products', medicalStoreProducts);
+module.exports = model('store products', medicalStoreProducts);
