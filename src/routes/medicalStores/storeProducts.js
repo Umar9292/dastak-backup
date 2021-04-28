@@ -5,7 +5,7 @@ const Users = require('../../models/userModel');
 const StoreProducts = require('../../models/MedicalStoreProducts');
 const Categories = require('../../models/categoriesModel');
 
-const client = createClient(6379);
+const client = createClient(process.env.REDIS_URL);
 
 const router = Router();
 
