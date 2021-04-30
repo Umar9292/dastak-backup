@@ -28,8 +28,8 @@ const usersManagementRouter = require('./src/routes/admin/dashboard/userManageme
 const usersReviewRouter = require('./src/routes/user/addReview');
 const adminSignInRouter = require('./src/routes/admin/dashboard/adminSignIn');
 const adminAutorizationRouter = require('./src/routes/admin/dashboard/adminAuthorization');
-const medicalStoresRouter = require('./src/routes/medicalStores/medicalStores');
-const storeProductsRouter = require('./src/routes/medicalStores/storeProducts');
+const medicalStoresRouter = require('./src/routes/stores/stores');
+const storeProductsRouter = require('./src/routes/stores/storeProducts');
 
 const port = process.env.PORT || 8080;
 

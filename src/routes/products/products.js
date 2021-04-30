@@ -4,6 +4,7 @@ const { createClient } = require('redis');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
+const StoreProducts = require('../../models/storeProducts');
 const Flavours = require('../../models/flavoursAndDrinks');
 const Categories = require('../../models/categoriesModel');
 
@@ -266,39 +267,16 @@ router.post('/allCategories', async (req, res) => {
 
 router.post('/productAvailability', async (req, res) => {
   try {
-    const { productId } = req.body;
+    const { productId, shopType } = req.body;
 
+    if (shopType && shopType === 'store') {
+      await StoreProducts.findByIdAndUpdate(productId, { $set: req.body });
+    }
     await Products.findByIdAndUpdate(productId, { $set: req.body });
 
     return res.json({
       status: '200',
       msg: 'Product status updated',
-    });
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
-router.post('/allMartProducts', async (req, res) => {
-  try {
-    const { martId, type } = req.body;
-    let products;
-
-    if (type === 'admin') {
-      products = await Products.find({ martId }).sort({ productName: 1 });
-    } else {
-      products = await Products.find({ martId, available: 'in stock' }).sort({
-        productName: 1,
-      });
-    }
-
-    return res.json({
-      status: '200',
-      data: products,
     });
   } catch (err) {
     return res.json({
