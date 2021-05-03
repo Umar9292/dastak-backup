@@ -30,6 +30,7 @@ const adminSignInRouter = require('./src/routes/admin/dashboard/adminSignIn');
 const adminAutorizationRouter = require('./src/routes/admin/dashboard/adminAuthorization');
 const medicalStoresRouter = require('./src/routes/stores/stores');
 const storeProductsRouter = require('./src/routes/stores/storeProducts');
+const updateProductRouter = require('./src/routes/stores/updatePrices');
 
 const port = process.env.PORT || 8080;
 
@@ -54,7 +55,12 @@ app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
-app.use('/stores', medicalStoresRouter, storeProductsRouter);
+app.use(
+  '/stores',
+  medicalStoresRouter,
+  storeProductsRouter,
+  updateProductRouter
+);
 app.use(
   '/admin',
   playerIdRouter,
