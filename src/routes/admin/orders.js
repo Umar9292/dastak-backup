@@ -44,7 +44,7 @@ router.post('/placeOrder', async (req, res) => {
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
-    const [mart, customer] = await Promise.all([
+    const [mart, customer, todaysOrders] = await Promise.all([
       Users.findById(martId)
         .select('-password -__v')
         .lean(),
@@ -52,6 +52,8 @@ router.post('/placeOrder', async (req, res) => {
       Users.findById(userId)
         .select('employee')
         .lean(),
+
+      Orders.countDocuments({ martId, date }),
     ]);
 
     if (!mart.available) {
@@ -87,6 +89,7 @@ router.post('/placeOrder', async (req, res) => {
       orderTotal: customer.employee ? orderTotal - 30 : orderTotal,
       deliveryCharges: customer.employee ? '0' : params.deliveryCharges,
       date,
+      orderNum: todaysOrders + 1,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
         .toISOString(),
@@ -145,7 +148,6 @@ router.post('/placeOrder', async (req, res) => {
       );
     }
   } catch (err) {
-    console.error(err);
     return res.json({
       status: '404',
       error: err.toString(),
