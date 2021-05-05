@@ -817,7 +817,6 @@ router.post('/dealMoney', async (req, res) => {
     if (restaurant === 'De Fiesta Restaurant') {
       let totalAmount = 0;
       let dealCount = 0;
-      const ourPercentage = 0;
 
       const [orders, pickupOrders] = await Promise.all([
         Orders.find({
@@ -837,35 +836,32 @@ router.post('/dealMoney', async (req, res) => {
         }),
       ]);
 
-      let data = [];
-
       await Promise.all(
-        orders.map(async ({ products, martId, orderNum }) => {
+        orders.map(async ({ products, martId }) => {
           await Promise.all(
-            products.map(async ({ productName, count }) => {
-              if (productName.includes('Ramadan Deal')) {
-                dealCount += count;
+            products.map(async ({ productName, count, net }) => {
+              const { price } = await Products.findOne({
+                martId,
+                productName,
+              })
+                .select('price')
+                .lean();
 
-                const { price } = await Products.findOne({
-                  martId,
-                  productName,
-                })
-                  .select('price')
-                  .lean();
+              /* if (productName.includes('Ramadan Deal')) {
+                dealCount += count;
 
                 const subTotal = price + 11;
 
                 totalAmount += subTotal;
+              } */
 
-                const result = {
-                  date: `${startDate} - ${endDate}`,
-                  orderNum,
-                  productName,
-                  price,
-                  count,
-                };
+              if (!productName.includes('Ramadan Deal')) {
+                dealCount += count;
 
-                data = [...data, result];
+                const tenPercentOfNet = ((10 / 100) * price).toFixed();
+                const subTotal = net - tenPercentOfNet;
+
+                totalAmount += subTotal;
               }
             })
           );
@@ -875,7 +871,6 @@ router.post('/dealMoney', async (req, res) => {
       return res.json({
         totalAmount,
         dealCount,
-        ourPercentage,
         amountToPay: totalAmount,
         pickupOrders,
       });
