@@ -856,7 +856,6 @@ router.post('/dealMoney', async (req, res) => {
                 const subTotal = price + 11;
 
                 totalAmount += subTotal;
-                dealCount += count;
 
                 const result = {
                   date: `${startDate} - ${endDate}`,
