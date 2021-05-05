@@ -837,7 +837,7 @@ router.post('/dealMoney', async (req, res) => {
         }),
       ]);
 
-      const data = [];
+      let data = [];
 
       await Promise.all(
         orders.map(async ({ products, martId, orderNum }) => {
@@ -846,19 +846,16 @@ router.post('/dealMoney', async (req, res) => {
               if (productName.includes('Ramadan Deal')) {
                 dealCount += count;
 
-                /* const { price } = await Products.findOne({
+                const { price } = await Products.findOne({
                   martId,
                   productName,
                 })
                   .select('price')
                   .lean();
 
-                const priceIntoCount = price * count;
+                const subTotal = price + 11;
 
-                const thirtyPercent = ((30 / 100) * priceIntoCount).toFixed();
-                const priceAfterSubtracting = priceIntoCount - +thirtyPercent;
-
-                totalAmount += priceAfterSubtracting;
+                totalAmount += subTotal;
                 dealCount += count;
 
                 const result = {
@@ -867,38 +864,14 @@ router.post('/dealMoney', async (req, res) => {
                   productName,
                   price,
                   count,
-                  net: priceIntoCount,
-                  priceAfterSubtracting,
                 };
 
-                data = [...data, result]; */
+                data = [...data, result];
               }
             })
           );
         })
       );
-
-      totalAmount = dealCount * 11;
-
-      /*       const workbook = new Exceljs.Workbook();
-      const worksheet = workbook.addWorksheet(`${startDate} - ${endDate}`);
-
-      worksheet.columns = [
-        { header: 'Date', key: 'date', width: 15 },
-        { header: 'Order#', key: 'orderNum', width: 15 },
-        { header: 'Product Name', key: 'productName', width: 15 },
-        { header: 'Original Price', key: 'price', width: 15 },
-        { header: 'Count', key: 'count', width: 15 },
-        { header: 'Net', key: 'net', width: 15 },
-        { header: 'After 30%', key: 'priceAfterSubtracting', width: 15 },
-      ];
-
-      await Promise.all(data.map(doc => worksheet.addRow(doc)));
-
-      worksheet.getRow(1).eachCell(cell => (cell.font = { bold: true }));
-
-      await workbook.xlsx.writeFile(`${startDate - endDate}.xlsx`);
-      sendDailyCollection(`${startDate - endDate}.xlsx`); */
 
       return res.json({
         totalAmount,
