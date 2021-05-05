@@ -86,6 +86,16 @@ router.post('/allProducts', async (req, res) => {
 
 router.post('/addProduct', async (req, res) => {
   try {
+    const { productName } = req.body;
+
+    const product = await StoreProducts.findOne({ productName });
+    if (product) {
+      return res.json({
+        status: '404',
+        msg: 'Product already added',
+      });
+    }
+
     await new StoreProducts(req.body).save();
 
     return res.json({
