@@ -843,7 +843,7 @@ router.post('/dealMoney', async (req, res) => {
         orders.map(async ({ products, martId, orderNum }) => {
           await Promise.all(
             products.map(async ({ productName, count }) => {
-              if (productName.includes('Discounted Deal')) {
+              if (productName.includes('Ramadan Deals')) {
                 dealCount += count;
 
                 /* const { price } = await Products.findOne({
@@ -878,7 +878,7 @@ router.post('/dealMoney', async (req, res) => {
         })
       );
 
-      totalAmount = dealCount * 225;
+      totalAmount = dealCount * 11;
 
       /*       const workbook = new Exceljs.Workbook();
       const worksheet = workbook.addWorksheet(`${startDate} - ${endDate}`);
