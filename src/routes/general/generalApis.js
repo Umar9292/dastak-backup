@@ -843,7 +843,7 @@ router.post('/dealMoney', async (req, res) => {
         orders.map(async ({ products, martId, orderNum }) => {
           await Promise.all(
             products.map(async ({ productName, count }) => {
-              if (productName.includes('Ramadan Deals')) {
+              if (productName.includes('Ramadan Deal')) {
                 dealCount += count;
 
                 /* const { price } = await Products.findOne({
