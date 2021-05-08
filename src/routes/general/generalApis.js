@@ -842,14 +842,14 @@ router.post('/dealMoney', async (req, res) => {
         orders.map(async ({ products, martId }) => {
           await Promise.all(
             products.map(async ({ productName, count, net }) => {
-              const { price } = await Products.findOne({
-                martId,
-                productName,
-              })
-                .select('price')
-                .lean();
-
               if (productName.includes('Ramadan Deal')) {
+                const { price } = await Products.findOne({
+                  martId,
+                  productName,
+                })
+                  .select('price')
+                  .lean();
+
                 ramadanDealCount += count;
 
                 const subTotal = price + 11;
@@ -858,6 +858,13 @@ router.post('/dealMoney', async (req, res) => {
               }
 
               if (!productName.includes('Ramadan Deal')) {
+                const { price } = await Products.findOne({
+                  martId,
+                  productName,
+                })
+                  .select('price')
+                  .lean();
+
                 otherDealCount += count;
 
                 const tenPercentOfNet = ((10 / 100) * price).toFixed();
