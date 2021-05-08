@@ -852,12 +852,10 @@ router.post('/dealMoney', async (req, res) => {
               if (productName.includes('Ramadan Deal')) {
                 ramadanDealCount += count;
 
-                const subTotal = price + 11 * count;
+                const subTotal = price * count + 11 * count;
 
                 ramadanDealsAmount += subTotal;
-              }
-
-              if (!productName.includes('Ramadan Deal')) {
+              } else {
                 otherDealCount += count;
 
                 const tenPercentOfNet = ((10 / 100) * price).toFixed();
