@@ -842,17 +842,17 @@ router.post('/dealMoney', async (req, res) => {
         orders.map(async ({ products, martId }) => {
           await Promise.all(
             products.map(async ({ productName, count, net }) => {
-              const { price } = await Products.findOne({
+              const { discountedPrice } = await Products.findOne({
                 martId,
                 productName,
               })
-                .select('price')
+                .select('discountedPrice')
                 .lean();
 
               if (productName.includes('Ramadan Deal')) {
                 ramadanDealCount += count;
 
-                const subTotal = price * count + 11 * count;
+                const subTotal = discountedPrice * count + 11 * count;
 
                 ramadanDealsAmount += subTotal;
               } else {
