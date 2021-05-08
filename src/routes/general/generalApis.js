@@ -815,8 +815,10 @@ router.post('/dealMoney', async (req, res) => {
     }
 
     if (restaurant === 'De Fiesta Restaurant') {
-      let totalAmount = 0;
-      let dealCount = 0;
+      let ramadanDealsAmount = 0;
+      let otherAmount = 0;
+      let ramadanDealCount = 0;
+      let otherDealCount = 0;
 
       const [orders, pickupOrders] = await Promise.all([
         Orders.find({
@@ -847,21 +849,21 @@ router.post('/dealMoney', async (req, res) => {
                 .select('price')
                 .lean();
 
-              /* if (productName.includes('Ramadan Deal')) {
-                dealCount += count;
+              if (productName.includes('Ramadan Deal')) {
+                ramadanDealCount += count;
 
                 const subTotal = price + 11;
 
-                totalAmount += subTotal;
-              } */
+                ramadanDealsAmount += subTotal;
+              }
 
               if (!productName.includes('Ramadan Deal')) {
-                dealCount += count;
+                otherDealCount += count;
 
                 const tenPercentOfNet = ((10 / 100) * price).toFixed();
                 const subTotal = net - tenPercentOfNet;
 
-                totalAmount += subTotal;
+                otherAmount += subTotal;
               }
             })
           );
@@ -869,9 +871,10 @@ router.post('/dealMoney', async (req, res) => {
       );
 
       return res.json({
-        totalAmount,
-        dealCount,
-        amountToPay: totalAmount,
+        ramadanDealsAmount,
+        ramadanDealCount,
+        otherAmount,
+        otherDealCount,
         pickupOrders,
       });
     }

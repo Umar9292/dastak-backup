@@ -5,7 +5,7 @@ const Users = require('../../models/userModel');
 const StoreProducts = require('../../models/storeProducts');
 const Categories = require('../../models/categoriesModel');
 
-const client = createClient(process.env.REDIS_URL);
+// const client = createClient(process.env.REDIS_URL);
 
 const router = Router();
 
@@ -60,12 +60,14 @@ router.post('/allProducts', async (req, res) => {
           productName: 1,
         });
 
-        const data = {
-          category: query.category,
-          data: products,
-        };
+        if (products.length > 0) {
+          const data = {
+            category: query.category,
+            data: products,
+          };
 
-        finalData = [...finalData, data];
+          finalData = [...finalData, data];
+        }
       }
 
       res.json({
