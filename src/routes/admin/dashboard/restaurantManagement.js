@@ -172,7 +172,6 @@ router.post('/paidToOwners', async (req, res) => {
             {
               martId: id,
               paid: false,
-              orderType: 'Delivery',
               status: { $in: ['Delivered', 'Rider Picked Up'] },
               dateForSearching: {
                 $gte: startDate,
