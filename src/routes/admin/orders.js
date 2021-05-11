@@ -612,11 +612,11 @@ router.post('/adminAcceptedOrders', async (req, res) => {
   }
 });
 
-router.post('/assignRider', async (req, res) => {
+/* router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
 
-    /* const currentDate = moment()
+    const currentDate = moment()
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
@@ -628,7 +628,7 @@ router.post('/assignRider', async (req, res) => {
     const time = moment().tz('Asia/Karachi');
 
     const depositTimeUpperLimit = moment('04:00', 'HH:mm').tz('Asia/Karachi');
-    const depositTimeLowerLimit = moment('22:00', 'HH:mm').tz('Asia/Karachi'); */
+    const depositTimeLowerLimit = moment('22:00', 'HH:mm').tz('Asia/Karachi');
 
     const [
       order,
@@ -640,7 +640,7 @@ router.post('/assignRider', async (req, res) => {
         paymentLimit,
         orderCount,
       },
-      // currentDateOrders,
+      currentDateOrders,
     ] = await Promise.all([
       Orders.findById(orderId),
 
@@ -650,9 +650,9 @@ router.post('/assignRider', async (req, res) => {
         )
         .lean(),
 
-      /* Orders.find({ riderId, currentDate, status: 'Delivered' })
+      Orders.find({ riderId, currentDate, status: 'Delivered' })
         .select('orderTotal time')
-        .lean(), */
+        .lean(),
     ]);
 
     if (pendingCollection >= paymentLimit) {
@@ -678,7 +678,7 @@ router.post('/assignRider', async (req, res) => {
       });
     }
 
-    /* if (time.isSameOrAfter(depositTimeUpperLimit)) {
+    if (time.isSameOrAfter(depositTimeUpperLimit)) {
       const filteredOrders = currentDateOrders.filter(order => {
         const orderTime = moment(order.time, 'HH:mm a')
           .tz('Asia/Karachi')
@@ -741,7 +741,122 @@ router.post('/assignRider', async (req, res) => {
           msg: `Dear ${name} your collection limit has been exceeded. Kindly deposit the previous amount to accept any further orders.`,
         });
       }
-    } */
+    }
+
+    if (!admin) {
+      order.assignedBy = name;
+    } else {
+      order.assignedBy = 'admin';
+    }
+
+    const orderTime = moment(order.time, 'HH:mma')
+      .tz('Asia/karachi')
+      .subtract(5, 'hours');
+
+    const morningFareTime = moment('04:00', 'HH:mm').tz('Asia/karachi');
+    const noonFareTime = moment('16:00', 'HH:mm').tz('Asia/karachi');
+
+    if (orderTime.isBetween(morningFareTime, noonFareTime)) {
+      req.body.riderFare = tillNoonFare;
+    } else {
+      req.body.riderFare = nightFare;
+    }
+
+    await Promise.all([
+      Orders.findByIdAndUpdate(orderId, { $set: req.body }),
+
+      Users.findByIdAndUpdate(riderId, {
+        status: 'on delivery',
+        orderCount: orderCount + 1,
+      }),
+    ]);
+
+    res.json({
+      status: '200',
+      msg: 'This order is now assigned to you.',
+    });
+
+    await order.save();
+
+    const { playerIds } = await Users.findById(order.martId);
+
+    const message = `Dastak rider ${riderName} is assigned to order# ${order.orderNum}.`;
+    const info = `${riderName} is assigned to an order for ${order.martName} placed by ${order.name}`;
+
+    playerIds.forEach(async playerId => {
+      await notifyAdmin(info, message, playerId, {
+        flag: 'adminReceived',
+      });
+    });
+
+    orderStatusEmail(message);
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+router.post('/assignRider', async (req, res) => {
+  try {
+    const { orderId, riderName, riderId, admin } = req.body;
+
+    const date = moment()
+      .tz('Asia/Karachi')
+      .format('DD-MM-YYYY');
+
+    const [
+      order,
+      {
+        tillNoonFare,
+        nightFare,
+        pendingCollection,
+        name,
+        paymentLimit,
+        orderCount,
+      },
+      todaysOrders,
+    ] = await Promise.all([
+      Orders.findById(orderId),
+
+      Users.findById(riderId)
+        .select(
+          'tillNoonFare nightFare pendingCollection name paymentLimit orderCount'
+        )
+        .lean(),
+
+      Orders.find({ riderId, date, status: 'Delivered' })
+        .select('orderTotal')
+        .lean(),
+    ]);
+
+    if (
+      pendingCollection >= paymentLimit ||
+      (todaysOrders.length === 0 && pendingCollection > 0)
+    ) {
+      return res.json({
+        status: '404',
+        msg: `Dear ${name} your collection limit has been exceeded. Kindly deposit the previous amount to accept any further orders.`,
+      });
+    }
+
+    if (order.riderId) {
+      return res.json({
+        status: '404',
+        msg:
+          'This order has already been assigned to another rider. Stay active another order might come your way.',
+      });
+    }
+
+    if (!admin && orderCount >= 2) {
+      return res.json({
+        status: '404',
+        msg:
+          'You cannot accept this order untill you deliver your previous orders.',
+      });
+    }
 
     if (!admin) {
       order.assignedBy = name;
