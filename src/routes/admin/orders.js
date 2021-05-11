@@ -616,16 +616,16 @@ router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
 
-    const currentDate = moment()
+    /* const currentDate = moment()
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
-    /* const previousDate = moment()
+    const previousDate = moment()
       .tz('Asia/Karachi')
       .subtract(1, 'days')
-      .format('DD-MM-YYYY'); */
+      .format('DD-MM-YYYY');
 
-    /* const time = moment().tz('Asia/Karachi');
+    const time = moment().tz('Asia/Karachi');
 
     const depositTimeUpperLimit = moment('04:00', 'HH:mm').tz('Asia/Karachi');
     const depositTimeLowerLimit = moment('22:00', 'HH:mm').tz('Asia/Karachi'); */
