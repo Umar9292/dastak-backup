@@ -620,15 +620,15 @@ router.post('/assignRider', async (req, res) => {
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
-    const previousDate = moment()
+    /* const previousDate = moment()
       .tz('Asia/Karachi')
       .subtract(1, 'days')
-      .format('DD-MM-YYYY');
+      .format('DD-MM-YYYY'); */
 
-    const time = moment().tz('Asia/Karachi');
+    /* const time = moment().tz('Asia/Karachi');
 
     const depositTimeUpperLimit = moment('04:00', 'HH:mm').tz('Asia/Karachi');
-    const depositTimeLowerLimit = moment('22:00', 'HH:mm').tz('Asia/Karachi');
+    const depositTimeLowerLimit = moment('22:00', 'HH:mm').tz('Asia/Karachi'); */
 
     const [
       order,
@@ -640,7 +640,7 @@ router.post('/assignRider', async (req, res) => {
         paymentLimit,
         orderCount,
       },
-      currentDateOrders,
+      // currentDateOrders,
     ] = await Promise.all([
       Orders.findById(orderId),
 
@@ -650,9 +650,9 @@ router.post('/assignRider', async (req, res) => {
         )
         .lean(),
 
-      Orders.find({ riderId, currentDate, status: 'Delivered' })
+      /* Orders.find({ riderId, currentDate, status: 'Delivered' })
         .select('orderTotal time')
-        .lean(),
+        .lean(), */
     ]);
 
     if (pendingCollection >= paymentLimit) {
@@ -678,7 +678,7 @@ router.post('/assignRider', async (req, res) => {
       });
     }
 
-    if (time.isSameOrAfter(depositTimeUpperLimit)) {
+    /* if (time.isSameOrAfter(depositTimeUpperLimit)) {
       const filteredOrders = currentDateOrders.filter(order => {
         const orderTime = moment(order.time, 'HH:mm a')
           .tz('Asia/Karachi')
@@ -741,7 +741,7 @@ router.post('/assignRider', async (req, res) => {
           msg: `Dear ${name} your collection limit has been exceeded. Kindly deposit the previous amount to accept any further orders.`,
         });
       }
-    }
+    } */
 
     if (!admin) {
       order.assignedBy = name;
