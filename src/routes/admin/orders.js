@@ -652,7 +652,7 @@ router.post('/assignRider', async (req, res) => {
         )
         .lean(),
 
-      Orders.find({ riderId, currentDate, status: 'Delivered' })
+      Orders.find({ riderId, date: currentDate, status: 'Delivered' })
         .select('orderTotal time')
         .lean(),
     ]);
