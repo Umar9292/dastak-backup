@@ -914,8 +914,8 @@ router.post('/assignRider', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
- */
+}); */
+
 router.post('/riderOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
