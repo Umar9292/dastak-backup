@@ -612,7 +612,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
   }
 });
 
-router.post('/assignRider', async (req, res) => {
+/* router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
 
@@ -799,9 +799,9 @@ router.post('/assignRider', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
-/* router.post('/assignRider', async (req, res) => {
+router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
 
@@ -914,7 +914,7 @@ router.post('/assignRider', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 router.post('/riderOrders', async (req, res) => {
   try {
