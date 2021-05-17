@@ -35,15 +35,33 @@ router.post('/editProfile', async (req, res) => {
       data: user,
     });
 
-    const date = moment()
-      .tz('Asia/Karachi')
-      .format('DD-MM-YYYY');
-
     if (pendingCollection !== undefined) {
+      const date = moment()
+        .tz('Asia/Karachi')
+        .format('DD-MM-YYYY');
+
+      const time = moment().tz('Asia/Karachi');
+
+      const depositTimeLowerLimit = moment('03:00', 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
+
       await ordersModel.updateMany(
-        { riderId: userId, date },
+        { riderId: userId, date, status: 'Delivered' },
         { collectionSubmitted: true }
       );
+
+      if (time.isSameOrBefore(depositTimeLowerLimit)) {
+        const previousDate = moment()
+          .tz('Asia/Karachi')
+          .subtract(1, 'days')
+          .format('DD-MM-YYYY');
+
+        await ordersModel.updateMany(
+          { riderId: userId, date: previousDate, status: 'Delivered' },
+          { collectionSubmitted: true }
+        );
+      }
     }
   } catch (err) {
     return res.json({
