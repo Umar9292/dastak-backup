@@ -39,7 +39,7 @@ router.post('/editProfile', async (req, res) => {
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
-    if (pendingCollection) {
+    if (pendingCollection !== undefined) {
       await ordersModel.updateMany(
         { riderId: userId, date },
         { collectionSubmitted: true }
