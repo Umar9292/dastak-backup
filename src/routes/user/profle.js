@@ -1,37 +1,50 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const Speakeasy = require('speakeasy');
+const moment = require('moment-timezone');
 const { compare, hash } = require('bcrypt');
 
 const Users = require('../../models/userModel');
 const Otp = require('../../models/otpModel');
 const { emailOtp } = require('../../emailHandler/otpEmail/otpEmail');
+const ordersModel = require('../../models/ordersModel');
 
 const router = Router();
 
 router.post('/editProfile', async (req, res) => {
   try {
-    const { type } = req.body;
+    const { userId, type, pendingCollection } = req.body;
     let user;
 
     if (type === 'admin') {
       user = await Users.findByIdAndUpdate(
-        req.body.userId,
+        userId,
         { $set: req.body },
         { new: true }
       ).select('-password -__v');
     } else {
       user = await Users.findByIdAndUpdate(
-        req.body.userId,
+        userId,
         { $set: req.body },
         { new: true }
       ).select('-password -__v');
     }
 
-    return res.json({
+    res.json({
       status: '200',
       data: user,
     });
+
+    const date = moment()
+      .tz('Asia/Karachi')
+      .format('DD-MM-YYYY');
+
+    if (pendingCollection) {
+      await ordersModel.updateMany(
+        { riderId: userId, date },
+        { collectionSubmitted: true }
+      );
+    }
   } catch (err) {
     return res.json({
       status: '404',
