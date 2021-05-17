@@ -6,6 +6,10 @@ const ordersModel = Schema(
       type: Boolean,
       default: false,
     },
+    collectionSubmitted: {
+      type: Boolean,
+      default: false,
+    },
     assignedBy: String,
     userId: String,
     martId: String,
