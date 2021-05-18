@@ -46,12 +46,15 @@ router.post('/editProfile', async (req, res) => {
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
 
+      console.log(depositTimeLowerLimit);
+
       await ordersModel.updateMany(
         { riderId: userId, date, status: 'Delivered' },
         { collectionSubmitted: true }
       );
 
       if (time.isSameOrBefore(depositTimeLowerLimit)) {
+        console.log('here');
         const previousDate = moment()
           .tz('Asia/Karachi')
           .subtract(1, 'days')
