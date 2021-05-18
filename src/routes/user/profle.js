@@ -41,13 +41,10 @@ router.post('/editProfile', async (req, res) => {
         .format('DD-MM-YYYY');
 
       const time = moment().tz('Asia/Karachi');
-      console.log(time);
 
       const depositTimeLowerLimit = moment('03:00', 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
-
-      console.log(depositTimeLowerLimit);
 
       await ordersModel.updateMany(
         { riderId: userId, date, status: 'Delivered' },
