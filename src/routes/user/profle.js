@@ -40,9 +40,7 @@ router.post('/editProfile', async (req, res) => {
         .tz('Asia/Karachi')
         .format('DD-MM-YYYY');
 
-      const time = moment('00:30', 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
+      const time = moment().tz('Asia/Karachi');
       console.log(time);
 
       const depositTimeLowerLimit = moment('03:00', 'HH:mm')
@@ -57,7 +55,6 @@ router.post('/editProfile', async (req, res) => {
       );
 
       if (time.isSameOrBefore(depositTimeLowerLimit)) {
-        console.log('here');
         const previousDate = moment()
           .tz('Asia/Karachi')
           .subtract(1, 'days')
