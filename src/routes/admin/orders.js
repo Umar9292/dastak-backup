@@ -612,7 +612,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
   }
 });
 
-/* router.post('/assignRider', async (req, res) => {
+router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
 
@@ -625,7 +625,9 @@ router.post('/adminAcceptedOrders', async (req, res) => {
       .subtract(1, 'days')
       .format('DD-MM-YYYY');
 
-    const time = moment().tz('Asia/Karachi');
+    const time = moment('00:45', 'HH:mm')
+      .tz('Asia/Karachi')
+      .subtract(5, 'hours');
 
     const depositTimeUpperLimit = moment('04:00', 'HH:mm').tz('Asia/Karachi');
     const depositTimeLowerLimit = moment('03:00', 'HH:mm')
@@ -805,9 +807,9 @@ router.post('/adminAcceptedOrders', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
-router.post('/assignRider', async (req, res) => {
+/* router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
 
@@ -920,7 +922,7 @@ router.post('/assignRider', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 router.post('/riderOrders', async (req, res) => {
   try {
