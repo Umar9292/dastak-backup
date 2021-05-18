@@ -40,7 +40,9 @@ router.post('/editProfile', async (req, res) => {
         .tz('Asia/Karachi')
         .format('DD-MM-YYYY');
 
-      const time = moment('00:30', 'HH:mm').tz('Asia/Karachi');
+      const time = moment('00:30', 'HH:mm')
+        .tz('Asia/Karachi')
+        .subtract(5, 'hours');
       console.log(time);
 
       const depositTimeLowerLimit = moment('03:00', 'HH:mm')
