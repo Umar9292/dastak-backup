@@ -154,7 +154,10 @@ router.post('/allProducts', async (req, res) => {
           available: 'in stock',
         };
 
-        const products = await Products.find(query).sort({ productName: 1 });
+        const products = await Products.find(query).sort({
+          productName: 1,
+          quantity: -1,
+        });
 
         if (products.length > 0) {
           const filteredProducts = products.filter(
@@ -200,7 +203,7 @@ router.post('/allProducts', async (req, res) => {
         data: finalData,
       });
 
-      client.setex(martId, 1800, JSON.stringify(finalData));
+      client.setex(martId, 5, JSON.stringify(finalData));
     });
   } catch (err) {
     console.log(err);
