@@ -628,7 +628,7 @@ router.post('/assignRider', async (req, res) => {
     console.log(currentDate);
     console.log(previousDate);
 
-    const time = moment('00:30', 'HH:mm');
+    const time = moment().tz('Asia/Karachi');
 
     console.log(time);
 
