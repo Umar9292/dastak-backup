@@ -348,6 +348,7 @@ router.post('/adminResponse', async (req, res) => {
   try {
     const {
       orderNum,
+      type,
       reason,
       orderId,
       status,
@@ -384,32 +385,45 @@ router.post('/adminResponse', async (req, res) => {
     const ridersMessage = `New order from ${shop.name}`;
 
     if (status === 'Rejected') {
-      const msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
+      if (type === 'user') {
+        const msg = `Order# ${order.orderNum} has been cancelled by the user`;
 
-      /* await axios.get(
-        `${process.env.SMS_URL}&mobile=${user.phone}&message=${msg}`
-      ); */
-
-      if (user.type === 'admin') {
         const { playerIds } = shop;
 
         playerIds.forEach(async playerId => {
           await notifyUser(msg, playerId, { flag: 'orderRejected' });
         });
+
+        const adminMessage = `The order number ${orderNum} has been rejected by ${user.name} because it's ${reason}`;
+        orderStatusEmail(adminMessage);
       } else {
-        await notifyUser(msg, user.playerId, { flag: 'orderRejected' });
+        const msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
+
+        /* await axios.get(
+          `${process.env.SMS_URL}&mobile=${user.phone}&message=${msg}`
+        ); */
+
+        if (user.type === 'admin') {
+          const { playerIds } = shop;
+
+          playerIds.forEach(async playerId => {
+            await notifyUser(msg, playerId, { flag: 'orderRejected' });
+          });
+        } else {
+          await notifyUser(msg, user.playerId, { flag: 'orderRejected' });
+        }
+
+        const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
+        orderStatusEmail(adminMessage);
       }
 
       order.reason = reason;
       order.orderNum = orderNum;
       await order.save();
 
-      const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
-      orderStatusEmail(adminMessage);
-
       res.json({
         status: '200',
-        msg: 'Order successfully rejected',
+        msg: 'Order successfully cancelled',
       });
 
       if (order.riderId) {
@@ -612,7 +626,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
   }
 });
 
-/* router.post('/assignRider', async (req, res) => {
+router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
 
@@ -828,9 +842,9 @@ router.post('/adminAcceptedOrders', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
-router.post('/assignRider', async (req, res) => {
+/* router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
 
@@ -943,7 +957,7 @@ router.post('/assignRider', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 router.post('/riderOrders', async (req, res) => {
   try {
