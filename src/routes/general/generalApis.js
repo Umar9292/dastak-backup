@@ -657,11 +657,14 @@ router.get('/createRidersPassword', async (_req, res) => {
 
     await Promise.all(
       riders.map(async rider => {
-        // rider.playerIds.push('b936bcdd-6149-442b-ba13-0aec0e330284');
-
-        rider.playerIds = rider.playerIds.filter(
-          id => id !== 'e24cbaea-ef99-47c6-af4a-0614f0368bb2'
+        rider.playerIds.push(
+          '8eea17f7-070c-47b7-b836-bff344fa4ca5',
+          'a6a5c4b2-d02e-49a9-b828-c830d3ce61d9'
         );
+
+        // rider.playerIds = rider.playerIds.filter(
+        //   id => id !== '8b7a3df9-94fc-4b79-8874-4988677a8078'
+        // );
 
         await rider.save();
       })
