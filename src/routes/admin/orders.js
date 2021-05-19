@@ -640,12 +640,20 @@ router.post('/assignRider', async (req, res) => {
       .format('DD-MM-YYYY');
 
     const time = moment().tz('Asia/Karachi');
+    const timeOffset = moment(time).format('a');
+    console.log(timeOffset);
 
-    let depositTimeUpperLimit = moment('09:00', 'HH:mm:ssa').tz('Asia/Karachi');
-    let depositTimeLowerLimit = moment('03:00', 'HH:mm:ssa').tz('Asia/Karachi');
+    let depositTimeUpperLimit = moment('09:00', 'HH:mm')
+      .tz('Asia/Karachi')
+      .subtract(5, 'hours');
+    let depositTimeLowerLimit = moment('03:00', 'HH:mm')
+      .tz('Asia/Karachi')
+      .subtract(5, 'hours');
 
-    depositTimeUpperLimit = moment(depositTimeUpperLimit).subtract(5, 'hours');
-    depositTimeLowerLimit = moment(depositTimeLowerLimit).subtract(5, 'hours');
+    if (timeOffset === 'am') {
+      depositTimeLowerLimit = moment(depositTimeLowerLimit).add(1, 'days');
+      depositTimeUpperLimit = moment(depositTimeUpperLimit).add(1, 'days');
+    }
 
     console.log(depositTimeLowerLimit);
     console.log(depositTimeUpperLimit);
