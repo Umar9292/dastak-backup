@@ -13,6 +13,7 @@ const GeoSchema = Schema({
 
 const userModel = Schema(
   {
+    verified: Boolean,
     superAdmin: Boolean,
     geometry: GeoSchema,
     category: String,
