@@ -31,6 +31,7 @@ const adminAutorizationRouter = require('./src/routes/admin/dashboard/adminAutho
 const medicalStoresRouter = require('./src/routes/stores/stores');
 const storeProductsRouter = require('./src/routes/stores/storeProducts');
 const updateProductRouter = require('./src/routes/stores/updatePrices');
+const otpVerificationRouter = require('./src/routes/user/otpVerification');
 
 const port = process.env.PORT || 8080;
 
@@ -49,7 +50,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, 'views')));
 
-app.use('/user', signUpRouter, profileRouter, logoutRouter, usersReviewRouter);
+app.use(
+  '/user',
+  signUpRouter,
+  profileRouter,
+  logoutRouter,
+  usersReviewRouter,
+  otpVerificationRouter
+);
 app.use('/orders', ordersRouter);
 app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
