@@ -639,15 +639,14 @@ router.post('/assignRider', async (req, res) => {
       .subtract(1, 'days')
       .format('DD-MM-YYYY');
 
-    console.log(currentDate);
-    console.log(previousDate);
-
     const time = moment().tz('Asia/Karachi');
 
-    console.log(time);
-
-    const depositTimeUpperLimit = moment('09:00', 'HH:mm').tz('Asia/Karachi');
-    const depositTimeLowerLimit = moment('03:00', 'HH:mm').tz('Asia/Karachi');
+    const depositTimeUpperLimit = moment('09:00', 'HH:mm')
+      .subtract(5, 'hours')
+      .tz('Asia/Karachi');
+    const depositTimeLowerLimit = moment('03:00', 'HH:mm')
+      .subtract(5, 'hours')
+      .tz('Asia/Karachi');
 
     console.log(depositTimeLowerLimit);
     console.log(depositTimeUpperLimit);
@@ -706,7 +705,6 @@ router.post('/assignRider', async (req, res) => {
     }
 
     if (time.isSameOrAfter(depositTimeUpperLimit)) {
-      console.log('Not here');
       const filteredOrders = currentDateOrders.filter(order => {
         const orderTime = moment(order.time, 'HH:mm a')
           .tz('Asia/Karachi')
@@ -732,8 +730,6 @@ router.post('/assignRider', async (req, res) => {
     }
 
     if (time.isSameOrBefore(depositTimeLowerLimit)) {
-      console.log('here');
-
       const previousDateOrders = await Orders.find({
         riderId,
         date: previousDate,
@@ -744,12 +740,9 @@ router.post('/assignRider', async (req, res) => {
         .lean();
 
       const previousDatefilteredOrders = previousDateOrders.filter(order => {
-        console.log(order.time);
         const orderTime = moment(order.time, 'HH:mm a')
           .tz('Asia/Karachi')
           .subtract(5, 'hours');
-
-        console.log(orderTime);
 
         if (orderTime.isSameOrAfter(depositTimeUpperLimit)) {
           return order;
@@ -761,15 +754,10 @@ router.post('/assignRider', async (req, res) => {
         0
       );
 
-      console.log(sumOfCurrentDateOrders);
-
       const sumOfPreviousDateOrders = previousDatefilteredOrders.reduce(
         (a, b) => a + b.orderTotal,
         0
       );
-
-      console.log(sumOfPreviousDateOrders);
-      console.log(pendingCollection);
 
       const remainder =
         sumOfCurrentDateOrders + sumOfPreviousDateOrders - pendingCollection;
