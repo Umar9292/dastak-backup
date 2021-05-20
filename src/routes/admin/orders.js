@@ -1,5 +1,5 @@
 const Router = require('express/lib/router');
-const moment = require('moment-timezone');
+const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 const axios = require('axios');
 
 const Orders = require('../../models/ordersModel');
@@ -640,7 +640,6 @@ router.post('/assignRider', async (req, res) => {
       .format('DD-MM-YYYY');
 
     const time = moment().tz('Asia/Karachi');
-    const formatedTime = moment(time).format('HH:mm');
 
     let depositTimeUpperLimit = moment('09:00', 'HH:mm')
       .tz('Asia/Karachi')
@@ -649,7 +648,7 @@ router.post('/assignRider', async (req, res) => {
       .tz('Asia/Karachi')
       .subtract(5, 'hours');
 
-    if (moment(formatedTime).isSameOrBefore('03:00', 'hour')) {
+    if (time.isBefore(moment({ hour: 3, minute: 0 }))) {
       depositTimeLowerLimit = moment(depositTimeLowerLimit).add(1, 'days');
       depositTimeUpperLimit = moment(depositTimeUpperLimit).add(1, 'days');
     }
