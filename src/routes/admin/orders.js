@@ -648,6 +648,8 @@ router.post('/assignRider', async (req, res) => {
       .tz('Asia/Karachi')
       .subtract(5, 'hours');
 
+    console.log(moment());
+
     if (
       time.isBefore(
         moment({ hour: 3, minute: 0 })
