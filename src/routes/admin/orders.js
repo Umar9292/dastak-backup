@@ -654,9 +654,6 @@ router.post('/assignRider', async (req, res) => {
       depositTimeUpperLimit = moment(depositTimeUpperLimit).add(1, 'days');
     }
 
-    console.log(depositTimeLowerLimit);
-    console.log(depositTimeUpperLimit);
-
     const [
       order,
       {
