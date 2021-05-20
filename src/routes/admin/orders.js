@@ -385,7 +385,7 @@ router.post('/adminResponse', async (req, res) => {
     const ridersMessage = `New order from ${shop.name}`;
 
     if (status === 'Rejected') {
-      if (type === 'user') {
+      if (type !== undefined && type === 'user') {
         const msg = `Order# ${order.orderNum} has been cancelled by the user`;
 
         const { playerIds } = shop;
