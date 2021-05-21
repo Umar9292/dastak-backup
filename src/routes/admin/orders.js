@@ -748,7 +748,7 @@ router.post('/assignRider', async (req, res) => {
           .subtract(5, 'hours');
 
         if (+hour <= 3) {
-          orderTime = moment(depositTimeLowerLimit).add(1, 'days');
+          orderTime = moment(orderTime).add(1, 'days');
         }
 
         if (orderTime.isSameOrAfter(depositTimeUpperLimit)) {
