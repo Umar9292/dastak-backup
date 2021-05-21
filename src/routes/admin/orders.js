@@ -743,9 +743,13 @@ router.post('/assignRider', async (req, res) => {
         .lean();
 
       const previousDatefilteredOrders = previousDateOrders.filter(order => {
-        const orderTime = moment(order.time, 'HH:mm a')
+        let orderTime = moment(order.time, 'HH:mm a')
           .tz('Asia/Karachi')
           .subtract(5, 'hours');
+
+        if (+hour <= 3) {
+          orderTime = moment(orderTime).add(1, 'days');
+        }
 
         if (orderTime.isSameOrAfter(depositTimeUpperLimit)) {
           return order;
