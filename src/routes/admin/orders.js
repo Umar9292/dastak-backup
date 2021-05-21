@@ -654,9 +654,6 @@ router.post('/assignRider', async (req, res) => {
       depositTimeUpperLimit = moment(depositTimeUpperLimit).add(1, 'days');
     }
 
-    console.log(depositTimeLowerLimit);
-    console.log(depositTimeUpperLimit);
-
     const [
       order,
       {
@@ -711,8 +708,6 @@ router.post('/assignRider', async (req, res) => {
     }
 
     if (time.isSameOrAfter(depositTimeUpperLimit)) {
-      console.log('Not here');
-
       const filteredOrders = currentDateOrders.filter(order => {
         const orderTime = moment(order.time, 'HH:mm a')
           .tz('Asia/Karachi')
@@ -738,8 +733,6 @@ router.post('/assignRider', async (req, res) => {
     }
 
     if (time.isSameOrBefore(depositTimeLowerLimit)) {
-      console.log('here');
-
       const previousDateOrders = await Orders.find({
         riderId,
         date: previousDate,
@@ -750,9 +743,13 @@ router.post('/assignRider', async (req, res) => {
         .lean();
 
       const previousDatefilteredOrders = previousDateOrders.filter(order => {
-        const orderTime = moment(order.time, 'HH:mm a')
+        let orderTime = moment(order.time, 'HH:mm a')
           .tz('Asia/Karachi')
           .subtract(5, 'hours');
+
+        if (+hour <= 3) {
+          orderTime = moment(depositTimeLowerLimit).add(1, 'days');
+        }
 
         if (orderTime.isSameOrAfter(depositTimeUpperLimit)) {
           return order;
