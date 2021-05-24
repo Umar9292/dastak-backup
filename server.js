@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const { connect } = require('mongoose');
+const { connect, connection } = require('mongoose');
 const bodyParser = require('body-parser');
-// const { get } = require('http');
+const { createServer } = require('http');
 const cors = require('cors');
 const logger = require('morgan');
 const helmet = require('helmet');
@@ -32,10 +32,16 @@ const medicalStoresRouter = require('./src/routes/stores/stores');
 const storeProductsRouter = require('./src/routes/stores/storeProducts');
 const updateProductRouter = require('./src/routes/stores/updatePrices');
 const otpVerificationRouter = require('./src/routes/user/otpVerification');
+const chatRouter = require('./src/routes/chat/chat');
+
+const Chats = require('./src/models/chatModel');
 
 const port = process.env.PORT || 8080;
 
 const app = express();
+const server = createServer(app);
+// eslint-disable-next-line import/order
+const io = require('socket.io')(server);
 
 app.disable('etag');
 app.disable('x-powered-by');
@@ -63,6 +69,7 @@ app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
+app.use('/chat', chatRouter);
 app.use(
   '/stores',
   medicalStoresRouter,
@@ -114,29 +121,27 @@ connect(
   }
 );
 
-/* connection.once('open', () => {
+connection.once('open', () => {
   console.log('Setting change streams');
-  const ordersChangeStream = connection.collection('orders').watch();
+  const ordersChangeStream = connection.collection('chats').watch();
 
   ordersChangeStream.on('change', async change => {
+    console.log(change.operationType);
     if (change.operationType === 'insert') {
       const { fullDocument } = change;
 
+      console.log(fullDocument);
       io.emit('newOrder', fullDocument);
     }
 
     if (change.operationType === 'update') {
-      const { documentKey, updateDescription } = change;
+      const { fullDocument } = change;
 
-      if (updateDescription.updatedFields.status === 'Admin Accepted') {
-        const newOrder = await Orders.findById(documentKey._id).lean();
-        if (newOrder.orderType === 'Delivery') {
-          io.emit('newOrder', newOrder);
-        }
-      }
+      console.log(change);
+      io.emit('newOrder', fullDocument);
     }
   });
-}); */
+});
 
 /* config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
