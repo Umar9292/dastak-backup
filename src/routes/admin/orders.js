@@ -394,6 +394,16 @@ router.post('/adminResponse', async (req, res) => {
           await notifyUser(msg, playerId, { flag: 'orderRejected' });
         });
 
+        if (order.riderId) {
+          const { playerId: ridersPlayerId } = await Users.findById(
+            order.riderId
+          )
+            .select('playerId')
+            .lean();
+
+          await notifyUser(msg, ridersPlayerId, { flag: 'orderRejected' });
+        }
+
         const adminMessage = `The order number ${orderNum} has been rejected by ${user.name} because it's ${reason}`;
         orderStatusEmail(adminMessage);
       } else {
@@ -699,7 +709,7 @@ router.post('/assignRider', async (req, res) => {
       });
     }
 
-    if (!admin && orderCount >= 2) {
+    if (admin !== undefined && orderCount >= 2) {
       return res.json({
         status: '404',
         msg:
@@ -777,7 +787,7 @@ router.post('/assignRider', async (req, res) => {
       }
     }
 
-    if (!admin) {
+    if (admin === undefined) {
       order.assignedBy = name;
     } else {
       order.assignedBy = 'admin';
