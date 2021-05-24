@@ -38,6 +38,7 @@ router.post('/placeOrder', async (req, res) => {
       products,
       latitude,
       longitude,
+      orderType,
     } = params;
 
     const date = moment()
@@ -86,7 +87,10 @@ router.post('/placeOrder', async (req, res) => {
       martPhone: mart.phone,
       martAddress: mart.martAddress,
       time: formatedTime,
-      orderTotal: customer.employee ? orderTotal - 30 : orderTotal,
+      orderTotal:
+        customer.employee && orderType === 'Delivery'
+          ? orderTotal - 30
+          : orderTotal,
       deliveryCharges: customer.employee ? '0' : params.deliveryCharges,
       date,
       orderNum: todaysOrders + 1,
