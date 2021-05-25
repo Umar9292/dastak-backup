@@ -203,7 +203,7 @@ router.post('/allProducts', async (req, res) => {
         data: finalData,
       });
 
-      client.setex(martId, 5, JSON.stringify(finalData));
+      client.setex(martId, 600, JSON.stringify(finalData));
     });
   } catch (err) {
     console.log(err);
