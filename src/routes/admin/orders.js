@@ -89,7 +89,7 @@ router.post('/placeOrder', async (req, res) => {
       time: formatedTime,
       orderTotal:
         customer.employee && orderType === 'Delivery'
-          ? orderTotal - 30
+          ? orderTotal - +mart.deliveryCharges
           : orderTotal,
       deliveryCharges: customer.employee ? '0' : params.deliveryCharges,
       date,
