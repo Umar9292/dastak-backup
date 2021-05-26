@@ -101,7 +101,10 @@ router.post('/placeOrder', async (req, res) => {
         .toISOString(),
     };
 
-    console.log(params.orderTotal);
+    if (orderType === 'PickUp' && orderTotal !== params.orderTotal) {
+      const msg = `Front End Order Total = ${orderTotal} and Backend Total = ${params.orderTotal}`;
+      await notifyUser(msg, '70c3917b-3e8c-4d40-b4b3-65ded06a5534', {});
+    }
 
     const order = await new Orders(params).save();
 
