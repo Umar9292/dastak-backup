@@ -41,6 +41,8 @@ router.post('/placeOrder', async (req, res) => {
       orderType,
     } = params;
 
+    console.log(req.body);
+
     const date = moment()
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
@@ -98,6 +100,8 @@ router.post('/placeOrder', async (req, res) => {
         .tz('Asia/Karachi')
         .toISOString(),
     };
+
+    console.log(params);
 
     const order = await new Orders(params).save();
 
