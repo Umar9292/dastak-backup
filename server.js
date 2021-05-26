@@ -34,14 +34,14 @@ const updateProductRouter = require('./src/routes/stores/updatePrices');
 const otpVerificationRouter = require('./src/routes/user/otpVerification');
 const chatRouter = require('./src/routes/chat/chat');
 
-const Chats = require('./src/models/chatModel');
+// const Chats = require('./src/models/chatModel');
 
 const port = process.env.PORT || 8080;
 
 const app = express();
-const server = createServer(app);
+/* const server = createServer(app);
 // eslint-disable-next-line import/order
-const io = require('socket.io')(server);
+const io = require('socket.io')(server); */
 
 app.disable('etag');
 app.disable('x-powered-by');
@@ -121,7 +121,7 @@ connect(
   }
 );
 
-connection.once('open', () => {
+/* connection.once('open', () => {
   console.log('Setting change streams');
   const ordersChangeStream = connection.collection('chats').watch();
 
@@ -141,7 +141,7 @@ connection.once('open', () => {
       io.emit('newOrder', fullDocument);
     }
   });
-});
+}); */
 
 /* config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
