@@ -79,6 +79,8 @@ router.post('/placeOrder', async (req, res) => {
       params.address = result.data.results[0].formatted_address;
     }
 
+    console.log(orderTotal);
+
     params = {
       ...params,
       products: await JSON.parse(products),
@@ -98,6 +100,8 @@ router.post('/placeOrder', async (req, res) => {
         .tz('Asia/Karachi')
         .toISOString(),
     };
+
+    console.log(params.orderTotal);
 
     const order = await new Orders(params).save();
 
