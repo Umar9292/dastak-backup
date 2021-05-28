@@ -88,10 +88,11 @@ router.post('/placeOrder', async (req, res) => {
       martAddress: mart.martAddress,
       time: formatedTime,
       orderTotal:
-        customer.employee && orderType === 'Delivery'
+        customer.employee !== undefined && orderType === 'Delivery'
           ? orderTotal - +mart.deliveryCharges
           : orderTotal,
-      deliveryCharges: customer.employee ? '0' : params.deliveryCharges,
+      deliveryCharges:
+        customer.employee !== undefined ? '0' : params.deliveryCharges,
       date,
       orderNum: todaysOrders + 1,
       dateForSearching: moment(date, 'DD-MM-YYYY')
