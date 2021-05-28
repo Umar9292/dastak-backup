@@ -79,8 +79,6 @@ router.post('/placeOrder', async (req, res) => {
       params.address = result.data.results[0].formatted_address;
     }
 
-    console.log(orderTotal);
-
     params = {
       ...params,
       products: await JSON.parse(products),
