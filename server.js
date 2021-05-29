@@ -36,6 +36,8 @@ const chatRouter = require('./src/routes/chat/chat');
 
 // const Chats = require('./src/models/chatModel');
 
+const { notifyUser } = require('./src/notificationHandler/handler');
+
 const port = process.env.PORT || 8080;
 
 const app = express();
@@ -121,27 +123,23 @@ connect(
   }
 );
 
-/* connection.once('open', () => {
+connection.once('open', () => {
   console.log('Setting change streams');
-  const ordersChangeStream = connection.collection('chats').watch();
+
+  const ordersChangeStream = connection.collection('orders').watch();
 
   ordersChangeStream.on('change', async change => {
-    console.log(change.operationType);
-    if (change.operationType === 'insert') {
-      const { fullDocument } = change;
-
-      console.log(fullDocument);
-      io.emit('newOrder', fullDocument);
-    }
-
-    if (change.operationType === 'update') {
-      const { fullDocument } = change;
-
-      console.log(change);
-      io.emit('newOrder', fullDocument);
+    if (
+      change.operationType === 'update' &&
+      change.updateDescription.updatedFields.orderTotal !== undefined
+    ) {
+      const { documentKey, updateDescription } = change;
+      const msg = `Order total of order id ${documentKey._id} got changed to ${updateDescription.updatedFields.orderTotal}`;
+      console.log('Here is the problem\n');
+      await notifyUser(msg, '70c3917b-3e8c-4d40-b4b3-65ded06a5534', {});
     }
   });
-}); */
+});
 
 /* config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
