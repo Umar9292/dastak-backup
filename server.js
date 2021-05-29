@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { connect } = require('mongoose');
+const { connect, connection } = require('mongoose');
 const bodyParser = require('body-parser');
 // const { get } = require('http');
 const cors = require('cors');
@@ -32,6 +32,8 @@ const medicalStoresRouter = require('./src/routes/stores/stores');
 const storeProductsRouter = require('./src/routes/stores/storeProducts');
 const updateProductRouter = require('./src/routes/stores/updatePrices');
 const otpVerificationRouter = require('./src/routes/user/otpVerification');
+
+const { notifyUser } = require('./src/notificationHandler/handler');
 
 const port = process.env.PORT || 8080;
 
@@ -114,29 +116,23 @@ connect(
   }
 );
 
-/* connection.once('open', () => {
+connection.once('open', () => {
   console.log('Setting change streams');
+
   const ordersChangeStream = connection.collection('orders').watch();
 
   ordersChangeStream.on('change', async change => {
-    if (change.operationType === 'insert') {
-      const { fullDocument } = change;
-
-      io.emit('newOrder', fullDocument);
-    }
-
-    if (change.operationType === 'update') {
+    if (
+      change.operationType === 'update' &&
+      change.updateDescription.updatedFields.orderTotal !== undefined
+    ) {
       const { documentKey, updateDescription } = change;
-
-      if (updateDescription.updatedFields.status === 'Admin Accepted') {
-        const newOrder = await Orders.findById(documentKey._id).lean();
-        if (newOrder.orderType === 'Delivery') {
-          io.emit('newOrder', newOrder);
-        }
-      }
+      const msg = `Order total of order id ${documentKey._id} got changed to ${updateDescription.updatedFields.orderTotal}`;
+      console.log('Here is the problem\n');
+      await notifyUser(msg, '70c3917b-3e8c-4d40-b4b3-65ded06a5534', {});
     }
   });
-}); */
+});
 
 /* config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
