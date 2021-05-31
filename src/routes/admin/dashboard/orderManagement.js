@@ -103,7 +103,7 @@ router.post('/updateOrder', async (req, res) => {
     if (orderType === 'Delivery' && order.orderType !== 'Delivery') {
       req.body.deliveryCharges = '30';
       order.orderTotal += 30;
-      order.save();
+      await order.save();
 
       const idleRiders = await Users.find({
         type: 'rider',
@@ -149,7 +149,7 @@ router.post('/updateOrder', async (req, res) => {
     if (orderType === 'PickUp' && order.orderType !== 'PickUp') {
       req.body.deliveryCharges = '0';
       order.orderTotal -= 30;
-      order.save();
+      await order.save();
     }
 
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
