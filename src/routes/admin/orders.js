@@ -45,13 +45,9 @@ router.post('/placeOrder', async (req, res) => {
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
-    const [mart, customer, todaysOrders] = await Promise.all([
+    const [mart, todaysOrders] = await Promise.all([
       Users.findById(martId)
         .select('-password -__v')
-        .lean(),
-
-      Users.findById(userId)
-        .select('employee')
         .lean(),
 
       Orders.countDocuments({ martId, date }),
