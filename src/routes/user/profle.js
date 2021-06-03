@@ -1,7 +1,6 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const Speakeasy = require('speakeasy');
-const moment = require('moment-timezone');
 const { compare, hash } = require('bcrypt');
 
 const Users = require('../../models/userModel');
@@ -36,37 +35,10 @@ router.post('/editProfile', async (req, res) => {
     });
 
     if (pendingCollection !== undefined) {
-      const date = moment()
-        .tz('Asia/Karachi')
-        .format('DD-MM-YYYY');
-
-      const time = moment().tz('Asia/Karachi');
-      const hour = moment(time).format('H');
-
-      let depositTimeLowerLimit = moment('03:00', 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-
-      if (+hour <= 3) {
-        depositTimeLowerLimit = moment(depositTimeLowerLimit).add(1, 'days');
-      }
-
       await ordersModel.updateMany(
-        { riderId: userId, date, status: 'Delivered' },
+        { riderId: userId, status: 'Delivered' },
         { collectionSubmitted: true }
       );
-
-      if (time.isSameOrBefore(depositTimeLowerLimit)) {
-        const previousDate = moment()
-          .tz('Asia/Karachi')
-          .subtract(1, 'days')
-          .format('DD-MM-YYYY');
-
-        await ordersModel.updateMany(
-          { riderId: userId, date: previousDate, status: 'Delivered' },
-          { collectionSubmitted: true }
-        );
-      }
     }
   } catch (err) {
     return res.json({
