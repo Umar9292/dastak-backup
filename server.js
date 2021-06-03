@@ -34,16 +34,16 @@ const updateProductRouter = require('./src/routes/stores/updatePrices');
 const otpVerificationRouter = require('./src/routes/user/otpVerification');
 const chatRouter = require('./src/routes/chat/chat');
 
-// const Chats = require('./src/models/chatModel');
-
 const { notifyUser } = require('./src/notificationHandler/handler');
+const userModel = require('./src/models/userModel');
+const Chats = require('./src/models/chatModel');
 
 const port = process.env.PORT || 8080;
 
 const app = express();
-/* const server = createServer(app);
+const server = createServer(app);
 // eslint-disable-next-line import/order
-const io = require('socket.io')(server); */
+const io = require('socket.io')(server);
 
 app.disable('etag');
 app.disable('x-powered-by');
@@ -124,9 +124,66 @@ connect(
 );
 
 connection.once('open', () => {
-  console.log('Setting change streams');
-
   const ordersChangeStream = connection.collection('orders').watch();
+  const chatChangeStream = connection.collection('chats').watch();
+
+  chatChangeStream.on('change', async change => {
+    if (change.operationType === 'insert') {
+      const { fullDocument } = change;
+
+      io.emit('newChat', fullDocument);
+
+      const { chat, userId, riderId } = fullDocument;
+      const msg = `New message from ${chat[0].type}: ${chat[0].message}`;
+
+      if (chat[0].type === 'customer') {
+        const { playerId } = await userModel
+          .findById(riderId)
+          .select('playerId')
+          .lean();
+
+        await notifyUser(msg, playerId, {});
+      } else {
+        const { playerId } = await userModel
+          .findById(userId)
+          .select('playerId')
+          .lean();
+
+        await notifyUser(msg, playerId, {});
+      }
+    }
+
+    if (change.operationType === 'update') {
+      const { documentKey, updateDescription } = change;
+
+      const { chat } = updateDescription.updatedFields;
+      io.emit('newMessage', chat);
+
+      const msg = `New message from ${chat[0].type}: ${
+        chat[chat.length - 1].message
+      }`;
+
+      const { userId, riderId } = await Chats.findById(documentKey._id)
+        .select('userId riderId')
+        .lean();
+
+      if (chat[chat.length - 1].type === 'customer') {
+        const { playerId } = await userModel
+          .findById(riderId)
+          .select('playerId')
+          .lean();
+
+        await notifyUser(msg, playerId, {});
+      } else {
+        const { playerId } = await userModel
+          .findById(userId)
+          .select('playerId')
+          .lean();
+
+        await notifyUser(msg, playerId, {});
+      }
+    }
+  });
 
   ordersChangeStream.on('change', async change => {
     if (
