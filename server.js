@@ -89,21 +89,6 @@ app.use(
   adminAutorizationRouter
 );
 
-/* const options = {
-  host: 'dastakbackend.herokuapp.com',
-  // host: 'martbackend.herokuapp.com',
-};
-const request = () => {
-  get(options, function(res) {
-    res.on('data', function() {
-      console.log('Working');
-    });
-  }).on('error', function(e) {
-    console.log(`Got error: ${e.message}`);
-  });
-};
-setInterval(request, 1500000); */
-
 connect(
   dbUrl,
   {
@@ -116,7 +101,7 @@ connect(
     if (err) {
       console.log(err);
     } else {
-      app.listen(port, () => console.log(`Listening on port ${port}\n`));
+      server.listen(port, () => console.log(`Listening on port ${port}\n`));
 
       console.log('Connected to database');
     }
@@ -131,12 +116,12 @@ connection.once('open', () => {
     if (change.operationType === 'insert') {
       const { fullDocument } = change;
 
-      io.emit('newChat', fullDocument);
+      io.emit('newMessage', fullDocument);
 
       const { chat, userId, riderId } = fullDocument;
-      const msg = `New message from ${chat[0].type}: ${chat[0].message}`;
+      const msg = `New message from ${chat[0].type}: ${chat[0].txt}`;
 
-      if (chat[0].type === 'customer') {
+      if (chat[0].type === 'user') {
         const { playerId } = await userModel
           .findById(riderId)
           .select('playerId')
@@ -157,17 +142,19 @@ connection.once('open', () => {
       const { documentKey, updateDescription } = change;
 
       const { chat } = updateDescription.updatedFields;
-      io.emit('newMessage', chat);
+
+      const fullDcocument = await Chats.findById(documentKey._id).lean();
+      io.emit('newMessage', fullDcocument);
 
       const msg = `New message from ${chat[0].type}: ${
-        chat[chat.length - 1].message
+        chat[chat.length - 1].txt
       }`;
 
       const { userId, riderId } = await Chats.findById(documentKey._id)
         .select('userId riderId')
         .lean();
 
-      if (chat[chat.length - 1].type === 'customer') {
+      if (chat[chat.length - 1].type === 'user') {
         const { playerId } = await userModel
           .findById(riderId)
           .select('playerId')
@@ -197,11 +184,5 @@ connection.once('open', () => {
     }
   });
 });
-
-/* config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET,
-}); */
 
 module.exports = app;
