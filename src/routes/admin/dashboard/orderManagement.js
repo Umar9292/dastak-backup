@@ -4,7 +4,10 @@ const moment = require('moment-timezone');
 const Orders = require('../../../models/ordersModel');
 const Users = require('../../../models/userModel');
 
-const { notifyRiders } = require('../../../notificationHandler/handler');
+const {
+  notifyRiders,
+  notifyUser,
+} = require('../../../notificationHandler/handler');
 const {
   emailOrderDetailsToRider,
 } = require('../../../emailHandler/riderEmail/riderEmail');
@@ -102,7 +105,7 @@ router.post('/updateOrder', async (req, res) => {
 
     if (orderTotal !== undefined) {
       const msg = `Incoming order total = ${orderTotal} and orderTotal in order = ${order.orderTotal}`;
-      await notifyUser(msg, '70c3917b-3e8c-4d40-b4b3-65ded06a5534'. {});
+      await notifyUser(msg, '70c3917b-3e8c-4d40-b4b3-65ded06a5534', {});
     }
 
     if (orderType === 'Delivery' && order.orderType !== 'Delivery') {
