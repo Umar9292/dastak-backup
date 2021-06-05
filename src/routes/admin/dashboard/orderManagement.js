@@ -101,7 +101,9 @@ router.post('/updateOrder', async (req, res) => {
       req.body.products = JSON.parse(products);
     }
 
-    const order = await Orders.findById(orderId).select('orderTotal martName');
+    const order = await Orders.findById(orderId).select(
+      'orderTotal martName orderType'
+    );
 
     if (orderTotal !== undefined) {
       const msg = `Incoming order total = ${orderTotal} and orderTotal in order = ${order.orderTotal}`;
