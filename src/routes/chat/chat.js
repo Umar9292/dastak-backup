@@ -25,4 +25,26 @@ router.post('/newMessage', async (req, res) => {
   }
 });
 
+router.post('/allMessages', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    const { chat } = await Chats.findOne({ orderId })
+      .select('chat')
+      .lean();
+
+    if (!chat) {
+      return res.json({ status: '404' });
+    }
+
+    res.json({ status: '200', chat });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
