@@ -1,12 +1,20 @@
 const Router = require('express/lib/router');
 
 const Chats = require('../../models/chatModel');
+const Orders = require('../../models/ordersModel');
 
 const router = Router();
 
 router.post('/newMessage', async (req, res) => {
   try {
     const { orderId, chat } = req.body;
+
+    const { status } = await Orders.findById(orderId)
+      .select('status')
+      .lean();
+    if (status === 'Delivered' || status === 'Rejected') {
+      return res.json({ status: '404' });
+    }
 
     const chatFound = await Chats.findOne({ orderId });
     if (!chatFound) {
