@@ -148,6 +148,7 @@ router.post('/placeOrder', async (req, res) => {
       );
     }
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
