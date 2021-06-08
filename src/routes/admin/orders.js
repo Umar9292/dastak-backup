@@ -709,7 +709,7 @@ router.post('/assignRider', async (req, res) => {
       });
     }
 
-    if (admin !== undefined && orderCount >= 2) {
+    if (admin === undefined && orderCount >= 2) {
       return res.json({
         status: '404',
         msg:
