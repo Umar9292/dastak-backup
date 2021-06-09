@@ -1,5 +1,9 @@
 const cluster = require('cluster');
 
+const { startChangeStreams } = require('./changeStreams');
+
+startChangeStreams();
+
 if (cluster.isMaster) {
   for (let i = 0; i < 5; i += 1) {
     cluster.fork();
