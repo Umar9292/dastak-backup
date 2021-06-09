@@ -127,14 +127,14 @@ connection.once('open', () => {
           .select('playerId')
           .lean();
 
-        await notifyUser(msg, playerId, {});
+        await notifyUser(msg, playerId, { flag: 'riderMsg' });
       } else {
         const { playerId } = await userModel
           .findById(userId)
           .select('playerId')
           .lean();
 
-        await notifyUser(msg, playerId, {});
+        await notifyUser(msg, playerId, { flag: 'userMsg' });
       }
     }
 
