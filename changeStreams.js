@@ -1,6 +1,6 @@
 const { connection } = require('mongoose');
 
-const { io } = require('./server');
+// const { io } = require('./server');
 const { notifyUser } = require('./src/notificationHandler/handler');
 
 const userModel = require('./src/models/userModel');
