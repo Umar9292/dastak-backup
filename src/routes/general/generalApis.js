@@ -889,40 +889,4 @@ router.post('/dealMoney', async (req, res) => {
   }
 });
 
-router.post('/test', async (req, res) => {
-  try {
-    let { startDate, endDate } = req.body;
-
-    startDate = moment(startDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
-      .toISOString();
-    endDate = moment(endDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
-      .toISOString();
-
-    await Orders.updateMany(
-      {
-        paid: true,
-        status: { $in: ['Delivered', 'Rider Picked Up'] },
-        dateForSearching: {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
-      { paid: false }
-    );
-
-    return res.json({
-      status: '200',
-      msg: 'Restaurants have been paid successfully',
-    });
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
 module.exports = router;
