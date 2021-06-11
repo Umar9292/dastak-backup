@@ -6,6 +6,7 @@ const { createServer } = require('http');
 
 const userModel = require('./src/models/userModel');
 const Chats = require('./src/models/chatModel');
+
 const { notifyUser } = require('./src/notificationHandler/handler');
 const { dbUrl } = require('./utils/dbUrls');
 
@@ -17,24 +18,24 @@ const server = createServer(app);
 // eslint-disable-next-line import/order
 const io = require('socket.io')(server);
 
-if (cluster.isMaster) {
-  connect(
-    dbUrl,
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false,
-      useCreateIndex: true,
-    },
-    err => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log('Connected to database');
-      }
+connect(
+  dbUrl,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
+  },
+  err => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log('Connected to database');
     }
-  );
+  }
+);
 
+if (cluster.isMaster) {
   connection.once('open', () => {
     console.log('Setting change streams');
     const ordersChangeStream = connection.collection('orders').watch();
@@ -42,6 +43,7 @@ if (cluster.isMaster) {
 
     chatChangeStream.on('change', async change => {
       if (change.operationType === 'insert') {
+        console.log('insert');
         const { fullDocument } = change;
 
         io.emit('newMessage', fullDocument);
@@ -67,12 +69,14 @@ if (cluster.isMaster) {
       }
 
       if (change.operationType === 'update') {
+        console.log('update');
         const { documentKey, updateDescription } = change;
 
         const { chat } = updateDescription.updatedFields;
 
         const fullDcocument = await Chats.findById(documentKey._id).lean();
-        io.emit('newMessage', fullDcocument);
+        const res = io.emit('newMessage', fullDcocument);
+        console.log(res);
 
         const msg = `New message from ${chat[0].type}: ${
           chat[chat.length - 1].txt

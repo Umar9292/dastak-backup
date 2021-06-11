@@ -80,7 +80,7 @@ app.use(
   adminAutorizationRouter
 );
 
-connect(
+/* connect(
   dbUrl,
   {
     useNewUrlParser: true,
@@ -95,6 +95,6 @@ connect(
       console.log('Connected to database');
     }
   }
-);
+); */
 
 module.exports = app;
