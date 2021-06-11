@@ -1011,7 +1011,6 @@ router.post('/riderOrders', async (req, res) => {
           .lean();
 
         const [longitude, latitude] = geometry.coordinates;
-        console.log(latitude, longitude);
         order.martLatitude = latitude.toString();
         order.martLongitude = longitude.toString();
       })
