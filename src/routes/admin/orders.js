@@ -1006,12 +1006,14 @@ router.post('/riderOrders', async (req, res) => {
       accepted.map(async order => {
         const { martId } = order;
 
-        const { latitude, longitude } = await Users.findById(martId)
-          .select('latitude longitude')
+        const { geometry } = await Users.findById(martId)
+          .select('geometry')
           .lean();
 
-        order.martLatitude = latitude;
-        order.martLongitude = longitude;
+        const [longitude, latitude] = geometry.coordinates;
+        console.log(latitude, longitude);
+        order.martLatitude = latitude.toString();
+        order.martLongitude = longitude.toString();
       })
     );
 
