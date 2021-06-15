@@ -26,9 +26,9 @@ router.post('/newMessage', async (req, res) => {
       await new Chats(req.body).save();
     }
 
-    await Chats.findOneAndUpdate({ orderId }, { chat });
+    const updatedChat = await Chats.findOneAndUpdate({ orderId }, { chat });
 
-    emitMessage(chat);
+    emitMessage(updatedChat);
 
     res.json({ status: '200' });
 
