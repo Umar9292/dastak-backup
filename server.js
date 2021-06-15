@@ -8,6 +8,8 @@ const { join } = require('path');
 // const { config } = require('cloudinary');
 const compression = require('compression');
 const { connect } = require('mongoose');
+const { createServer } = require('http');
+const socketIo = require('socket.io');
 
 const signUpRouter = require('./src/routes/user/signUp');
 const profileRouter = require('./src/routes/user/profle');
@@ -30,11 +32,22 @@ const medicalStoresRouter = require('./src/routes/stores/stores');
 const storeProductsRouter = require('./src/routes/stores/storeProducts');
 const updateProductRouter = require('./src/routes/stores/updatePrices');
 const otpVerificationRouter = require('./src/routes/user/otpVerification');
-const chatRouter = require('./src/routes/chat/chat');
 
 const { dbUrl } = require('./utils/dbUrls');
 
+const port = process.env.PORT || 8080;
+
 const app = express();
+
+const server = createServer(app);
+const io = socketIo(server);
+server.listen(port, () => console.log(`Listening on port ${port}\n`));
+
+exports.emitMessage = chat => {
+  io.emit('newMessage', chat);
+};
+
+const chatRouter = require('./src/routes/chat/chat');
 
 app.disable('etag');
 app.disable('x-powered-by');
@@ -80,7 +93,7 @@ app.use(
   adminAutorizationRouter
 );
 
-/* connect(
+connect(
   dbUrl,
   {
     useNewUrlParser: true,
@@ -95,6 +108,6 @@ app.use(
       console.log('Connected to database');
     }
   }
-); */
+);
 
-module.exports = app;
+// module.exports = app;

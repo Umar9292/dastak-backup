@@ -59,7 +59,9 @@ router.get('/notifications', async (req, res) => {
     // const msg = `Dear Umar to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
     const msg =
       'Hello. The number that you have given is powred off. Kindly contact dastak rider or your order will be cancelled';
-    await notifyUser(msg, 'cb712449-673d-4867-aab5-2ff36f118549', {});
+    await notifyUser(msg, 'c95ffb41-7878-4a4a-ab76-bf86443bdacc', {
+      flag: 'userMsg',
+    });
 
     /*  for (const user of users) {
       if (user.playerId && user.player !== '') {
