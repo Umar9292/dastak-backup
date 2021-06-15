@@ -10,6 +10,7 @@ const compression = require('compression');
 const { connect } = require('mongoose');
 const { createServer } = require('http');
 const socketIo = require('socket.io');
+const redis = require('socket.io-redis');
 
 const signUpRouter = require('./src/routes/user/signUp');
 const profileRouter = require('./src/routes/user/profle');
@@ -41,6 +42,9 @@ const app = express();
 
 const server = createServer(app);
 const io = socketIo(server);
+io.adapter(
+  redis({ host: process.env.REDIS_URL, port: process.env.PORT || 6379 })
+);
 server.listen(port, () => console.log(`Listening on port ${port}\n`));
 
 exports.emitMessage = chat => {

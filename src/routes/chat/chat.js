@@ -21,12 +21,17 @@ router.post('/newMessage', async (req, res) => {
       return res.json({ status: '404' });
     }
 
+    let updatedChat;
     const chatFound = await Chats.findOne({ orderId });
     if (!chatFound) {
-      await new Chats(req.body).save();
+      updatedChat = await new Chats(req.body).save();
+    } else {
+      updatedChat = await Chats.findOneAndUpdate(
+        { orderId },
+        { chat },
+        { new: true }
+      );
     }
-
-    const updatedChat = await Chats.findOneAndUpdate({ orderId }, { chat });
 
     emitMessage(updatedChat);
 
