@@ -42,10 +42,10 @@ const app = express();
 
 const server = createServer(app);
 const io = socketIo(server);
+server.listen(port, () => console.log(`Listening on port ${port}\n`));
 io.adapter(
   redis({ url: process.env.REDIS_URL, port: process.env.PORT || 6379 })
 );
-server.listen(port, () => console.log(`Listening on port ${port}\n`));
 
 exports.emitMessage = chat => {
   io.emit('newMessage', chat);
