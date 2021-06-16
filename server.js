@@ -41,11 +41,12 @@ const port = process.env.PORT || 8080;
 const app = express();
 
 const server = createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  transports: ['websocket'],
+});
+io.adapter(redis(process.env.REDIS_URL));
+
 server.listen(port, () => console.log(`Listening on port ${port}\n`));
-io.adapter(
-  redis({ url: process.env.REDIS_URL, port: process.env.PORT || 6379 })
-);
 
 exports.emitMessage = chat => {
   io.emit('newMessage', chat);
