@@ -39,15 +39,20 @@ router.post('/placeOrder', async (req, res) => {
       latitude,
       longitude,
       orderType,
+      deliveryCharges,
     } = params;
 
     const date = moment()
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
-    const [mart, todaysOrders] = await Promise.all([
+    const [mart, { employee }, todaysOrders] = await Promise.all([
       Users.findById(martId)
         .select('-password -__v')
+        .lean(),
+
+      Users.findById(userId)
+        .select('employee')
         .lean(),
 
       Orders.countDocuments({ martId, date }),
@@ -83,8 +88,13 @@ router.post('/placeOrder', async (req, res) => {
       martPhone: mart.phone,
       martAddress: mart.martAddress,
       time: formatedTime,
+      deliveryCharges: employee !== undefined ? '0' : deliveryCharges,
       date,
       orderNum: todaysOrders + 1,
+      orderTotal:
+        employee !== undefined && orderType !== 'PickUp'
+          ? orderTotal - +mart.deliveryCharges
+          : orderTotal,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
         .toISOString(),
