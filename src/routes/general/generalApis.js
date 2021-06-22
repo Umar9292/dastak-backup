@@ -16,23 +16,25 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '60a7aa7819df0a05efbf1223',
+      martId: '602baeafc4da00045a131e49',
     });
 
     await Promise.all(
       products.map(product => {
-        if (
-          product.category === 'Pizza' ||
-          product.category === 'Burgers' ||
-          product.category === 'Burger Meal' ||
-          product.category === 'Shawarma'
-        ) {
-          let discountedPrice = ((30 / 100) * product.price).toFixed();
-          discountedPrice = Math.round(discountedPrice / 5) * 5;
-          product.discountedPrice = product.price - +discountedPrice;
-          product.discount = '30';
-          return product.save();
-        }
+        // if (
+        //   product.category === 'Pizza' ||
+        //   product.category === 'Burgers' ||
+        //   product.category === 'Burger Meal' ||
+        //   product.category === 'Shawarma'
+        // ) {
+        // let discountedPrice = ((10 / 100) * product.price).toFixed();
+        // discountedPrice = Math.round(discountedPrice / 5) * 5;
+        // product.price += +discountedPrice;
+        product.lunchTimeStart = '11:00';
+        product.lunchTimeEnd = '23:00';
+        product.randomOffer = true;
+        return product.save();
+        // }
       })
     );
 
