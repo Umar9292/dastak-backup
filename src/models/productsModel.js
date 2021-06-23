@@ -22,7 +22,7 @@ const productsModel = Schema(
     count: Number,
     type: String,
     flavours: Object,
-    drinks: String,
+    drinks: Boolean,
     allDrinks: Object,
     sizes: Object,
     randomOffer: Boolean,
