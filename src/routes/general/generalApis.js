@@ -510,7 +510,7 @@ router.post('/closeRestaurants', async (req, res) => {
 
     await Users.updateMany(
       {
-        shopType: 'restaurant',
+        type: 'admin',
         status: 'active',
         available: searchFlag,
       },

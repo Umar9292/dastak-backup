@@ -12,7 +12,6 @@ router.get('/manageRestaurants', async (_req, res) => {
     const [activeRestaurants, inactiveRestaurants] = await Promise.all([
       Users.find({
         type: 'admin',
-        shopType: 'restaurant',
         status: 'active',
       })
         .sort({ name: 1 })
@@ -20,7 +19,6 @@ router.get('/manageRestaurants', async (_req, res) => {
 
       Users.find({
         type: 'admin',
-        shopType: 'restaurant',
         status: 'inactive',
       })
         .sort({ name: 1 })
