@@ -20,7 +20,7 @@ router.get('/allOrders', async (_req, res) => {
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
-    const [upcoming, accepted, picked, totalOrders] = await Promise.all([
+    const [pending, adminAccepted, pickedUp, totalOrders] = await Promise.all([
       Orders.find({ status: 'Pending' })
         .sort({ createdAt: -1 })
         .lean(),
@@ -41,8 +41,8 @@ router.get('/allOrders', async (_req, res) => {
       }).lean(),
     ]);
 
-    await Promise.all([
-      upcoming.map(async order => {
+    const [upcoming, accepted, picked] = await Promise.all([
+      pending.map(async order => {
         const { martId } = order;
 
         const { geometry } = await Users.findById(martId)
@@ -54,7 +54,7 @@ router.get('/allOrders', async (_req, res) => {
         order.martLongitude = longitude.toString();
       }),
 
-      accepted.map(async order => {
+      adminAccepted.map(async order => {
         const { martId } = order;
 
         const { geometry } = await Users.findById(martId)
@@ -66,7 +66,7 @@ router.get('/allOrders', async (_req, res) => {
         order.martLongitude = longitude.toString();
       }),
 
-      picked.map(async order => {
+      pickedUp.map(async order => {
         const { martId } = order;
 
         const { geometry } = await Users.findById(martId)
