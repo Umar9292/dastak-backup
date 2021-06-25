@@ -69,14 +69,22 @@ router.post('/allRestaurants', async (req, res) => {
     const currentTime = moment().tz('Asia/Karachi');
 
     let [data1, data2, allRestaurants] = await Promise.all([
-      Users.find({
-        available: true,
-        status: 'active',
-        shopType: 'restaurant',
-        featured: true,
-      })
-        .sort({ name: -1 })
-        .lean(),
+      Users.aggregate([
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [long, lat] },
+            distanceField: 'dist',
+            maxDistance: 8000,
+            query: {
+              available: true,
+              status: 'active',
+              shopType: 'restaurant',
+              featured: true,
+            },
+            spherical: true,
+          },
+        },
+      ]),
 
       Users.aggregate([
         {

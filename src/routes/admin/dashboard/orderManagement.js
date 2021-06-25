@@ -41,6 +41,44 @@ router.get('/allOrders', async (_req, res) => {
       }).lean(),
     ]);
 
+    await Promise.all([
+      upcoming.map(async order => {
+        const { martId } = order;
+
+        const { geometry } = await Users.findById(martId)
+          .select('geometry')
+          .lean();
+
+        const [longitude, latitude] = geometry.coordinates;
+        order.martLatitude = latitude.toString();
+        order.martLongitude = longitude.toString();
+      }),
+
+      accepted.map(async order => {
+        const { martId } = order;
+
+        const { geometry } = await Users.findById(martId)
+          .select('geometry')
+          .lean();
+
+        const [longitude, latitude] = geometry.coordinates;
+        order.martLatitude = latitude.toString();
+        order.martLongitude = longitude.toString();
+      }),
+
+      picked.map(async order => {
+        const { martId } = order;
+
+        const { geometry } = await Users.findById(martId)
+          .select('geometry')
+          .lean();
+
+        const [longitude, latitude] = geometry.coordinates;
+        order.martLatitude = latitude.toString();
+        order.martLongitude = longitude.toString();
+      }),
+    ]);
+
     return res.json({
       status: '200',
       upcoming,
