@@ -42,41 +42,50 @@ router.get('/allOrders', async (_req, res) => {
     ]);
 
     const [upcoming, accepted, picked] = await Promise.all([
-      pending.map(async order => {
-        const { martId } = order;
+      Promise.all(
+        pending.map(async order => {
+          const { martId } = order;
 
-        const { geometry } = await Users.findById(martId)
-          .select('geometry')
-          .lean();
+          const { geometry } = await Users.findById(martId)
+            .select('geometry')
+            .lean();
 
-        const [longitude, latitude] = geometry.coordinates;
-        order.martLatitude = latitude.toString();
-        order.martLongitude = longitude.toString();
-      }),
+          const [longitude, latitude] = geometry.coordinates;
+          order.martLatitude = latitude.toString();
+          order.martLongitude = longitude.toString();
+          return order;
+        })
+      ),
 
-      adminAccepted.map(async order => {
-        const { martId } = order;
+      Promise.all(
+        adminAccepted.map(async order => {
+          const { martId } = order;
 
-        const { geometry } = await Users.findById(martId)
-          .select('geometry')
-          .lean();
+          const { geometry } = await Users.findById(martId)
+            .select('geometry')
+            .lean();
 
-        const [longitude, latitude] = geometry.coordinates;
-        order.martLatitude = latitude.toString();
-        order.martLongitude = longitude.toString();
-      }),
+          const [longitude, latitude] = geometry.coordinates;
+          order.martLatitude = latitude.toString();
+          order.martLongitude = longitude.toString();
+          return order;
+        })
+      ),
 
-      pickedUp.map(async order => {
-        const { martId } = order;
+      Promise.all(
+        pickedUp.map(async order => {
+          const { martId } = order;
 
-        const { geometry } = await Users.findById(martId)
-          .select('geometry')
-          .lean();
+          const { geometry } = await Users.findById(martId)
+            .select('geometry')
+            .lean();
 
-        const [longitude, latitude] = geometry.coordinates;
-        order.martLatitude = latitude.toString();
-        order.martLongitude = longitude.toString();
-      }),
+          const [longitude, latitude] = geometry.coordinates;
+          order.martLatitude = latitude.toString();
+          order.martLongitude = longitude.toString();
+          return order;
+        })
+      ),
     ]);
 
     return res.json({
