@@ -8,6 +8,7 @@ const chatModel = Schema(
     chat: Object,
   },
   {
+    timestamps: true,
     versionKey: false,
   }
 );
