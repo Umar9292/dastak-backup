@@ -9,7 +9,7 @@ router.post('/allMedicalStores', async (req, res) => {
   try {
     const { lat, long, employee } = req.body;
 
-    if (employee) {
+    if (employee === true) {
       const allMedicalStores = await Users.find({
         available: true,
         status: 'active',

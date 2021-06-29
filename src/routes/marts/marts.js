@@ -66,7 +66,7 @@ router.post('/allRestaurants', async (req, res) => {
   try {
     const { lat, long, employee } = req.body;
 
-    if (employee) {
+    if (employee === true) {
       const [data1, data2, allRestaurants] = await Promise.all([
         Users.find({
           available: true,
