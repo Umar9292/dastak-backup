@@ -7,7 +7,18 @@ const router = Router();
 
 router.post('/allMedicalStores', async (req, res) => {
   try {
-    const { lat, long } = req.body;
+    const { lat, long, employee } = req.body;
+
+    if (employee) {
+      const allMedicalStores = await Users.find({
+        available: true,
+        status: 'active',
+        shopType: 'restaurant',
+        featured: true,
+      });
+
+      return res.json({ status: '200', allMedicalStores });
+    }
 
     const currentTime = moment().tz('Asia/Karachi');
 
@@ -17,7 +28,7 @@ router.post('/allMedicalStores', async (req, res) => {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 3100,
+            maxDistance: 2800,
             query: {
               available: true,
               type: 'admin',

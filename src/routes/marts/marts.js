@@ -64,7 +64,40 @@ const router = Router();
 
 router.post('/allRestaurants', async (req, res) => {
   try {
-    const { lat, long } = req.body;
+    const { lat, long, employee } = req.body;
+
+    if (employee) {
+      const [data1, data2, allRestaurants] = await Promise.all([
+        Users.find({
+          available: true,
+          status: 'active',
+          shopType: 'restaurant',
+          featured: true,
+        }),
+
+        Users.find({
+          available: true,
+          status: 'active',
+          shopType: 'restaurant',
+          category: 'Home Chef',
+        }),
+
+        Users.find({
+          available: true,
+          status: 'active',
+          shopType: 'restaurant',
+        }),
+      ]);
+
+      return res.json({
+        status: '200',
+        allRestaurants,
+        label1: data1.length !== 0 ? 'Featured' : undefined,
+        data1: data1.length !== 0 ? data1 : undefined,
+        label2: data2.length !== 0 ? 'Home Chefs' : undefined,
+        data2: data2.length !== 0 ? data2 : undefined,
+      });
+    }
 
     const currentTime = moment().tz('Asia/Karachi');
 
@@ -74,7 +107,7 @@ router.post('/allRestaurants', async (req, res) => {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 8000,
+            maxDistance: 5000,
             query: {
               available: true,
               status: 'active',
@@ -91,7 +124,7 @@ router.post('/allRestaurants', async (req, res) => {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 3100,
+            maxDistance: 2800,
             query: {
               available: true,
               type: 'admin',
@@ -109,7 +142,7 @@ router.post('/allRestaurants', async (req, res) => {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 3100,
+            maxDistance: 2800,
             query: {
               available: true,
               type: 'admin',
