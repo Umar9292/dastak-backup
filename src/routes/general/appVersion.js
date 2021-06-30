@@ -6,7 +6,7 @@ router.post('/checkVersion', async (req, res) => {
   try {
     const { platform, version } = req.body;
 
-    if (platform === 'ios' && version === '1.6.2') {
+    if (platform === 'ios' && (version === '1.6.2' || version === '1.6.3')) {
       return res.json({ status: '200', showCategories: 'false' });
     }
 
@@ -16,7 +16,7 @@ router.post('/checkVersion', async (req, res) => {
       });
     } */
 
-    if (platform === 'ios' && version === '1.6.2') {
+    if (platform === 'ios' && (version === '1.6.2' || version === '1.6.3')) {
       return res.json({
         status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
@@ -24,7 +24,10 @@ router.post('/checkVersion', async (req, res) => {
       });
     }
 
-    if (platform === 'android' && version === '1.6.2') {
+    if (
+      platform === 'android' &&
+      (version === '1.6.2' || version === '1.6.3')
+    ) {
       return res.json({ status: '200', showCategories: 'false' });
     }
 
@@ -34,7 +37,10 @@ router.post('/checkVersion', async (req, res) => {
       });
     } */
 
-    if (platform === 'android' && version !== '1.6.2') {
+    if (
+      platform === 'android' &&
+      (version === '1.6.2' || version === '1.6.3')
+    ) {
       return res.json({
         status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
