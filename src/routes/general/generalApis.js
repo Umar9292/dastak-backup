@@ -900,4 +900,25 @@ router.post('/dealMoney', async (req, res) => {
   }
 });
 
+router.get('/test', async (_req, res) => {
+  try {
+    const riders = await Orders.find({});
+
+    await Promise.all(
+      riders.map(async rider => {
+        rider.city = 'Sargodha';
+        await rider.save();
+      })
+    );
+
+    return res.json({ riders });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;

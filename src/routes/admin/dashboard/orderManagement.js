@@ -14,30 +14,34 @@ const {
 
 const router = Router();
 
-router.get('/allOrders', async (_req, res) => {
+router.post('/allOrders', async (req, res) => {
   try {
+    const { city } = req.body;
+
     const today = moment()
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
     const [pending, adminAccepted, pickedUp, totalOrders] = await Promise.all([
-      Orders.find({ status: 'Pending' })
+      Orders.find({ status: 'Pending', city })
         .sort({ createdAt: -1 })
         .lean(),
 
       Orders.find({
         status: { $in: ['Admin Accepted', 'Rider Accepted'] },
+        city,
       })
         .sort({ createdAt: -1 })
         .lean(),
 
-      Orders.find({ status: 'Rider Picked Up' })
+      Orders.find({ status: 'Rider Picked Up', city })
         .sort({ createdAt: -1 })
         .lean(),
 
       Orders.countDocuments({
         date: today,
         status: { $ne: 'Rejected' },
+        city,
       }).lean(),
     ]);
 
@@ -106,7 +110,9 @@ router.get('/allOrders', async (_req, res) => {
 
 router.post('/ordersTillNow', async (req, res) => {
   try {
-    const { startDate, endDate } = req.body;
+    const { startDate, endDate, city } = req.body;
+
+    console.log(city);
 
     let end = moment().tz('Asia/Karachi');
     let start = moment(end).subtract(30, 'days');
@@ -124,6 +130,7 @@ router.post('/ordersTillNow', async (req, res) => {
       .toISOString();
 
     const orders = await Orders.find({
+      city,
       status: { $ne: 'Rejected' },
       dateForSearching: { $gte: start, $lte: end },
     })

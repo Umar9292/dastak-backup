@@ -60,14 +60,16 @@ router.get('/activeRiders', async (_req, res) => {
   }
 });
 
-router.get('/manageRiders', async (_req, res) => {
+router.post('/manageRiders', async (req, res) => {
   try {
+    const { city } = req.body;
+
     const [activeRiders, inactiveRiders] = await Promise.all([
-      Users.find({ type: 'rider', status: { $ne: 'inactive' } })
+      Users.find({ type: 'rider', status: { $ne: 'inactive' }, city })
         .sort({ available: -1 })
         .lean(),
 
-      Users.find({ type: 'rider', status: 'inactive' })
+      Users.find({ type: 'rider', status: 'inactive', city })
         .sort({ available: -1 })
         .lean(),
     ]);

@@ -16,6 +16,7 @@ const userModel = Schema(
     verified: Boolean,
     superAdmin: Boolean,
     geometry: GeoSchema,
+    city: String,
     category: String,
     new: Boolean,
     featured: Boolean,
