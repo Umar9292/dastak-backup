@@ -73,20 +73,22 @@ router.post('/allRestaurants', async (req, res) => {
           status: 'active',
           shopType: 'restaurant',
           featured: true,
-        }),
+        })
+          .sort({ position: 1 })
+          .lean(),
 
         Users.find({
           available: true,
           status: 'active',
           shopType: 'restaurant',
           category: 'Home Chef',
-        }),
+        }).lean(),
 
         Users.find({
           available: true,
           status: 'active',
           shopType: 'restaurant',
-        }),
+        }).lean(),
       ]);
 
       return res.json({
@@ -107,7 +109,7 @@ router.post('/allRestaurants', async (req, res) => {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 4500,
+            maxDistance: 5000,
             query: {
               available: true,
               status: 'active',
@@ -117,6 +119,7 @@ router.post('/allRestaurants', async (req, res) => {
             spherical: true,
           },
         },
+        { $sort: { position: 1 } },
       ]),
 
       Users.aggregate([
