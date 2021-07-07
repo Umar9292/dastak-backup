@@ -7,12 +7,15 @@ const Orders = require('../../../models/ordersModel');
 
 const router = Router();
 
-router.get('/manageRestaurants', async (_req, res) => {
+router.post('/manageRestaurants', async (req, res) => {
   try {
+    const { city } = req.body;
+
     const [activeRestaurants, inactiveRestaurants] = await Promise.all([
       Users.find({
         type: 'admin',
         status: 'active',
+        city,
       })
         .sort({ name: 1 })
         .lean(),
@@ -20,6 +23,7 @@ router.get('/manageRestaurants', async (_req, res) => {
       Users.find({
         type: 'admin',
         status: 'inactive',
+        city,
       })
         .sort({ name: 1 })
         .lean(),
@@ -37,7 +41,7 @@ router.get('/manageRestaurants', async (_req, res) => {
 
 router.post('/restaurantCollections', async (req, res) => {
   try {
-    const { startDate, endDate } = req.body;
+    const { startDate, endDate, city } = req.body;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -53,6 +57,7 @@ router.post('/restaurantCollections', async (req, res) => {
         $gte: start,
         $lte: end,
       },
+      city,
     });
 
     let data = await Promise.all(
@@ -66,6 +71,7 @@ router.post('/restaurantCollections', async (req, res) => {
               $gte: start,
               $lte: end,
             },
+            city,
           }),
 
           Users.findById(martId)

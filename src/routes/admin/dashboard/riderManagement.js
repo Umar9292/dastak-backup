@@ -7,9 +7,12 @@ const { notifyRiders } = require('../../../notificationHandler/handler');
 
 const router = Router();
 
-router.get('/allRiders', async (_req, res) => {
+router.post('/allRiders', async (req, res) => {
   try {
+    const { city } = req.body;
+
     const riders = await Users.find({
+      city,
       type: 'rider',
       pendingCollection: { $gt: 0 },
     })
@@ -242,7 +245,7 @@ router.post('/dailyRiderCollections', async (req, res) => {
 
 router.post('/ridersFare', async (req, res) => {
   try {
-    const { startDate, endDate } = req.body;
+    const { startDate, endDate, city } = req.body;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -259,11 +262,13 @@ router.post('/ridersFare', async (req, res) => {
       status: 'Delivered',
       orderType: 'Delivery',
       paidToRider: false,
+      city,
     });
 
     const data = await Promise.all(
       riders.map(async riderId => {
         const orders = await Orders.find({
+          city,
           riderId,
           paidToRider: false,
           orderType: 'Delivery',

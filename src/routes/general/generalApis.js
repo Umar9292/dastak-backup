@@ -16,25 +16,18 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '602baeafc4da00045a131e49',
+      martId: '5face45a8c7148033edfada1',
     });
 
     await Promise.all(
       products.map(product => {
-        // if (
-        //   product.category === 'Pizza' ||
-        //   product.category === 'Burgers' ||
-        //   product.category === 'Burger Meal' ||
-        //   product.category === 'Shawarma'
-        // ) {
-        // let discountedPrice = ((10 / 100) * product.price).toFixed();
-        // discountedPrice = Math.round(discountedPrice / 5) * 5;
-        // product.price += +discountedPrice;
-        product.lunchTimeStart = '11:00';
-        product.lunchTimeEnd = '23:00';
-        product.randomOffer = true;
-        return product.save();
-        // }
+        if (product.category !== 'Dastak Deals') {
+          let discountedPrice = ((20 / 100) * product.price).toFixed();
+          discountedPrice = Math.round(discountedPrice / 5) * 5;
+          product.discountedPrice = product.price - +discountedPrice;
+          product.discount = '20';
+          return product.save();
+        }
       })
     );
 
@@ -902,14 +895,14 @@ router.post('/dealMoney', async (req, res) => {
 
 router.get('/test', async (_req, res) => {
   try {
-    const riders = await Orders.find({});
+    const riders = await Orders.updateMany({ city: 'Sargodha' });
 
-    await Promise.all(
+    /* await Promise.all(
       riders.map(async rider => {
         rider.city = 'Sargodha';
         await rider.save();
       })
-    );
+    ); */
 
     return res.json({ riders });
   } catch (err) {
