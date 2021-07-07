@@ -88,6 +88,7 @@ router.post('/reAssignRider', async (req, res) => {
 
     const {
       riderId: currentlyAssignedRidersId,
+      status: ordersCurrentStatus,
     } = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
@@ -121,13 +122,15 @@ router.post('/reAssignRider', async (req, res) => {
       await Users.findByIdAndUpdate(riderId, { status: 'on delivery' });
     }
 
-    await Promise.all([
-      Users.findByIdAndUpdate(riderId, { orderCount: newRidersOrderCount + 1 }),
-
-      Users.findByIdAndUpdate(currentlyAssignedRidersId, {
+    if (ordersCurrentStatus !== 'Rejected') {
+      await Users.findByIdAndUpdate(currentlyAssignedRidersId, {
         orderCount: currentRidersOrderCount - 1,
-      }),
-    ]);
+      });
+    }
+
+    await Users.findByIdAndUpdate(riderId, {
+      orderCount: newRidersOrderCount + 1,
+    });
 
     return res.json({ status: '200', msg: 'This order has been re assigned' });
   } catch (err) {
