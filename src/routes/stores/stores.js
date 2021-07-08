@@ -12,9 +12,9 @@ router.post('/allMedicalStores', async (req, res) => {
     if (employee === true) {
       const allMedicalStores = await Users.find({
         available: true,
+        type: 'admin',
         status: 'active',
-        shopType: 'restaurant',
-        featured: true,
+        shopType: 'store',
       });
 
       return res.json({ status: '200', allMedicalStores });
