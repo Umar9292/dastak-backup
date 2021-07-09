@@ -44,7 +44,7 @@ router.post('/allOrders', async (req, res) => {
         .sort({ createdAt: -1 })
         .lean(),
 
-      Orders.find({ today, status: 'Rejected', city })
+      Orders.find({ date: today, status: 'Rejected', city })
         .sort({ createdAt: -1 })
         .lean(),
 
