@@ -22,7 +22,13 @@ router.post('/allOrders', async (req, res) => {
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
-    const [pending, adminAccepted, pickedUp, totalOrders] = await Promise.all([
+    const [
+      pending,
+      adminAccepted,
+      pickedUp,
+      todaysRejected,
+      totalOrders,
+    ] = await Promise.all([
       Orders.find({ status: 'Pending', city })
         .sort({ createdAt: -1 })
         .lean(),
@@ -38,6 +44,10 @@ router.post('/allOrders', async (req, res) => {
         .sort({ createdAt: -1 })
         .lean(),
 
+      Orders.find({ today, status: 'Rejected', city })
+        .sort({ createdAt: -1 })
+        .lean(),
+
       Orders.countDocuments({
         date: today,
         status: { $ne: 'Rejected' },
@@ -45,7 +55,7 @@ router.post('/allOrders', async (req, res) => {
       }).lean(),
     ]);
 
-    const [upcoming, accepted, picked] = await Promise.all([
+    const [upcoming, accepted, picked, rejected] = await Promise.all([
       Promise.all(
         pending.map(async order => {
           const { martId } = order;
@@ -90,6 +100,21 @@ router.post('/allOrders', async (req, res) => {
           return order;
         })
       ),
+
+      Promise.all(
+        todaysRejected.map(async order => {
+          const { martId } = order;
+
+          const { geometry } = await Users.findById(martId)
+            .select('geometry')
+            .lean();
+
+          const [longitude, latitude] = geometry.coordinates;
+          order.martLatitude = latitude.toString();
+          order.martLongitude = longitude.toString();
+          return order;
+        })
+      ),
     ]);
 
     return res.json({
@@ -97,6 +122,7 @@ router.post('/allOrders', async (req, res) => {
       upcoming,
       accepted,
       picked,
+      rejected,
       totalOrders,
     });
   } catch (err) {
