@@ -254,4 +254,29 @@ router.post('/updateOrder', async (req, res) => {
   }
 });
 
+router.post('/reOpenOrder', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    const order = await Orders.findById(orderId).select('status riderId');
+    if (order.riderId) {
+      order.status = 'Rider Accepted';
+
+      await Users.findByIdAndUpdate(order.riderId, { $inc: { orderCount: 1 } });
+    } else {
+      order.status = 'Admin Accepted';
+    }
+
+    await order.save();
+
+    return res.json({ status: '200', msg: 'Order reopened' });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
