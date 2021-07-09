@@ -499,10 +499,11 @@ router.post('/specificRestaurantDetails', async (req, res) => {
 
 router.post('/closeRestaurants', async (req, res) => {
   try {
-    const { searchFlag, updateFlag } = req.body;
+    const { searchFlag, updateFlag, city } = req.body;
 
     await Users.updateMany(
       {
+        city,
         type: 'admin',
         status: 'active',
         available: searchFlag,
