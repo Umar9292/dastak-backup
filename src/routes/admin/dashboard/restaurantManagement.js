@@ -205,7 +205,7 @@ router.post('/paidToOwners', async (req, res) => {
 
 router.post('/expensesTillNow', async (req, res) => {
   try {
-    const { startDate, endDate } = req.body;
+    const { startDate, endDate, city } = req.body;
 
     let end = moment().tz('Asia/Karachi');
     let start = moment(end).subtract(30, 'days');
@@ -223,6 +223,7 @@ router.post('/expensesTillNow', async (req, res) => {
       .toISOString();
 
     const restaurants = await Orders.distinct('martId', {
+      city,
       status: 'Delivered',
       paid: true,
       paidToRider: true,
@@ -236,6 +237,7 @@ router.post('/expensesTillNow', async (req, res) => {
       restaurants.map(async martId => {
         const [orders, { name: martName, percentage }] = await Promise.all([
           Orders.find({
+            city,
             paid: true,
             paidToRider: true,
             status: 'Delivered',
