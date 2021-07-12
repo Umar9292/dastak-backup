@@ -177,14 +177,14 @@ router.post('/paidToOwners', async (req, res) => {
           Orders.updateMany(
             {
               martId: id,
-              paid: true,
+              paid: false,
               status: { $in: ['Delivered', 'Rider Picked Up'] },
               dateForSearching: {
                 $gte: startDate,
                 $lte: endDate,
               },
             },
-            { paid: false }
+            { paid: true }
           ),
         ]);
       })
