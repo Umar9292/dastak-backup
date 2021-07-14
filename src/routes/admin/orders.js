@@ -83,6 +83,7 @@ router.post('/placeOrder', async (req, res) => {
     params = {
       ...params,
       products: await JSON.parse(products),
+      city: mart.city,
       martId: mart._id,
       martName: mart.name,
       martPhone: mart.phone,
