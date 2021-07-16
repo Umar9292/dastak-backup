@@ -269,7 +269,7 @@ router.post('/expensesTillNow', async (req, res) => {
         );
 
         const deliveryCharges = deliveryOrders.reduce(
-          (a, b) => b.deliveryCharges !== '0' && a + 30,
+          (a, b) => (b.deliveryCharges !== '0' ? a + 30 : a),
           0
         );
 
