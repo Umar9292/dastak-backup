@@ -818,6 +818,19 @@ router.post('/assignRider', async (req, res) => {
       req.body.riderFare = nightFare;
     }
 
+    /*  const { geometry } = await Users.findById(order.martId)
+      .select('geometry')
+      .lean();
+
+    const [longitude, latitude] = geometry.coordinates;
+    const result = await axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${order.latitude},${order.longitude}&destinations=${latitude},${longitude}&departure_time=now&key=${process.env.GOOGLE_API_KEY}
+      `);
+
+    const distance = result.data.rows[0].elements[0].distance.text.substring(
+      0,
+      3
+    ); */
+
     await Promise.all([
       Orders.findByIdAndUpdate(orderId, { $set: req.body }),
 
