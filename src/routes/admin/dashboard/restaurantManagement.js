@@ -255,7 +255,7 @@ router.post('/expensesTillNow', async (req, res) => {
           ({ orderType }) => orderType === 'Delivery'
         );
 
-        console.log(martName, deliveryOrders);
+        console.log(martName, deliveryOrders.length);
 
         const totalWithoutDelivery = orders.reduce(
           (a, b) =>
