@@ -111,8 +111,6 @@ router.post('/restaurantCollections', async (req, res) => {
           +((percentage / 100) * totalWithoutDelivery).toFixed() +
           deliveryCharges;
 
-        console.log(restaurant, totalWithoutDelivery, ourProfit);
-
         const totalToPay =
           totalOfDeliveryOrders > 0 ? totalOfDeliveryOrders - ourProfit : 0;
 
@@ -225,8 +223,6 @@ router.post('/expensesTillNow', async (req, res) => {
     const restaurants = await Orders.distinct('martId', {
       city,
       status: 'Delivered',
-      paid: true,
-      paidToRider: true,
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -238,8 +234,6 @@ router.post('/expensesTillNow', async (req, res) => {
         const [orders, { name: martName, percentage }] = await Promise.all([
           Orders.find({
             city,
-            paid: true,
-            paidToRider: true,
             status: 'Delivered',
             martId,
             dateForSearching: { $gte: start, $lte: end },
@@ -272,12 +266,6 @@ router.post('/expensesTillNow', async (req, res) => {
           (a, b) => (b.deliveryCharges !== '0' ? a + 30 : a),
           0
         );
-
-        if (martName === 'Charsi Chai') {
-          console.log(orders);
-        }
-
-        console.log(martName, deliveryOrders.length, deliveryCharges);
 
         const ourPercentage =
           +((percentage / 100) * totalWithoutDelivery).toFixed() +
