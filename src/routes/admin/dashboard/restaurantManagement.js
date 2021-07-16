@@ -273,6 +273,10 @@ router.post('/expensesTillNow', async (req, res) => {
           0
         );
 
+        if (martName === 'Charsi Chai') {
+          console.log(orders);
+        }
+
         console.log(martName, deliveryOrders.length, deliveryCharges);
 
         const ourPercentage =
