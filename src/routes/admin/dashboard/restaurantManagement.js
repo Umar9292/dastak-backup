@@ -255,8 +255,6 @@ router.post('/expensesTillNow', async (req, res) => {
           ({ orderType }) => orderType === 'Delivery'
         );
 
-        console.log(martName, deliveryOrders.length);
-
         const totalWithoutDelivery = orders.reduce(
           (a, b) =>
             b.deliveryCharges !== '0'
@@ -275,7 +273,7 @@ router.post('/expensesTillNow', async (req, res) => {
           0
         );
 
-        console.log(martName, deliveryCharges);
+        console.log(martName, deliveryOrders.length, deliveryCharges);
 
         const ourPercentage =
           +((percentage / 100) * totalWithoutDelivery).toFixed() +
