@@ -267,6 +267,7 @@ router.post('/reOpenOrder', async (req, res) => {
       order.status = 'Admin Accepted';
     }
 
+    order.reason = '';
     await order.save();
 
     return res.json({ status: '200', msg: 'Order reopened' });
