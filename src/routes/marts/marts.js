@@ -302,7 +302,6 @@ router.post('/reviews', async (req, res) => {
 router.post('/specificRestaurants', async (req, res) => {
   try {
     const { category } = req.body;
-    console.log(req.body);
 
     const [allRestaurants, featured] = await Promise.all([
       Users.find({

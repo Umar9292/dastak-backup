@@ -66,6 +66,10 @@ const userModel = Schema(
       type: Number,
       default: 0,
     },
+    unpaidCollection: {
+      type: Number,
+      default: 0,
+    },
     paymentLimit: {
       type: Number,
       default: 4000,

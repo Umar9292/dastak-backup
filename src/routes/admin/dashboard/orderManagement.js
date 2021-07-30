@@ -44,14 +44,14 @@ router.post('/allOrders', async (req, res) => {
         .sort({ createdAt: -1 })
         .lean(),
 
-      Orders.find({ date: today, status: 'Rejected', city })
+      Orders.find({ status: 'Rejected', city, date: today })
         .sort({ createdAt: -1 })
         .lean(),
 
       Orders.countDocuments({
-        date: today,
         status: { $ne: 'Rejected' },
         city,
+        date: today,
       }).lean(),
     ]);
 
@@ -138,8 +138,6 @@ router.post('/ordersTillNow', async (req, res) => {
   try {
     const { startDate, endDate, city } = req.body;
 
-    console.log(city);
-
     let end = moment().tz('Asia/Karachi');
     let start = moment(end).subtract(30, 'days');
 
@@ -156,8 +154,8 @@ router.post('/ordersTillNow', async (req, res) => {
       .toISOString();
 
     const orders = await Orders.find({
-      city,
       status: { $ne: 'Rejected' },
+      city,
       dateForSearching: { $gte: start, $lte: end },
     })
       .sort({ createdAt: -1 })
@@ -175,7 +173,7 @@ router.post('/ordersTillNow', async (req, res) => {
 
 router.post('/updateOrder', async (req, res) => {
   try {
-    const { orderId, products, orderType, orderTotal } = req.body;
+    const { orderId, products, orderType } = req.body;
 
     if (products) {
       req.body.products = JSON.parse(products);
@@ -184,11 +182,6 @@ router.post('/updateOrder', async (req, res) => {
     const order = await Orders.findById(orderId).select(
       'orderTotal martName orderType'
     );
-
-    if (orderTotal !== undefined) {
-      const msg = `Incoming order total = ${orderTotal} and orderTotal in order = ${order.orderTotal}`;
-      await notifyUser(msg, '70c3917b-3e8c-4d40-b4b3-65ded06a5534', {});
-    }
 
     if (orderType === 'Delivery' && order.orderType !== 'Delivery') {
       req.body.deliveryCharges = '30';

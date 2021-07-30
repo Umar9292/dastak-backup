@@ -14,7 +14,10 @@ router.post('/allRiders', async (req, res) => {
     const riders = await Users.find({
       city,
       type: 'rider',
-      pendingCollection: { $gt: 0 },
+      $or: [
+        { pendingCollection: { $gt: 0 } },
+        { unpaidCollection: { $gt: 0 } },
+      ],
     })
       .sort({ pendingCollection: -1 })
       .lean();

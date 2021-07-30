@@ -12,7 +12,7 @@ const router = Router();
 
 router.post('/editProfile', async (req, res) => {
   try {
-    const { userId, type, pendingCollection } = req.body;
+    const { userId, type, pendingCollection, unpaidCollection } = req.body;
     let user;
 
     if (type === 'admin') {
@@ -39,6 +39,10 @@ router.post('/editProfile', async (req, res) => {
         { riderId: userId, status: 'Delivered' },
         { collectionSubmitted: true }
       );
+    }
+
+    if (unpaidCollection !== undefined) {
+      await Users.findByIdAndUpdate(userId, { unpaidCollection });
     }
   } catch (err) {
     return res.json({

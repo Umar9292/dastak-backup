@@ -4,6 +4,7 @@ const axios = require('axios');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
+
 const {
   orderStatusEmail,
 } = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
@@ -25,6 +26,10 @@ const {
   notifyAdmin,
   notifyRiders,
 } = require('../../notificationHandler/handler');
+/* const {
+  calculateRidersFare,
+  riderFare,
+} = require('../../ridersFareHandler/ridersFareHandler'); */
 
 const router = Router();
 
@@ -289,7 +294,7 @@ router.post('/allOrders', async (req, res) => {
       0
     );
 
-    const deliveryCharges = unpaidOrders.reduce(
+    const deliveryCharges = deliveryOrders.reduce(
       (a, b) => (b.deliveryCharges !== '0' ? a + 30 : a),
       0
     );
@@ -829,7 +834,10 @@ router.post('/assignRider', async (req, res) => {
     const distance = result.data.rows[0].elements[0].distance.text.substring(
       0,
       3
-    ); */
+    );
+
+    const riderFare = await calculateRidersFare(distance);
+    req.body.riderFare = riderFare; */
 
     await Promise.all([
       Orders.findByIdAndUpdate(orderId, { $set: req.body }),

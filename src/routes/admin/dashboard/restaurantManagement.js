@@ -64,15 +64,15 @@ router.post('/restaurantCollections', async (req, res) => {
       restaurants.map(async martId => {
         const [orders, restaurant] = await Promise.all([
           Orders.find({
-            martId,
             paid: false,
             status: 'Delivered',
+            martId,
+            city,
             dateForSearching: {
               $gte: start,
               $lte: end,
             },
-            city,
-          }),
+          }).lean(),
 
           Users.findById(martId)
             .select('name phone jazzCashNumber percentage')
@@ -221,8 +221,8 @@ router.post('/expensesTillNow', async (req, res) => {
       .toISOString();
 
     const restaurants = await Orders.distinct('martId', {
-      city,
       status: 'Delivered',
+      city,
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -233,9 +233,9 @@ router.post('/expensesTillNow', async (req, res) => {
       restaurants.map(async martId => {
         const [orders, { name: martName, percentage }] = await Promise.all([
           Orders.find({
-            city,
             status: 'Delivered',
             martId,
+            city,
             dateForSearching: { $gte: start, $lte: end },
           })
             .select('riderFare orderTotal deliveryCharges martName orderType')
