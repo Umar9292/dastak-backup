@@ -17,7 +17,7 @@ exports.notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
   });
 
   const { data } = await oneSignalClient.sendNotification(notification);
-
+  console.log(data);
   return data.id ? console.log(info) : console.log(data.errors[0]);
 };
 
