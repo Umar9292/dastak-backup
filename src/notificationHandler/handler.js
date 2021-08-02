@@ -16,9 +16,9 @@ exports.notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
       'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
   });
 
-  const { data } = await oneSignalClient.sendNotification(notification);
-  console.log(data);
-  return data.id ? console.log(info) : console.log(data.errors[0]);
+  const result = await oneSignalClient.sendNotification(notification);
+  console.log(result);
+  // return data.id ? console.log(info) : console.log(data.errors[0]);
 };
 
 exports.notifyUser = async (msg, whomToSend, toBeSentData) => {
