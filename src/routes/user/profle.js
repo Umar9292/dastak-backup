@@ -34,7 +34,7 @@ router.post('/editProfile', async (req, res) => {
       data: user,
     });
 
-    if (pendingCollection !== undefined && pendingCollection !== 0) {
+    if (pendingCollection !== undefined) {
       await ordersModel.updateMany(
         { riderId: userId, status: 'Delivered' },
         { collectionSubmitted: true }
