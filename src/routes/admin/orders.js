@@ -47,8 +47,6 @@ router.post('/placeOrder', async (req, res) => {
       deliveryCharges,
     } = params;
 
-    console.log(latitude, longitude);
-
     const date = moment()
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
@@ -107,11 +105,6 @@ router.post('/placeOrder', async (req, res) => {
         .tz('Asia/Karachi')
         .toISOString(),
     };
-
-    if (orderType === 'PickUp' && orderTotal !== params.orderTotal) {
-      const msg = `Front End Order Total = ${orderTotal} and Backend Total = ${params.orderTotal}`;
-      await notifyUser(msg, '70c3917b-3e8c-4d40-b4b3-65ded06a5534', {});
-    }
 
     const order = await new Orders(params).save();
 

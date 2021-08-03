@@ -45,7 +45,7 @@ const server = createServer(app);
 const io = socketIo(server, {
   transports: ['websocket'],
 });
-// io.adapter(redis(process.env.REDIS_URL));
+io.adapter(redis(process.env.REDIS_URL));
 
 server.listen(port, () => console.log(`Listening on port ${port}\n`));
 

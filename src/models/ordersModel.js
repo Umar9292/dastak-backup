@@ -10,6 +10,7 @@ const ordersModel = Schema(
       type: Boolean,
       default: false,
     },
+    prescriptionImg: String,
     city: String,
     assignedBy: String,
     userId: String,
