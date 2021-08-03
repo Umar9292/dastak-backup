@@ -47,6 +47,8 @@ router.post('/placeOrder', async (req, res) => {
       deliveryCharges,
     } = params;
 
+    console.log(latitude, longitude);
+
     const date = moment()
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');

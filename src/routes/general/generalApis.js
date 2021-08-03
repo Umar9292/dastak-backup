@@ -16,18 +16,18 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '5face45a8c7148033edfada1',
+      martId: '60d08f43ff57632b6250a5f4',
     });
 
     await Promise.all(
       products.map(product => {
-        if (product.category !== 'Dastak Deals') {
-          let discountedPrice = ((20 / 100) * product.price).toFixed();
-          discountedPrice = Math.round(discountedPrice / 5) * 5;
-          product.discountedPrice = product.price - +discountedPrice;
-          product.discount = '20';
-          return product.save();
-        }
+        // if (product.category !== 'Dastak Deals') {
+        let discountedPrice = ((20 / 100) * product.price).toFixed();
+        discountedPrice = Math.round(discountedPrice / 5) * 5;
+        product.discountedPrice = product.price - +discountedPrice;
+        product.discount = '20';
+        return product.save();
+        // }
       })
     );
 

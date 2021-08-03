@@ -8,7 +8,7 @@ const StoreProducts = require('../../models/storeProducts');
 const Flavours = require('../../models/flavoursAndDrinks');
 const Categories = require('../../models/categoriesModel');
 
-const client = createClient(process.env.REDIS_URL);
+// const client = createClient(process.env.REDIS_URL);
 
 const router = Router();
 

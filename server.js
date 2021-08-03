@@ -5,7 +5,7 @@ const cors = require('cors');
 const logger = require('morgan');
 const helmet = require('helmet');
 const { join } = require('path');
-// const { config } = require('cloudinary');
+const { config } = require('cloudinary');
 const compression = require('compression');
 const { connect } = require('mongoose');
 const { createServer } = require('http');
@@ -33,6 +33,7 @@ const medicalStoresRouter = require('./src/routes/stores/stores');
 const storeProductsRouter = require('./src/routes/stores/storeProducts');
 const updateProductRouter = require('./src/routes/stores/updatePrices');
 const otpVerificationRouter = require('./src/routes/user/otpVerification');
+const uploadPrescription = require('./src/routes/stores/uploadPrescription');
 
 const { dbUrl } = require('./utils/dbUrls');
 
@@ -44,7 +45,7 @@ const server = createServer(app);
 const io = socketIo(server, {
   transports: ['websocket'],
 });
-io.adapter(redis(process.env.REDIS_URL));
+// io.adapter(redis(process.env.REDIS_URL));
 
 server.listen(port, () => console.log(`Listening on port ${port}\n`));
 
@@ -85,7 +86,8 @@ app.use(
   '/stores',
   medicalStoresRouter,
   storeProductsRouter,
-  updateProductRouter
+  updateProductRouter,
+  uploadPrescription
 );
 app.use(
   '/admin',
@@ -114,5 +116,11 @@ connect(
     }
   }
 );
+
+config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+});
 
 // module.exports = app;
