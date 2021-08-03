@@ -47,7 +47,7 @@ router.post('/placeOrder', async (req, res) => {
       deliveryCharges,
     } = params;
 
-    console.log(latitude, longitude);
+    console.log(params);
 
     const date = moment()
       .tz('Asia/Karachi')
@@ -84,7 +84,7 @@ router.post('/placeOrder', async (req, res) => {
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&sensor=true&key=${process.env.GOOGLE_API_KEY}`
       );
 
-      console.log(result.data.results[0]);
+      console.log(result.data);
       params.address = result.data.results[0].formatted_address;
     }
 
