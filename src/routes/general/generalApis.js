@@ -61,7 +61,7 @@ router.get('/notifications', async (req, res) => {
     // const msg = `Dear Umar to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
     const msg =
       'Hello. The number that you have given is powred off. Kindly contact dastak rider or your order will be cancelled';
-    await notifyUser(msg, 'c95ffb41-7878-4a4a-ab76-bf86443bdacc', {
+    await notifyUser(msg, '70c3917b-3e8c-4d40-b4b3-65ded06a5534', {
       flag: 'userMsg',
     });
 
