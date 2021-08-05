@@ -1,4 +1,5 @@
 const Router = require('express/lib/router');
+const moment = require('moment-timezone');
 
 const { unlinkSync } = require('fs');
 const { IncomingForm } = require('formidable');
@@ -20,11 +21,23 @@ router.post('/uploadPrescription', (req, res) => {
     form.maxFieldsSize = 10 * 1024 * 1024;
 
     form.parse(req, async (_err, fields, files) => {
-      const orderData = JSON.parse(fields.orderData);
+      let orderData = JSON.parse(fields.orderData);
 
       const imgPath = files.prescription.path;
 
-      const [{ url }, { playerIds }] = await Promise.all([
+      const date = moment()
+        .tz('Asia/Karachi')
+        .format('DD-MM-YYYY');
+
+      const time = moment()
+        .tz('Asia/Karachi')
+        .format('hh:mm a');
+
+      const [
+        { url: prescriptionImg },
+        { playerIds },
+        orderCount,
+      ] = await Promise.all([
         v2.uploader.upload(imgPath, {
           quality: 'auto',
           folder: 'Prescriptions',
@@ -35,9 +48,18 @@ router.post('/uploadPrescription', (req, res) => {
         Users.findById(orderData.martId)
           .select('playerIds')
           .lean(),
+
+        Orders.countDocuments({ martId: orderData.martId, date }),
       ]);
 
-      orderData.prescriptionImg = url;
+      orderData = {
+        ...orderData,
+        date,
+        prescriptionImg,
+        orderNum: orderCount + 1,
+        time,
+      };
+
       await new Orders(orderData).save();
 
       const adminMessage = 'You have a new order';
