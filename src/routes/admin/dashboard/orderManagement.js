@@ -248,7 +248,10 @@ router.post('/reOpenOrder', async (req, res) => {
   try {
     const { orderId } = req.body;
 
-    const order = await Orders.findById(orderId).select('status riderId');
+    const order = await Orders.findById(orderId).select(
+      'status riderId reason'
+    );
+
     if (order.riderId) {
       order.status = 'Rider Accepted';
 
