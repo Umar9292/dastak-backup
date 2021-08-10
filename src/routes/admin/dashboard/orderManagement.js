@@ -4,10 +4,7 @@ const moment = require('moment-timezone');
 const Orders = require('../../../models/ordersModel');
 const Users = require('../../../models/userModel');
 
-const {
-  notifyRiders,
-  notifyUser,
-} = require('../../../notificationHandler/handler');
+const { notifyRiders } = require('../../../notificationHandler/handler');
 const {
   emailOrderDetailsToRider,
 } = require('../../../emailHandler/riderEmail/riderEmail');
@@ -251,7 +248,10 @@ router.post('/reOpenOrder', async (req, res) => {
   try {
     const { orderId } = req.body;
 
-    const order = await Orders.findById(orderId).select('status riderId');
+    const order = await Orders.findById(orderId).select(
+      'status riderId reason'
+    );
+
     if (order.riderId) {
       order.status = 'Rider Accepted';
 
