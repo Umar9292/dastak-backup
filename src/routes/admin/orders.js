@@ -245,33 +245,34 @@ router.post('/allOrders', async (req, res) => {
         .select('name percentage')
         .lean(),
 
-      Orders.find({ martId, status: 'Pending' })
+      Orders.find({ status: 'Pending', martId })
         .sort({ createdAt: -1 })
         .lean(),
 
       Orders.find({
-        martId,
         status: {
           $in: ['Admin Accepted', 'Rider Accepted', 'Rider Picked Up'],
         },
+        martId,
       })
         .sort({ createdAt: -1 })
         .lean(),
 
       Orders.find({
-        martId,
         paid: false,
         status: 'Delivered',
+        martId,
       })
         .sort({
           createdAt: -1,
         })
-        .lean(),
+        .lean()
+        .explain(),
 
       Orders.find({
-        martId,
         paid: false,
         status: 'Delivered',
+        martId,
       })
         .select('orderTotal deliveryCharges orderType')
         .lean(),
@@ -606,7 +607,9 @@ router.post('/adminAcceptedOrders', async (req, res) => {
         .select('status name')
         .lean(),
 
-      Users.findById(riderId).lean(),
+      Users.findById(riderId)
+        .select('status name')
+        .lean(),
     ]);
 
     console.log(`${name} refreshed`);
@@ -697,10 +700,10 @@ router.post('/assignRider', async (req, res) => {
         .lean(),
 
       Orders.find({
-        riderId,
-        date: currentDate,
-        status: 'Delivered',
         collectionSubmitted: false,
+        status: 'Delivered',
+        date: currentDate,
+        riderId,
       })
         .select('orderTotal time')
         .lean(),
