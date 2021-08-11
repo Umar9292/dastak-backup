@@ -602,13 +602,15 @@ router.post('/adminAcceptedOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
-    const [idleRiders, { status, name }] = await Promise.all([
-      Users.find({ type: 'rider', status: 'idle', available: true })
-        .select('status name')
-        .lean(),
+    const [availableRiders, { name }] = await Promise.all([
+      Users.countDocuments({ type: 'rider', available: true }),
 
       Users.findById(riderId)
+<<<<<<< HEAD
         .select('status name')
+=======
+        .select('name')
+>>>>>>> 3d95b95aeece137e920c6888434f7ece055fe8d5
         .lean(),
     ]);
 
@@ -616,18 +618,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
 
     let acceptedOrders = [];
 
-    if (idleRiders.length > 0) {
-      if (status === 'idle') {
-        acceptedOrders = await Orders.find({
-          status: 'Admin Accepted',
-          orderType: 'Delivery',
-        })
-          .sort({
-            createdAt: -1,
-          })
-          .lean();
-      }
-    } else {
+    if (availableRiders > 0) {
       acceptedOrders = await Orders.find({
         status: 'Admin Accepted',
         orderType: 'Delivery',
