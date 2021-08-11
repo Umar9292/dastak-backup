@@ -606,11 +606,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
       Users.countDocuments({ type: 'rider', available: true }),
 
       Users.findById(riderId)
-<<<<<<< HEAD
-        .select('status name')
-=======
         .select('name')
->>>>>>> 3d95b95aeece137e920c6888434f7ece055fe8d5
         .lean(),
     ]);
 
