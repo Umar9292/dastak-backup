@@ -905,7 +905,7 @@ router.post('/dealMoney', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    let totalAmountoPay = 0;
+    let totalToPayForAzadiDeals = 0;
     let azadiDealCount = 0;
     let otherOrdersTotalAmount = 0;
 
@@ -933,7 +933,7 @@ router.post('/dealMoney', async (req, res) => {
           await Promise.all(
             products.map(async ({ productName, count, net }) => {
               if (productName.includes('Azadi Deal')) {
-                totalAmountoPay += net;
+                totalToPayForAzadiDeals += net;
                 azadiDealCount += count;
               } else {
                 otherOrdersTotalAmount += net;
@@ -947,10 +947,11 @@ router.post('/dealMoney', async (req, res) => {
       const totalAmountOfOtherOrdersToPay =
         otherOrdersTotalAmount - ourPercentage;
 
-      totalAmountoPay += totalAmountOfOtherOrdersToPay;
+      // totalAmountoPay += totalAmountOfOtherOrdersToPay;
 
       return res.json({
-        totalAmountoPay,
+        totalToPayForAzadiDeals,
+        totalAmountOfOtherOrdersToPay,
         azadiDealCount,
         pickupOrders,
       });
