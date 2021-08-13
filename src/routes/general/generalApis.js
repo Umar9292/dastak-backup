@@ -685,7 +685,7 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-router.post('/dealMoney', async (req, res) => {
+/* router.post('/dealMoney', async (req, res) => {
   try {
     const { restaurant, startDate, endDate } = req.body;
 
@@ -881,6 +881,68 @@ router.post('/dealMoney', async (req, res) => {
         ramadanDealCount,
         otherAmount,
         otherDealCount,
+        pickupOrders,
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+router.post('/dealMoney', async (req, res) => {
+  try {
+    const { restaurant, startDate, endDate } = req.body;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    let totalAmountoPay = 0;
+    let dealCount = 0;
+
+    if (restaurant === 'De Fiesta Restaurant') {
+      const [deliveryOrders, pickupOrders] = await Promise.all([
+        Orders.find({
+          martName: restaurant,
+          status: 'Delivered',
+          orderType: 'Delivery',
+          dateForSearching: { $gte: start, $lte: end },
+        })
+          .select('products orderTotal martId orderNum')
+          .lean(),
+
+        Orders.countDocuments({
+          martName: restaurant,
+          status: 'Delivered',
+          orderType: 'PickUp',
+          dateForSearching: { $gte: start, $lte: end },
+        }),
+      ]);
+
+      await Promise.all(
+        deliveryOrders.map(async ({ products }) => {
+          await Promise.all(
+            products.map(async ({ productName, count, net }) => {
+              if (productName.includes('Azadi Deal')) {
+                totalAmountoPay += net;
+                dealCount += count;
+              }
+            })
+          );
+        })
+      );
+
+      return res.json({
+        totalAmountoPay,
+        dealCount,
         pickupOrders,
       });
     }
