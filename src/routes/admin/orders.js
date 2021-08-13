@@ -602,19 +602,15 @@ router.post('/adminAcceptedOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
-    const [availableRiders, { name }] = await Promise.all([
-      Users.countDocuments({ type: 'rider', available: true }),
-
-      Users.findById(riderId)
-        .select('name')
-        .lean(),
-    ]);
+    const { name, available } = await Users.findById(riderId)
+      .select('name available')
+      .lean();
 
     console.log(`${name} refreshed`);
 
     let acceptedOrders = [];
 
-    if (availableRiders > 0) {
+    if (available) {
       acceptedOrders = await Orders.find({
         status: 'Admin Accepted',
         orderType: 'Delivery',
