@@ -906,7 +906,8 @@ router.post('/dealMoney', async (req, res) => {
       .toISOString();
 
     let totalAmountoPay = 0;
-    let dealCount = 0;
+    let azadiDealCount = 0;
+    let otherOrdersTotalAmount = 0;
 
     if (restaurant === 'De Fiesta Restaurant') {
       const [deliveryOrders, pickupOrders] = await Promise.all([
@@ -933,16 +934,24 @@ router.post('/dealMoney', async (req, res) => {
             products.map(async ({ productName, count, net }) => {
               if (productName.includes('Azadi Deal')) {
                 totalAmountoPay += net;
-                dealCount += count;
+                azadiDealCount += count;
+              } else {
+                otherOrdersTotalAmount += net;
               }
             })
           );
         })
       );
 
+      const ourPercentage = ((13 / 100) * otherOrdersTotalAmount).toFixed();
+      const totalAmountOfOtherOrdersToPay =
+        otherOrdersTotalAmount - ourPercentage;
+
+      totalAmountoPay += totalAmountOfOtherOrdersToPay;
+
       return res.json({
         totalAmountoPay,
-        dealCount,
+        azadiDealCount,
         pickupOrders,
       });
     }
