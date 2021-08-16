@@ -327,7 +327,9 @@ router.post('/previousPayments', async (req, res) => {
       status: 'Delivered',
       orderType: 'Delivery',
       dateForSearching: { $gte: start, $lte: end },
-    }).lean();
+    })
+      .sort({ createdAt: -1 })
+      .lean();
 
     await Promise.all(
       orders.map(async ({ products }) => {
