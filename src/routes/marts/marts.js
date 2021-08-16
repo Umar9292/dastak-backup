@@ -319,8 +319,6 @@ router.post('/previousPayments', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    console.log(req.body);
-
     let amountPaid = 0;
 
     const orders = await Orders.find({
