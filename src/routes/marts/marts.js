@@ -7,61 +7,6 @@ const Orders = require('../../models/ordersModel');
 
 const router = Router();
 
-/* router.get('/allRestaurants', async (req, res) => {
-  try {
-    const currentTime = moment().tz('Asia/Karachi');
-
-    const query = {
-      type: 'admin',
-      status: 'active',
-      available: true,
-      shopType: 'restaurant',
-    };
-
-    const allRestaurants = await Users.find(query)
-      .sort({ position: -1 })
-      .select('-password -__v')
-      .lean();
-
-    const result = allRestaurants.filter(restaurant => {
-      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-
-      const openingTimeOffSet = moment(restaurantOpening).format('a');
-      const closingTimeOffSet = moment(restaurantClosing).format('a');
-
-      if (
-        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
-        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
-      ) {
-        restaurantClosing = moment(restaurantClosing).add(1, 'days');
-      }
-
-      if (
-        currentTime.isSameOrAfter(restaurantOpening) &&
-        currentTime.isBefore(restaurantClosing)
-      ) {
-        return restaurant;
-      }
-    });
-
-    return res.json({
-      status: '200',
-      data: result,
-    });
-  } catch (err) {
-    return res.json({
-      status: '404',
-      data: 'Looks like an error occurred on our side. Kindly try again',
-      error: err.toString(),
-    });
-  }
-}); */
-
 router.post('/allRestaurants', async (req, res) => {
   try {
     const { lat, long, employee } = req.body;
@@ -355,6 +300,59 @@ router.post('/availabilityStatus', async (req, res) => {
       data: shop,
     });
   } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/previousPayments', async (req, res) => {
+  try {
+    const { martId, percentage, startDate, endDate } = req.body;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    console.log(req.body);
+
+    let amountPaid = 0;
+
+    const orders = await Orders.find({
+      martId,
+      status: 'Delivered',
+      orderType: 'Delivery',
+      dateForSearching: { $gte: start, $lte: end },
+    }).lean();
+
+    await Promise.all(
+      orders.map(async ({ products }) => {
+        await Promise.all(
+          products.map(async ({ productName, net }) => {
+            if (
+              !productName.includes('Azadi Deal') ||
+              !productName.includes('Discounted Deal') ||
+              !productName.includes('Zabardast Deal') ||
+              !productName.includes('Zabardast Deals')
+            ) {
+              amountPaid += net;
+            }
+          })
+        );
+      })
+    );
+
+    const ourPercentage = ((percentage / 100) * amountPaid).toFixed();
+    amountPaid -= ourPercentage;
+
+    return res.json({ status: '200', orders, amountPaid });
+  } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
