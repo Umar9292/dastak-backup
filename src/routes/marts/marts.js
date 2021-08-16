@@ -323,6 +323,7 @@ router.post('/previousPayments', async (req, res) => {
 
     const orders = await Orders.find({
       martId,
+      paid: true,
       status: 'Delivered',
       orderType: 'Delivery',
       dateForSearching: { $gte: start, $lte: end },
@@ -333,10 +334,12 @@ router.post('/previousPayments', async (req, res) => {
         await Promise.all(
           products.map(async ({ productName, net }) => {
             if (
-              !productName.includes('Azadi Deal') ||
-              !productName.includes('Discounted Deal') ||
-              !productName.includes('Zabardast Deal') ||
-              !productName.includes('Zabardast Deals')
+              !productName.includes(
+                'Azadi Deal',
+                'Discounted Deal',
+                'Zabardast Deal',
+                'Zabardast Deals'
+              )
             ) {
               amountPaid += net;
             }
