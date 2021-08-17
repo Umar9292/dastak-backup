@@ -332,7 +332,11 @@ router.post('/previousPayments', async (req, res) => {
       .lean();
 
     await Promise.all(
-      orders.map(async ({ products }) => {
+      orders.map(async order => {
+        // if (order.actualPrice !== undefined) {
+        //   amountPaid += order.actualPrice;
+        // } else {
+        const { products } = order;
         await Promise.all(
           products.map(async ({ productName, net }) => {
             if (
@@ -347,6 +351,7 @@ router.post('/previousPayments', async (req, res) => {
             }
           })
         );
+        // }
       })
     );
 

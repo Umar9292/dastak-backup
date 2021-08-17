@@ -7,6 +7,7 @@ const productsModel = Schema(
       default: 'in stock',
       type: String,
     },
+    actualPrice: Number,
     dealFlavours: Boolean,
     dastakDeal: Boolean,
     restaurant: Object,
