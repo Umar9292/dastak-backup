@@ -320,7 +320,8 @@ router.post('/previousPayments', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    let amountPaid = 0;
+    let amountPaidForDealOrders = 0;
+    let amountPaidForNonDealOrders = 0;
 
     const orders = await Orders.find({
       martId,
@@ -344,7 +345,7 @@ router.post('/previousPayments', async (req, res) => {
                 'Zabardast Deals'
               )
             ) {
-              amountPaid += net;
+              amountPaidForDealOrders += net;
             } else {
               const product = await Products.findOne({
                 martId,
@@ -355,7 +356,7 @@ router.post('/previousPayments', async (req, res) => {
                 .lean();
 
               if (product.actualPrice !== undefined) {
-                amountPaid += product.actualPrice;
+                amountPaidForNonDealOrders += product.actualPrice;
               }
             }
           })
@@ -363,10 +364,19 @@ router.post('/previousPayments', async (req, res) => {
       })
     );
 
-    const ourPercentage = ((percentage / 100) * amountPaid).toFixed();
-    amountPaid -= ourPercentage;
+    const ourPercentage = (
+      (percentage / 100) *
+      amountPaidForNonDealOrders
+    ).toFixed();
 
-    return res.json({ status: '200', orders, amountPaid });
+    amountPaidForNonDealOrders -= ourPercentage;
+
+    return res.json({
+      status: '200',
+      orders,
+      amountPaidForDealOrders,
+      amountPaidForNonDealOrders,
+    });
   } catch (err) {
     console.log(err);
     return res.json({
