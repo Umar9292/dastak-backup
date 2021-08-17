@@ -4,6 +4,7 @@ const moment = require('moment-timezone');
 const Users = require('../../models/userModel');
 const Reviews = require('../../models/reviewsModel');
 const Orders = require('../../models/ordersModel');
+const Products = require('../../models/productsModel');
 
 const router = Router();
 
@@ -332,26 +333,33 @@ router.post('/previousPayments', async (req, res) => {
       .lean();
 
     await Promise.all(
-      orders.map(async order => {
-        if (order.actualPrice !== undefined) {
-          amountPaid += order.actualPrice;
-        } else {
-          const { products } = order;
-          await Promise.all(
-            products.map(async ({ productName, net }) => {
-              if (
-                !productName.includes(
-                  'Azadi Deal',
-                  'Discounted Deal',
-                  'Zabardast Deal',
-                  'Zabardast Deals'
-                )
-              ) {
-                amountPaid += net;
+      orders.map(async ({ products }) => {
+        await Promise.all(
+          products.map(async ({ productName, net, quantity }) => {
+            if (
+              !productName.includes(
+                'Azadi Deal',
+                'Discounted Deal',
+                'Zabardast Deal',
+                'Zabardast Deals'
+              )
+            ) {
+              amountPaid += net;
+            } else {
+              const product = await Products.findOne({
+                martId,
+                productName,
+                quantity,
+              })
+                .select('actualPrice')
+                .lean();
+
+              if (product.actualPrice !== undefined) {
+                amountPaid += product.actualPrice;
               }
-            })
-          );
-        }
+            }
+          })
+        );
       })
     );
 
