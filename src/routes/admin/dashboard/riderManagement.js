@@ -95,6 +95,26 @@ router.post('/reAssignRider', async (req, res) => {
     const { orderId, riderId } = req.body;
 
     const {
+      status: newRidersStatus,
+      orderCount: newRidersOrderCount,
+      nightFare,
+      tillNoonFare,
+    } = await Users.findById(riderId)
+      .select('status orderCount tillNoonFare nightFare')
+      .lean();
+
+    const currentTime = moment().tz('Asia/karachi');
+
+    const morningFareTime = moment('04:00', 'HH:mm').tz('Asia/karachi');
+    const noonFareTime = moment('16:00', 'HH:mm').tz('Asia/karachi');
+
+    if (currentTime.isBetween(morningFareTime, noonFareTime)) {
+      req.body.riderFare = tillNoonFare;
+    } else {
+      req.body.riderFare = nightFare;
+    }
+
+    const {
       riderId: currentlyAssignedRidersId,
       status: ordersCurrentStatus,
     } = await Orders.findByIdAndUpdate(orderId, {
@@ -103,17 +123,12 @@ router.post('/reAssignRider', async (req, res) => {
 
     const [
       currentRidersOrders,
-      { status: newRidersStatus, orderCount: newRidersOrderCount },
       { orderCount: currentRidersOrderCount },
     ] = await Promise.all([
       Orders.countDocuments({
         riderId: currentlyAssignedRidersId,
         status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
       }),
-
-      Users.findById(riderId)
-        .select('status orderCount')
-        .lean(),
 
       Users.findById(currentlyAssignedRidersId)
         .select('orderCount')
