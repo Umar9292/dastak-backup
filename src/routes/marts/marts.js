@@ -333,25 +333,25 @@ router.post('/previousPayments', async (req, res) => {
 
     await Promise.all(
       orders.map(async order => {
-        // if (order.actualPrice !== undefined) {
-        //   amountPaid += order.actualPrice;
-        // } else {
-        const { products } = order;
-        await Promise.all(
-          products.map(async ({ productName, net }) => {
-            if (
-              !productName.includes(
-                'Azadi Deal',
-                'Discounted Deal',
-                'Zabardast Deal',
-                'Zabardast Deals'
-              )
-            ) {
-              amountPaid += net;
-            }
-          })
-        );
-        // }
+        if (order.actualPrice !== undefined) {
+          amountPaid += order.actualPrice;
+        } else {
+          const { products } = order;
+          await Promise.all(
+            products.map(async ({ productName, net }) => {
+              if (
+                !productName.includes(
+                  'Azadi Deal',
+                  'Discounted Deal',
+                  'Zabardast Deal',
+                  'Zabardast Deals'
+                )
+              ) {
+                amountPaid += net;
+              }
+            })
+          );
+        }
       })
     );
 
