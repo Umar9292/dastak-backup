@@ -7,8 +7,13 @@ if (cluster.isMaster) {
     cluster.fork();
   }
 
-  cluster.on('exit', function(worker) {
+  cluster.on('exit', function(worker, code) {
     console.log(`worker ${worker.process.pid} died`);
+
+    if (code !== 0 && !worker.exitedAfterDisconnect) {
+      console.log(`Worker ${worker.process.pid} died`);
+      cluster.fork();
+    }
   });
 } else {
   // eslint-disable-next-line global-require
