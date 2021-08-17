@@ -346,7 +346,16 @@ router.post('/previousPayments', async (req, res) => {
               )
             ) {
               nonDealPayment += net;
-            } else {
+            }
+
+            if (
+              productName.includes(
+                'Azadi Deal',
+                'Discounted Deal',
+                'Zabardast Deal',
+                'Zabardast Deals'
+              )
+            ) {
               const product = await Products.findOne({
                 martId,
                 productName,
