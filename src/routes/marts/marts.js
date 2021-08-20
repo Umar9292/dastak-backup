@@ -344,7 +344,9 @@ router.post('/previousPayments', async (req, res) => {
               !productName.includes('Zabardast Deal')
             ) {
               nonDealPayment += net;
-            } else if (product.actualPrice !== undefined) {
+            }
+
+            if (product.actualPrice !== undefined) {
               dealPayment += product.actualPrice * count;
             }
           })
