@@ -4,7 +4,6 @@ const moment = require('moment-timezone');
 const Users = require('../../models/userModel');
 const Reviews = require('../../models/reviewsModel');
 const Orders = require('../../models/ordersModel');
-const Products = require('../../models/productsModel');
 
 const router = Router();
 
