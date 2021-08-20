@@ -89,36 +89,40 @@ router.post('/restaurantCollections', async (req, res) => {
           ({ orderType }) => orderType === 'PickUp'
         );
 
-        const totalWithoutDelivery = orders.reduce(
-          (a, b) =>
-            b.deliveryCharges !== '0'
-              ? a + b.orderTotal - 30
-              : a + b.orderTotal,
-          0
+        let dealPayment = 0;
+        let nonDealPayment = 0;
+
+        await Promise.all(
+          orders.map(async ({ products }) => {
+            await Promise.all(
+              products.map(async product => {
+                const { productName, net, count } = product;
+
+                if (
+                  !productName.includes('Azadi Deal') &&
+                  !productName.includes('Discounted Deal') &&
+                  !productName.includes('Zabardast Deal')
+                ) {
+                  nonDealPayment += net;
+                }
+
+                if (product.actualPrice !== undefined) {
+                  dealPayment += product.actualPrice * count;
+                }
+              })
+            );
+          })
         );
 
-        const totalOfDeliveryOrders = deliveryOrders.reduce(
-          (a, b) => a + b.orderTotal,
-          0
-        );
-
-        const deliveryCharges = orders.reduce(
-          (a, b) => (b.deliveryCharges !== '0' ? a + 30 : a),
-          0
-        );
-
-        const ourProfit =
-          +((percentage / 100) * totalWithoutDelivery).toFixed() +
-          deliveryCharges;
-
-        const totalToPay =
-          totalOfDeliveryOrders > 0 ? totalOfDeliveryOrders - ourProfit : 0;
+        const ourProfit = ((percentage / 100) * nonDealPayment).toFixed();
+        const totalToPay = dealPayment + (nonDealPayment - ourProfit);
 
         return {
           martId,
           martName,
           ourProfit,
-          totalOfDeliveryOrders,
+          dealPayment,
+          nonDealPayment,
           totalToPay,
           deliveryOrders,
           pickupOrders,
