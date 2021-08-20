@@ -320,6 +320,9 @@ router.post('/previousPayments', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
+    console.log(start);
+    console.log(end);
+
     let dealPayment = 0;
     let nonDealPayment = 0;
 
@@ -343,6 +346,8 @@ router.post('/previousPayments', async (req, res) => {
               !productName.includes('Zabardast Deal') &&
               !productName.includes('Zabardast Deals')
             ) {
+              console.log('now here');
+
               nonDealPayment += net;
             } else {
               console.log('here');
