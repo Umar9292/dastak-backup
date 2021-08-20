@@ -320,9 +320,6 @@ router.post('/previousPayments', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    console.log(start);
-    console.log(end);
-
     let dealPayment = 0;
     let nonDealPayment = 0;
 
@@ -339,26 +336,17 @@ router.post('/previousPayments', async (req, res) => {
     await Promise.all(
       orders.map(async ({ products }) => {
         await Promise.all(
-          products.map(async ({ productName, net, quantity }) => {
+          products.map(async product => {
+            const { productName, net, count } = product;
+
             if (
               !productName.includes('Azadi Deal') &&
               !productName.includes('Discounted Deal') &&
               !productName.includes('Zabardast Deal')
             ) {
               nonDealPayment += net;
-            } else {
-              console.log(productName);
-              const product = await Products.findOne({
-                martId,
-                productName,
-                quantity,
-              })
-                .select('actualPrice')
-                .lean();
-
-              if (product.actualPrice !== undefined) {
-                dealPayment += product.actualPrice;
-              }
+            } else if (product.actualPrice !== undefined) {
+              dealPayment += product.actualPrice * count;
             }
           })
         );
