@@ -896,7 +896,7 @@ router.get('/createRidersPassword', async (_req, res) => {
 
 router.post('/dealMoney', async (req, res) => {
   try {
-    const { restaurant, startDate, endDate } = req.body;
+    const { martId, startDate, endDate } = req.body;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -909,53 +909,51 @@ router.post('/dealMoney', async (req, res) => {
     let azadiDealCount = 0;
     let otherOrdersTotalAmount = 0;
 
-    if (restaurant === 'De Fiesta Restaurant') {
-      const [deliveryOrders, pickupOrders] = await Promise.all([
-        Orders.find({
-          martName: restaurant,
-          status: 'Delivered',
-          orderType: 'Delivery',
-          dateForSearching: { $gte: start, $lte: end },
-        })
-          .select('products orderTotal martId orderNum')
-          .lean(),
+    const [deliveryOrders, pickupOrders] = await Promise.all([
+      Orders.find({
+        martId,
+        status: 'Delivered',
+        orderType: 'Delivery',
+        dateForSearching: { $gte: start, $lte: end },
+      })
+        .select('products orderTotal martId orderNum')
+        .lean(),
 
-        Orders.countDocuments({
-          martName: restaurant,
-          status: 'Delivered',
-          orderType: 'PickUp',
-          dateForSearching: { $gte: start, $lte: end },
-        }),
-      ]);
+      Orders.countDocuments({
+        martId,
+        status: 'Delivered',
+        orderType: 'PickUp',
+        dateForSearching: { $gte: start, $lte: end },
+      }),
+    ]);
 
-      await Promise.all(
-        deliveryOrders.map(async ({ products }) => {
-          await Promise.all(
-            products.map(async ({ productName, count, net }) => {
-              if (productName.includes('Azadi Deal')) {
-                totalToPayForAzadiDeals += net;
-                azadiDealCount += count;
-              } else {
-                otherOrdersTotalAmount += net;
-              }
-            })
-          );
-        })
-      );
+    await Promise.all(
+      deliveryOrders.map(async ({ products }) => {
+        await Promise.all(
+          products.map(async ({ productName, count, net }) => {
+            if (productName.includes('Azadi Deal')) {
+              totalToPayForAzadiDeals += net;
+              azadiDealCount += count;
+            } else {
+              otherOrdersTotalAmount += net;
+            }
+          })
+        );
+      })
+    );
 
-      const ourPercentage = ((13 / 100) * otherOrdersTotalAmount).toFixed();
-      const totalAmountOfOtherOrdersToPay =
-        otherOrdersTotalAmount - ourPercentage;
+    const ourPercentage = ((13 / 100) * otherOrdersTotalAmount).toFixed();
+    const totalAmountOfOtherOrdersToPay =
+      otherOrdersTotalAmount - ourPercentage;
 
-      // totalAmountoPay += totalAmountOfOtherOrdersToPay;
+    // totalAmountoPay += totalAmountOfOtherOrdersToPay;
 
-      return res.json({
-        totalToPayForAzadiDeals,
-        totalAmountOfOtherOrdersToPay,
-        azadiDealCount,
-        pickupOrders,
-      });
-    }
+    return res.json({
+      totalToPayForAzadiDeals,
+      totalAmountOfOtherOrdersToPay,
+      azadiDealCount,
+      pickupOrders,
+    });
   } catch (err) {
     console.log(err);
     return res.json({
