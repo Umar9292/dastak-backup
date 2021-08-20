@@ -343,14 +343,13 @@ router.post('/previousPayments', async (req, res) => {
             if (
               !productName.includes('Azadi Deal') &&
               !productName.includes('Discounted Deal') &&
-              !productName.includes('Zabardast Deal') &&
-              !productName.includes('Zabardast Deals')
+              !productName.includes('Zabardast Deal')
             ) {
               console.log('now here');
 
               nonDealPayment += net;
             } else {
-              console.log('here');
+              console.log(productName);
               const product = await Products.findOne({
                 martId,
                 productName,
