@@ -338,12 +338,10 @@ router.post('/previousPayments', async (req, res) => {
         await Promise.all(
           products.map(async ({ productName, net, quantity }) => {
             if (
-              !productName.includes(
-                'Azadi Deal',
-                'Discounted Deal',
-                'Zabardast Deal',
-                'Zabardast Deals'
-              )
+              !productName.includes('Azadi Deal') &&
+              !productName.includes('Discounted Deal') &&
+              !productName.includes('Zabardast Deal') &&
+              !productName.includes('Zabardast Deals')
             ) {
               nonDealPayment += net;
             } else {
@@ -371,9 +369,9 @@ router.post('/previousPayments', async (req, res) => {
 
     return res.json({
       status: '200',
-      orders,
       dealPayment,
       nonDealPayment,
+      orders,
     });
   } catch (err) {
     console.log(err);
