@@ -345,8 +345,6 @@ router.post('/previousPayments', async (req, res) => {
               !productName.includes('Discounted Deal') &&
               !productName.includes('Zabardast Deal')
             ) {
-              console.log('now here');
-
               nonDealPayment += net;
             } else {
               console.log(productName);
