@@ -318,9 +318,7 @@ router.post('/addActualPrices', async (req, res) => {
           martId,
           status: 'Delivered',
           dateForSearching: { $gte: start, $lte: end },
-        })
-          .sort({ createdAt: -1 })
-          .lean();
+        });
 
         await Promise.all(
           orders.map(async order => {
