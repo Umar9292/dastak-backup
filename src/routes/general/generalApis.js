@@ -343,14 +343,11 @@ router.post('/addActualPrices', async (req, res) => {
                     .select('actualPrice')
                     .lean();
 
-                  if (product.actualPrice === (null || undefined)) {
-                    console.log(martId);
-                    console.log(productName);
-                    console.log(productName);
-                  }
-
                   if (product.actualPrice !== undefined) {
                     p.actualPrice = product.actualPrice;
+                  } else {
+                    console.log(martId);
+                    console.log(productName);
                   }
 
                   // console.log(p);
