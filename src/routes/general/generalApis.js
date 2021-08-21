@@ -333,15 +333,13 @@ router.post('/addActualPrices', async (req, res) => {
                   productName.includes('Discounted Deal') ||
                   productName.includes('Zabardast Deal')
                 ) {
-                  console.log(productName, martId, _id);
+                  // console.log(productName, martId, _id);
 
                   const product = await Products.findOne({
                     martId,
                     productName,
                     quantity,
-                  })
-                    .select('actualPrice')
-                    .lean();
+                  }).lean();
 
                   if (product.actualPrice !== undefined) {
                     p.actualPrice = product.actualPrice;
