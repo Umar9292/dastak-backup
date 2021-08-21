@@ -119,13 +119,19 @@ router.post('/restaurantCollections', async (req, res) => {
           0
         );
 
-        const ourProfit = ((percentage / 100) * nonDealPayment).toFixed();
+        const deliveryCharges = deliveryOrders.reduce(
+          (a, b) => a + +b.deliveryCharges,
+          0
+        );
+
+        const ourProfit =
+          +((percentage / 100) * nonDealPayment).toFixed() + deliveryCharges;
         const totalToPay = dealPayment + (nonDealPayment - ourProfit);
 
         return {
           martId,
           martName,
-          ourProfit: +ourProfit,
+          ourProfit,
           totalOfDeliveryOrders,
           dealPayment,
           nonDealPayment,
