@@ -337,7 +337,7 @@ router.post('/addActualPrices', async (req, res) => {
                     martId,
                     productName,
                     quantity,
-                  }).lean();
+                  });
 
                   if (!product) {
                     console.log(`order id = ${_id}`);
@@ -347,7 +347,7 @@ router.post('/addActualPrices', async (req, res) => {
                     p.actualPrice = product.actualPrice;
                   }
 
-                  // console.log(p);
+                  console.log(products);
                 }
               })
             );
