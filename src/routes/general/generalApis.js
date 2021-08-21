@@ -323,7 +323,7 @@ router.post('/addActualPrices', async (req, res) => {
           .lean();
 
         await Promise.all(
-          orders.map(async ({ products }) => {
+          orders.map(async ({ products, _id }) => {
             await Promise.all(
               products.map(async p => {
                 const { productName, quantity } = p;
@@ -333,7 +333,7 @@ router.post('/addActualPrices', async (req, res) => {
                   productName.includes('Discounted Deal') ||
                   productName.includes('Zabardast Deal')
                 ) {
-                  console.log(productName, martId);
+                  console.log(productName, martId, _id);
 
                   const product = await Products.findOne({
                     martId,
@@ -345,6 +345,7 @@ router.post('/addActualPrices', async (req, res) => {
 
                   if (product.actualPrice === (null || undefined)) {
                     console.log(martId);
+                    console.log(productName);
                     console.log(productName);
                   }
 
