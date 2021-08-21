@@ -266,8 +266,7 @@ router.post('/allOrders', async (req, res) => {
         .sort({
           createdAt: -1,
         })
-        .lean()
-        .explain(),
+        .lean(),
 
       Orders.find({
         paid: false,
