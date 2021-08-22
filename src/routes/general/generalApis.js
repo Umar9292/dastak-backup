@@ -324,32 +324,31 @@ router.post('/addActualPrices', async (req, res) => {
           orders.map(async order => {
             const { products, _id } = order;
 
-            await Promise.all(
-              products.map(async p => {
-                const { productName, quantity } = p;
+            products.map(async p => {
+              const { productName, quantity } = p;
 
-                if (
-                  productName.includes('Azadi Deal') ||
-                  productName.includes('Discounted Deal') ||
-                  productName.includes('Zabardast Deal')
-                ) {
-                  const product = await Products.findOne({
-                    martId,
-                    productName,
-                    quantity,
-                  });
+              if (
+                productName.includes('Azadi Deal') ||
+                productName.includes('Discounted Deal') ||
+                productName.includes('Zabardast Deal')
+              ) {
+                const product = await Products.findOne({
+                  martId,
+                  productName,
+                  quantity,
+                });
 
-                  if (!product) {
-                    console.log(`order id = ${_id}`);
-                  }
-
-                  if (product.actualPrice !== undefined) {
-                    p.actualPrice = product.actualPrice;
-                    order.save();
-                  }
+                if (!product) {
+                  console.log(`order id = ${_id}`);
                 }
-              })
-            );
+
+                if (product.actualPrice !== undefined) {
+                  p.actualPrice = product.actualPrice;
+                }
+              }
+            });
+
+            await order.save();
           })
         );
       })
