@@ -347,10 +347,10 @@ router.post('/addActualPrices', async (req, res) => {
                     p.actualPrice = product.actualPrice;
                   }
                 }
+
+                await order.save();
               })
             );
-
-            await order.save();
           })
         );
       })
