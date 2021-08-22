@@ -356,8 +356,7 @@ router.post('/addActualPrices', async (req, res) => {
 
             console.log(_id);
             console.log(testProducts);
-            order.products = testProducts;
-            await order.save();
+            await Orders.findByIdAndUpdate(_id, { products: testProducts });
           })
         );
       })
