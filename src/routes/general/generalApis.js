@@ -323,6 +323,7 @@ router.post('/addActualPrices', async (req, res) => {
         await Promise.all(
           orders.map(async order => {
             const { products, _id } = order;
+            let testProducts = [];
 
             products.map(async p => {
               const { productName, quantity } = p;
@@ -344,11 +345,12 @@ router.post('/addActualPrices', async (req, res) => {
 
                 if (product.actualPrice !== undefined) {
                   p.actualPrice = product.actualPrice;
+                  testProducts = [...testProducts, p];
                 }
               }
             });
 
-            console.log(products);
+            console.log(testProducts);
             // await order.save();
           })
         );
