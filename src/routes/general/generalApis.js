@@ -352,6 +352,7 @@ router.post('/addActualPrices', async (req, res) => {
               })
             );
 
+            console.log(_id);
             console.log(testProducts);
             // await order.save();
           })
