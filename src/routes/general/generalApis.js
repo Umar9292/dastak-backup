@@ -348,7 +348,8 @@ router.post('/addActualPrices', async (req, res) => {
               }
             });
 
-            await order.save();
+            console.log(products);
+            // await order.save();
           })
         );
       })
