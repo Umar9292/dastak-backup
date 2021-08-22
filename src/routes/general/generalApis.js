@@ -345,10 +345,9 @@ router.post('/addActualPrices', async (req, res) => {
 
                   if (product.actualPrice !== undefined) {
                     p.actualPrice = product.actualPrice;
+                    order.save();
                   }
                 }
-
-                await order.save();
               })
             );
           })
