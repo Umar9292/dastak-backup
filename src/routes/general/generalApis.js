@@ -348,6 +348,8 @@ router.post('/addActualPrices', async (req, res) => {
                     p.actualPrice = product.actualPrice;
                     testProducts = [...testProducts, p];
                   }
+                } else {
+                  testProducts = [...testProducts, p];
                 }
               })
             );
