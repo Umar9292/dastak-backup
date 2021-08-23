@@ -234,13 +234,7 @@ router.post('/allOrders', async (req, res) => {
   try {
     const { martId } = req.body;
 
-    const [
-      { percentage },
-      upcoming,
-      accepted,
-      delivered,
-      unpaidOrders,
-    ] = await Promise.all([
+    const [{ percentage }, upcoming, accepted, delivered] = await Promise.all([
       Users.findById(martId)
         .select('name percentage')
         .lean(),
@@ -267,46 +261,45 @@ router.post('/allOrders', async (req, res) => {
           createdAt: -1,
         })
         .lean(),
-
-      Orders.find({
-        paid: false,
-        status: 'Delivered',
-        martId,
-      })
-        .select('orderTotal deliveryCharges orderType')
-        .lean(),
     ]);
 
-    const deliveryOrders = unpaidOrders.filter(
-      ({ orderType }) => orderType === 'Delivery'
+    let dealPayment = 0;
+    let nonDealPayment = 0;
+
+    await Promise.all(
+      delivered.map(async ({ products }) => {
+        await Promise.all(
+          products.map(async product => {
+            const { productName, net, count } = product;
+
+            if (
+              !productName.includes('Azadi Deal') &&
+              !productName.includes('Discounted Deal') &&
+              !productName.includes('Zabardast Deal') &&
+              !productName.includes('Zabardast Deals')
+            ) {
+              nonDealPayment += net;
+            }
+
+            if (product.actualPrice !== undefined) {
+              dealPayment += product.actualPrice * count;
+            }
+          })
+        );
+      })
     );
 
-    const totalAmount = deliveryOrders.reduce((a, b) => a + b.orderTotal, 0);
-
-    const amountWithoutDelivery = unpaidOrders.reduce(
-      (a, b) =>
-        b.deliveryCharges !== '0' ? a + b.orderTotal - 30 : a + b.orderTotal,
-      0
-    );
-
-    const deliveryCharges = deliveryOrders.reduce(
-      (a, b) => (b.deliveryCharges !== '0' ? a + 30 : a),
-      0
-    );
-
-    const ourPercentage = +(
-      (percentage / 100) *
-      amountWithoutDelivery
-    ).toFixed();
-
-    const totalToPay = totalAmount - (deliveryCharges + ourPercentage);
+    const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
+    nonDealPayment -= ourPercentage;
+    const totalToPay = dealPayment + (nonDealPayment - ourPercentage);
 
     return res.json({
       status: '200',
       upcoming,
       accepted,
       delivered,
-      amountWithoutDelivery,
+      dealPayment,
+      nonDealPayment,
       totalToPay,
     });
   } catch (err) {
