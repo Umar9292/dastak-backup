@@ -101,7 +101,8 @@ router.post('/restaurantCollections', async (req, res) => {
                 if (
                   !productName.includes('Azadi Deal') &&
                   !productName.includes('Discounted Deal') &&
-                  !productName.includes('Zabardast Deal')
+                  !productName.includes('Zabardast Deal') &&
+                  !productName.includes('Zabardast Deals')
                 ) {
                   nonDealPayment += net;
                 }
