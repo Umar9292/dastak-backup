@@ -282,7 +282,7 @@ router.post('/ridersFare', async (req, res) => {
       },
       status: 'Delivered',
       orderType: 'Delivery',
-      paidToRider: false,
+      paidToRider: true,
       city,
     });
 
@@ -291,7 +291,7 @@ router.post('/ridersFare', async (req, res) => {
         const orders = await Orders.find({
           city,
           riderId,
-          paidToRider: false,
+          paidToRider: true,
           orderType: 'Delivery',
           status: 'Delivered',
           dateForSearching: {

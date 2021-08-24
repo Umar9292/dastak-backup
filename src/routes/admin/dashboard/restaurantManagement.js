@@ -326,4 +326,95 @@ router.post('/expensesTillNow', async (req, res) => {
   }
 });
 
+router.post('/previouslyPaidAmount', async (req, res) => {
+  try {
+    const { startDate, endDate, city } = req.body;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    const restaurants = await Orders.distinct('martId', {
+      paid: true,
+      status: 'Delivered',
+      dateForSearching: {
+        $gte: start,
+        $lte: end,
+      },
+      city,
+    });
+
+    let data = await Promise.all(
+      restaurants.map(async martId => {
+        const [orders, restaurant] = await Promise.all([
+          Orders.find({
+            paid: true,
+            status: 'Delivered',
+            orderType: 'Delivery',
+            martId,
+            city,
+            dateForSearching: {
+              $gte: start,
+              $lte: end,
+            },
+          }).lean(),
+
+          Users.findById(martId)
+            .select('name percentage')
+            .lean(),
+        ]);
+
+        const { name: martName, percentage } = restaurant;
+
+        let dealPayment = 0;
+        let nonDealPayment = 0;
+
+        await Promise.all(
+          orders.map(async ({ products }) => {
+            await Promise.all(
+              products.map(async product => {
+                const { productName, net, count } = product;
+
+                if (
+                  !productName.includes('Azadi Deal') &&
+                  !productName.includes('Discounted Deal') &&
+                  !productName.includes('Zabardast Deal')
+                ) {
+                  nonDealPayment += net;
+                }
+
+                if (product.actualPrice !== undefined) {
+                  dealPayment += product.actualPrice * count;
+                }
+              })
+            );
+          })
+        );
+
+        const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
+        const paidAmount = dealPayment + (nonDealPayment - ourPercentage);
+
+        return {
+          martName,
+          paidAmount,
+          orderCount: orders.length,
+        };
+      })
+    );
+
+    data = orderBy(data, ['paidAmount'], ['desc']);
+
+    return res.json({ status: '200', data });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
