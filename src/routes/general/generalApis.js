@@ -304,7 +304,6 @@ router.post('/addActualPrices', async (req, res) => {
       .toISOString();
 
     const restaurants = await Orders.distinct('martId', {
-      paid: false,
       status: 'Delivered',
       dateForSearching: {
         $gte: start,
