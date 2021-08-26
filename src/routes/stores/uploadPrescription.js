@@ -35,7 +35,7 @@ router.post('/uploadPrescription', (req, res) => {
 
       const [
         { url: prescriptionImg },
-        { playerIds },
+        { playerIds, city },
         orderCount,
       ] = await Promise.all([
         v2.uploader.upload(imgPath, {
@@ -46,7 +46,7 @@ router.post('/uploadPrescription', (req, res) => {
         }),
 
         Users.findById(orderData.martId)
-          .select('playerIds')
+          .select('playerIds city')
           .lean(),
 
         Orders.countDocuments({ martId: orderData.martId, date }),
@@ -55,6 +55,7 @@ router.post('/uploadPrescription', (req, res) => {
       orderData = {
         ...orderData,
         date,
+        city,
         prescriptionImg,
         orderNum: orderCount + 1,
         time,
