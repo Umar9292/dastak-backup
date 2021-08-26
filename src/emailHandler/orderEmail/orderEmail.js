@@ -13,7 +13,7 @@ exports.emailOrderDetails = async (
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
-    secure: true,
+    secure: false,
     pool: true,
     auth: {
       user: process.env.MAIL_USER_NAME,

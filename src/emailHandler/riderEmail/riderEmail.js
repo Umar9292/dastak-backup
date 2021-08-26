@@ -6,7 +6,7 @@ exports.emailOrderDetailsToRider = async riderEmails => {
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
-    secure: true,
+    secure: false,
     auth: {
       user: process.env.MAIL_USER_NAME,
       pass: process.env.MAIL_PASSWORD,
