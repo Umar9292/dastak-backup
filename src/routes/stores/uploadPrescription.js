@@ -1,6 +1,7 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
 
+const axios = require('axios');
 const { unlinkSync } = require('fs');
 const { IncomingForm } = require('formidable');
 const { v2 } = require('cloudinary');
@@ -51,6 +52,16 @@ router.post('/uploadPrescription', (req, res) => {
 
         Orders.countDocuments({ martId: orderData.martId, date }),
       ]);
+
+      if (orderData.address === 'Current Location') {
+        const { latitude, longitude } = orderData;
+
+        const result = await axios.get(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&sensor=true&key=${process.env.GOOGLE_API_KEY}`
+        );
+
+        orderData.address = result.data.results[0].formatted_address;
+      }
 
       orderData = {
         ...orderData,
