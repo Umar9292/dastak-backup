@@ -4,14 +4,11 @@ exports.orderStatusEmail = async adminMessage => {
   const transporter = createTransport({
     host: process.env.MAIL_HOST,
     port: 465,
-    secure: false,
+    secure: true,
     pool: true,
     auth: {
       user: process.env.MAIL_USER_NAME,
       pass: process.env.MAIL_PASSWORD,
-    },
-    tls: {
-      rejectUnauthorized: false,
     },
   });
 
