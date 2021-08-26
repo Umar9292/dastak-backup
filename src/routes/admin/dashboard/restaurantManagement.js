@@ -361,8 +361,6 @@ router.post('/expensesTillNow', async (req, res) => {
         let dealPayment = 0;
         let nonDealPayment = 0;
 
-        console.log(deliveryOrders);
-
         await Promise.all(
           deliveryOrders.map(async ({ products }) => {
             await Promise.all(
