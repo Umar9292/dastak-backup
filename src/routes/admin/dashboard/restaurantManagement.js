@@ -351,7 +351,7 @@ router.post('/expensesTillNow', async (req, res) => {
             city,
             dateForSearching: { $gte: start, $lte: end },
           })
-            .select('riderFare deliveryCharges martName')
+            .select('riderFare deliveryCharges martName products')
             .sort({ createdAt: -1 })
             .lean(),
 
@@ -360,6 +360,8 @@ router.post('/expensesTillNow', async (req, res) => {
 
         let dealPayment = 0;
         let nonDealPayment = 0;
+
+        console.log(deliveryOrders);
 
         await Promise.all(
           deliveryOrders.map(async ({ products }) => {
@@ -418,6 +420,7 @@ router.post('/expensesTillNow', async (req, res) => {
       paidToRestaurants,
     });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
