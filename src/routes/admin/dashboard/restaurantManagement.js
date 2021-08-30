@@ -72,7 +72,12 @@ router.post('/restaurantCollections', async (req, res) => {
               $gte: start,
               $lte: end,
             },
-          }).lean(),
+          })
+            .select(
+              'riderFare deliveryCharges martName products orderType orderTotal'
+            )
+            .sort({ createdAt: -1 })
+            .lean(),
 
           Users.findById(martId)
             .select('name phone jazzCashNumber percentage')
@@ -94,24 +99,32 @@ router.post('/restaurantCollections', async (req, res) => {
         let ourProfit = 0;
 
         await Promise.all(
-          deliveryOrders.map(async ({ products }) => {
+          orders.map(async ({ products, orderType }) => {
             await Promise.all(
               products.map(async product => {
                 const { productName, net, count } = product;
 
-                if (
-                  !productName.includes('Azadi Deal') &&
-                  !productName.includes('Discounted Deal') &&
-                  !productName.includes('Zabardast Deal') &&
-                  !productName.includes('Zabardast Deals')
-                ) {
-                  nonDealPayment += net;
+                if (orderType === 'Delivery') {
+                  if (
+                    !productName.includes('Azadi Deal') &&
+                    !productName.includes('Discounted Deal') &&
+                    !productName.includes('Zabardast Deal') &&
+                    !productName.includes('Zabardast Deals')
+                  ) {
+                    nonDealPayment += net;
+                  }
                 }
 
                 if (product.actualPrice !== undefined) {
-                  const actualPriceIntoCount = product.actualPrice * count;
-                  dealPayment += actualPriceIntoCount;
-                  ourProfit += net - actualPriceIntoCount;
+                  const priceDifference = net - product.actualPrice * count;
+
+                  if (orderType === 'PickUp') {
+                    ourProfit += priceDifference;
+                  } else {
+                    const actualPriceIntoCount = product.actualPrice * count;
+                    dealPayment += actualPriceIntoCount;
+                    ourProfit += priceDifference;
+                  }
                 }
               })
             );
@@ -130,8 +143,7 @@ router.post('/restaurantCollections', async (req, res) => {
 
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
         const totalToPay = dealPayment + (nonDealPayment - ourPercentage);
-        const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
-        ourProfit += ourPercentage + deliveryCharges - ridersFare;
+        ourProfit += ourPercentage + deliveryCharges;
 
         return {
           martId,
@@ -334,7 +346,6 @@ router.post('/expensesTillNow', async (req, res) => {
 
     const restaurants = await Orders.distinct('martId', {
       status: 'Delivered',
-      orderType: 'Delivery',
       city,
       dateForSearching: {
         $gte: start,
@@ -344,18 +355,14 @@ router.post('/expensesTillNow', async (req, res) => {
 
     let data = await Promise.all(
       restaurants.map(async martId => {
-        const [
-          deliveryOrders,
-          { name: martName, percentage },
-        ] = await Promise.all([
+        const [orders, { name: martName, percentage }] = await Promise.all([
           Orders.find({
             status: 'Delivered',
-            orderType: 'Delivery',
             martId,
             city,
             dateForSearching: { $gte: start, $lte: end },
           })
-            .select('riderFare deliveryCharges martName products')
+            .select('riderFare deliveryCharges martName products orderType')
             .sort({ createdAt: -1 })
             .lean(),
 
@@ -367,28 +374,40 @@ router.post('/expensesTillNow', async (req, res) => {
         let ourProfit = 0;
 
         await Promise.all(
-          deliveryOrders.map(async ({ products }) => {
+          orders.map(async ({ products, orderType }) => {
             await Promise.all(
               products.map(async product => {
                 const { productName, net, count } = product;
 
-                if (
-                  !productName.includes('Azadi Deal') &&
-                  !productName.includes('Discounted Deal') &&
-                  !productName.includes('Zabardast Deal') &&
-                  !productName.includes('Zabardast Deals')
-                ) {
-                  nonDealPayment += net;
+                if (orderType === 'Delivery') {
+                  if (
+                    !productName.includes('Azadi Deal') &&
+                    !productName.includes('Discounted Deal') &&
+                    !productName.includes('Zabardast Deal') &&
+                    !productName.includes('Zabardast Deals')
+                  ) {
+                    nonDealPayment += net;
+                  }
                 }
 
                 if (product.actualPrice !== undefined) {
-                  const actualPriceIntoCount = product.actualPrice * count;
-                  dealPayment += actualPriceIntoCount;
-                  ourProfit += net - actualPriceIntoCount;
+                  const priceDifference = net - product.actualPrice * count;
+
+                  if (orderType === 'PickUp') {
+                    ourProfit += priceDifference;
+                  } else {
+                    const actualPriceIntoCount = product.actualPrice * count;
+                    dealPayment += actualPriceIntoCount;
+                    ourProfit += priceDifference;
+                  }
                 }
               })
             );
           })
+        );
+
+        const deliveryOrders = orders.filter(
+          ({ orderType }) => orderType === 'Delivery'
         );
 
         const deliveryCharges = deliveryOrders.reduce(
