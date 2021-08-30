@@ -385,7 +385,7 @@ router.post('/expensesTillNow', async (req, res) => {
                 if (product.actualPrice !== undefined) {
                   const actualPriceIntoCount = product.actualPrice * count;
                   dealPayment += actualPriceIntoCount;
-                  ourProfit += product.net - actualPriceIntoCount;
+                  ourProfit += actualPriceIntoCount - product.net;
                 }
               })
             );
