@@ -60,13 +60,11 @@ router.post('/restaurantCollections', async (req, res) => {
       city,
     });
 
-    let ourProfit = 0;
-
     let data = await Promise.all(
       restaurants.map(async martId => {
         const [orders, restaurant] = await Promise.all([
           Orders.find({
-            paid: false,
+            // paid: false,
             status: 'Delivered',
             martId,
             city,
@@ -93,6 +91,7 @@ router.post('/restaurantCollections', async (req, res) => {
 
         let dealPayment = 0;
         let nonDealPayment = 0;
+        let ourProfit = 0;
 
         await Promise.all(
           orders.map(async ({ products }) => {
@@ -131,7 +130,8 @@ router.post('/restaurantCollections', async (req, res) => {
 
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
         const totalToPay = dealPayment + (nonDealPayment - ourPercentage);
-        ourProfit += ourPercentage + deliveryCharges;
+        const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
+        ourProfit += ourPercentage + deliveryCharges - ridersFare;
 
         return {
           martId,
@@ -342,8 +342,6 @@ router.post('/expensesTillNow', async (req, res) => {
       },
     });
 
-    let ourProfit = 0;
-
     let data = await Promise.all(
       restaurants.map(async martId => {
         const [
@@ -366,6 +364,7 @@ router.post('/expensesTillNow', async (req, res) => {
 
         let dealPayment = 0;
         let nonDealPayment = 0;
+        let ourProfit = 0;
 
         await Promise.all(
           deliveryOrders.map(async ({ products }) => {
