@@ -385,7 +385,7 @@ router.post('/expensesTillNow', async (req, res) => {
                 if (product.actualPrice !== undefined) {
                   const actualPriceIntoCount = product.actualPrice * count;
                   dealPayment += actualPriceIntoCount;
-                  ourProfit += actualPriceIntoCount - product.net;
+                  ourProfit += actualPriceIntoCount - net;
                 }
               })
             );
@@ -396,6 +396,8 @@ router.post('/expensesTillNow', async (req, res) => {
           (a, b) => a + +b.deliveryCharges,
           0
         );
+
+        console.log(martName, ourProfit);
 
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
         const totalPaid = dealPayment + (nonDealPayment - ourPercentage);
