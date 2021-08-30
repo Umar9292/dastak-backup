@@ -94,7 +94,7 @@ router.post('/restaurantCollections', async (req, res) => {
         let ourProfit = 0;
 
         await Promise.all(
-          orders.map(async ({ products }) => {
+          deliveryOrders.map(async ({ products }) => {
             await Promise.all(
               products.map(async product => {
                 const { productName, net, count } = product;
@@ -132,6 +132,18 @@ router.post('/restaurantCollections', async (req, res) => {
         const totalToPay = dealPayment + (nonDealPayment - ourPercentage);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
         ourProfit += ourPercentage + deliveryCharges - ridersFare;
+
+        if (martName === 'Khan Baba Hotel') {
+          console.log(
+            martName,
+            `percentage${percentage}`,
+            `Non Deal Payment ${nonDealPayment}`,
+            deliveryOrders.length,
+            `Riders Fare ${ridersFare}`,
+            `ourPercentage ${ourPercentage}`,
+            `deliveryCharges ${deliveryCharges}\n`
+          );
+        }
 
         return {
           martId,
@@ -400,6 +412,18 @@ router.post('/expensesTillNow', async (req, res) => {
         const totalPaid = dealPayment + (nonDealPayment - ourPercentage);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
         ourProfit += ourPercentage + deliveryCharges - ridersFare;
+
+        if (martName === 'Khan Baba Hotel') {
+          console.log(
+            martName,
+            `percentage ${percentage}`,
+            `Non Deal Payment ${nonDealPayment}`,
+            deliveryOrders.length,
+            `Riders Fare ${ridersFare}`,
+            `ourPercentage ${ourPercentage}`,
+            `deliveryCharges ${deliveryCharges}\n`
+          );
+        }
 
         return {
           martName,
