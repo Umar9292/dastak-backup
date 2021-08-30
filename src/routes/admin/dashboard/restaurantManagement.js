@@ -342,8 +342,6 @@ router.post('/expensesTillNow', async (req, res) => {
       },
     });
 
-    let ourProfit = 0;
-
     let data = await Promise.all(
       restaurants.map(async martId => {
         const [
@@ -385,7 +383,6 @@ router.post('/expensesTillNow', async (req, res) => {
                 if (product.actualPrice !== undefined) {
                   const actualPriceIntoCount = product.actualPrice * count;
                   dealPayment += actualPriceIntoCount;
-                  ourProfit += actualPriceIntoCount - net;
                 }
               })
             );
@@ -397,12 +394,10 @@ router.post('/expensesTillNow', async (req, res) => {
           0
         );
 
-        console.log(martName, ourProfit);
-
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
         const totalPaid = dealPayment + (nonDealPayment - ourPercentage);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
-        ourProfit += ourPercentage + deliveryCharges - ridersFare;
+        const ourProfit = ourPercentage + deliveryCharges - ridersFare;
 
         return {
           martName,
