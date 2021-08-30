@@ -51,7 +51,7 @@ router.post('/restaurantCollections', async (req, res) => {
       .toISOString();
 
     const restaurants = await Orders.distinct('martId', {
-      paid: false,
+      // paid: false,
       status: 'Delivered',
       dateForSearching: {
         $gte: start,
