@@ -133,18 +133,6 @@ router.post('/restaurantCollections', async (req, res) => {
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
         ourProfit += ourPercentage + deliveryCharges - ridersFare;
 
-        if (martName === 'Khan Baba Hotel') {
-          console.log(
-            martName,
-            `percentage${percentage}`,
-            `Non Deal Payment ${nonDealPayment}`,
-            deliveryOrders.length,
-            `Riders Fare ${ridersFare}`,
-            `ourPercentage ${ourPercentage}`,
-            `deliveryCharges ${deliveryCharges}\n`
-          );
-        }
-
         return {
           martId,
           martName,
@@ -412,18 +400,6 @@ router.post('/expensesTillNow', async (req, res) => {
         const totalPaid = dealPayment + (nonDealPayment - ourPercentage);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
         ourProfit += ourPercentage + deliveryCharges - ridersFare;
-
-        if (martName === 'Khan Baba Hotel') {
-          console.log(
-            martName,
-            `percentage ${percentage}`,
-            `Non Deal Payment ${nonDealPayment}`,
-            deliveryOrders.length,
-            `Riders Fare ${ridersFare}`,
-            `ourPercentage ${ourPercentage}`,
-            `deliveryCharges ${deliveryCharges}\n`
-          );
-        }
 
         return {
           martName,
