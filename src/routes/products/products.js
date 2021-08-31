@@ -426,27 +426,39 @@ router.post('/updateProductsAvailability', async (req, res) => {
 
 router.post('/dastakDeals', async (req, res) => {
   try {
-    const { lat, long } = req.body;
+    const { lat, long, employee } = req.body;
 
     const currentTime = moment().tz('Asia/Karachi');
 
-    const restaurants = await Users.aggregate([
-      {
-        $geoNear: {
-          near: { type: 'Point', coordinates: [long, lat] },
-          distanceField: 'dist',
-          maxDistance: 3500,
-          query: {
-            available: true,
-            dastakDeal: true,
-            type: 'admin',
-            status: 'active',
-            shopType: 'restaurant',
+    let restaurants = [];
+
+    if (!employee) {
+      restaurants = await Users.aggregate([
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [long, lat] },
+            distanceField: 'dist',
+            maxDistance: 3500,
+            query: {
+              available: true,
+              dastakDeal: true,
+              type: 'admin',
+              status: 'active',
+              shopType: 'restaurant',
+            },
+            spherical: true,
           },
-          spherical: true,
         },
-      },
-    ]);
+      ]);
+    } else {
+      restaurants = await Users.find({
+        available: true,
+        dastakDeal: true,
+        type: 'admin',
+        status: 'active',
+        shopType: 'restaurant',
+      });
+    }
 
     const openRestaurants = [];
 
