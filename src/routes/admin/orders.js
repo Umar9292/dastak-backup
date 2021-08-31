@@ -127,7 +127,7 @@ router.post('/placeOrder', async (req, res) => {
       orderTotal:
         employee !== undefined && orderType !== 'PickUp'
           ? orderTotal - +mart.deliveryCharges
-          : orderTotal,
+          : orderTotal - 30 + deliveryCharges,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
         .toISOString(),
