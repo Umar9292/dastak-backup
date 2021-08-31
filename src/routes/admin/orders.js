@@ -44,6 +44,7 @@ router.post('/placeOrder', async (req, res) => {
       latitude: userLatitude,
       longitude: userLongitude,
       orderType,
+      deliveryCharges,
     } = params;
 
     const date = moment()
@@ -84,7 +85,7 @@ router.post('/placeOrder', async (req, res) => {
       params.address = addressData.results[0].formatted_address;
     }
 
-    const [longitude, latitude] = mart.geometry.coordinates;
+    /*  const [longitude, latitude] = mart.geometry.coordinates;
     const { data: distanceData } = await axios.get(
       `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${userLatitude},${userLongitude}&destinations=${latitude},${longitude}&key=${process.env.GOOGLE_API_KEY}`
     );
@@ -110,7 +111,7 @@ router.post('/placeOrder', async (req, res) => {
 
     if (+distance > 4) {
       deliveryCharges = 50;
-    }
+    } */
 
     params = {
       ...params,
@@ -127,7 +128,7 @@ router.post('/placeOrder', async (req, res) => {
       orderTotal:
         employee !== undefined && orderType !== 'PickUp'
           ? orderTotal - +mart.deliveryCharges
-          : orderTotal - 30 + deliveryCharges,
+          : orderTotal,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
         .toISOString(),
