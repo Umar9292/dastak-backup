@@ -128,20 +128,21 @@ router.post('/allProducts', async (req, res) => {
       martLongitude,
     } = req.body;
 
+    console.log(req.body);
+
     let finalData = [];
 
     client.get(martId, async (err, data) => {
       if (err) console.log(err);
 
-      const [restaurant, { data: distanceData }] = await Promise.all([
-        Users.findById(martId).lean(),
+      const restaurant = await Users.findById(martId).lean();
 
-        axios.get(
-          `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${+userLatitude},${+userLongitude}&destinations=${+martLatitude},${+martLongitude}&key=${
-            process.env.GOOGLE_API_KEY
-          }`
-        ),
-      ]);
+      console.log(restaurant);
+      const { data: distanceData } = await axios.get(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${+userLatitude},${+userLongitude}&destinations=${+martLatitude},${+martLongitude}&key=${
+          process.env.GOOGLE_API_KEY
+        }`
+      );
 
       const distance = distanceData.rows[0].elements[0].distance.text.substring(
         0,
@@ -174,18 +175,15 @@ router.post('/allProducts', async (req, res) => {
         return res.json({ status: '200', data: JSON.parse(data), restaurant });
       }
 
-      const [{ categories }, { name }, options] = await Promise.all([
+      const [{ categories }, options] = await Promise.all([
         Categories.findOne({ martId })
           .select('categories')
-          .lean(),
-
-        Users.findById(martId)
-          .select('name')
           .lean(),
 
         Flavours.findOne({ martId }).lean(),
       ]);
 
+      const { name } = restaurant;
       if (userId && userId !== '') {
         const customer = await Users.findById(userId).select('name');
         console.log(`${customer.name} opened ${name}`);
