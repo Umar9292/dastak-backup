@@ -128,6 +128,8 @@ router.post('/allProducts', async (req, res) => {
       martLongitude,
     } = req.body;
 
+    console.log(req.body);
+
     let finalData = [];
 
     client.get(martId, async (err, data) => {
@@ -136,7 +138,9 @@ router.post('/allProducts', async (req, res) => {
       const restaurant = await Users.findById(martId).lean();
 
       const { data: distanceData } = await axios.get(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${userLatitude},${userLongitude}&destinations=${martLatitude},${martLongitude}&key=${process.env.GOOGLE_API_KEY}`
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${+userLatitude},${+userLongitude}&destinations=${+martLatitude},${+martLongitude}&key=${
+          process.env.GOOGLE_API_KEY
+        }`
       );
 
       const distance = distanceData.rows[0].elements[0].distance.text.substring(
