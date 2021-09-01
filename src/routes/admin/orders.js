@@ -99,7 +99,7 @@ router.post('/placeOrder', async (req, res) => {
       orderNum: todaysOrders + 1,
       orderTotal:
         employee !== undefined && orderType !== 'PickUp'
-          ? orderTotal - +mart.deliveryCharges
+          ? orderTotal - deliveryCharges
           : orderTotal,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
