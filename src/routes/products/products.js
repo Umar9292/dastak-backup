@@ -146,8 +146,6 @@ router.post('/allProducts', async (req, res) => {
         3
       );
 
-      console.log(distance);
-
       let deliveryCharges = 0;
 
       if (+distance <= 1) {
@@ -545,8 +543,6 @@ router.post('/dastakDeals', async (req, res) => {
 
           Flavours.findOne({ martId }),
         ]);
-
-        console.log(restaurant.name, restaurant.geometry);
 
         const [longitude, latitude] = restaurant.geometry.coordinates;
         const { data: distanceData } = await axios.get(

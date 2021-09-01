@@ -51,8 +51,6 @@ router.post('/allProducts', async (req, res) => {
         3
       );
 
-      console.log(distance);
-
       let deliveryCharges = 0;
 
       if (+distance <= 1) {
