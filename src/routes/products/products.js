@@ -128,8 +128,6 @@ router.post('/allProducts', async (req, res) => {
       martLongitude,
     } = req.body;
 
-    console.log(req.body);
-
     let finalData = [];
 
     client.get(martId, async (err, data) => {
