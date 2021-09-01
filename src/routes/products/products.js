@@ -546,6 +546,8 @@ router.post('/dastakDeals', async (req, res) => {
           Flavours.findOne({ martId }),
         ]);
 
+        console.log(restaurant.name, restaurant.geometry);
+
         const [longitude, latitude] = restaurant.geometry.coordinates;
         const { data: distanceData } = await axios.get(
           `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${lat},${long}&destinations=${latitude},${longitude}&key=${process.env.GOOGLE_API_KEY}`
