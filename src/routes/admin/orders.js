@@ -41,8 +41,8 @@ router.post('/placeOrder', async (req, res) => {
       martId,
       userId,
       products,
-      latitude: userLatitude,
-      longitude: userLongitude,
+      latitude,
+      longitude,
       orderType,
       deliveryCharges,
     } = params;
@@ -78,40 +78,12 @@ router.post('/placeOrder', async (req, res) => {
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
     if (params.address === 'Current Location') {
-      const { data: addressData } = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${userLatitude},${userLongitude}&sensor=true&key=${process.env.GOOGLE_API_KEY}`
+      const { data } = await axios.get(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&sensor=true&key=${process.env.GOOGLE_API_KEY}`
       );
 
-      params.address = addressData.results[0].formatted_address;
+      params.address = data.results[0].formatted_address;
     }
-
-    /*  const [longitude, latitude] = mart.geometry.coordinates;
-    const { data: distanceData } = await axios.get(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${userLatitude},${userLongitude}&destinations=${latitude},${longitude}&key=${process.env.GOOGLE_API_KEY}`
-    );
-
-    const distance = distanceData.rows[0].elements[0].distance.text.substring(
-      0,
-      3
-    );
-
-    let deliveryCharges = 0;
-
-    if (+distance <= 1) {
-      deliveryCharges = 20;
-    }
-
-    if (+distance > 1 && +distance <= 2) {
-      deliveryCharges = 30;
-    }
-
-    if (+distance > 2 && +distance <= 4) {
-      deliveryCharges = 40;
-    }
-
-    if (+distance > 4) {
-      deliveryCharges = 50;
-    } */
 
     params = {
       ...params,
