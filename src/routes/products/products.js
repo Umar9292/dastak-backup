@@ -119,7 +119,15 @@ const router = Router();
 
 router.post('/allProducts', async (req, res) => {
   try {
-    const { martId, userId } = req.body;
+    const {
+      martId,
+      userId,
+      userLatitude,
+      userLongitude,
+      martLatitude,
+      martLongitude,
+    } = req.body;
+
     let finalData = [];
 
     client.get(martId, async (err, data) => {
