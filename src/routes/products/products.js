@@ -128,8 +128,6 @@ router.post('/allProducts', async (req, res) => {
       martLongitude,
     } = req.body;
 
-    console.log(req.body);
-
     let finalData = [];
 
     client.get(martId, async (err, data) => {
@@ -469,6 +467,8 @@ router.post('/updateProductsAvailability', async (req, res) => {
 router.post('/dastakDeals', async (req, res) => {
   try {
     const { lat, long, employee } = req.body;
+
+    console.log(req.body);
 
     const currentTime = moment().tz('Asia/Karachi');
 
