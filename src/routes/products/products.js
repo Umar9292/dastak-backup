@@ -124,8 +124,39 @@ router.post('/allProducts', async (req, res) => {
     client.get(martId, async (err, data) => {
       if (err) console.log(err);
 
+      const restaurant = await Users.findById(martId).lean();
+
+      const { data: distanceData } = await axios.get(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${userLatitude},${userLongitude}&destinations=${martLatitude},${martLongitude}&key=${process.env.GOOGLE_API_KEY}`
+      );
+
+      const distance = distanceData.rows[0].elements[0].distance.text.substring(
+        0,
+        3
+      );
+
+      let deliveryCharges = 0;
+
+      if (+distance <= 1) {
+        deliveryCharges = 20;
+      }
+
+      if (+distance > 1 && +distance <= 2) {
+        deliveryCharges = 30;
+      }
+
+      if (+distance > 2 && +distance <= 4) {
+        deliveryCharges = 40;
+      }
+
+      if (+distance > 4) {
+        deliveryCharges = 50;
+      }
+
+      restaurant.deliveryCharges = deliveryCharges;
+
       if (data !== null) {
-        return res.json({ status: '200', data: JSON.parse(data) });
+        return res.json({ status: '200', data: JSON.parse(data), restaurant });
       }
 
       const [{ categories }, { name }, options] = await Promise.all([
@@ -202,6 +233,7 @@ router.post('/allProducts', async (req, res) => {
       res.json({
         status: '200',
         data: finalData,
+        restaurant,
       });
 
       client.setex(martId, 600, JSON.stringify(finalData));
