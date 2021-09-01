@@ -1,4 +1,5 @@
 const Router = require('express/lib/router');
+const axios = require('axios');
 const { createClient } = require('redis');
 
 const Users = require('../../models/userModel');
@@ -11,7 +12,16 @@ const router = Router();
 
 router.post('/allProducts', async (req, res) => {
   try {
-    const { martId, userId, type } = req.body;
+    const {
+      martId,
+      userId,
+      type,
+      userLatitude,
+      userLongitude,
+      martLatitude,
+      martLongitude,
+    } = req.body;
+
     let finalData = [];
 
     if (type && type === 'admin') {
@@ -28,20 +38,48 @@ router.post('/allProducts', async (req, res) => {
     client.get(martId, async (err, data) => {
       if (err) console.log(err);
 
-      if (data !== null) {
-        return res.json({ status: '200', data: JSON.parse(data) });
+      const restaurant = await Users.findById(martId).lean();
+
+      const { data: distanceData } = await axios.get(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${+userLatitude},${+userLongitude}&destinations=${+martLatitude},${+martLongitude}&key=${
+          process.env.GOOGLE_API_KEY
+        }`
+      );
+
+      const distance = distanceData.rows[0].elements[0].distance.text.substring(
+        0,
+        3
+      );
+
+      let deliveryCharges = 0;
+
+      if (+distance <= 1) {
+        deliveryCharges = 20;
       }
 
-      const [{ categories }, { name }] = await Promise.all([
-        Categories.findOne({ martId })
-          .select('categories')
-          .lean(),
+      if (+distance > 1 && +distance <= 2) {
+        deliveryCharges = 30;
+      }
 
-        Users.findById(martId)
-          .select('name')
-          .lean(),
-      ]);
+      if (+distance > 2 && +distance <= 4) {
+        deliveryCharges = 40;
+      }
 
+      if (+distance > 4) {
+        deliveryCharges = 50;
+      }
+
+      restaurant.deliveryCharges = deliveryCharges;
+
+      if (data !== null) {
+        return res.json({ status: '200', data: JSON.parse(data), restaurant });
+      }
+
+      const { categories } = await Categories.findOne({ martId })
+        .select('categories')
+        .lean();
+
+      const { name } = restaurant;
       if (userId && userId !== '') {
         const customer = await Users.findById(userId).select('name');
         console.log(`${customer.name} opened ${name}`);
@@ -73,6 +111,7 @@ router.post('/allProducts', async (req, res) => {
       res.json({
         status: '200',
         data: finalData,
+        restaurant,
       });
 
       client.setex(martId, 300, JSON.stringify(finalData));
