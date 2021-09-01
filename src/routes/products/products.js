@@ -468,6 +468,8 @@ router.post('/dastakDeals', async (req, res) => {
   try {
     const { lat, long, employee } = req.body;
 
+    console.log(req.body);
+
     const currentTime = moment().tz('Asia/Karachi');
 
     let restaurants = [];
