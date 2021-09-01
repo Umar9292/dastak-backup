@@ -133,18 +133,22 @@ router.post('/allProducts', async (req, res) => {
     client.get(martId, async (err, data) => {
       if (err) console.log(err);
 
-      const restaurant = await Users.findById(martId).lean();
+      const [restaurant, { data: distanceData }] = await Promise.all([
+        Users.findById(martId).lean(),
 
-      const { data: distanceData } = await axios.get(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${+userLatitude},${+userLongitude}&destinations=${+martLatitude},${+martLongitude}&key=${
-          process.env.GOOGLE_API_KEY
-        }`
-      );
+        axios.get(
+          `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${+userLatitude},${+userLongitude}&destinations=${+martLatitude},${+martLongitude}&key=${
+            process.env.GOOGLE_API_KEY
+          }`
+        ),
+      ]);
 
       const distance = distanceData.rows[0].elements[0].distance.text.substring(
         0,
         3
       );
+
+      console.log(distance);
 
       let deliveryCharges = 0;
 
