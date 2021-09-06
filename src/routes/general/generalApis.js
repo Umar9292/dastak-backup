@@ -372,7 +372,7 @@ router.post('/addActualPrices', async (req, res) => {
 
 router.post('/dealCount', async (req, res) => {
   try {
-    const { martId, startDate, endDate } = req.body;
+    const { martId, startDate, endDate, dealName } = req.body;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -398,7 +398,7 @@ router.post('/dealCount', async (req, res) => {
       deliveryOrders.map(async ({ products }) => {
         await Promise.all(
           products.map(async ({ productName, count, quantity }) => {
-            if (productName.includes('Azadi Deal')) {
+            if (productName.includes(dealName)) {
               if (quantity.includes('Small')) {
                 small += count;
               }
