@@ -81,7 +81,7 @@ router.get('/notifications', async (req, res) => {
   }
 });
 
-router.get('/aiAttempt', async (_req, res) => {
+/* router.get('/aiAttempt', async (_req, res) => {
   try {
     const users = await Orders.distinct('userId', {
       orderTotal: { $gte: 400 },
@@ -143,7 +143,7 @@ router.get('/aiAttempt', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 router.post('/closeRestaurants', async (req, res) => {
   try {
@@ -360,6 +360,67 @@ router.post('/addActualPrices', async (req, res) => {
     );
 
     return res.json({ status: '200' });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/dealCount', async (req, res) => {
+  try {
+    const { martId, startDate, endDate } = req.body;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    let small = 0;
+    let medium = 0;
+    let large = 0;
+
+    const deliveryOrders = await Orders.find({
+      martId,
+      status: 'Delivered',
+      orderType: 'Delivery',
+      dateForSearching: { $gte: start, $lte: end },
+    })
+      .select('products')
+      .lean();
+
+    await Promise.all(
+      deliveryOrders.map(async ({ products }) => {
+        await Promise.all(
+          products.map(async ({ productName, count, quantity }) => {
+            if (productName.includes('Azadi Deal')) {
+              if (quantity.includes('Small')) {
+                small += count;
+              }
+
+              if (quantity.includes('Medium')) {
+                medium += count;
+              }
+
+              if (quantity.includes('Large')) {
+                large += count;
+              }
+            }
+          })
+        );
+      })
+    );
+
+    return res.json({
+      small,
+      medium,
+      large,
+    });
   } catch (err) {
     console.log(err);
     return res.json({
