@@ -5,35 +5,35 @@ const Users = require('../../models/userModel');
 
 const router = Router();
 
-router.post('/allMedicalStores', async (req, res) => {
+router.post('/allStores', async (req, res) => {
   try {
     const { lat, long, employee } = req.body;
 
     if (employee === true) {
-      const allMedicalStores = await Users.find({
+      const allStores = await Users.find({
         available: true,
         type: 'admin',
         status: 'active',
-        shopType: 'store',
+        shopType: { $in: ['store', 'pharmacy'] },
       });
 
-      return res.json({ status: '200', allMedicalStores });
+      return res.json({ status: '200', allStores });
     }
 
     const currentTime = moment().tz('Asia/Karachi');
 
-    let [allMedicalStores] = await Promise.all([
+    let [allStores] = await Promise.all([
       Users.aggregate([
         {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 2800,
+            maxDistance: 3500,
             query: {
               available: true,
               type: 'admin',
               status: 'active',
-              shopType: 'store',
+              shopType: { $in: ['store', 'pharmacy'] },
             },
             spherical: true,
           },
@@ -41,11 +41,11 @@ router.post('/allMedicalStores', async (req, res) => {
       ]),
     ]);
 
-    allMedicalStores = allMedicalStores.filter(medicalStore => {
-      const restaurantOpening = moment(medicalStore.openingTime, 'HH:mm')
+    allStores = allStores.filter(store => {
+      const restaurantOpening = moment(store.openingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
-      let restaurantClosing = moment(medicalStore.closingTime, 'HH:mm')
+      let restaurantClosing = moment(store.closingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
 
@@ -63,13 +63,13 @@ router.post('/allMedicalStores', async (req, res) => {
         currentTime.isSameOrAfter(restaurantOpening) &&
         currentTime.isBefore(restaurantClosing)
       ) {
-        return medicalStore;
+        return store;
       }
     });
 
     return res.json({
       status: '200',
-      allMedicalStores,
+      allStores,
     });
   } catch (err) {
     return res.json({
