@@ -313,49 +313,57 @@ router.post('/addActualPrices', async (req, res) => {
 
     await Promise.all(
       restaurants.map(async martId => {
-        const orders = await Orders.find({
-          martId,
-          status: 'Delivered',
-          dateForSearching: { $gte: start, $lte: end },
-        });
+        const mart = Users.findById(martId)
+          .select('name')
+          .lean();
 
-        await Promise.all(
-          orders.map(async order => {
-            const { products, _id } = order;
-            let testProducts = [];
+        if (mart.name === 'Khan Baba Hotel') {
+          console.log('here');
 
-            await Promise.all(
-              products.map(async p => {
-                const { productName, quantity } = p;
+          const orders = await Orders.find({
+            martId,
+            status: 'Delivered',
+            dateForSearching: { $gte: start, $lte: end },
+          });
 
-                if (
-                  productName.includes('Azadi Deal') ||
-                  productName.includes('Discounted Deal') ||
-                  productName.includes('Zabardast Deal')
-                ) {
-                  const product = await Products.findOne({
-                    martId,
-                    productName,
-                    quantity,
-                  });
+          await Promise.all(
+            orders.map(async order => {
+              const { products, _id } = order;
+              let testProducts = [];
 
-                  if (!product) {
-                    console.log(`order id = ${_id}`);
-                  }
+              await Promise.all(
+                products.map(async p => {
+                  const { productName, quantity } = p;
 
-                  if (product.actualPrice !== undefined) {
-                    p.actualPrice = product.actualPrice;
+                  if (
+                    productName.includes('Azadi Deal') ||
+                    productName.includes('Discounted Deal') ||
+                    productName.includes('Zabardast Deal')
+                  ) {
+                    const product = await Products.findOne({
+                      martId,
+                      productName,
+                      quantity,
+                    });
+
+                    if (!product) {
+                      console.log(`order id = ${_id}`);
+                    }
+
+                    if (product.actualPrice !== undefined) {
+                      p.actualPrice = product.actualPrice;
+                      testProducts = [...testProducts, p];
+                    }
+                  } else {
                     testProducts = [...testProducts, p];
                   }
-                } else {
-                  testProducts = [...testProducts, p];
-                }
-              })
-            );
+                })
+              );
 
-            await Orders.findByIdAndUpdate(_id, { products: testProducts });
-          })
-        );
+              await Orders.findByIdAndUpdate(_id, { products: testProducts });
+            })
+          );
+        }
       })
     );
 
