@@ -60,6 +60,8 @@ router.post('/restaurantCollections', async (req, res) => {
       city,
     });
 
+    let totalOfPickUpOrders = 0;
+
     let data = await Promise.all(
       restaurants.map(async martId => {
         const [orders, restaurant] = await Promise.all([
@@ -92,6 +94,11 @@ router.post('/restaurantCollections', async (req, res) => {
 
         const pickupOrders = orders.filter(
           ({ orderType }) => orderType === 'PickUp'
+        );
+
+        totalOfPickUpOrders += pickupOrders.reduce(
+          (a, b) => a + b.orderTotal,
+          0
         );
 
         let dealPayment = 0;
@@ -146,6 +153,7 @@ router.post('/restaurantCollections', async (req, res) => {
         ourProfit += ourPercentage + deliveryCharges;
 
         return {
+          totalOfPickUpOrders,
           martId,
           martName,
           ourProfit,
