@@ -153,7 +153,6 @@ router.post('/restaurantCollections', async (req, res) => {
         ourProfit += ourPercentage + deliveryCharges;
 
         return {
-          totalOfPickUpOrders,
           martId,
           martName,
           ourProfit,
@@ -181,6 +180,7 @@ router.post('/restaurantCollections', async (req, res) => {
 
     return res.json({
       status: '200',
+      totalOfPickUpOrders,
       data,
       totalProfit,
       amountToPay,
