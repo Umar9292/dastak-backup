@@ -97,6 +97,7 @@ router.post('/restaurantCollections', async (req, res) => {
         let dealPayment = 0;
         let nonDealPayment = 0;
         let ourProfit = 0;
+        let pickupProfit = 0;
 
         await Promise.all(
           orders.map(async ({ products, orderType }) => {
@@ -120,7 +121,7 @@ router.post('/restaurantCollections', async (req, res) => {
                   product.actualPrice === undefined &&
                   orderType === 'PickUp'
                 ) {
-                  const pickupProfit = +((percentage / 100) * net).toFixed();
+                  pickupProfit = +((percentage / 100) * net).toFixed();
                   ourProfit += pickupProfit;
                 }
 
