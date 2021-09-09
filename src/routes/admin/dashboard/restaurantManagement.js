@@ -97,7 +97,6 @@ router.post('/restaurantCollections', async (req, res) => {
         let dealPayment = 0;
         let nonDealPayment = 0;
         let ourProfit = 0;
-        let pickupProfit = 0;
 
         await Promise.all(
           orders.map(async ({ products, orderType }) => {
@@ -116,12 +115,13 @@ router.post('/restaurantCollections', async (req, res) => {
                   }
                 }
 
+                // Calculate our percentage from non deal PickUp orders.
                 if (
                   product.actualPrice === undefined &&
                   orderType === 'PickUp'
                 ) {
-                  pickupProfit = +((percentage / 100) * net).toFixed();
-                  ourProfit += pickupProfit;
+                  const ourPercentage = +((percentage / 100) * net).toFixed();
+                  ourProfit += ourPercentage;
                 }
 
                 if (product.actualPrice !== undefined) {
@@ -150,9 +150,7 @@ router.post('/restaurantCollections', async (req, res) => {
           0
         );
 
-        const ourPercentage =
-          +((percentage / 100) * nonDealPayment).toFixed() + ourProfit;
-
+        const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
         const totalToPay = dealPayment + (nonDealPayment - ourPercentage);
         ourProfit += ourPercentage + deliveryCharges;
 
@@ -401,15 +399,6 @@ router.post('/expensesTillNow', async (req, res) => {
                   }
                 }
 
-                // Calculate our percentage from non deal PickUp orders.
-                if (
-                  product.actualPrice === undefined &&
-                  orderType === 'PickUp'
-                ) {
-                  const ourPercentage = +((percentage / 100) * net).toFixed();
-                  ourProfit += ourPercentage;
-                }
-
                 if (product.actualPrice !== undefined) {
                   const priceDifference = net - product.actualPrice * count;
 
@@ -435,9 +424,7 @@ router.post('/expensesTillNow', async (req, res) => {
           0
         );
 
-        const ourPercentage =
-          +((percentage / 100) * nonDealPayment).toFixed() + ourProfit;
-
+        const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
         const totalPaid = dealPayment + (nonDealPayment - ourPercentage);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
         ourProfit += ourPercentage + deliveryCharges - ridersFare;
