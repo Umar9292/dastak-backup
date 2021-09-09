@@ -106,7 +106,7 @@ router.post('/restaurantCollections', async (req, res) => {
         let ourProfit = 0;
 
         await Promise.all(
-          orders.map(async ({ products, orderType }) => {
+          orders.map(async ({ products, orderType, orderTotal }) => {
             await Promise.all(
               products.map(async product => {
                 const { productName, net, count } = product;
@@ -120,6 +120,19 @@ router.post('/restaurantCollections', async (req, res) => {
                   ) {
                     nonDealPayment += net;
                   }
+                }
+
+                // Calculate our percentage from non deal PickUp orders.
+                if (
+                  product.actualPrice === undefined &&
+                  orderType === 'PickUp'
+                ) {
+                  const ourPercentage = +(
+                    (percentage / 100) *
+                    orderTotal
+                  ).toFixed();
+
+                  ourProfit += ourPercentage;
                 }
 
                 if (product.actualPrice !== undefined) {
