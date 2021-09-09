@@ -271,7 +271,7 @@ router.post('/allOrders', async (req, res) => {
     );
 
     const pickupOrders = delivered.filter(
-      ({ orderType }) => orderType === 'pickUp'
+      ({ orderType }) => orderType === 'PickUp'
     );
 
     const pickupOrdersTotal = pickupOrders.reduce(
