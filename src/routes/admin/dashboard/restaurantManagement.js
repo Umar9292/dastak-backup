@@ -139,11 +139,6 @@ router.post('/restaurantCollections', async (req, res) => {
           })
         );
 
-        if (martName === 'BreakTime Cafe') {
-          console.log(orders.length);
-          console.log(martName, ourProfit, nonDealPayment);
-        }
-
         const totalOfDeliveryOrders = deliveryOrders.reduce(
           (a, b) => a + b.orderTotal,
           0

@@ -305,8 +305,6 @@ router.post('/allOrders', async (req, res) => {
       })
     );
 
-    console.log(ourProfit, nonDealPayment);
-
     const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
     const totalToPay =
       dealPayment + (nonDealPayment - ourPercentage - ourProfit);
