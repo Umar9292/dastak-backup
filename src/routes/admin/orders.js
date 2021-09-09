@@ -266,8 +266,12 @@ router.post('/allOrders', async (req, res) => {
     let dealPayment = 0;
     let nonDealPayment = 0;
 
+    const deliveryOrders = delivered.filter(
+      ({ orderType }) => orderType === 'Delivery'
+    );
+
     await Promise.all(
-      delivered.map(async ({ products }) => {
+      deliveryOrders.map(async ({ products }) => {
         await Promise.all(
           products.map(async product => {
             const { productName, net, count } = product;
