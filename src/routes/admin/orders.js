@@ -270,15 +270,6 @@ router.post('/allOrders', async (req, res) => {
       ({ orderType }) => orderType === 'Delivery'
     );
 
-    const pickupOrders = delivered.filter(
-      ({ orderType }) => orderType === 'PickUp'
-    );
-
-    const pickupOrdersTotal = pickupOrders.reduce(
-      (a, b) => a + b.orderTotal,
-      0
-    );
-
     await Promise.all(
       deliveryOrders.map(async ({ products }) => {
         await Promise.all(
@@ -302,19 +293,8 @@ router.post('/allOrders', async (req, res) => {
       })
     );
 
-    const deliveryOrdersPercentage = +(
-      (percentage / 100) *
-      nonDealPayment
-    ).toFixed();
-
-    const pickupOrdersPercentage = +(
-      (percentage / 100) *
-      pickupOrdersTotal
-    ).toFixed();
-
-    const totalPercentage = deliveryOrdersPercentage + pickupOrdersPercentage;
-
-    const totalToPay = dealPayment + (nonDealPayment - totalPercentage);
+    const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
+    const totalToPay = dealPayment + (nonDealPayment - ourPercentage);
 
     return res.json({
       status: '200',
