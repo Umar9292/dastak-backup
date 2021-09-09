@@ -120,6 +120,7 @@ router.post('/restaurantCollections', async (req, res) => {
                   product.actualPrice === undefined &&
                   orderType === 'PickUp'
                 ) {
+                  console.log(product);
                   const ourPercentage = +((percentage / 100) * net).toFixed();
                   ourProfit += ourPercentage;
                 }
