@@ -116,7 +116,6 @@ router.post('/restaurantCollections', async (req, res) => {
                   }
                 }
 
-                // Calculate our percentage from non deal PickUp orders.
                 if (
                   product.actualPrice === undefined &&
                   orderType === 'PickUp'
