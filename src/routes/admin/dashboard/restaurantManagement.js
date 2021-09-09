@@ -115,7 +115,6 @@ router.post('/restaurantCollections', async (req, res) => {
                   }
                 }
 
-                // Calculate our percentage from non deal PickUp orders.
                 if (
                   product.actualPrice === undefined &&
                   orderType === 'PickUp'
@@ -139,6 +138,11 @@ router.post('/restaurantCollections', async (req, res) => {
             );
           })
         );
+
+        if (martName === 'BreakTime Cafe') {
+          console.log(orders.length);
+          console.log(martName, ourProfit, nonDealPayment);
+        }
 
         const totalOfDeliveryOrders = deliveryOrders.reduce(
           (a, b) => a + b.orderTotal,
@@ -400,7 +404,6 @@ router.post('/expensesTillNow', async (req, res) => {
                   }
                 }
 
-                // Calculate our percentage from non deal PickUp orders.
                 if (
                   product.actualPrice === undefined &&
                   orderType === 'PickUp'

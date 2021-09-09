@@ -236,7 +236,7 @@ router.post('/allOrders', async (req, res) => {
 
     const [{ percentage }, upcoming, accepted, delivered] = await Promise.all([
       Users.findById(martId)
-        .select('name percentage')
+        .select('percentage')
         .lean(),
 
       Orders.find({ status: 'Pending', martId })
@@ -265,36 +265,51 @@ router.post('/allOrders', async (req, res) => {
 
     let dealPayment = 0;
     let nonDealPayment = 0;
-
-    const deliveryOrders = delivered.filter(
-      ({ orderType }) => orderType === 'Delivery'
-    );
+    let ourProfit = 0;
 
     await Promise.all(
-      deliveryOrders.map(async ({ products }) => {
+      delivered.map(async ({ products, orderType }) => {
         await Promise.all(
           products.map(async product => {
             const { productName, net, count } = product;
 
-            if (
-              !productName.includes('Azadi Deal') &&
-              !productName.includes('Discounted Deal') &&
-              !productName.includes('Zabardast Deal') &&
-              !productName.includes('Zabardast Deals')
-            ) {
-              nonDealPayment += net;
+            if (orderType === 'Delivery') {
+              if (
+                !productName.includes('Azadi Deal') &&
+                !productName.includes('Discounted Deal') &&
+                !productName.includes('Zabardast Deal') &&
+                !productName.includes('Zabardast Deals')
+              ) {
+                nonDealPayment += net;
+              }
+            }
+
+            if (product.actualPrice === undefined && orderType === 'PickUp') {
+              const ourPercentage = +((percentage / 100) * net).toFixed();
+              ourProfit += ourPercentage;
             }
 
             if (product.actualPrice !== undefined) {
-              dealPayment += product.actualPrice * count;
+              const priceDifference = net - product.actualPrice * count;
+
+              if (orderType === 'PickUp') {
+                ourProfit += priceDifference;
+              } else {
+                const actualPriceIntoCount = product.actualPrice * count;
+                dealPayment += actualPriceIntoCount;
+                ourProfit += priceDifference;
+              }
             }
           })
         );
       })
     );
 
+    console.log(ourProfit, nonDealPayment);
+
     const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
-    const totalToPay = dealPayment + (nonDealPayment - ourPercentage);
+    const totalToPay =
+      dealPayment + (nonDealPayment - ourPercentage - ourProfit);
 
     return res.json({
       status: '200',
