@@ -400,6 +400,15 @@ router.post('/expensesTillNow', async (req, res) => {
                   }
                 }
 
+                // Calculate our percentage from non deal PickUp orders.
+                if (
+                  product.actualPrice === undefined &&
+                  orderType === 'PickUp'
+                ) {
+                  const ourPercentage = +((percentage / 100) * net).toFixed();
+                  ourProfit += ourPercentage;
+                }
+
                 if (product.actualPrice !== undefined) {
                   const priceDifference = net - product.actualPrice * count;
 
