@@ -60,8 +60,6 @@ router.post('/restaurantCollections', async (req, res) => {
       city,
     });
 
-    let totalOfPickUpOrders = 0;
-
     let data = await Promise.all(
       restaurants.map(async martId => {
         const [orders, restaurant] = await Promise.all([
@@ -96,11 +94,6 @@ router.post('/restaurantCollections', async (req, res) => {
           ({ orderType }) => orderType === 'PickUp'
         );
 
-        totalOfPickUpOrders += pickupOrders.reduce(
-          (a, b) => a + b.orderTotal,
-          0
-        );
-
         let dealPayment = 0;
         let nonDealPayment = 0;
         let ourProfit = 0;
@@ -127,11 +120,7 @@ router.post('/restaurantCollections', async (req, res) => {
                   product.actualPrice === undefined &&
                   orderType === 'PickUp'
                 ) {
-                  const ourPercentage = +(
-                    (percentage / 100) *
-                    orderTotal
-                  ).toFixed();
-
+                  const ourPercentage = +((percentage / 100) * net).toFixed();
                   ourProfit += ourPercentage;
                 }
 
@@ -193,7 +182,6 @@ router.post('/restaurantCollections', async (req, res) => {
 
     return res.json({
       status: '200',
-      totalOfPickUpOrders,
       data,
       totalProfit,
       amountToPay,
