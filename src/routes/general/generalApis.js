@@ -431,7 +431,7 @@ router.post('/dealCount', async (req, res) => {
   }
 });
 
-router.get('/test', async (req, res) => {
+router.post('/test', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
 
