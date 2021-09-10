@@ -444,13 +444,13 @@ router.post('/test', async (req, res) => {
 
     const updatedOrders = await Orders.updateMany(
       {
-        riderId: '611140bc92a114003b9f773c',
+        martId: '5ffc5254ae4f9b02e5ba52bd',
         dateForSearching: {
           $gte: start,
           $lte: end,
         },
       },
-      { paidToRider: false }
+      { paid: false }
     );
 
     return res.json({ updatedOrders });
