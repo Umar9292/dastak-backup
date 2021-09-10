@@ -150,7 +150,11 @@ router.post('/restaurantCollections', async (req, res) => {
         );
 
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
-        console.log(dealPayment, ourPercentage, ourProfit);
+
+        if (martName === 'De Pizza Grill') {
+          console.log(dealPayment, ourPercentage, ourProfit);
+        }
+
         const totalToPay =
           dealPayment + (nonDealPayment - ourPercentage - ourProfit);
         ourProfit += ourPercentage + deliveryCharges;
