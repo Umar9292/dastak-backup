@@ -431,4 +431,36 @@ router.post('/dealCount', async (req, res) => {
   }
 });
 
+router.get('/test', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    const updatedOrders = await Orders.updateMany(
+      {
+        riderId: '611140bc92a114003b9f773c',
+        dateForSearching: {
+          $gte: start,
+          $lte: end,
+        },
+      },
+      { paidToRider: false }
+    );
+
+    return res.json({ updatedOrders });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
