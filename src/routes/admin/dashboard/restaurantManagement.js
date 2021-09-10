@@ -121,10 +121,6 @@ router.post('/restaurantCollections', async (req, res) => {
                 ) {
                   const ourPercentage = +((percentage / 100) * net).toFixed();
                   ourProfit += ourPercentage;
-
-                  if (martName === 'De Pizza Grill') {
-                    console.log(martName, ourProfit);
-                  }
                 }
 
                 if (product.actualPrice !== undefined) {
@@ -154,10 +150,6 @@ router.post('/restaurantCollections', async (req, res) => {
         );
 
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
-
-        if (martName === 'De Pizza Grill') {
-          console.log(dealPayment, nonDealPayment, ourPercentage, ourProfit);
-        }
 
         const totalToPay = dealPayment + (nonDealPayment - ourPercentage);
         ourProfit += ourPercentage + deliveryCharges;
@@ -441,8 +433,7 @@ router.post('/expensesTillNow', async (req, res) => {
         );
 
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
-        const totalPaid =
-          dealPayment + (nonDealPayment - ourPercentage - ourProfit);
+        const totalPaid = dealPayment + (nonDealPayment - ourPercentage);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
         ourProfit += ourPercentage + deliveryCharges - ridersFare;
 

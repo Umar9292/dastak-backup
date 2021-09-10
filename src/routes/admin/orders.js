@@ -265,7 +265,6 @@ router.post('/allOrders', async (req, res) => {
 
     let dealPayment = 0;
     let nonDealPayment = 0;
-    let ourProfit = 0;
 
     await Promise.all(
       delivered.map(async ({ products, orderType }) => {
@@ -284,21 +283,9 @@ router.post('/allOrders', async (req, res) => {
               }
             }
 
-            if (product.actualPrice === undefined && orderType === 'PickUp') {
-              const ourPercentage = +((percentage / 100) * net).toFixed();
-              ourProfit += ourPercentage;
-            }
-
             if (product.actualPrice !== undefined) {
-              const priceDifference = net - product.actualPrice * count;
-
-              if (orderType === 'PickUp') {
-                ourProfit += priceDifference;
-              } else {
-                const actualPriceIntoCount = product.actualPrice * count;
-                dealPayment += actualPriceIntoCount;
-                ourProfit += priceDifference;
-              }
+              const actualPriceIntoCount = product.actualPrice * count;
+              dealPayment += actualPriceIntoCount;
             }
           })
         );
@@ -306,8 +293,7 @@ router.post('/allOrders', async (req, res) => {
     );
 
     const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
-    const totalToPay =
-      dealPayment + (nonDealPayment - ourPercentage - ourProfit);
+    const totalToPay = dealPayment + (nonDealPayment - ourPercentage);
 
     return res.json({
       status: '200',
