@@ -1,5 +1,6 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
+const NodeGeocoder = require('node-geocoder');
 
 const Users = require('../../models/userModel');
 
@@ -7,13 +8,27 @@ const router = Router();
 
 router.post('/allStores', async (req, res) => {
   try {
-    const { lat, long, employee } = req.body;
+    let { lat, long, employee, city } = req.body;
 
     if (employee === true) {
+      if (city === '') {
+        const options = {
+          provider: 'google',
+          httpAdapter: 'https',
+          apiKey: process.env.GOOGLE_API_KEY,
+          formatter: 'json',
+        };
+
+        const geocoder = NodeGeocoder(options);
+        const res = await geocoder.reverse({ lat, lon: long });
+        city = res[0].city;
+      }
+
       const allStores = await Users.find({
         available: true,
         type: 'admin',
         status: 'active',
+        city,
         shopType: { $in: ['store', 'pharmacy'] },
       });
 
