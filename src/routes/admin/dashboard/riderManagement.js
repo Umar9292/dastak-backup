@@ -34,12 +34,15 @@ router.post('/allRiders', async (req, res) => {
   }
 });
 
-router.get('/activeRiders', async (_req, res) => {
+router.post('/activeRiders', async (req, res) => {
   try {
+    const { city } = req.body;
+
     const activeRiders = await Users.find({
       type: 'rider',
       status: { $ne: 'inactive' },
       available: true,
+      city,
     })
       .sort({ name: 1 })
       .lean();

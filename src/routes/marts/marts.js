@@ -1,5 +1,6 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
+const NodeGeocoder = require('node-geocoder');
 
 const Users = require('../../models/userModel');
 const Reviews = require('../../models/reviewsModel');
@@ -9,15 +10,29 @@ const router = Router();
 
 router.post('/allRestaurants', async (req, res) => {
   try {
-    const { lat, long, employee } = req.body;
+    let { lat, long, employee, city } = req.body;
 
     if (employee === true) {
+      if (city === undefined) {
+        const options = {
+          provider: 'google',
+          httpAdapter: 'https',
+          apiKey: process.env.GOOGLE_API_KEY,
+          formatter: 'json',
+        };
+
+        const geocoder = NodeGeocoder(options);
+        const res = await geocoder.reverse({ lat, lon: long });
+        city = res[0].city;
+      }
+
       const [data1, data2, allRestaurants] = await Promise.all([
         Users.find({
           available: true,
           status: 'active',
           shopType: 'restaurant',
           featured: true,
+          city,
         })
           .sort({ position: 1 })
           .lean(),
@@ -27,12 +42,14 @@ router.post('/allRestaurants', async (req, res) => {
           status: 'active',
           shopType: 'restaurant',
           category: 'Home Chef',
+          city,
         }).lean(),
 
         Users.find({
           available: true,
           status: 'active',
           shopType: 'restaurant',
+          city,
         }).lean(),
       ]);
 
@@ -190,6 +207,7 @@ router.post('/allRestaurants', async (req, res) => {
       data2: data2.length !== 0 ? data2 : undefined,
     });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       data: 'Looks like an error occurred on our side. Kindly try again',

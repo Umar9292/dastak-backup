@@ -597,7 +597,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
-    const { name, available } = await Users.findById(riderId)
+    const { name, available, city } = await Users.findById(riderId)
       .select('name available')
       .lean();
 
@@ -609,6 +609,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
       acceptedOrders = await Orders.find({
         status: 'Admin Accepted',
         orderType: 'Delivery',
+        city,
       })
         .sort({
           createdAt: -1,
