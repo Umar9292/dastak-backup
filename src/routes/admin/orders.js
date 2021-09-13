@@ -598,7 +598,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
     const { riderId } = req.body;
 
     const { name, available, city } = await Users.findById(riderId)
-      .select('name available')
+      .select('name available city')
       .lean();
 
     console.log(`${name} refreshed`);
