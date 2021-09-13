@@ -1,6 +1,7 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone/moment-timezone');
 const axios = require('axios');
+const NodeGeocoder = require('node-geocoder');
 const { createClient } = require('redis');
 
 const Users = require('../../models/userModel');
@@ -466,7 +467,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
 
 router.post('/dastakDeals', async (req, res) => {
   try {
-    const { lat, long, employee } = req.body;
+    let { lat, long, employee, city } = req.body;
 
     const currentTime = moment().tz('Asia/Karachi');
 
@@ -491,12 +492,26 @@ router.post('/dastakDeals', async (req, res) => {
         },
       ]);
     } else {
+      if (city === '') {
+        const options = {
+          provider: 'google',
+          httpAdapter: 'https',
+          apiKey: process.env.GOOGLE_API_KEY,
+          formatter: 'json',
+        };
+
+        const geocoder = NodeGeocoder(options);
+        const res = await geocoder.reverse({ lat, lon: long });
+        city = res[0].city;
+      }
+
       restaurants = await Users.find({
         available: true,
         dastakDeal: true,
         type: 'admin',
         status: 'active',
         shopType: 'restaurant',
+        city,
       });
     }
 

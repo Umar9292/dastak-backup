@@ -13,7 +13,7 @@ router.post('/allRestaurants', async (req, res) => {
     let { lat, long, employee, city } = req.body;
 
     if (employee === true) {
-      if (city === undefined) {
+      if (city === '') {
         const options = {
           provider: 'google',
           httpAdapter: 'https',
