@@ -312,7 +312,7 @@ router.post('/addActualPrices', async (req, res) => {
     });
 
     restaurants = restaurants.filter(
-      restaurant => restaurant !== '610bf655cbe70e395cac5a34'
+      restaurant => restaurant !== '60dc575c2fde591c8b7fe758'
     );
 
     console.log(restaurants);
