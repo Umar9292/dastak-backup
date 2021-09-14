@@ -303,13 +303,19 @@ router.post('/addActualPrices', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    const restaurants = await Orders.distinct('martId', {
+    let restaurants = await Orders.distinct('martId', {
       status: 'Delivered',
       dateForSearching: {
         $gte: start,
         $lte: end,
       },
     });
+
+    restaurants = restaurants.filter(
+      restaurant => restaurant !== '610bf655cbe70e395cac5a34'
+    );
+
+    console.log(restaurants);
 
     await Promise.all(
       restaurants.map(async martId => {
