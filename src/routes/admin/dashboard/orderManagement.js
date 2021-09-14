@@ -5,9 +5,6 @@ const Orders = require('../../../models/ordersModel');
 const Users = require('../../../models/userModel');
 
 const { notifyRiders } = require('../../../notificationHandler/handler');
-const {
-  emailOrderDetailsToRider,
-} = require('../../../emailHandler/riderEmail/riderEmail');
 
 const router = Router();
 
@@ -177,7 +174,7 @@ router.post('/updateOrder', async (req, res) => {
     }
 
     const order = await Orders.findById(orderId).select(
-      'orderTotal martName orderType'
+      'orderTotal martName orderType city'
     );
 
     if (orderType === 'Delivery' && order.orderType !== 'Delivery') {
@@ -185,45 +182,44 @@ router.post('/updateOrder', async (req, res) => {
       order.orderTotal += 30;
       await order.save();
 
-      const idleRiders = await Users.find({
-        type: 'rider',
-        status: 'idle',
-        available: true,
-      });
+      const [idleRiders, allRiders] = await Promise.all([
+        Users.find({
+          type: 'rider',
+          status: 'idle',
+          available: true,
+          city: order.city,
+        })
+          .select('name playerId')
+          .lean(),
 
-      const allRiders = await Users.find({ type: 'rider', available: true });
+        Users.find({
+          type: 'rider',
+          available: true,
+          city: order.city,
+        })
+          .select('name playerId')
+          .lean(),
+      ]);
 
       const ridersMessage = `New order from ${order.martName}`;
 
       if (idleRiders.length === 0) {
-        const riderEmails = await Promise.all(
-          allRiders.map(async rider => {
-            const { name, email, playerId } = rider;
-
-            await notifyRiders(name, ridersMessage, playerId, {
-              flag: 'riderNotified',
-            });
-
-            return email;
-          })
-        );
-
-        emailOrderDetailsToRider(riderEmails);
-      }
-
-      const riderEmails = await Promise.all(
-        idleRiders.map(async rider => {
-          const { name, email, playerId } = rider;
+        allRiders.forEach(async rider => {
+          const { name, playerId } = rider;
 
           await notifyRiders(name, ridersMessage, playerId, {
             flag: 'riderNotified',
           });
+        });
+      } else {
+        idleRiders.forEach(async rider => {
+          const { name, playerId } = rider;
 
-          return email;
-        })
-      );
-
-      emailOrderDetailsToRider(riderEmails);
+          await notifyRiders(name, ridersMessage, playerId, {
+            flag: 'riderNotified',
+          });
+        });
+      }
     }
 
     if (orderType === 'PickUp' && order.orderType !== 'PickUp') {

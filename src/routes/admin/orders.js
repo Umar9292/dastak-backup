@@ -501,7 +501,7 @@ router.post('/adminResponse', async (req, res) => {
           available: true,
           city: order.city,
         })
-          .select('name email playerId')
+          .select('name playerId')
           .lean(),
 
         Users.find({
@@ -509,7 +509,7 @@ router.post('/adminResponse', async (req, res) => {
           available: true,
           city: order.city,
         })
-          .select('name email playerId')
+          .select('name playerId')
           .lean(),
       ]);
 
