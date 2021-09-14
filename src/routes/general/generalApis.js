@@ -315,8 +315,6 @@ router.post('/addActualPrices', async (req, res) => {
       restaurant => restaurant !== '60dc575c2fde591c8b7fe758'
     );
 
-    console.log(restaurants);
-
     await Promise.all(
       restaurants.map(async martId => {
         const orders = await Orders.find({
