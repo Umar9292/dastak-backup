@@ -9,9 +9,6 @@ const {
   orderStatusEmail,
 } = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
 const {
-  emailOrderDetailsToRider,
-} = require('../../emailHandler/riderEmail/riderEmail');
-const {
   sendAcceptanceEmail,
 } = require('../../emailHandler/customerEmail/acceptanceEmail');
 const {
@@ -364,7 +361,9 @@ router.post('/adminResponse', async (req, res) => {
       customerNotified,
     } = req.body;
 
-    const { status: orderStatus } = await Orders.findById(orderId);
+    const { status: orderStatus } = await Orders.findById(orderId)
+      .select('status')
+      .lean();
 
     if (orderStatus === 'Rejected') {
       return res.json({ status: '404', msg: 'Already Rejected' });
@@ -500,6 +499,7 @@ router.post('/adminResponse', async (req, res) => {
           type: 'rider',
           status: 'idle',
           available: true,
+          city: order.city,
         })
           .select('name email playerId')
           .lean(),
@@ -507,46 +507,29 @@ router.post('/adminResponse', async (req, res) => {
         Users.find({
           type: 'rider',
           available: true,
+          city: order.city,
         })
           .select('name email playerId')
           .lean(),
       ]);
 
-      let riderEmails = [];
-
       if (idleRiders.length === 0) {
-        await Promise.all(
-          allRiders.map(async rider => {
-            const { name, email, playerId } = rider;
-
-            await notifyRiders(name, ridersMessage, playerId, {
-              flag: 'riderNotified',
-            });
-
-            if (email !== '') {
-              riderEmails = [...riderEmails, email];
-            }
-          })
-        );
-
-        emailOrderDetailsToRider(riderEmails);
-      }
-
-      await Promise.all(
-        idleRiders.map(async rider => {
-          const { name, email, playerId } = rider;
+        allRiders.forEach(async rider => {
+          const { name, playerId } = rider;
 
           await notifyRiders(name, ridersMessage, playerId, {
             flag: 'riderNotified',
           });
+        });
+      } else {
+        idleRiders.forEach(async rider => {
+          const { name, playerId } = rider;
 
-          if (email !== '') {
-            riderEmails = [...riderEmails, email];
-          }
-        })
-      );
-
-      emailOrderDetailsToRider(riderEmails);
+          await notifyRiders(name, ridersMessage, playerId, {
+            flag: 'riderNotified',
+          });
+        });
+      }
 
       order.orderNum = orderNum;
       order.save();
@@ -571,16 +554,6 @@ router.post('/adminResponse', async (req, res) => {
       return res.json({
         status: '200',
         msg: 'Customer has been notified',
-      });
-    }
-
-    if (status === 'Delivered') {
-      const msg = `Dear ${user.name} thankyou for your order from ${shop.name}`;
-      await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
-
-      return res.json({
-        status: '200',
-        msg: 'Order successfully completed',
       });
     }
   } catch (err) {
@@ -658,18 +631,7 @@ router.post('/assignRider', async (req, res) => {
       depositTimeUpperLimit = moment(depositTimeUpperLimit).add(1, 'days');
     }
 
-    const [
-      order,
-      {
-        tillNoonFare,
-        nightFare,
-        pendingCollection,
-        name,
-        paymentLimit,
-        orderCount,
-      },
-      currentDateOrders,
-    ] = await Promise.all([
+    const [order, rider, currentDateOrders] = await Promise.all([
       Orders.findById(orderId),
 
       Users.findById(riderId)
@@ -687,6 +649,15 @@ router.post('/assignRider', async (req, res) => {
         .select('orderTotal time')
         .lean(),
     ]);
+
+    const {
+      tillNoonFare,
+      nightFare,
+      pendingCollection,
+      name,
+      paymentLimit,
+      orderCount,
+    } = rider;
 
     if (pendingCollection >= paymentLimit) {
       return res.json({

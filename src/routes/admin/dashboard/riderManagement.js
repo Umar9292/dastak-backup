@@ -199,6 +199,7 @@ router.post('/removeRider', async (req, res) => {
       type: 'rider',
       status: 'idle',
       available: true,
+      city: order.city,
     });
 
     const msg = `New Order from ${order.martName}`;
@@ -207,58 +208,6 @@ router.post('/removeRider', async (req, res) => {
       notifyRiders(rider.name, rider.playerId, msg, { flag: 'riderNotified' })
     );
   } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
-router.post('/dailyRiderCollections', async (req, res) => {
-  try {
-    const { date } = req.body;
-
-    const riders = await Orders.distinct('riderId', {
-      date,
-      paidToRider: false,
-    });
-
-    const data = await Promise.all(
-      riders.map(async riderId => {
-        const [orders, { pendingCollection }] = await Promise.all([
-          Orders.find({
-            riderId,
-            date,
-            status: 'Delivered',
-            orderType: 'Delivery',
-            paidToRider: false,
-          }),
-
-          Users.findById(riderId).select('pendingCollection'),
-        ]);
-
-        const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
-
-        return {
-          riderId,
-          name: orders[0].riderName,
-          phone: orders[0].phone,
-          collection,
-          pendingCollection,
-        };
-      })
-    );
-
-    const totalCollection = data.reduce((a, b) => a + b.collection, 0);
-
-    return res.json({
-      totalCollection,
-      data,
-      status: '200',
-    });
-  } catch (err) {
-    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
