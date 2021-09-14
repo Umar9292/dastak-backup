@@ -74,7 +74,7 @@ router.post('/restaurantCollections', async (req, res) => {
             },
           })
             .select(
-              'riderFare deliveryCharges martName products orderType orderTotal orderNum'
+              'riderFare deliveryCharges martName products orderType orderTotal orderNum date time'
             )
             .sort({ createdAt: -1 })
             .lean(),
