@@ -3,7 +3,7 @@ require('dotenv').config();
 const cluster = require('cluster');
 
 if (cluster.isMaster) {
-  for (let i = 0; i < 6; i += 1) {
+  for (let i = 0; i < 5; i += 1) {
     cluster.fork();
   }
 
