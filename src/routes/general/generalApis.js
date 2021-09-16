@@ -435,9 +435,9 @@ router.post('/dealCount', async (req, res) => {
   }
 });
 
-router.post('/test', async (req, res) => {
+router.post('/unpayRestaurant', async (req, res) => {
   try {
-    const { startDate, endDate } = req.body;
+    const { martId, startDate, endDate } = req.body;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -448,7 +448,7 @@ router.post('/test', async (req, res) => {
 
     const updatedOrders = await Orders.updateMany(
       {
-        martId: '610bf655cbe70e395cac5a34',
+        martId,
         dateForSearching: {
           $gte: start,
           $lte: end,
