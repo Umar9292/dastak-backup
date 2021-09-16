@@ -51,7 +51,7 @@ router.post('/restaurantCollections', async (req, res) => {
       .toISOString();
 
     const restaurants = await Orders.distinct('martId', {
-      paid: true,
+      paid: false,
       status: 'Delivered',
       dateForSearching: {
         $gte: start,
@@ -64,7 +64,7 @@ router.post('/restaurantCollections', async (req, res) => {
       restaurants.map(async martId => {
         const [orders, restaurant] = await Promise.all([
           Orders.find({
-            paid: true,
+            paid: false,
             status: 'Delivered',
             martId,
             city,
