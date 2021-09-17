@@ -451,14 +451,11 @@ router.post('/dastakDeals', async (req, res) => {
   try {
     let { lat, long, employee, city } = req.body;
 
-    console.log(req.body);
-
     const currentTime = moment().tz('Asia/Karachi');
 
     let restaurants = [];
 
     if (!employee) {
-      console.log('here');
       restaurants = await Users.aggregate([
         {
           $geoNear: {
