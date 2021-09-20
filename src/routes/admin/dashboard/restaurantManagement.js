@@ -417,11 +417,11 @@ router.post('/expensesTillNow', async (req, res) => {
                   const priceDifference = net - product.actualPrice * count;
 
                   if (orderType === 'PickUp') {
+                    ourProfit += priceDifference;
+
                     if (martName === 'Umar Khayam BBQ') {
                       console.log(ourProfit);
                     }
-
-                    ourProfit += priceDifference;
                   } else {
                     const actualPriceIntoCount = product.actualPrice * count;
                     dealPayment += actualPriceIntoCount;
