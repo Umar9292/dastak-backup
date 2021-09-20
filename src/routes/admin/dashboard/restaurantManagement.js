@@ -384,8 +384,6 @@ router.post('/expensesTillNow', async (req, res) => {
 
         await Promise.all(
           orders.map(async ({ products, orderType }) => {
-            console.log(martName, orders.length);
-
             ourProfit = 0;
 
             await Promise.all(
