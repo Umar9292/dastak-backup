@@ -424,6 +424,8 @@ router.post('/expensesTillNow', async (req, res) => {
           })
         );
 
+        console.log(martName, ourProfit);
+
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
         );
