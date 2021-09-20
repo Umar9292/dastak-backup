@@ -1,5 +1,4 @@
 const Router = require('express/lib/router');
-const axios = require('axios');
 const Speakeasy = require('speakeasy');
 const { compare, hash } = require('bcrypt');
 
@@ -119,9 +118,6 @@ router.post('/sendOtp', async (req, res) => {
 
     if (email !== '') {
       emailOtp(user.email, token);
-    } else {
-      const msg = `Your Dastak code is ${token}`;
-      await axios.get(`${process.env.SMS_URL}&mobile=${phone}&message=${msg}`);
     }
 
     return res.json({

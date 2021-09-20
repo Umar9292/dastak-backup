@@ -1,10 +1,12 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
-const NodeGeocoder = require('node-geocoder');
 
 const Users = require('../../models/userModel');
 const Reviews = require('../../models/reviewsModel');
 const Orders = require('../../models/ordersModel');
+
+const { getCity } = require('../../geoCoder/getCity');
+const { openRestaurants } = require('./openRestaurants/openRestaurants');
 
 const router = Router();
 
@@ -14,44 +16,23 @@ router.post('/allRestaurants', async (req, res) => {
 
     if (employee === true) {
       if (city === '') {
-        const options = {
-          provider: 'google',
-          httpAdapter: 'https',
-          apiKey: process.env.GOOGLE_API_KEY,
-          formatter: 'json',
-        };
-
-        const geocoder = NodeGeocoder(options);
-        const res = await geocoder.reverse({ lat, lon: long });
-        city = res[0].city;
+        city = await getCity(lat, long);
       }
 
-      const [data1, data2, allRestaurants] = await Promise.all([
-        Users.find({
-          available: true,
-          status: 'active',
-          shopType: 'restaurant',
-          featured: true,
-          city,
-        })
-          .sort({ position: 1 })
-          .lean(),
+      const allRestaurants = await Users.find({
+        available: true,
+        status: 'active',
+        shopType: 'restaurant',
+        city,
+      }).lean();
 
-        Users.find({
-          available: true,
-          status: 'active',
-          shopType: 'restaurant',
-          category: 'Home Chef',
-          city,
-        }).lean(),
+      const data1 = allRestaurants.filter(
+        ({ featured, city }) => featured && city
+      );
 
-        Users.find({
-          available: true,
-          status: 'active',
-          shopType: 'restaurant',
-          city,
-        }).lean(),
-      ]);
+      const data2 = allRestaurants.filter(
+        ({ category, city }) => category === 'Home Chef' && city
+      );
 
       return res.json({
         status: '200',
@@ -63,15 +44,13 @@ router.post('/allRestaurants', async (req, res) => {
       });
     }
 
-    const currentTime = moment().tz('Asia/Karachi');
-
     let [data1, data2, allRestaurants] = await Promise.all([
       Users.aggregate([
         {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 3500,
+            maxDistance: city === 'Jhang' ? 3500 : 3500,
             query: {
               available: true,
               status: 'active',
@@ -120,83 +99,11 @@ router.post('/allRestaurants', async (req, res) => {
       ]),
     ]);
 
-    allRestaurants = allRestaurants.filter(restaurant => {
-      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-
-      const openingTimeOffSet = moment(restaurantOpening).format('a');
-      const closingTimeOffSet = moment(restaurantClosing).format('a');
-
-      if (
-        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
-        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
-      ) {
-        restaurantClosing = moment(restaurantClosing).add(1, 'days');
-      }
-
-      if (
-        currentTime.isSameOrAfter(restaurantOpening) &&
-        currentTime.isBefore(restaurantClosing)
-      ) {
-        return restaurant;
-      }
-    });
-
-    data1 = data1.filter(restaurant => {
-      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-
-      const openingTimeOffSet = moment(restaurantOpening).format('a');
-      const closingTimeOffSet = moment(restaurantClosing).format('a');
-
-      if (
-        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
-        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
-      ) {
-        restaurantClosing = moment(restaurantClosing).add(1, 'days');
-      }
-
-      if (
-        currentTime.isSameOrAfter(restaurantOpening) &&
-        currentTime.isBefore(restaurantClosing)
-      ) {
-        return restaurant;
-      }
-    });
-
-    data2 = data2.filter(restaurant => {
-      const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-      let restaurantClosing = moment(restaurant.closingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-
-      const openingTimeOffSet = moment(restaurantOpening).format('a');
-      const closingTimeOffSet = moment(restaurantClosing).format('a');
-
-      if (
-        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
-        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
-      ) {
-        restaurantClosing = moment(restaurantClosing).add(1, 'days');
-      }
-
-      if (
-        currentTime.isSameOrAfter(restaurantOpening) &&
-        currentTime.isBefore(restaurantClosing)
-      ) {
-        return restaurant;
-      }
-    });
+    [allRestaurants, data1, data2] = await Promise.all([
+      openRestaurants(allRestaurants),
+      openRestaurants(data1),
+      openRestaurants(data2),
+    ]);
 
     return res.json({
       status: '200',

@@ -1,8 +1,11 @@
 const Router = require('express/lib/router');
-const moment = require('moment-timezone');
-const NodeGeocoder = require('node-geocoder');
 
 const Users = require('../../models/userModel');
+
+const { getCity } = require('../../geoCoder/getCity');
+const {
+  openRestaurants,
+} = require('../../routes/marts/openRestaurants/openRestaurants');
 
 const router = Router();
 
@@ -12,16 +15,7 @@ router.post('/allStores', async (req, res) => {
 
     if (employee === true) {
       if (city === '') {
-        const options = {
-          provider: 'google',
-          httpAdapter: 'https',
-          apiKey: process.env.GOOGLE_API_KEY,
-          formatter: 'json',
-        };
-
-        const geocoder = NodeGeocoder(options);
-        const res = await geocoder.reverse({ lat, lon: long });
-        city = res[0].city;
+        city = await getCity(lat, long);
       }
 
       const allStores = await Users.find({
@@ -34,8 +28,6 @@ router.post('/allStores', async (req, res) => {
 
       return res.json({ status: '200', allStores });
     }
-
-    const currentTime = moment().tz('Asia/Karachi');
 
     let [allStores] = await Promise.all([
       Users.aggregate([
@@ -56,31 +48,7 @@ router.post('/allStores', async (req, res) => {
       ]),
     ]);
 
-    allStores = allStores.filter(store => {
-      const restaurantOpening = moment(store.openingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-      let restaurantClosing = moment(store.closingTime, 'HH:mm')
-        .tz('Asia/Karachi')
-        .subtract(5, 'hours');
-
-      const openingTimeOffSet = moment(restaurantOpening).format('a');
-      const closingTimeOffSet = moment(restaurantClosing).format('a');
-
-      if (
-        (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
-        (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
-      ) {
-        restaurantClosing = moment(restaurantClosing).add(1, 'days');
-      }
-
-      if (
-        currentTime.isSameOrAfter(restaurantOpening) &&
-        currentTime.isBefore(restaurantClosing)
-      ) {
-        return store;
-      }
-    });
+    allStores = await openRestaurants(allStores);
 
     return res.json({
       status: '200',

@@ -1,10 +1,10 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
-const axios = require('axios');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
 
+const { getAddress } = require('../../geoCoder/getAddress');
 const {
   orderStatusEmail,
 } = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
@@ -23,10 +23,6 @@ const {
   notifyAdmin,
   notifyRiders,
 } = require('../../notificationHandler/handler');
-/* const {
-  calculateRidersFare,
-  riderFare,
-} = require('../../ridersFareHandler/ridersFareHandler'); */
 
 const router = Router();
 
@@ -75,11 +71,7 @@ router.post('/placeOrder', async (req, res) => {
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
     if (params.address === 'Current Location') {
-      const { data } = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&sensor=true&key=${process.env.GOOGLE_API_KEY}`
-      );
-
-      params.address = data.results[0].formatted_address;
+      params.address = await getAddress(latitude, longitude);
     }
 
     params = {
