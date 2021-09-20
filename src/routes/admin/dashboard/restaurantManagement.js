@@ -384,6 +384,8 @@ router.post('/expensesTillNow', async (req, res) => {
 
         await Promise.all(
           orders.map(async ({ products, orderType }) => {
+            console.log(martName, orders.length);
+
             ourProfit = 0;
 
             await Promise.all(
@@ -417,6 +419,10 @@ router.post('/expensesTillNow', async (req, res) => {
                   const priceDifference = net - product.actualPrice * count;
 
                   if (orderType === 'PickUp') {
+                    if (martName === 'Umar Khayam BBQ') {
+                      console.log(ourProfit);
+                    }
+
                     ourProfit += priceDifference;
                   } else {
                     const actualPriceIntoCount = product.actualPrice * count;
