@@ -423,8 +423,6 @@ router.post('/expensesTillNow', async (req, res) => {
           })
         );
 
-        console.log(martName, ourProfit);
-
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
         );
@@ -435,7 +433,8 @@ router.post('/expensesTillNow', async (req, res) => {
         );
 
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
-        const totalPaid = dealPayment + (nonDealPayment - ourPercentage);
+        const totalPaid =
+          dealPayment + (nonDealPayment - ourPercentage - ourProfit);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
         ourProfit += ourPercentage + deliveryCharges - ridersFare;
 
