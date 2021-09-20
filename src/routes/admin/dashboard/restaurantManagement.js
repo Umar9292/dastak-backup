@@ -363,6 +363,8 @@ router.post('/expensesTillNow', async (req, res) => {
       },
     });
 
+    let checkProfit = 0;
+
     let data = await Promise.all(
       restaurants.map(async martId => {
         const [orders, { name: martName, percentage }] = await Promise.all([
@@ -424,7 +426,7 @@ router.post('/expensesTillNow', async (req, res) => {
           })
         );
 
-        console.log(martName, ourProfit);
+        checkProfit += ourProfit;
 
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
@@ -458,6 +460,7 @@ router.post('/expensesTillNow', async (req, res) => {
 
     return res.json({
       status: '200',
+      checkProfit,
       data,
       totalProfit,
       paidToRiders,
