@@ -403,12 +403,12 @@ router.post('/expensesTillNow', async (req, res) => {
                   product.actualPrice === undefined &&
                   orderType === 'PickUp'
                 ) {
-                  if (martName === 'Umar Khayam BBQ') {
-                    console.log('here');
-                  }
-
                   const ourPercentage = +((percentage / 100) * net).toFixed();
                   ourProfit += ourPercentage;
+
+                  if (martName === 'Umar Khayam BBQ') {
+                    console.log(ourProfit);
+                  }
                 }
 
                 if (product.actualPrice !== undefined) {
