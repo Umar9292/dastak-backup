@@ -295,7 +295,7 @@ router.post('/dastakDeals', async (req, res) => {
     let dastakDeals = [];
 
     await Promise.all(
-      openRestaurants.map(async martId => {
+      openRestaurants.map(async ({ _id: martId }) => {
         const [restaurant, products, options] = await Promise.all([
           Users.findById(martId),
 
