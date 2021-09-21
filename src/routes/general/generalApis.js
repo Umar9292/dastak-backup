@@ -12,18 +12,18 @@ const router = Router();
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '60d08f43ff57632b6250a5f4',
+      martId: '6149af549db64b0b8ca2e79e',
     });
 
     await Promise.all(
       products.map(product => {
-        // if (product.category !== 'Dastak Deals') {
-        let discountedPrice = ((20 / 100) * product.price).toFixed();
-        discountedPrice = Math.round(discountedPrice / 5) * 5;
-        product.discountedPrice = product.price - +discountedPrice;
-        product.discount = '20';
-        return product.save();
-        // }
+        if (product.category !== 'Zabardast Deals') {
+          let discountedPrice = ((10 / 100) * product.price).toFixed();
+          discountedPrice = Math.round(discountedPrice / 5) * 5;
+          product.price += +discountedPrice;
+          // product.discount = '20';
+          return product.save();
+        }
       })
     );
 
@@ -80,70 +80,6 @@ router.get('/notifications', async (req, res) => {
     });
   }
 });
-
-/* router.get('/aiAttempt', async (_req, res) => {
-  try {
-    const users = await Orders.distinct('userId', {
-      orderTotal: { $gte: 400 },
-    });
-    const data = [];
-
-    await Promise.all(
-      users.map(async userId => {
-        const user = await Users.findById(userId);
-
-        if (user) {
-          const restaurants = await Orders.distinct('martName', { userId });
-          const userOrderData = [];
-
-          await Promise.all(
-            restaurants.map(async martName => {
-              const [orderCount, orders] = await Promise.all([
-                Orders.countDocuments({
-                  martName,
-                  userId,
-                  orderTotal: { $gte: 400 },
-                }),
-                Orders.find({ martName, userId, orderTotal: { $gte: 400 } }),
-              ]);
-
-              let biggestOrder;
-
-              if (orders.length > 0) {
-                biggestOrder = orders.reduce((a, b) =>
-                  a.orderTotal > b.orderTotal ? a : b
-                );
-
-                const result = {
-                  restaurant: martName,
-                  orderCount,
-                  biggestOrder,
-                };
-
-                userOrderData.push(result);
-              }
-            })
-          );
-
-          const result = {
-            name: user.name,
-            userOrderData,
-          };
-
-          data.push(result);
-        }
-      })
-    );
-
-    return res.json({ data });
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-}); */
 
 router.post('/closeRestaurants', async (req, res) => {
   try {
@@ -221,76 +157,6 @@ router.get('/createRidersPassword', async (_req, res) => {
     });
   }
 }); */
-
-router.post('/dealMoney', async (req, res) => {
-  try {
-    const { martId, startDate, endDate } = req.body;
-
-    const start = moment(startDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
-      .toISOString();
-    const end = moment(endDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
-      .toISOString();
-
-    let totalToPayForAzadiDeals = 0;
-    let azadiDealCount = 0;
-    let otherOrdersTotalAmount = 0;
-
-    const [deliveryOrders, pickupOrders] = await Promise.all([
-      Orders.find({
-        martId,
-        status: 'Delivered',
-        orderType: 'Delivery',
-        dateForSearching: { $gte: start, $lte: end },
-      })
-        .select('products orderTotal martId orderNum')
-        .lean(),
-
-      Orders.countDocuments({
-        martId,
-        status: 'Delivered',
-        orderType: 'PickUp',
-        dateForSearching: { $gte: start, $lte: end },
-      }),
-    ]);
-
-    await Promise.all(
-      deliveryOrders.map(async ({ products }) => {
-        await Promise.all(
-          products.map(async ({ productName, count, net }) => {
-            if (productName.includes('Zabardast Deal')) {
-              totalToPayForAzadiDeals += net;
-              azadiDealCount += count;
-            } else {
-              otherOrdersTotalAmount += net;
-            }
-          })
-        );
-      })
-    );
-
-    const ourPercentage = ((13 / 100) * otherOrdersTotalAmount).toFixed();
-    const totalAmountOfOtherOrdersToPay =
-      otherOrdersTotalAmount - ourPercentage;
-
-    // totalAmountoPay += totalAmountOfOtherOrdersToPay;
-
-    return res.json({
-      totalToPayForAzadiDeals,
-      totalAmountOfOtherOrdersToPay,
-      azadiDealCount,
-      pickupOrders,
-    });
-  } catch (err) {
-    console.log(err);
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
 
 router.post('/addActualPrices', async (req, res) => {
   try {
