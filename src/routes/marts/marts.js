@@ -16,11 +16,11 @@ router.post('/allRestaurants', async (req, res) => {
 
     console.log(req.body);
 
-    if (employee === true) {
-      if (city === '') {
-        city = await getCity(lat, long);
-      }
+    if (city === '') {
+      city = await getCity(lat, long);
+    }
 
+    if (employee === true) {
       const allRestaurants = await Users.find({
         available: true,
         status: 'active',
@@ -52,7 +52,7 @@ router.post('/allRestaurants', async (req, res) => {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: city === 'Jhang' ? 6000 : 3500,
+            maxDistance: city === 'Jhang' ? 5500 : 3500,
             query: {
               available: true,
               status: 'active',
