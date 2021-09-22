@@ -129,8 +129,7 @@ router.post('/restaurantCollections', async (req, res) => {
                   if (orderType === 'PickUp') {
                     ourProfit += priceDifference;
                   } else {
-                    const actualPriceIntoCount = product.net;
-                    dealPayment += actualPriceIntoCount;
+                    dealPayment += product.net;
                     ourProfit += priceDifference;
                   }
                 }
@@ -416,8 +415,7 @@ router.post('/expensesTillNow', async (req, res) => {
                   if (orderType === 'PickUp') {
                     ourProfit += priceDifference;
                   } else {
-                    const actualPriceIntoCount = product.actualPrice * count;
-                    dealPayment += actualPriceIntoCount;
+                    dealPayment += product.net;
                     ourProfit += priceDifference;
                   }
                 }
