@@ -7,7 +7,7 @@ const Otp = require('../../models/otpModel');
 
 const router = Router();
 
-router.post('/numberVerificationOtp', async (req, res) => {
+router.post('/signUpOtp', async (req, res) => {
   try {
     const { phone } = req.body;
 
@@ -21,18 +21,18 @@ router.post('/numberVerificationOtp', async (req, res) => {
     }
 
     const secret = Speakeasy.generateSecret({ length: 20 }).base32;
-    const token = Speakeasy.totp({ secret, encoding: 'base32' });
+    const otp = Speakeasy.totp({ secret, encoding: 'base32' });
 
-    const msg = `Your Dastak verification code is ${token}`;
-    await axios.get(`${process.env.OTP_URL}&to=${phone}&message=${msg}`);
+    const otpPhone = 92 + phone.substring(1, 11);
+    console.log(otpPhone);
+    const msg = `Your Dastak verification code is ${otp}`;
+    await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
 
-    await new Otp({ phone, secret, token }).save();
+    await new Otp({ phone, secret, otp }).save();
 
-    return res.json({
-      status: '200',
-      msg: `A verification code has been sent to your phone number.`,
-    });
+    return res.json({ status: '200' });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       msg: `Looks like an error occurred on our side. Kindly try again`,
@@ -41,24 +41,25 @@ router.post('/numberVerificationOtp', async (req, res) => {
   }
 });
 
-router.post('/validateNumberOtp', async (req, res) => {
+router.post('/verifySignUpOtp', async (req, res) => {
   try {
-    const { phone, token } = req.body;
+    const { phone, otp } = req.body;
 
-    const { secret } = await Otp.findOne({ phone, token }).select('secret');
+    const doc = await Otp.findOne({ phone, otp }).select('secret');
 
-    if (!secret) {
+    if (!doc) {
       return res.json({
         status: '404',
         msg: `Sorry you've entered the wrong verification code.`,
       });
     }
 
+    const { secret } = doc;
     const verified = Speakeasy.totp.verify({
       secret,
       encoding: 'base32',
-      token,
-      window: 300,
+      token: otp,
+      window: 3,
     });
 
     if (!verified) {
@@ -68,10 +69,12 @@ router.post('/validateNumberOtp', async (req, res) => {
       });
     }
 
-    await new Users(req.body).save();
+    req.body.verified = true;
+    const user = await new Users(req.body).save();
 
-    return res.json({ status: '200' });
+    return res.json({ status: '200', data: user });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       msg: 'Looks like an error occurred on our side. Kindly try again',
