@@ -362,8 +362,6 @@ router.post('/expensesTillNow', async (req, res) => {
       },
     });
 
-    let checkProfit = 0;
-
     let data = await Promise.all(
       restaurants.map(async martId => {
         const [orders, { name: martName, percentage }] = await Promise.all([
@@ -384,16 +382,12 @@ router.post('/expensesTillNow', async (req, res) => {
             .lean(),
         ]);
 
-        let totalOrdersCollection = 0;
-
         let dealPayment = 0;
         let nonDealPayment = 0;
         let ourProfit = 0;
 
         await Promise.all(
-          orders.map(async ({ products, orderType, orderTotal }) => {
-            totalOrdersCollection += orderTotal;
-
+          orders.map(async ({ products, orderType }) => {
             await Promise.all(
               products.map(async product => {
                 const { net, count } = product;
@@ -428,8 +422,6 @@ router.post('/expensesTillNow', async (req, res) => {
           })
         );
 
-        checkProfit += ourProfit;
-
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
         );
@@ -443,10 +435,9 @@ router.post('/expensesTillNow', async (req, res) => {
         const totalPaid =
           dealPayment + (nonDealPayment - ourPercentage - ourProfit);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
-        ourProfit += ourPercentage + deliveryCharges;
+        ourProfit += ourPercentage + deliveryCharges - ridersFare;
 
         return {
-          totalOrdersCollection,
           deliveryCharges,
           ourPercentage,
           martName,
@@ -460,32 +451,15 @@ router.post('/expensesTillNow', async (req, res) => {
     const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
     const paidToRiders = data.reduce((a, b) => a + b.ridersFare, 0);
     const paidToRestaurants = data.reduce((a, b) => a + b.totalPaid, 0);
-    const overallCollection = data.reduce(
-      (a, b) => a + b.totalOrdersCollection,
-      0
-    );
-    const totalDeliveryCharges = data.reduce(
-      (a, b) => a + b.deliveryCharges,
-      0
-    );
-
-    const nonDealOrdersPercentage = data.reduce(
-      (a, b) => a + b.ourPercentage,
-      0
-    );
 
     data = orderBy(data, ['ourProfit'], ['desc']);
 
     return res.json({
       status: '200',
-      overallCollection,
-      totalDeliveryCharges,
-      checkProfit,
       data,
       totalProfit,
       paidToRiders,
       paidToRestaurants,
-      nonDealOrdersPercentage,
     });
   } catch (err) {
     console.log(err);
