@@ -254,20 +254,32 @@ router.post('/allOrders', async (req, res) => {
 
     let dealPayment = 0;
     let nonDealPayment = 0;
+    let ourProfit = 0;
 
     await Promise.all(
-      delivered.map(async ({ products }) => {
+      delivered.map(async ({ products, orderType }) => {
         await Promise.all(
           products.map(async product => {
             const { net, count } = product;
 
-            if (product.actualPrice === undefined) {
+            if (orderType === 'Delivery' && product.actualPrice === undefined) {
               nonDealPayment += net;
             }
 
+            if (product.actualPrice === undefined && orderType === 'PickUp') {
+              const ourPercentage = +((percentage / 100) * net).toFixed();
+              ourProfit += ourPercentage;
+            }
+
             if (product.actualPrice !== undefined) {
-              const actualPriceIntoCount = product.actualPrice * count;
-              dealPayment += actualPriceIntoCount;
+              const priceDifference = net - product.actualPrice * count;
+
+              if (orderType === 'PickUp') {
+                ourProfit += priceDifference;
+              } else {
+                dealPayment += product.net;
+                ourProfit += priceDifference;
+              }
             }
           })
         );
@@ -275,8 +287,9 @@ router.post('/allOrders', async (req, res) => {
     );
 
     const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
-    const totalToPay = dealPayment + (nonDealPayment - ourPercentage);
-    nonDealPayment -= ourPercentage;
+    const totalToPay =
+      dealPayment + (nonDealPayment - ourPercentage - ourProfit);
+    nonDealPayment -= ourPercentage - ourProfit;
 
     return res.json({
       status: '200',
