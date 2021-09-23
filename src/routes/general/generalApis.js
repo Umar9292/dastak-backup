@@ -178,7 +178,7 @@ router.post('/addActualPrices', async (req, res) => {
     });
 
     restaurants = restaurants.filter(
-      restaurant => restaurant !== '60dc575c2fde591c8b7fe758'
+      restaurant => restaurant !== '606b1e691fb3d1047bf14e97'
     );
 
     await Promise.all(
