@@ -384,17 +384,16 @@ router.post('/expensesTillNow', async (req, res) => {
             .lean(),
         ]);
 
-        const totalOrdersCollection = orders.reduce(
-          (a, b) => a + b.orderTotal,
-          0
-        );
+        let totalOrdersCollection = 0;
 
         let dealPayment = 0;
         let nonDealPayment = 0;
         let ourProfit = 0;
 
         await Promise.all(
-          orders.map(async ({ products, orderType }) => {
+          orders.map(async ({ products, orderType, orderTotal }) => {
+            totalOrdersCollection += orderTotal;
+
             await Promise.all(
               products.map(async product => {
                 const { productName, net, count } = product;
