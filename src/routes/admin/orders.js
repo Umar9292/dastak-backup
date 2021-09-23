@@ -255,6 +255,7 @@ router.post('/allOrders', async (req, res) => {
     let dealPayment = 0;
     let nonDealPayment = 0;
     let ourProfit = 0;
+    let dealPaymentForRestaurant = 0;
 
     await Promise.all(
       delivered.map(async ({ products, orderType }) => {
@@ -278,6 +279,7 @@ router.post('/allOrders', async (req, res) => {
                 ourProfit += priceDifference;
               } else {
                 dealPayment += product.net;
+                dealPaymentForRestaurant += product.actualPrice * count;
                 ourProfit += priceDifference;
               }
             }
@@ -289,6 +291,7 @@ router.post('/allOrders', async (req, res) => {
     const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
     const totalToPay =
       dealPayment + (nonDealPayment - ourPercentage - ourProfit);
+
     nonDealPayment = nonDealPayment - ourPercentage - ourProfit;
 
     return res.json({
@@ -296,7 +299,7 @@ router.post('/allOrders', async (req, res) => {
       upcoming,
       accepted,
       delivered,
-      dealPayment,
+      dealPayment: dealPaymentForRestaurant,
       nonDealPayment,
       totalToPay,
     });
