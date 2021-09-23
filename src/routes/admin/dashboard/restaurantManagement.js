@@ -373,7 +373,9 @@ router.post('/expensesTillNow', async (req, res) => {
             city,
             dateForSearching: { $gte: start, $lte: end },
           })
-            .select('riderFare deliveryCharges martName products orderType')
+            .select(
+              'riderFare deliveryCharges martName products orderType orderTotal'
+            )
             .sort({ createdAt: -1 })
             .lean(),
 
