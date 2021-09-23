@@ -379,10 +379,10 @@ router.post('/expensesTillNow', async (req, res) => {
             .sort({ createdAt: -1 })
             .lean(),
 
-          Users.findById(martId),
+          Users.findById(martId)
+            .select('name percentage')
+            .lean(),
         ]);
-
-        console.log(martName, orders.length);
 
         const totalOrdersCollection = orders.reduce(
           (a, b) => a + b.orderTotal,
@@ -448,7 +448,7 @@ router.post('/expensesTillNow', async (req, res) => {
         const totalPaid =
           dealPayment + (nonDealPayment - ourPercentage - ourProfit);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
-        ourProfit += ourPercentage + deliveryCharges - ridersFare;
+        ourProfit += ourPercentage + deliveryCharges;
 
         return {
           totalOrdersCollection,
