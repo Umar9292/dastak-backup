@@ -382,6 +382,8 @@ router.post('/expensesTillNow', async (req, res) => {
           Users.findById(martId),
         ]);
 
+        console.log(martName, orders.length);
+
         const totalOrdersCollection = orders.reduce(
           (a, b) => a + b.orderTotal,
           0
@@ -430,8 +432,6 @@ router.post('/expensesTillNow', async (req, res) => {
             );
           })
         );
-
-        console.log(martName, ourProfit);
 
         checkProfit += ourProfit;
 
