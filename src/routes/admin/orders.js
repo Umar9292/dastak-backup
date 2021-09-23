@@ -256,12 +256,12 @@ router.post('/allOrders', async (req, res) => {
     let nonDealPayment = 0;
 
     await Promise.all(
-      delivered.map(async ({ products, orderType }) => {
+      delivered.map(async ({ products }) => {
         await Promise.all(
           products.map(async product => {
             const { net, count } = product;
 
-            if (orderType === 'Delivery' && product.actualPrice === undefined) {
+            if (product.actualPrice === undefined) {
               nonDealPayment += net;
             }
 
