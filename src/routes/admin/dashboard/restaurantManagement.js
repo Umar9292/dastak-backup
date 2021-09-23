@@ -450,6 +450,7 @@ router.post('/expensesTillNow', async (req, res) => {
 
         return {
           totalOrdersCollection,
+          deliveryCharges,
           martName,
           ourProfit,
           totalPaid,
@@ -465,12 +466,17 @@ router.post('/expensesTillNow', async (req, res) => {
       (a, b) => a + b.totalOrdersCollection,
       0
     );
+    const totalDeliveryCharges = data.reduce(
+      (a, b) => a + b.deliveryCharges,
+      0
+    );
 
     data = orderBy(data, ['ourProfit'], ['desc']);
 
     return res.json({
       status: '200',
       overallCollection,
+      totalDeliveryCharges,
       checkProfit,
       data,
       totalProfit,
