@@ -442,6 +442,8 @@ router.post('/expensesTillNow', async (req, res) => {
           0
         );
 
+        console.log(martName, deliveryCharges);
+
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
         const totalPaid =
           dealPayment + (nonDealPayment - ourPercentage - ourProfit);
