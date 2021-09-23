@@ -261,13 +261,9 @@ router.post('/previousPayments', async (req, res) => {
       orders.map(async ({ products }) => {
         await Promise.all(
           products.map(async product => {
-            const { productName, net, count } = product;
+            const { net, count } = product;
 
-            if (
-              !productName.includes('Azadi Deal') &&
-              !productName.includes('Discounted Deal') &&
-              !productName.includes('Zabardast Deal')
-            ) {
+            if (product.actualPrice === undefined) {
               nonDealPayment += net;
             }
 
