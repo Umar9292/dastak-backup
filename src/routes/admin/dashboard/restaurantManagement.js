@@ -380,6 +380,11 @@ router.post('/expensesTillNow', async (req, res) => {
           Users.findById(martId),
         ]);
 
+        const totalOrdersCollection = orders.reduce(
+          (a, b) => a + b.orderTotal,
+          0
+        );
+
         let dealPayment = 0;
         let nonDealPayment = 0;
         let ourProfit = 0;
@@ -442,6 +447,7 @@ router.post('/expensesTillNow', async (req, res) => {
         ourProfit += ourPercentage + deliveryCharges - ridersFare;
 
         return {
+          totalOrdersCollection,
           martName,
           ourProfit,
           totalPaid,
@@ -453,11 +459,16 @@ router.post('/expensesTillNow', async (req, res) => {
     const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
     const paidToRiders = data.reduce((a, b) => a + b.ridersFare, 0);
     const paidToRestaurants = data.reduce((a, b) => a + b.totalPaid, 0);
+    const overallCollection = data.reduce(
+      (a, b) => a + b.totalOrdersCollection,
+      0
+    );
 
     data = orderBy(data, ['ourProfit'], ['desc']);
 
     return res.json({
       status: '200',
+      overallCollection,
       checkProfit,
       data,
       totalProfit,
