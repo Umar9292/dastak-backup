@@ -396,17 +396,13 @@ router.post('/expensesTillNow', async (req, res) => {
 
             await Promise.all(
               products.map(async product => {
-                const { productName, net, count } = product;
+                const { net, count } = product;
 
-                if (orderType === 'Delivery') {
-                  if (
-                    !productName.includes('Azadi Deal') &&
-                    !productName.includes('Discounted Deal') &&
-                    !productName.includes('Zabardast Deal') &&
-                    !productName.includes('Zabardast Deals')
-                  ) {
-                    nonDealPayment += net;
-                  }
+                if (
+                  orderType === 'Delivery' &&
+                  product.actualPrice === undefined
+                ) {
+                  nonDealPayment += net;
                 }
 
                 if (
