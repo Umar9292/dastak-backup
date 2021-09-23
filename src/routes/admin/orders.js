@@ -261,10 +261,8 @@ router.post('/allOrders', async (req, res) => {
           products.map(async product => {
             const { net, count } = product;
 
-            if (orderType === 'Delivery') {
-              if (product.actualPrice === undefined) {
-                nonDealPayment += net;
-              }
+            if (orderType === 'Delivery' && product.actualPrice === undefined) {
+              nonDealPayment += net;
             }
 
             if (product.actualPrice !== undefined) {

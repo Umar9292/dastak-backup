@@ -286,12 +286,15 @@ router.post('/previouslyPaidAmount', async (req, res) => {
         let nonDealPayment = 0;
 
         await Promise.all(
-          orders.map(async ({ products }) => {
+          orders.map(async ({ products, orderType }) => {
             await Promise.all(
               products.map(async product => {
                 const { net, count } = product;
 
-                if (product.actualPrice === undefined) {
+                if (
+                  orderType === 'Delivery' &&
+                  product.actualPrice === undefined
+                ) {
                   nonDealPayment += net;
                 }
 

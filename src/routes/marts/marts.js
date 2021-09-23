@@ -258,12 +258,12 @@ router.post('/previousPayments', async (req, res) => {
       .lean();
 
     await Promise.all(
-      orders.map(async ({ products }) => {
+      orders.map(async ({ products, orderType }) => {
         await Promise.all(
           products.map(async product => {
             const { net, count } = product;
 
-            if (product.actualPrice === undefined) {
+            if (orderType === 'Delivery' && product.actualPrice === undefined) {
               nonDealPayment += net;
             }
 
@@ -276,7 +276,6 @@ router.post('/previousPayments', async (req, res) => {
     );
 
     const ourPercentage = ((percentage / 100) * nonDealPayment).toFixed();
-
     nonDealPayment -= ourPercentage;
 
     return res.json({
