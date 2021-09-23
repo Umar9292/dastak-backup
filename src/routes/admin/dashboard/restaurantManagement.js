@@ -442,9 +442,8 @@ router.post('/expensesTillNow', async (req, res) => {
           0
         );
 
-        console.log(martName, deliveryCharges);
-
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
+        console.log(martName, ourPercentage);
         const totalPaid =
           dealPayment + (nonDealPayment - ourPercentage - ourProfit);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
@@ -453,6 +452,7 @@ router.post('/expensesTillNow', async (req, res) => {
         return {
           totalOrdersCollection,
           deliveryCharges,
+          ourPercentage,
           martName,
           ourProfit,
           totalPaid,
@@ -473,6 +473,11 @@ router.post('/expensesTillNow', async (req, res) => {
       0
     );
 
+    const nonDealOrdersPercentage = data.reduce(
+      (a, b) => a + b.ourPercentage,
+      0
+    );
+
     data = orderBy(data, ['ourProfit'], ['desc']);
 
     return res.json({
@@ -484,6 +489,7 @@ router.post('/expensesTillNow', async (req, res) => {
       totalProfit,
       paidToRiders,
       paidToRestaurants,
+      nonDealOrdersPercentage,
     });
   } catch (err) {
     console.log(err);
