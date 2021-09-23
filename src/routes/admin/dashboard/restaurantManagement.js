@@ -443,7 +443,6 @@ router.post('/expensesTillNow', async (req, res) => {
         );
 
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
-        console.log(martName, ourPercentage);
         const totalPaid =
           dealPayment + (nonDealPayment - ourPercentage - ourProfit);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
