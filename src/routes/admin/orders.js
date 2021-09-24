@@ -255,6 +255,7 @@ router.post('/allOrders', async (req, res) => {
     let dealPayment = 0;
     let nonDealPayment = 0;
     let ourProfit = 0;
+    let pickUpPercentage = 0;
     let dealPaymentForRestaurant = 0;
 
     await Promise.all(
@@ -269,7 +270,7 @@ router.post('/allOrders', async (req, res) => {
 
             if (product.actualPrice === undefined && orderType === 'PickUp') {
               const ourPercentage = +((percentage / 100) * net).toFixed();
-              ourProfit += ourPercentage;
+              pickUpPercentage += ourPercentage;
             }
 
             if (product.actualPrice !== undefined) {
@@ -292,7 +293,7 @@ router.post('/allOrders', async (req, res) => {
     const totalToPay =
       dealPayment + (nonDealPayment - ourPercentage - ourProfit);
 
-    nonDealPayment = nonDealPayment - ourPercentage - ourProfit;
+    nonDealPayment = nonDealPayment - ourPercentage - pickUpPercentage;
 
     return res.json({
       status: '200',
