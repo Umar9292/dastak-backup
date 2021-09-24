@@ -246,7 +246,6 @@ router.post('/previousPayments', async (req, res) => {
 
     let dealPayment = 0;
     let nonDealPayment = 0;
-    let ourProfit = 0;
 
     const orders = await Orders.find({
       martId,
@@ -267,20 +266,8 @@ router.post('/previousPayments', async (req, res) => {
               nonDealPayment += net;
             }
 
-            if (product.actualPrice === undefined && orderType === 'PickUp') {
-              const ourPercentage = +((percentage / 100) * net).toFixed();
-              ourProfit += ourPercentage;
-            }
-
             if (product.actualPrice !== undefined) {
-              const priceDifference = net - product.actualPrice * count;
-
-              if (orderType === 'PickUp') {
-                ourProfit += priceDifference;
-              } else {
-                dealPayment += product.actualPrice * count;
-                ourProfit += priceDifference;
-              }
+              dealPayment += product.actualPrice * count;
             }
           })
         );
@@ -288,7 +275,7 @@ router.post('/previousPayments', async (req, res) => {
     );
 
     const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
-    nonDealPayment = nonDealPayment - ourPercentage - ourProfit;
+    nonDealPayment -= ourPercentage;
 
     return res.json({
       status: '200',
