@@ -246,7 +246,6 @@ router.post('/previousPayments', async (req, res) => {
 
     let dealPayment = 0;
     let nonDealPayment = 0;
-    const ourProfit = 0;
     let pickUpPercentage = 0;
 
     const orders = await Orders.find({
