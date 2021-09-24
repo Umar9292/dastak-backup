@@ -1,7 +1,9 @@
 const Router = require('express/lib/router');
 const Speakeasy = require('speakeasy');
+const moment = require('moment-timezone');
 const { compare, hash } = require('bcrypt');
 
+const PaymentSubmissions = require('../../models/paymentSubmitionsModel');
 const Users = require('../../models/userModel');
 const Otp = require('../../models/otpModel');
 const { emailOtp } = require('../../emailHandler/otpEmail/otpEmail');
@@ -11,7 +13,14 @@ const router = Router();
 
 router.post('/editProfile', async (req, res) => {
   try {
-    const { userId, type, pendingCollection, unpaidCollection } = req.body;
+    const {
+      userId,
+      type,
+      pendingCollection,
+      unpaidCollection,
+      modifier,
+    } = req.body;
+
     let user;
 
     if (type === 'admin') {
@@ -32,6 +41,39 @@ router.post('/editProfile', async (req, res) => {
       status: '200',
       data: user,
     });
+
+    if (modifier !== undefined) {
+      const date = moment()
+        .tz('Asia/Karachi')
+        .format('DD-MM-YYYY');
+
+      const currentTime = moment().tz('Asia/karachi');
+      const formatedTime = moment(currentTime, 'hh:mm').format('hh:mm a');
+
+      const doc = await PaymentSubmissions.findOne({
+        riderId: user._id,
+      });
+
+      const submission = {
+        modifier,
+        date,
+        time: formatedTime,
+      };
+
+      if (!doc) {
+        await new PaymentSubmissions({
+          riderId: user._id,
+          riderName: user.name,
+          submissions: submission,
+        }).save();
+      } else {
+        let { submissions } = doc;
+        submissions = [...submissions, submission];
+
+        doc.submissions = submissions;
+        doc.save();
+      }
+    }
 
     if (pendingCollection !== undefined) {
       await ordersModel.updateMany(
