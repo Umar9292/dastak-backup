@@ -233,7 +233,7 @@ router.post('/availabilityStatus', async (req, res) => {
   }
 });
 
-router.post('/previousPayments', async (req, res) => {
+router.post('/previousPaymentss', async (req, res) => {
   try {
     const { martId, percentage, startDate, endDate } = req.body;
 
