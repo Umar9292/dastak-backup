@@ -246,7 +246,6 @@ router.post('/previousPayments', async (req, res) => {
 
     let dealPayment = 0;
     let nonDealPayment = 0;
-    let ourProfit = 0;
     let pickUpPercentage = 0;
 
     const orders = await Orders.find({
@@ -274,14 +273,7 @@ router.post('/previousPayments', async (req, res) => {
             }
 
             if (product.actualPrice !== undefined) {
-              const priceDifference = net - product.actualPrice * count;
-
-              if (orderType === 'PickUp') {
-                ourProfit += priceDifference;
-              } else {
-                dealPayment += product.actualPrice * count;
-                ourProfit += priceDifference;
-              }
+              dealPayment += product.actualPrice * count;
             }
           })
         );
