@@ -158,7 +158,7 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-/* router.post('/addActualPrices', async (req, res) => {
+router.post('/addActualPrices', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
 
@@ -226,87 +226,6 @@ router.get('/createRidersPassword', async (_req, res) => {
             await Orders.findByIdAndUpdate(_id, { products: testProducts });
           })
         );
-      })
-    );
-
-    return res.json({ status: '200' });
-  } catch (err) {
-    console.log(err);
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-}); */
-
-router.post('/addActualPrices', async (req, res) => {
-  try {
-    const { startDate, endDate, martId } = req.body;
-
-    const start = moment(startDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
-      .toISOString();
-    const end = moment(endDate, 'DD-MM-YYYY')
-      .tz('Asia/Karachi')
-      .toISOString();
-
-    const orders = await Orders.find({
-      martId,
-      dateForSearching: {
-        $gte: start,
-        $lte: end,
-      },
-    });
-
-    /*     let restaurants = await Orders.distinct('martId', {
-      status: 'Delivered',
-      dateForSearching: {
-        $gte: start,
-        $lte: end,
-      },
-    });
-
-    restaurants = restaurants.filter(
-      restaurant => restaurant !== '606b1e691fb3d1047bf14e97'
-    ); */
-
-    await Promise.all(
-      orders.map(async order => {
-        const { products, _id } = order;
-        let testProducts = [];
-
-        await Promise.all(
-          products.map(async p => {
-            const { productName, quantity } = p;
-
-            if (
-              productName.includes('Azadi Deal') ||
-              productName.includes('Discounted Deal') ||
-              productName.includes('Zabardast Deal') ||
-              productName.includes('Deal')
-            ) {
-              const product = await Products.findOne({
-                martId,
-                productName,
-                quantity,
-              });
-
-              if (!product) {
-                console.log(`order id = ${_id}`);
-              }
-
-              if (product.actualPrice !== undefined) {
-                p.actualPrice = product.actualPrice;
-                testProducts = [...testProducts, p];
-              }
-            } else {
-              testProducts = [...testProducts, p];
-            }
-          })
-        );
-
-        await Orders.findByIdAndUpdate(_id, { products: testProducts });
       })
     );
 
