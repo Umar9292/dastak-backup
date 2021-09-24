@@ -127,7 +127,7 @@ router.post('/restaurantCollections', async (req, res) => {
                     ourProfit += priceDifference;
                   } else {
                     dealPayment += product.net;
-                    dealPaymentToShowRestaurant = product.actualPrice * count;
+                    dealPaymentToShowRestaurant += product.actualPrice * count;
                     ourProfit += priceDifference;
                   }
                 }
