@@ -298,6 +298,14 @@ router.post('/previouslyPaidAmount', async (req, res) => {
                   nonDealPayment += net;
                 }
 
+                if (
+                  product.actualPrice === undefined &&
+                  orderType === 'PickUp'
+                ) {
+                  const ourPercentage = +((percentage / 100) * net).toFixed();
+                  ourProfit += ourPercentage;
+                }
+
                 if (product.actualPrice !== undefined) {
                   const priceDifference = net - product.actualPrice * count;
 
