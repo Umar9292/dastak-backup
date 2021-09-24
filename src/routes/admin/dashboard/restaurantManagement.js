@@ -97,6 +97,7 @@ router.post('/restaurantCollections', async (req, res) => {
         let dealPayment = 0;
         let nonDealPayment = 0;
         let ourProfit = 0;
+        let dealPaymentToShowRestaurant = 0;
 
         await Promise.all(
           orders.map(async ({ products, orderType }) => {
@@ -126,6 +127,7 @@ router.post('/restaurantCollections', async (req, res) => {
                     ourProfit += priceDifference;
                   } else {
                     dealPayment += product.net;
+                    dealPaymentToShowRestaurant = product.actualPrice * count;
                     ourProfit += priceDifference;
                   }
                 }
@@ -155,7 +157,7 @@ router.post('/restaurantCollections', async (req, res) => {
           martName,
           ourProfit,
           totalOfDeliveryOrders,
-          dealPayment,
+          dealPayment: dealPaymentToShowRestaurant,
           nonDealPayment,
           totalToPay,
           deliveryOrders,
