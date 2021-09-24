@@ -169,15 +169,7 @@ router.post('/addActualPrices', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    const orders = await Orders.find({
-      martId: '5fa90c7c74b8060566d8ff7f',
-      dateForSearching: {
-        $gte: start,
-        $lte: end,
-      },
-    });
-
-    /*     let restaurants = await Orders.distinct('martId', {
+    let restaurants = await Orders.distinct('martId', {
       status: 'Delivered',
       dateForSearching: {
         $gte: start,
@@ -187,44 +179,53 @@ router.post('/addActualPrices', async (req, res) => {
 
     restaurants = restaurants.filter(
       restaurant => restaurant !== '606b1e691fb3d1047bf14e97'
-    ); */
+    );
 
     await Promise.all(
-      orders.map(async order => {
-        const { products, _id } = order;
-        let testProducts = [];
+      restaurants.map(async martId => {
+        const orders = await Orders.find({
+          martId,
+          status: 'Delivered',
+          dateForSearching: { $gte: start, $lte: end },
+        });
 
         await Promise.all(
-          products.map(async p => {
-            const { productName, quantity } = p;
+          orders.map(async order => {
+            const { products, _id } = order;
+            let testProducts = [];
 
-            if (
-              productName.includes('Azadi Deal') ||
-              productName.includes('Discounted Deal') ||
-              productName.includes('Zabardast Deal') ||
-              productName.includes('Deal')
-            ) {
-              const product = await Products.findOne({
-                martId: '5fa90c7c74b8060566d8ff7f',
-                productName,
-                quantity,
-              });
+            await Promise.all(
+              products.map(async p => {
+                const { productName, quantity } = p;
 
-              if (!product) {
-                console.log(`order id = ${_id}`);
-              }
+                if (
+                  productName.includes('Azadi Deal') ||
+                  productName.includes('Discounted Deal') ||
+                  productName.includes('Zabardast Deal')
+                ) {
+                  const product = await Products.findOne({
+                    martId,
+                    productName,
+                    quantity,
+                  });
 
-              if (product.actualPrice !== undefined) {
-                p.actualPrice = product.actualPrice;
-                testProducts = [...testProducts, p];
-              }
-            } else {
-              testProducts = [...testProducts, p];
-            }
+                  if (!product) {
+                    console.log(`order id = ${_id}`);
+                  }
+
+                  if (product.actualPrice !== undefined) {
+                    p.actualPrice = product.actualPrice;
+                    testProducts = [...testProducts, p];
+                  }
+                } else {
+                  testProducts = [...testProducts, p];
+                }
+              })
+            );
+
+            await Orders.findByIdAndUpdate(_id, { products: testProducts });
           })
         );
-
-        await Orders.findByIdAndUpdate(_id, { products: testProducts });
       })
     );
 
