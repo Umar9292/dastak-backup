@@ -6,8 +6,9 @@ const { compare, hash } = require('bcrypt');
 const PaymentSubmissions = require('../../models/paymentSubmitionsModel');
 const Users = require('../../models/userModel');
 const Otp = require('../../models/otpModel');
-const { emailOtp } = require('../../emailHandler/otpEmail/otpEmail');
 const ordersModel = require('../../models/ordersModel');
+
+const { emailOtp } = require('../../emailHandler/otpEmail/otpEmail');
 
 const router = Router();
 
@@ -58,6 +59,8 @@ router.post('/editProfile', async (req, res) => {
         modifier,
         date,
         time: formatedTime,
+        pendingCollection,
+        unpaidCollection,
       };
 
       if (!doc) {
