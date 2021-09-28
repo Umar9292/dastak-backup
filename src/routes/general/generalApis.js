@@ -1,5 +1,7 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
+const { unlinkSync } = require('fs');
+const { IncomingForm } = require('formidable');
 const { randomBytes } = require('crypto');
 
 const Users = require('../../models/userModel');
@@ -397,6 +399,38 @@ router.post('/unpayRestaurant', async (req, res) => {
       status: '404',
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/uploadPicture', (req, res) => {
+  try {
+    const form = new IncomingForm();
+
+    form.uploadDir = 'uploads';
+    form.keepExtensions = true;
+    form.maxFieldsSize = 10 * 1024 * 1024;
+
+    form.parse(req, async (_err, _fields, files) => {
+      const img = files.image.path;
+
+      const user = await Users.findByIdAndUpdate(
+        { _id: '5f312d42d9d50a3bebf4611a' },
+        { img },
+        { new: true }
+      );
+
+      unlinkSync(img);
+
+      return res.json(user);
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg:
+        'Looks like something went wrong on our side. Sorry for the incinvenience',
     });
   }
 });

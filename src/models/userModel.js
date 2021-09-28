@@ -22,6 +22,9 @@ const userModel = Schema(
     featured: Boolean,
     rating: Number,
     reviews: Number,
+    img: {
+      type: Buffer,
+    },
     status: {
       type: String,
       default: 'active',
