@@ -158,7 +158,7 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-/* router.post('/addActualPrices', async (req, res) => {
+router.post('/addActualPrices', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
 
@@ -238,9 +238,9 @@ router.get('/createRidersPassword', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
-router.post('/addActualPrices', async (req, res) => {
+/* router.post('/addActualPrices', async (req, res) => {
   try {
     const { startDate, endDate, martId } = req.body;
 
@@ -306,7 +306,7 @@ router.post('/addActualPrices', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 router.post('/dealCount', async (req, res) => {
   try {
