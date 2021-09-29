@@ -7,73 +7,28 @@ const { randomBytes } = require('crypto');
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
 const Orders = require('../../models/ordersModel');
-const { notifyUser } = require('../../notificationHandler/handler');
 
 const router = Router();
 
 router.get('/changePrices', async (req, res) => {
   try {
     const products = await Products.find({
-      martId: '6149af549db64b0b8ca2e79e',
+      martId: '61530c86ffcfac8158732092',
     });
 
     await Promise.all(
       products.map(product => {
-        if (product.category !== 'Zabardast Deals') {
-          let discountedPrice = ((10 / 100) * product.price).toFixed();
-          discountedPrice = Math.round(discountedPrice / 5) * 5;
-          product.price += +discountedPrice;
-          // product.discount = '20';
-          return product.save();
-        }
+        // if (product.category !== 'Zabardast Deals') {
+        let discountedPrice = ((3 / 100) * product.price).toFixed();
+        discountedPrice = Math.round(discountedPrice / 5) * 5;
+        product.price += +discountedPrice;
+        // product.discount = '20';
+        return product.save();
+        // }
       })
     );
 
     return res.json('done');
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
-router.get('/notifications', async (req, res) => {
-  try {
-    /*  const users = await Users.find({
-      type: 'user',
-      $or: [
-        { playerId: { $ne: '' } },
-        { playerId: { $ne: null } },
-        { playerId: { $ne: undefined } },
-      ],
-    });
-
-    console.log(users.length);
-
-    let count = 0; */
-
-    // const msg = `!Great News for Dastak Users! 😀\nFrom now on there will be no delivery charges on any order what so ever. Toh abhi mangwao abhi khao Dastak now. 😇`;
-    // const msg = `Dear Dastak users due to current weather conditions 🌧. Our services are not available right now. We'll notify you once the services are resumed. We appreciate your patient. 😇`;
-    // const msg = `Dear Umar to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
-    const msg =
-      'Hello. The number that you have given is powred off. Kindly contact dastak rider or your order will be cancelled';
-    await notifyUser(msg, '70c3917b-3e8c-4d40-b4b3-65ded06a5534', {
-      flag: 'userMsg',
-    });
-
-    /*  for (const user of users) {
-      if (user.playerId && user.player !== '') {
-        const msg = `Dear ${user.name} to help bring your food more quickly we have updated our address policy. So kindly select your address from map if the app asks for it. Thankyou.`;
-        await notifyUser(msg, user.playerId, {});
-
-        count += 1;
-      }
-    } */
-
-    // console.log(count);
-    return res.status(200).send('done');
   } catch (err) {
     return res.json({
       status: '404',
