@@ -481,7 +481,12 @@ router.post('/adminResponse', async (req, res) => {
         orderStatusEmail(adminMessage);
 
         const otpPhone = 92 + user.phone.substring(1, 11);
-        await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
+        console.log(otpPhone);
+        const res = await axios.get(
+          `${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`
+        );
+
+        console.log(res);
 
         return res.json({
           status: '200',
