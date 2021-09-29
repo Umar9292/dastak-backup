@@ -481,12 +481,9 @@ router.post('/adminResponse', async (req, res) => {
         orderStatusEmail(adminMessage);
 
         const otpPhone = 92 + user.phone.substring(1, 11);
-        console.log(otpPhone);
         const res = await axios.get(
           `${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`
         );
-
-        console.log(res);
 
         return res.json({
           status: '200',
@@ -545,6 +542,9 @@ router.post('/adminResponse', async (req, res) => {
         status: '200',
         msg: 'Order successfully accepted',
       });
+
+      const otpPhone = 92 + user.phone.substring(1, 11);
+      await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
 
       const adminMessage = `The order number ${orderNum} has been Accepted by ${shop.name}`;
       orderStatusEmail(adminMessage);
