@@ -1,4 +1,5 @@
 const Router = require('express/lib/router');
+const axios = require('axios');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
 const Orders = require('../../models/ordersModel');
@@ -479,9 +480,8 @@ router.post('/adminResponse', async (req, res) => {
         const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
         orderStatusEmail(adminMessage);
 
-        /* await axios.get(
-          `${process.env.SMS_URL}&mobile=${user.phone}&message=${msg}`
-        ); */
+        const otpPhone = 92 + user.phone.substring(1, 11);
+        await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
 
         return res.json({
           status: '200',
