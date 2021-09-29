@@ -393,6 +393,7 @@ router.post('/adminResponse', async (req, res) => {
     ]);
 
     const ridersMessage = `New order from ${shop.name}`;
+    const otpPhone = 92 + user.phone.substring(1, 11);
 
     if (status === 'Rejected') {
       if (type !== undefined && type === 'user') {
@@ -419,9 +420,7 @@ router.post('/adminResponse', async (req, res) => {
       } else {
         const msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
 
-        /* await axios.get(
-          `${process.env.SMS_URL}&mobile=${user.phone}&message=${msg}`
-        ); */
+        await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
 
         if (user.type === 'admin') {
           const { playerIds } = shop;
@@ -480,10 +479,7 @@ router.post('/adminResponse', async (req, res) => {
         const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
         orderStatusEmail(adminMessage);
 
-        const otpPhone = 92 + user.phone.substring(1, 11);
-        const res = await axios.get(
-          `${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`
-        );
+        await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
 
         return res.json({
           status: '200',
@@ -543,7 +539,6 @@ router.post('/adminResponse', async (req, res) => {
         msg: 'Order successfully accepted',
       });
 
-      const otpPhone = 92 + user.phone.substring(1, 11);
       await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
 
       const adminMessage = `The order number ${orderNum} has been Accepted by ${shop.name}`;
