@@ -418,7 +418,9 @@ router.post('/adminResponse', async (req, res) => {
         const adminMessage = `The order number ${orderNum} has been rejected by ${user.name} because it's ${reason}`;
         orderStatusEmail(adminMessage);
       } else {
-        const msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
+        const msg = encodeURIComponent(
+          `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`
+        );
 
         await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
 
@@ -487,7 +489,9 @@ router.post('/adminResponse', async (req, res) => {
         });
       }
 
-      const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
+      const msg = encodeURIComponent(
+        `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`
+      );
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
       if (user.email !== '') {
