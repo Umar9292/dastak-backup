@@ -291,8 +291,11 @@ router.post('/allOrders', async (req, res) => {
     );
 
     const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
+    const totalToPay =
+      dealPayment +
+      (nonDealPayment - ourPercentage - ourProfit - pickUpPercentage);
+
     nonDealPayment = nonDealPayment - ourPercentage - pickUpPercentage;
-    const totalToPay = dealPayment + nonDealPayment;
 
     return res.json({
       status: '200',
