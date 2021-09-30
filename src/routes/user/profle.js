@@ -14,29 +14,33 @@ const router = Router();
 
 router.post('/editProfile', async (req, res) => {
   try {
-    const {
+    const { userId } = req.body;
+
+    const user = await Users.findByIdAndUpdate(
       userId,
-      type,
-      pendingCollection,
-      unpaidCollection,
-      modifier,
-    } = req.body;
+      { $set: req.body },
+      { new: true }
+    ).select('-password -__v');
 
-    let user;
+    res.json({ status: '200', data: user });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience`,
+      error: err.toString(),
+    });
+  }
+});
 
-    if (type === 'admin') {
-      user = await Users.findByIdAndUpdate(
-        userId,
-        { $set: req.body },
-        { new: true }
-      ).select('-password -__v');
-    } else {
-      user = await Users.findByIdAndUpdate(
-        userId,
-        { $set: req.body },
-        { new: true }
-      ).select('-password -__v');
-    }
+router.post('/editRiderCollection', async (req, res) => {
+  try {
+    const { userId, pendingCollection, unpaidCollection, modifier } = req.body;
+
+    const user = await Users.findByIdAndUpdate(
+      userId,
+      { $set: req.body },
+      { new: true }
+    ).select('-password -__v');
 
     res.json({
       status: '200',
@@ -74,7 +78,7 @@ router.post('/editProfile', async (req, res) => {
         submissions = [...submissions, submission];
 
         doc.submissions = submissions;
-        doc.save();
+        await doc.save();
       }
     }
 
