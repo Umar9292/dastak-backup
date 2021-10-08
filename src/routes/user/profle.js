@@ -1,14 +1,13 @@
 const Router = require('express/lib/router');
 const Speakeasy = require('speakeasy');
 const moment = require('moment-timezone');
+const axios = require('axios');
 const { compare, hash } = require('bcrypt');
 
 const PaymentSubmissions = require('../../models/paymentSubmitionsModel');
 const Users = require('../../models/userModel');
 const Otp = require('../../models/otpModel');
 const ordersModel = require('../../models/ordersModel');
-
-const { emailOtp } = require('../../emailHandler/otpEmail/otpEmail');
 
 const router = Router();
 
@@ -138,40 +137,28 @@ router.post('/changePassword', async (req, res) => {
 
 router.post('/sendOtp', async (req, res) => {
   try {
-    const { email, phone } = req.body;
-    let user;
+    const { phone } = req.body;
 
-    if (email !== '') {
-      user = await Users.findOne({ email });
-    } else {
-      user = await Users.findOne({ phone });
-    }
-
+    const user = await Users.findOne({ phone });
     if (!user) {
       return res.json({
         status: '404',
-        msg:
-          'The email or phone you entered is not associated with any account',
+        msg: 'The number you entered is not associated with any account',
       });
     }
 
     const secret = Speakeasy.generateSecret({ length: 20 }).base32;
-    const token = Speakeasy.totp({ secret, encoding: 'base32' });
+    const otp = Speakeasy.totp({ secret, encoding: 'base32' });
 
-    await new Otp({
-      userId: user._id,
-      email,
-      secret,
-      token,
-    }).save();
+    const otpPhone = 92 + phone.substring(1, 11);
+    const msg = `Your Dastak verification code is ${otp}`;
+    await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
 
-    if (email !== '') {
-      emailOtp(user.email, token);
-    }
+    await new Otp({ phone, secret, otp }).save();
 
     return res.json({
       status: '200',
-      msg: `A verification code has been sent to ${user.email}.`,
+      msg: `A verification code has been sent to ${phone}.`,
     });
   } catch (err) {
     return res.json({
@@ -184,15 +171,9 @@ router.post('/sendOtp', async (req, res) => {
 
 router.post('/validateOtp', async (req, res) => {
   try {
-    const { email, phone, token } = req.body;
-    let otp;
+    const { phone, token } = req.body;
 
-    if (email !== '') {
-      otp = await Otp.findOne({ email, token }).select('secret');
-    } else {
-      otp = await Otp.findOne({ phone, token }).select('secret');
-    }
-
+    const otp = await Otp.findOne({ phone, otp: token }).select('secret');
     if (!otp) {
       return res.json({
         status: '404',
@@ -200,11 +181,12 @@ router.post('/validateOtp', async (req, res) => {
       });
     }
 
+    const { secret } = otp;
     const verified = Speakeasy.totp.verify({
-      secret: otp.secret,
+      secret,
       encoding: 'base32',
       token,
-      window: 300,
+      window: 3,
     });
 
     if (!verified) {

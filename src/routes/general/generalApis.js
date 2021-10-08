@@ -10,21 +10,22 @@ const Orders = require('../../models/ordersModel');
 
 const router = Router();
 
-router.get('/changePrices', async (req, res) => {
+router.get('/changePrices', async (_req, res) => {
   try {
     const products = await Products.find({
-      martId: '61530c86ffcfac8158732092',
+      martId: '60c0aeaa276990031ef54af3',
     });
 
     await Promise.all(
       products.map(product => {
-        // if (product.category !== 'Zabardast Deals') {
-        let discountedPrice = ((3 / 100) * product.price).toFixed();
-        discountedPrice = Math.round(discountedPrice / 5) * 5;
-        product.price += +discountedPrice;
-        // product.discount = '20';
-        return product.save();
-        // }
+        if (product.category === 'Grilled Burgers') {
+          let discountedPrice = ((40 / 100) * product.price).toFixed();
+          discountedPrice = Math.round(discountedPrice / 5) * 5;
+          product.discountedPrice = product.price - +discountedPrice;
+          product.discount = '40';
+          product.actualPrice = product.discountedPrice;
+          return product.save();
+        }
       })
     );
 

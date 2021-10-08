@@ -67,6 +67,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, 'views')));
 
+app.use('/orders', ordersRouter);
+app.use('/marts', martsRouter);
+app.use('/app', appVersionRouter);
+app.use('/general', playerIdRouter, generalApisRouter);
+app.use('/products', productsRouter, productImageRouter);
+app.use('/chat', chatRouter);
 app.use(
   '/user',
   signUpRouter,
@@ -75,12 +81,6 @@ app.use(
   usersReviewRouter,
   otpVerificationRouter
 );
-app.use('/orders', ordersRouter);
-app.use('/marts', martsRouter);
-app.use('/app', appVersionRouter);
-app.use('/general', playerIdRouter, generalApisRouter);
-app.use('/products', productsRouter, productImageRouter);
-app.use('/chat', chatRouter);
 app.use(
   '/stores',
   medicalStoresRouter,
