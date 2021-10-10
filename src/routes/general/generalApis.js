@@ -386,4 +386,34 @@ router.post('/uploadPicture', (req, res) => {
   }
 });
 
+router.post('/testAlgorithm', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    const users = await Orders.distinct('userId', {
+      status: 'Delivered',
+      city: 'Sargodha',
+      dateForSearching: {
+        $gte: start,
+        $lte: end,
+      },
+    });
+
+    return res.json(users.length);
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
