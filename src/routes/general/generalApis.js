@@ -409,7 +409,7 @@ router.post('/testAlgorithm', async (req, res) => {
     });
 
     const usersOrderData = await Promise.all(
-      users.map(async userId => {
+      users.filter(async userId => {
         const thisUsersOrders = await Orders.find({
           status: 'Delivered',
           userId,
@@ -419,14 +419,22 @@ router.post('/testAlgorithm', async (req, res) => {
             $lte: end,
           },
         })
-          .select('time date products')
+          .select('time date products name')
           .lean();
 
-        return {
-          name: thisUsersOrders[0].name,
-          totalOrders: thisUsersOrders.length,
-          thisUsersOrders,
-        };
+        const [dates, times] = await Promise.all([
+          thisUsersOrders.map(({ date }) => date),
+          thisUsersOrders.map(({ time }) => time),
+        ]);
+
+        if (thisUsersOrders.length >= 4) {
+          return {
+            name: thisUsersOrders[0].name,
+            totalOrders: thisUsersOrders.length,
+            dates,
+            times,
+          };
+        }
       })
     );
 
