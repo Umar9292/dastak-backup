@@ -401,6 +401,7 @@ router.post('/testAlgorithm', async (req, res) => {
     const users = await Orders.distinct('userId', {
       status: 'Delivered',
       city: 'Sargodha',
+      orderTotal: { $gte: 400 },
       dateForSearching: {
         $gte: start,
         $lte: end,
