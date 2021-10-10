@@ -408,7 +408,29 @@ router.post('/testAlgorithm', async (req, res) => {
       },
     });
 
-    return res.json(users.length);
+    const usersOrderData = await Promise.all(
+      users.map(async userId => {
+        const thisUsersOrders = await Orders.find({
+          status: 'Delivered',
+          userId,
+          orderTotal: { $gte: 400 },
+          dateForSearching: {
+            $gte: start,
+            $lte: end,
+          },
+        })
+          .select('time date products')
+          .lean();
+
+        return {
+          name: thisUsersOrders[0].name,
+          totalOrders: thisUsersOrders.length,
+          thisUsersOrders,
+        };
+      })
+    );
+
+    return res.json({ usersOrderData });
   } catch (err) {
     return res.json({
       status: '404',
