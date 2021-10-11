@@ -409,7 +409,7 @@ router.post('/testAlgorithm', async (req, res) => {
     });
 
     const usersOrderData = await Promise.all(
-      users.filter(async userId => {
+      users.map(async userId => {
         const thisUsersOrders = await Orders.find({
           status: 'Delivered',
           userId,
@@ -427,14 +427,12 @@ router.post('/testAlgorithm', async (req, res) => {
           thisUsersOrders.map(({ time }) => time),
         ]);
 
-        if (thisUsersOrders.length >= 4) {
-          return {
-            name: thisUsersOrders[0].name,
-            totalOrders: thisUsersOrders.length,
-            dates,
-            times,
-          };
-        }
+        return {
+          name: thisUsersOrders[0].name,
+          totalOrders: thisUsersOrders.length,
+          dates,
+          times,
+        };
       })
     );
 
