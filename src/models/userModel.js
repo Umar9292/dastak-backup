@@ -41,8 +41,9 @@ const userModel = Schema(
     phone: String,
     password: String,
     tillNoonFare: Number,
-    cnic: String,
     nightFare: Number,
+    lateNightFare: Number,
+    cnic: String,
     email: {
       type: String,
       default: '',
