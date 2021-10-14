@@ -640,7 +640,7 @@ router.post('/assignRider', async (req, res) => {
 
       Users.findById(riderId)
         .select(
-          'tillNoonFare nightFare pendingCollection name paymentLimit orderCount'
+          'tillNoonFare nightFare lateNightFare pendingCollection name paymentLimit orderCount'
         )
         .lean(),
 
