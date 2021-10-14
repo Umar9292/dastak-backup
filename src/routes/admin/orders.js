@@ -664,6 +664,7 @@ router.post('/assignRider', async (req, res) => {
     const {
       tillNoonFare,
       nightFare,
+      lateNightFare,
       pendingCollection,
       name,
       paymentLimit,
@@ -775,28 +776,15 @@ router.post('/assignRider', async (req, res) => {
 
     const morningFareTime = moment('04:00', 'HH:mm').tz('Asia/karachi');
     const noonFareTime = moment('16:00', 'HH:mm').tz('Asia/karachi');
+    const lateNightFareTime = moment('19:00', 'HH:mm').tz('Asia/karachi');
 
     if (orderTime.isBetween(morningFareTime, noonFareTime)) {
       req.body.riderFare = tillNoonFare;
-    } else {
+    } else if (orderTime.isBetween(noonFareTime, lateNightFareTime)) {
       req.body.riderFare = nightFare;
+    } else {
+      req.body.riderFare = lateNightFare;
     }
-
-    /*  const { geometry } = await Users.findById(order.martId)
-      .select('geometry')
-      .lean();
-
-    const [longitude, latitude] = geometry.coordinates;
-    const result = await axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${order.latitude},${order.longitude}&destinations=${latitude},${longitude}&departure_time=now&key=${process.env.GOOGLE_API_KEY}
-      `);
-
-    const distance = result.data.rows[0].elements[0].distance.text.substring(
-      0,
-      3
-    );
-
-    const riderFare = await calculateRidersFare(distance);
-    req.body.riderFare = riderFare; */
 
     await Promise.all([
       Orders.findByIdAndUpdate(orderId, { $set: req.body }),
