@@ -398,7 +398,7 @@ router.post('/adminResponse', async (req, res) => {
 
     if (status === 'Rejected') {
       if (type !== undefined && type === 'user') {
-        const msg = `Order# ${order.orderNum} has been cancelled by the user`;
+        const msg = `Order# ${order.orderNum} has been cancelled.`;
 
         const { playerIds } = shop;
 
@@ -415,11 +415,13 @@ router.post('/adminResponse', async (req, res) => {
 
           await notifyUser(msg, ridersPlayerId, { flag: 'orderRejected' });
         }
-
-        const adminMessage = `The order number ${orderNum} has been rejected by ${user.name} because it's ${reason}`;
-        orderStatusEmail(adminMessage);
       } else {
-        const msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
+        let msg;
+        if (orderStatus !== 'Pending') {
+          msg = `Dear ${user.name} your order# ${orderNum} has been cancelled.`;
+        } else {
+          msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
+        }
 
         await axios.get(
           `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
