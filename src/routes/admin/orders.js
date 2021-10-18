@@ -10,9 +10,6 @@ const {
   orderStatusEmail,
 } = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
 const {
-  sendAcceptanceEmail,
-} = require('../../emailHandler/customerEmail/acceptanceEmail');
-const {
   emailOrderDetails,
   notifyRestaurantByEmail,
 } = require('../../emailHandler/orderEmail/orderEmail');
@@ -378,6 +375,13 @@ router.post('/adminResponse', async (req, res) => {
       $set: req.body,
     });
 
+    if (status === 'Delivered') {
+      return res.json({
+        status: '200',
+        msg: 'Order completed.',
+      });
+    }
+
     const [user, shop] = await Promise.all([
       Users.findById(order.userId),
 
@@ -464,7 +468,6 @@ router.post('/adminResponse', async (req, res) => {
     if (status === 'Admin Accepted' && !customerNotified) {
       if (orderType === 'PickUp') {
         const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
-        sendAcceptanceEmail(user.email !== '' ? user.email : '', msg);
 
         if (user.type === 'admin') {
           const { playerIds } = user;
@@ -476,10 +479,11 @@ router.post('/adminResponse', async (req, res) => {
           await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
         }
 
-        const adminMessage = `The order number ${orderNum} has been accepted by ${shop.name}. It's a pick up order.`;
-        orderStatusEmail(adminMessage);
-
-        await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
+        await axios.get(
+          `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
+            msg
+          )}`
+        );
 
         return res.json({
           status: '200',
@@ -489,10 +493,6 @@ router.post('/adminResponse', async (req, res) => {
 
       const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
-
-      if (user.email !== '') {
-        sendAcceptanceEmail(user.email, msg);
-      }
 
       const [idleRiders, allRiders] = await Promise.all([
         Users.find({
@@ -552,10 +552,6 @@ router.post('/adminResponse', async (req, res) => {
     if (status === 'Admin Accepted' && customerNotified) {
       const msg = `Dear ${user.name} your order# ${orderNum} for ${shop.name} is now ready. Kindly pick it up`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
-
-      if (user.email !== '') {
-        sendAcceptanceEmail(user.email, msg);
-      }
 
       return res.json({
         status: '200',
