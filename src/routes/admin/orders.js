@@ -382,6 +382,13 @@ router.post('/adminResponse', async (req, res) => {
       $set: req.body,
     });
 
+    if (status === 'Delivered') {
+      return res.json({
+        status: '200',
+        msg: 'Order completed.',
+      });
+    }
+
     const [user, shop] = await Promise.all([
       Users.findById(order.userId),
 
