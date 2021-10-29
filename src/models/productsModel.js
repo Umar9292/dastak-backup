@@ -30,6 +30,7 @@ const productsModel = Schema(
     discount: String,
     discountedPrice: Number,
     dealNumber: Number,
+    specifications: Array,
   },
   {
     versionKey: false,
