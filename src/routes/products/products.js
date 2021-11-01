@@ -153,110 +153,110 @@ router.post('/allProducts', async (req, res) => {
 
     let finalData = [];
 
-    // client.get(martId, async (err, data) => {
-    //   if (err) console.log(err);
+    client.get(martId, async (err, data) => {
+      if (err) console.log(err);
 
-    // if (data !== null) {
-    //   finalData = JSON.parse(data);
-    // }
+      if (data !== null) {
+        finalData = JSON.parse(data);
+      }
 
-    const [restaurant, deliveryCharges] = await Promise.all([
-      Users.findById(martId).lean(),
+      const [restaurant, deliveryCharges] = await Promise.all([
+        Users.findById(martId).lean(),
 
-      calculateDeliveryCharges(
-        userLatitude,
-        userLongitude,
-        martLatitude,
-        martLongitude
-      ),
-    ]);
+        calculateDeliveryCharges(
+          userLatitude,
+          userLongitude,
+          martLatitude,
+          martLongitude
+        ),
+      ]);
 
-    restaurant.deliveryCharges = deliveryCharges;
+      restaurant.deliveryCharges = deliveryCharges;
 
-    // if (data !== null) {
-    //   return res.json({ status: '200', data: finalData, restaurant });
-    // }
+      if (data !== null) {
+        return res.json({ status: '200', data: finalData, restaurant });
+      }
 
-    const [{ categories }, options] = await Promise.all([
-      Categories.findOne({ martId })
-        .select('categories')
-        .lean(),
+      const [{ categories }, options] = await Promise.all([
+        Categories.findOne({ martId })
+          .select('categories')
+          .lean(),
 
-      Flavours.findOne({ martId }).lean(),
-    ]);
+        Flavours.findOne({ martId }).lean(),
+      ]);
 
-    /*   const { name } = restaurant;
-    if (userId && userId !== '') {
-      const customer = await Users.findById(userId).select('name');
-      console.log(`${customer.name} opened ${name}`);
-    } else {
-      console.log(`${name} has been opened`);
-    } */
+      const { name } = restaurant;
+      if (userId && userId !== '') {
+        const customer = await Users.findById(userId).select('name');
+        console.log(`${customer.name} opened ${name}`);
+      } else {
+        console.log(`${name} has been opened`);
+      }
 
-    for (const category of categories) {
-      const query = {
-        category,
-        martId,
-        available: 'in stock',
-      };
-
-      const products = await Products.find(query).sort({
-        dealNumber: 1,
-        productName: 1,
-        quantity: -1,
-      });
-
-      if (products.length > 0) {
-        const filteredProducts = products.filter(
-          ({ type, drinks }) => type === 'deal' || drinks === true
-        );
-
-        const { specifications: flavourSpecifications } = options;
-        const details = [];
-
-        if (filteredProducts.length > 0) {
-          for (const product of filteredProducts) {
-            const { specifications } = product;
-
-            await Promise.all(
-              specifications.map(
-                ({ productName, productType, flavourType }) => {
-                  flavourSpecifications.map(specification => {
-                    if (
-                      productType === specification.productType &&
-                      flavourType === specification.flavourType
-                    ) {
-                      details.push({
-                        title: productName,
-                        data: specification.data,
-                      });
-                    }
-                  });
-                }
-              )
-            );
-
-            product.specifications = details;
-          }
-        }
-
-        const data = {
-          category: query.category,
-          data: products,
+      for (const category of categories) {
+        const query = {
+          category,
+          martId,
+          available: 'in stock',
         };
 
-        finalData = [...finalData, data];
+        const products = await Products.find(query).sort({
+          dealNumber: 1,
+          productName: 1,
+          quantity: -1,
+        });
+
+        if (products.length > 0) {
+          const filteredProducts = products.filter(
+            ({ type, drinks }) => type === 'deal' || drinks === true
+          );
+
+          const { specifications: flavourSpecifications } = options;
+          const details = [];
+
+          if (filteredProducts.length > 0) {
+            for (const product of filteredProducts) {
+              const { specifications } = product;
+
+              await Promise.all(
+                specifications.map(
+                  ({ productName, productType, flavourType }) => {
+                    flavourSpecifications.map(specification => {
+                      if (
+                        productType === specification.productType &&
+                        flavourType === specification.flavourType
+                      ) {
+                        details.push({
+                          title: productName,
+                          data: specification.data,
+                        });
+                      }
+                    });
+                  }
+                )
+              );
+
+              product.specifications = details;
+            }
+          }
+
+          const data = {
+            category: query.category,
+            data: products,
+          };
+
+          finalData = [...finalData, data];
+        }
       }
-    }
 
-    res.json({
-      status: '200',
-      data: finalData,
-      restaurant,
+      res.json({
+        status: '200',
+        data: finalData,
+        restaurant,
+      });
+
+      client.setex(martId, 600, JSON.stringify(finalData));
     });
-
-    //   client.setex(martId, 600, JSON.stringify(finalData));
-    // });
   } catch (err) {
     console.log(err);
     return res.json({
