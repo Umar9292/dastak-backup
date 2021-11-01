@@ -144,7 +144,6 @@ router.post('/allProducts', async (req, res) => {
   try {
     const {
       martId,
-      userId,
       userLatitude,
       userLongitude,
       martLatitude,
@@ -184,14 +183,6 @@ router.post('/allProducts', async (req, res) => {
 
         Flavours.findOne({ martId }).lean(),
       ]);
-
-      const { name } = restaurant;
-      if (userId && userId !== '') {
-        const customer = await Users.findById(userId).select('name');
-        console.log(`${customer.name} opened ${name}`);
-      } else {
-        console.log(`${name} has been opened`);
-      }
 
       for (const category of categories) {
         const query = {
