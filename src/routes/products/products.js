@@ -333,6 +333,25 @@ router.post('/productAvailability', async (req, res) => {
   }
 });
 
+router.post('/editProduct', async (req, res) => {
+  try {
+    const { productId } = req.body;
+
+    await Products.findByIdAndUpdate(productId, { $set: req.body });
+
+    return res.json({
+      status: '200',
+      msg: 'Product updated',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 router.get('/addAvailability', async (req, res) => {
   try {
     await Products.updateMany({}, { available: 'in stock' });
