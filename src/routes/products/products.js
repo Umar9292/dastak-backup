@@ -24,10 +24,10 @@ router.post('/allProducts', async (req, res) => {
     const {
       martId,
       userId,
-      userLatitude,
-      userLongitude,
-      martLatitude,
-      martLongitude,
+      // userLatitude,
+      // userLongitude,
+      // martLatitude,
+      // martLongitude,
     } = req.body;
 
     let finalData = [];
@@ -37,14 +37,14 @@ router.post('/allProducts', async (req, res) => {
 
       const restaurant = await Users.findById(martId).lean();
 
-      const deliveryCharges = await calculateDeliveryCharges(
+      /*   const deliveryCharges = await calculateDeliveryCharges(
         userLatitude,
         userLongitude,
         martLatitude,
         martLongitude
-      );
+      ); */
 
-      restaurant.deliveryCharges = deliveryCharges;
+      restaurant.deliveryCharges = 30;
 
       if (data !== null) {
         return res.json({ status: '200', data: JSON.parse(data), restaurant });
