@@ -44,7 +44,7 @@ router.post('/allProducts', async (req, res) => {
         martLongitude
       ); */
 
-      restaurant.deliveryCharges = 30;
+      restaurant.deliveryCharges = 40;
 
       if (data !== null) {
         return res.json({ status: '200', data: JSON.parse(data), restaurant });
