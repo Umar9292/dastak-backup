@@ -1,14 +1,14 @@
 const Router = require('express/lib/router');
-const axios = require('axios');
+// const axios = require('axios');
 const { createClient } = require('redis');
 
 const Users = require('../../models/userModel');
 const StoreProducts = require('../../models/storeProducts');
 const Categories = require('../../models/categoriesModel');
 
-const {
-  calculateDeliveryCharges,
-} = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
+// const {
+//   calculateDeliveryCharges,
+// } = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
 
 const client = createClient(process.env.REDIS_URL);
 
@@ -20,10 +20,10 @@ router.post('/allProducts', async (req, res) => {
       martId,
       userId,
       type,
-      userLatitude,
-      userLongitude,
-      martLatitude,
-      martLongitude,
+      // userLatitude,
+      // userLongitude,
+      // martLatitude,
+      // martLongitude,
     } = req.body;
 
     let finalData = [];
@@ -44,14 +44,14 @@ router.post('/allProducts', async (req, res) => {
 
       const restaurant = await Users.findById(martId).lean();
 
-      const deliveryCharges = await calculateDeliveryCharges(
+      /* const deliveryCharges = await calculateDeliveryCharges(
         userLatitude,
         userLongitude,
         martLatitude,
         martLongitude
-      );
+      ); */
 
-      restaurant.deliveryCharges = deliveryCharges;
+      restaurant.deliveryCharges = 40;
 
       if (data !== null) {
         return res.json({ status: '200', data: JSON.parse(data), restaurant });

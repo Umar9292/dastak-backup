@@ -11,9 +11,9 @@ const { getCity } = require('../../geoCoder/getCity');
 const {
   openRestaurants: checkOpenRestaurants,
 } = require('../../routes/marts/openRestaurants/openRestaurants');
-const {
-  calculateDeliveryCharges,
-} = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
+// const {
+//   calculateDeliveryCharges,
+// } = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
 
 const client = createClient(process.env.REDIS_URL);
 
@@ -327,15 +327,15 @@ router.post('/dastakDeals', async (req, res) => {
           Flavours.findOne({ martId }),
         ]);
 
-        const [longitude, latitude] = restaurant.geometry.coordinates;
+        /* const [longitude, latitude] = restaurant.geometry.coordinates;
         const deliveryCharges = await calculateDeliveryCharges(
           lat,
           long,
           latitude,
           longitude
-        );
+        ); */
 
-        restaurant.deliveryCharges = deliveryCharges;
+        restaurant.deliveryCharges = 40;
 
         if (products.length > 0) {
           for (const product of products) {
