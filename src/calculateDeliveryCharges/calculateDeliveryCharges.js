@@ -17,11 +17,11 @@ exports.calculateDeliveryCharges = async (
   let deliveryCharges = 0;
 
   if (+distance <= 1) {
-    deliveryCharges = 20;
+    deliveryCharges = 30;
   }
 
   if (+distance > 1 && +distance <= 2) {
-    deliveryCharges = 30;
+    deliveryCharges = 35;
   }
 
   if (+distance > 2 && +distance <= 4) {
