@@ -1,5 +1,4 @@
-const axios = require('axios');
-const { getPreciseDistance } = require('geolib');
+// const axios = require('axios');
 
 /* const test = async () => {
   const data = {
@@ -64,13 +63,3 @@ refundTest(); */
 };
 
 geolibTest(); */
-
-const test = async () => {
-  const result = await axios.get(
-    'https://us1.locationiq.com/v1/matrix/driving/72.70534627139568,32.03429060235852;72.69955974072218,32.091192953752255?annotations=distance&key=pk.581c9867f7c07883ce3e4c91ef481370'
-  );
-
-  console.log(result.data.distances[0][1]);
-};
-
-test();

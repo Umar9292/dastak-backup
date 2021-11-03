@@ -1,5 +1,4 @@
 const Router = require('express/lib/router');
-const axios = require('axios');
 const { createClient } = require('redis');
 
 const Users = require('../../models/userModel');
