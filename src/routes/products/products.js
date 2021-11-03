@@ -11,9 +11,9 @@ const { getCity } = require('../../geoCoder/getCity');
 const {
   openRestaurants: checkOpenRestaurants,
 } = require('../../routes/marts/openRestaurants/openRestaurants');
-// const {
-//   calculateDeliveryCharges,
-// } = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
+const {
+  calculateDeliveryCharges,
+} = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
 
 const client = createClient(process.env.REDIS_URL);
 
@@ -24,10 +24,10 @@ router.post('/allProducts', async (req, res) => {
     const {
       martId,
       userId,
-      // userLatitude,
-      // userLongitude,
-      // martLatitude,
-      // martLongitude,
+      userLatitude,
+      userLongitude,
+      martLatitude,
+      martLongitude,
     } = req.body;
 
     let finalData = [];
@@ -37,14 +37,14 @@ router.post('/allProducts', async (req, res) => {
 
       const restaurant = await Users.findById(martId).lean();
 
-      /*   const deliveryCharges = await calculateDeliveryCharges(
+      const deliveryCharges = await calculateDeliveryCharges(
         userLatitude,
         userLongitude,
         martLatitude,
         martLongitude
-      ); */
+      );
 
-      restaurant.deliveryCharges = 40;
+      restaurant.deliveryCharges = deliveryCharges;
 
       if (data !== null) {
         return res.json({ status: '200', data: JSON.parse(data), restaurant });
@@ -327,15 +327,15 @@ router.post('/dastakDeals', async (req, res) => {
           Flavours.findOne({ martId }),
         ]);
 
-        /* const [longitude, latitude] = restaurant.geometry.coordinates;
+        const [longitude, latitude] = restaurant.geometry.coordinates;
         const deliveryCharges = await calculateDeliveryCharges(
           lat,
           long,
           latitude,
           longitude
-        ); */
+        );
 
-        restaurant.deliveryCharges = 40;
+        restaurant.deliveryCharges = deliveryCharges;
 
         if (products.length > 0) {
           for (const product of products) {

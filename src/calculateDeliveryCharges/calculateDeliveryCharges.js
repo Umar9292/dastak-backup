@@ -1,7 +1,7 @@
 require('dotenv').config();
 const axios = require('axios');
 
-const calculateDeliveryCharges = async (
+exports.calculateDeliveryCharges = async (
   userLatitude,
   userLongitude,
   martLatitude,
@@ -11,8 +11,8 @@ const calculateDeliveryCharges = async (
     `https://us1.locationiq.com/v1/matrix/driving/${userLongitude},${userLatitude};${martLongitude},${martLatitude}?annotations=distance&key=${process.env.LOCATION_IQ_KEY}`
   );
 
-  const distance = result.data.distances[0][1].toFixed(1);
-  console.log(distance);
+  let distance = result.data.distances[0][1] / 1000;
+  distance = distance.toFixed(1);
 
   let deliveryCharges = 0;
 
@@ -34,10 +34,3 @@ const calculateDeliveryCharges = async (
 
   return deliveryCharges;
 };
-
-calculateDeliveryCharges(
-  32.07546878829667,
-  72.67687864601612,
-  32.03429060235852,
-  72.70534627139568
-);
