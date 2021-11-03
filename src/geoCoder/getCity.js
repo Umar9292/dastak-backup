@@ -1,14 +1,9 @@
-const NodeGeocoder = require('node-geocoder');
+const axios = require('axios');
 
 exports.getCity = async (lat, long) => {
-  const options = {
-    provider: 'google',
-    httpAdapter: 'https',
-    apiKey: process.env.GOOGLE_API_KEY,
-    formatter: 'json',
-  };
+  const result = await axios.get(
+    `https://us1.locationiq.com/v1/reverse.php?key=${process.env.LOCATION_IQ_KEY}&lat=${lat}&lon=${long}&zoom=10&format=json`
+  );
 
-  const geocoder = NodeGeocoder(options);
-  const res = await geocoder.reverse({ lat, lon: long });
-  return res[0].city;
+  return result.data.address.city;
 };
