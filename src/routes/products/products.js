@@ -23,7 +23,7 @@ router.post('/allProducts', async (req, res) => {
   try {
     const {
       martId,
-      userId,
+      // userId,
       userLatitude,
       userLongitude,
       martLatitude,
@@ -37,14 +37,16 @@ router.post('/allProducts', async (req, res) => {
 
       const restaurant = await Users.findById(martId).lean();
 
-      const deliveryCharges = await calculateDeliveryCharges(
-        userLatitude,
-        userLongitude,
-        martLatitude,
-        martLongitude
-      );
+      if (userLatitude) {
+        const deliveryCharges = await calculateDeliveryCharges(
+          userLatitude,
+          userLongitude,
+          martLatitude,
+          martLongitude
+        );
 
-      restaurant.deliveryCharges = deliveryCharges;
+        restaurant.deliveryCharges = deliveryCharges;
+      }
 
       if (data !== null) {
         return res.json({ status: '200', data: JSON.parse(data), restaurant });
@@ -58,13 +60,13 @@ router.post('/allProducts', async (req, res) => {
         Flavours.findOne({ martId }).lean(),
       ]);
 
-      const { name } = restaurant;
+      /*   const { name } = restaurant;
       if (userId && userId !== '') {
         const customer = await Users.findById(userId).select('name');
         console.log(`${customer.name} opened ${name}`);
       } else {
         console.log(`${name} has been opened`);
-      }
+      } */
 
       for (const category of categories) {
         const query = {
