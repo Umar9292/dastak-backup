@@ -199,7 +199,7 @@ router.post('/allProducts', async (req, res) => {
 
         if (products.length > 0) {
           const filteredProducts = products.filter(
-            ({ type, drinks }) => type === 'deal' || drinks === true
+            ({ type }) => type === 'deal'
           );
 
           const { specifications: flavourSpecifications } = options;
