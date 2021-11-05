@@ -1,3 +1,4 @@
+require('dotenv').config();
 const axios = require('axios');
 
 exports.calculateDeliveryCharges = async (
@@ -6,29 +7,21 @@ exports.calculateDeliveryCharges = async (
   martLatitude,
   martLongitude
 ) => {
-  const { data: distanceData } = await axios.get(
-    `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${+userLatitude},${+userLongitude}&destinations=${+martLatitude},${+martLongitude}&key=${
-      process.env.GOOGLE_API_KEY
-    }`
+  const result = await axios.get(
+    `https://us1.locationiq.com/v1/matrix/driving/${userLongitude},${userLatitude};${martLongitude},${martLatitude}?annotations=distance&key=${process.env.LOCATION_IQ_KEY}`
   );
 
-  const distance = distanceData.rows[0].elements[0].distance.text.substring(
-    0,
-    3
-  );
+  let distance = result.data.distances[0][1] / 1000;
+  distance = distance.toFixed(1);
 
   let deliveryCharges = 0;
 
-  if (distance.includes('m')) {
-    deliveryCharges = 20;
-  }
-
   if (+distance <= 1) {
-    deliveryCharges = 20;
+    deliveryCharges = 30;
   }
 
   if (+distance > 1 && +distance <= 2) {
-    deliveryCharges = 30;
+    deliveryCharges = 35;
   }
 
   if (+distance > 2 && +distance <= 4) {
