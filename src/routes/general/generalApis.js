@@ -446,4 +446,88 @@ router.post('/testAlgorithm', async (req, res) => {
   }
 });
 
+router.get('/test', async (_req, res) => {
+  try {
+    const dealProducts = await Products.find({
+      type: 'deal',
+      sizes: { $ne: undefined },
+    });
+
+    await Promise.all(
+      dealProducts.map(async product => {
+        let specifications = [];
+
+        const { sizes, drinks } = product;
+
+        if (drinks) {
+          specifications = [
+            ...specifications,
+            {
+              productName: 'Choose your drink',
+              productType: 'drink',
+              flavourType: 'regular',
+            },
+          ];
+        }
+
+        let smallPizzaCount = 1;
+        let mediumPizzaCount = 1;
+        let largePizzaCount = 1;
+
+        sizes.map(({ value }) => {
+          if (value.includes('Small')) {
+            specifications = [
+              ...specifications,
+              {
+                productName: `Small Pizza ${smallPizzaCount}`,
+                productType: 'pizza',
+                flavourType: product.regular ? 'regular' : 'dealFlavours',
+              },
+            ];
+
+            smallPizzaCount += 1;
+          }
+
+          if (value.includes('Medium')) {
+            specifications = [
+              ...specifications,
+              {
+                productName: `Medium Pizza ${mediumPizzaCount}`,
+                productType: 'pizza',
+                flavourType: product.regular ? 'regular' : 'dealFlavours',
+              },
+            ];
+
+            mediumPizzaCount += 1;
+          }
+
+          if (value.includes('Large')) {
+            specifications = [
+              ...specifications,
+              {
+                productName: `Large Pizza ${largePizzaCount}`,
+                productType: 'pizza',
+                flavourType: product.regular ? 'regular' : 'dealFlavours',
+              },
+            ];
+
+            largePizzaCount += 1;
+          }
+        });
+
+        product.specifications = specifications;
+        await product.save();
+      })
+    );
+
+    return res.json({ dealProducts });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
