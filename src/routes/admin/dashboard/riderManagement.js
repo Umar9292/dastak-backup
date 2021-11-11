@@ -102,19 +102,23 @@ router.post('/reAssignRider', async (req, res) => {
       orderCount: newRidersOrderCount,
       nightFare,
       tillNoonFare,
+      lateNightFare,
     } = await Users.findById(riderId)
-      .select('status orderCount tillNoonFare nightFare')
+      .select('status orderCount tillNoonFare nightFare lateNightFare')
       .lean();
 
     const currentTime = moment().tz('Asia/karachi');
 
     const morningFareTime = moment('04:00', 'HH:mm').tz('Asia/karachi');
     const noonFareTime = moment('16:00', 'HH:mm').tz('Asia/karachi');
+    const lateNightFareTime = moment('19:00', 'HH:mm').tz('Asia/karachi');
 
     if (currentTime.isBetween(morningFareTime, noonFareTime)) {
       req.body.riderFare = tillNoonFare;
-    } else {
+    } else if (currentTime.isBetween(noonFareTime, lateNightFareTime)) {
       req.body.riderFare = nightFare;
+    } else {
+      req.body.riderFare = lateNightFare;
     }
 
     const {
