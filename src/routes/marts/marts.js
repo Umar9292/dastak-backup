@@ -5,34 +5,40 @@ const Users = require('../../models/userModel');
 const Reviews = require('../../models/reviewsModel');
 const Orders = require('../../models/ordersModel');
 
-const { getCity } = require('../../geoCoder/getCity');
+// const { getCity } = require('../../geoCoder/getCity');
 const { openRestaurants } = require('./openRestaurants/openRestaurants');
 
 const router = Router();
 
 router.post('/allRestaurants', async (req, res) => {
   try {
-    let { lat, long, employee, city } = req.body;
+    const { lat, long, employee, city } = req.body;
 
-    if (city === '') {
+    /* if (city === '') {
       city = await getCity(lat, long);
     }
-
-    if (employee === true) {
-      const allRestaurants = await Users.find({
+ */
+    if (employee === true && city !== '') {
+      let allRestaurants = await Users.find({
         available: true,
         status: 'active',
         shopType: 'restaurant',
         city,
       }).lean();
 
-      const data1 = allRestaurants.filter(
+      let data1 = allRestaurants.filter(
         ({ featured, city }) => featured && city
       );
 
-      const data2 = allRestaurants.filter(
+      let data2 = allRestaurants.filter(
         ({ category, city }) => category === 'Home Chef' && city
       );
+
+      [allRestaurants, data1, data2] = await Promise.all([
+        openRestaurants(allRestaurants),
+        openRestaurants(data1),
+        openRestaurants(data2),
+      ]);
 
       return res.json({
         status: '200',
@@ -50,7 +56,7 @@ router.post('/allRestaurants', async (req, res) => {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 3500,
+            maxDistance: employee === true ? 20000 : 3500,
             query: {
               available: true,
               status: 'active',
@@ -68,7 +74,7 @@ router.post('/allRestaurants', async (req, res) => {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 3500,
+            maxDistance: employee === true ? 20000 : 3500,
             query: {
               available: true,
               type: 'admin',
@@ -86,7 +92,7 @@ router.post('/allRestaurants', async (req, res) => {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: 3500,
+            maxDistance: employee === true ? 20000 : 3500,
             query: {
               available: true,
               type: 'admin',
