@@ -419,17 +419,7 @@ router.post('/dastakDeals', async (req, res) => {
 
     await Promise.all(
       openRestaurants.map(async ({ _id: martId }) => {
-        const [restaurant, products, options] = await Promise.all([
-          Users.findById(martId),
-
-          Products.find({
-            martId,
-            dastakDeal: true,
-            available: 'in stock',
-          }),
-
-          Flavours.findOne({ martId }),
-        ]);
+        const restaurant = await Users.findById(martId);
 
         const [longitude, latitude] = restaurant.geometry.coordinates;
         const deliveryCharges = await calculateDeliveryCharges(
@@ -440,6 +430,16 @@ router.post('/dastakDeals', async (req, res) => {
         );
 
         restaurant.deliveryCharges = deliveryCharges;
+
+        const [products, options] = await Promise.all([
+          Products.find({
+            martId,
+            dastakDeal: true,
+            available: 'in stock',
+          }),
+
+          Flavours.findOne({ martId }),
+        ]);
 
         if (products.length > 0) {
           for (const product of products) {
