@@ -7,7 +7,7 @@ const StoreProducts = require('../../models/storeProducts');
 const Flavours = require('../../models/flavoursAndDrinks');
 const Categories = require('../../models/categoriesModel');
 
-const { getCity } = require('../../geoCoder/getCity');
+// const { getCity } = require('../../geoCoder/getCity');
 const {
   openRestaurants: checkOpenRestaurants,
 } = require('../../routes/marts/openRestaurants/openRestaurants');
@@ -274,42 +274,27 @@ router.post('/updateProductsAvailability', async (req, res) => {
 
 router.post('/dastakDeals', async (req, res) => {
   try {
-    let { lat, long, employee, city } = req.body;
+    const { lat, long, employee } = req.body;
 
     let restaurants = [];
 
-    if (!employee) {
-      restaurants = await Users.aggregate([
-        {
-          $geoNear: {
-            near: { type: 'Point', coordinates: [long, lat] },
-            distanceField: 'dist',
-            maxDistance: 3500,
-            query: {
-              available: true,
-              dastakDeal: true,
-              type: 'admin',
-              status: 'active',
-              shopType: 'restaurant',
-            },
-            spherical: true,
+    restaurants = await Users.aggregate([
+      {
+        $geoNear: {
+          near: { type: 'Point', coordinates: [long, lat] },
+          distanceField: 'dist',
+          maxDistance: employee === true ? 20000 : 3500,
+          query: {
+            available: true,
+            dastakDeal: true,
+            type: 'admin',
+            status: 'active',
+            shopType: 'restaurant',
           },
+          spherical: true,
         },
-      ]);
-    } else {
-      if (city === '') {
-        city = await getCity(lat, long);
-      }
-
-      restaurants = await Users.find({
-        available: true,
-        dastakDeal: true,
-        type: 'admin',
-        status: 'active',
-        shopType: 'restaurant',
-        city,
-      });
-    }
+      },
+    ]);
 
     const openRestaurants = await checkOpenRestaurants(restaurants);
 
