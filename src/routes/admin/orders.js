@@ -608,6 +608,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
         acceptedOrders = await Orders.find({
           status: 'Admin Accepted',
           orderType: 'Delivery',
+          city,
         })
           .sort({
             createdAt: -1,
@@ -618,6 +619,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
       acceptedOrders = await Orders.find({
         status: 'Admin Accepted',
         orderType: 'Delivery',
+        city,
       })
         .sort({
           createdAt: -1,
