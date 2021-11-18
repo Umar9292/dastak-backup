@@ -577,7 +577,7 @@ router.post('/adminResponse', async (req, res) => {
 
 router.post('/adminAcceptedOrders', async (req, res) => {
   try {
-    // Todo: Change this api, availbe and city should come from fron end
+    // Todo: Change this api, availbe and city should come from front end
     const { riderId } = req.body;
     let acceptedOrders = [];
 
