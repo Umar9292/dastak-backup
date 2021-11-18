@@ -577,21 +577,46 @@ router.post('/adminResponse', async (req, res) => {
 
 router.post('/adminAcceptedOrders', async (req, res) => {
   try {
+    // Todo: Change this api, availbe and city should come from fron end
     const { riderId } = req.body;
+    let acceptedOrders = [];
 
-    const { name, available, city } = await Users.findById(riderId)
-      .select('name available city')
+    const { name, available, city, status } = await Users.findById(riderId)
+      .select('name available city status')
       .lean();
 
     console.log(`${name} refreshed`);
 
-    let acceptedOrders = [];
+    if (!available) {
+      return res.json({
+        status: '404',
+        msg:
+          'Kindly make your self available by clicking the button on the bottom right.',
+      });
+    }
 
-    if (available) {
+    const idleRiders = await Users.countDocuments({
+      type: 'rider',
+      status: 'idle',
+      available: true,
+      city,
+    });
+
+    if (idleRiders > 0) {
+      if (status === 'idle') {
+        acceptedOrders = await Orders.find({
+          status: 'Admin Accepted',
+          orderType: 'Delivery',
+        })
+          .sort({
+            createdAt: -1,
+          })
+          .lean();
+      }
+    } else {
       acceptedOrders = await Orders.find({
         status: 'Admin Accepted',
         orderType: 'Delivery',
-        city,
       })
         .sort({
           createdAt: -1,
