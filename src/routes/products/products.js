@@ -129,6 +129,7 @@ router.post('/allProducts', async (req, res) => {
       client.setex(martId, 600, JSON.stringify(finalData));
     });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
