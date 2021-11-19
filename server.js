@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const { join } = require('path');
 const { config } = require('cloudinary');
 const compression = require('compression');
-const { connect } = require('mongoose');
+const { connect, connection } = require('mongoose');
 const { createServer } = require('http');
 const socketIo = require('socket.io');
 const redis = require('socket.io-redis');
@@ -34,7 +34,9 @@ const updateProductRouter = require('./src/routes/stores/updatePrices');
 const otpVerificationRouter = require('./src/routes/user/otpVerification');
 const uploadPrescription = require('./src/routes/stores/uploadPrescription');
 
+const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
+const { notifyUser } = require('./src/notificationHandler/handler');
 
 const port = process.env.PORT || 8080;
 
@@ -67,6 +69,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, 'views')));
 
+app.use('/orders', ordersRouter);
+app.use('/marts', martsRouter);
+app.use('/app', appVersionRouter);
+app.use('/general', playerIdRouter, generalApisRouter);
+app.use('/products', productsRouter, productImageRouter);
+app.use('/chat', chatRouter);
 app.use(
   '/user',
   signUpRouter,
@@ -75,12 +83,6 @@ app.use(
   usersReviewRouter,
   otpVerificationRouter
 );
-app.use('/orders', ordersRouter);
-app.use('/marts', martsRouter);
-app.use('/app', appVersionRouter);
-app.use('/general', playerIdRouter, generalApisRouter);
-app.use('/products', productsRouter, productImageRouter);
-app.use('/chat', chatRouter);
 app.use(
   '/stores',
   medicalStoresRouter,
@@ -115,6 +117,24 @@ connect(
     }
   }
 );
+
+connection.once('open', () => {
+  const changeStream = connection.collection('users').watch();
+
+  changeStream.on('change', async change => {
+    if (change.operationType === 'update') {
+      const { documentKey, updateDescription } = change;
+
+      const { name, orderCount } = await Users.findById(documentKey._id);
+
+      if (updateDescription.updatedFields.orderCount < 0) {
+        const msg = `Order count in minus for rider ${name} i.e ${orderCount}`;
+        notifyUser(msg, '378fa662-adc7-49b7-a560-efa4f653e887', {});
+        notifyUser(msg, 'ac6d647f-e496-408c-bc3b-6cb442578258', {});
+      }
+    }
+  });
+});
 
 config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
