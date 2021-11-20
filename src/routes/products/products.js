@@ -400,7 +400,7 @@ router.post('/dastakDeals', async (req, res) => {
         $geoNear: {
           near: { type: 'Point', coordinates: [long, lat] },
           distanceField: 'dist',
-          maxDistance: employee === true ? 20000 : 2800,
+          maxDistance: employee === true ? 20000 : 3000,
           query: {
             available: true,
             dastakDeal: true,

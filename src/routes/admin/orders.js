@@ -568,7 +568,7 @@ router.post('/adminResponse', async (req, res) => {
   }
 });
 
-router.post('/adminAcceptedOrders', async (req, res) => {
+/* router.post('/adminAcceptedOrders', async (req, res) => {
   try {
     // Todo: Change this api, availbe and city should come from front end
     const { riderId } = req.body;
@@ -609,6 +609,43 @@ router.post('/adminAcceptedOrders', async (req, res) => {
           .lean();
       }
     } else {
+      acceptedOrders = await Orders.find({
+        status: 'Admin Accepted',
+        orderType: 'Delivery',
+        city,
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .lean();
+    }
+
+    return res.json({
+      status: '200',
+      data: acceptedOrders,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+router.post('/adminAcceptedOrders', async (req, res) => {
+  try {
+    const { riderId } = req.body;
+
+    const { name, available, city } = await Users.findById(riderId)
+      .select('name available city')
+      .lean();
+
+    console.log(`${name} refreshed`);
+
+    let acceptedOrders = [];
+
+    if (available) {
       acceptedOrders = await Orders.find({
         status: 'Admin Accepted',
         orderType: 'Delivery',
