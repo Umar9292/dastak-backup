@@ -575,7 +575,7 @@ router.post('/adminResponse', async (req, res) => {
   }
 });
 
-/* router.post('/adminAcceptedOrders', async (req, res) => {
+router.post('/adminAcceptedOrders', async (req, res) => {
   try {
     // Todo: Change this api, availbe and city should come from front end
     const { riderId } = req.body;
@@ -638,9 +638,9 @@ router.post('/adminResponse', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
-router.post('/adminAcceptedOrders', async (req, res) => {
+/* router.post('/adminAcceptedOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
@@ -676,7 +676,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
     });
   }
 });
-
+ */
 router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
