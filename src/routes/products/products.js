@@ -8,6 +8,7 @@ const Flavours = require('../../models/flavoursAndDrinks');
 const Categories = require('../../models/categoriesModel');
 
 // const { getCity } = require('../../geoCoder/getCity');
+const { notifyUser } = require('../../notificationHandler/handler');
 const {
   openRestaurants: checkOpenRestaurants,
 } = require('../../routes/marts/openRestaurants/openRestaurants');
@@ -333,12 +334,21 @@ router.post('/editProduct', async (req, res) => {
   try {
     const { productId } = req.body;
 
-    await Products.findByIdAndUpdate(productId, { $set: req.body });
+    const { martId, category, productName } = await Products.findByIdAndUpdate(
+      productId,
+      {
+        $set: req.body,
+      }
+    );
 
-    return res.json({
+    res.json({
       status: '200',
       msg: 'Product updated',
     });
+
+    const { name } = await Users.findById(martId).select('name');
+    const msg = `${name} updated a product of ${category} category where product name = ${productName}`;
+    await notifyUser(msg, 'ac6d647f-e496-408c-bc3b-6cb442578258', {});
   } catch (err) {
     return res.json({
       status: '404',
