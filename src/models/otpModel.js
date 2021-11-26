@@ -5,6 +5,7 @@ const otpModel = Schema(
     phone: String,
     secret: String,
     otp: String,
+    token: String,
   },
   {
     versionKey: false,
