@@ -1074,6 +1074,14 @@ router.post('/changeOrderStatus', async (req, res) => {
 
     const currentTime = moment().tz('Asia/karachi');
 
+    const { status: currentOrderStatus } = await Orders.findById(orderId);
+    if (currentOrderStatus === 'Delivered') {
+      return res.json({
+        status: '404',
+        msg: 'Order is already delivered',
+      });
+    }
+
     const order = await Orders.findByIdAndUpdate(
       orderId,
       { $set: req.body },
