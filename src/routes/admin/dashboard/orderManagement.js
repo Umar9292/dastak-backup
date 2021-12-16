@@ -251,7 +251,10 @@ router.post('/reOpenOrder', async (req, res) => {
     if (order.riderId) {
       order.status = 'Rider Accepted';
 
-      await Users.findByIdAndUpdate(order.riderId, { $inc: { orderCount: 1 } });
+      await Users.findByIdAndUpdate(order.riderId, {
+        $inc: { orderCount: 1 },
+        status: 'on delivery',
+      });
     } else {
       order.status = 'Admin Accepted';
     }
