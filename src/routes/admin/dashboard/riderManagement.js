@@ -23,8 +23,14 @@ router.post('/allRiders', async (req, res) => {
       .lean();
 
     const totalCollection = riders.reduce((a, b) => a + b.pendingCollection, 0);
+    const unpaidCollection = riders.reduce((a, b) => a + b.unpaidCollection, 0);
 
-    return res.json({ status: '200', totalCollection, riders });
+    return res.json({
+      status: '200',
+      totalCollection,
+      riders,
+      unpaidCollection,
+    });
   } catch (err) {
     return res.json({
       status: '404',
