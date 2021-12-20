@@ -49,10 +49,7 @@ const userModel = Schema(
       type: String,
       default: '',
     },
-    address: {
-      type: Array,
-      default: [],
-    },
+    address: Array,
     playerId: String,
     type: {
       type: String,

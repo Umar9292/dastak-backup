@@ -2,10 +2,9 @@ const { Schema, model } = require('mongoose');
 
 const otpModel = Schema(
   {
-    userId: String,
-    email: String,
+    phone: String,
     secret: String,
-    token: String,
+    otp: String,
   },
   {
     versionKey: false,

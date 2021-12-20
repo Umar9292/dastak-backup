@@ -89,6 +89,7 @@ router.post('/userPlayerId', async (req, res) => {
       return unique.save();
     }
   } catch (err) {
+    console.log(err);
     return res.json({
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,

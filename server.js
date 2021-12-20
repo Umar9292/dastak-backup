@@ -11,12 +11,10 @@ const { createServer } = require('http');
 const socketIo = require('socket.io');
 const redis = require('socket.io-redis');
 
-const signUpRouter = require('./src/routes/user/signUp');
 const profileRouter = require('./src/routes/user/profle');
 const productsRouter = require('./src/routes/products/products');
 const productImageRouter = require('./src/routes/admin/productImage');
 const ordersRouter = require('./src/routes/admin/orders');
-const logoutRouter = require('./src/routes/user/logout');
 const martsRouter = require('./src/routes/marts/marts');
 const appVersionRouter = require('./src/routes/general/appVersion');
 const playerIdRouter = require('./src/routes/general/playerIds');
@@ -75,14 +73,7 @@ app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 app.use('/chat', chatRouter);
-app.use(
-  '/user',
-  signUpRouter,
-  profileRouter,
-  logoutRouter,
-  usersReviewRouter,
-  otpVerificationRouter
-);
+app.use('/user', profileRouter, usersReviewRouter, otpVerificationRouter);
 app.use(
   '/stores',
   medicalStoresRouter,
