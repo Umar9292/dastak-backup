@@ -35,6 +35,7 @@ const userModel = Schema(
     jazzCashNumber: String,
     orderFare: Number,
     dastakDeal: Boolean,
+    pickupDeals: Boolean,
     fareType: String,
     altPhone: String,
     name: String,

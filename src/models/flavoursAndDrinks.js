@@ -3,6 +3,7 @@ const { Schema, model } = require('mongoose');
 const optionsModel = Schema(
   {
     martId: String,
+    specifications: Object,
     flavours: Object,
     regularFlavours: Object,
     dealFlavours: Object,

@@ -399,7 +399,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
   }
 });
 
-router.post('/dastakDeals', async (req, res) => {
+/* router.post('/dastakDeals', async (req, res) => {
   try {
     const { lat, long, employee } = req.body;
 
@@ -472,6 +472,98 @@ router.post('/dastakDeals', async (req, res) => {
     return res.json({
       status: '200',
       data: dastakDeals,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+router.post('/pickupDeals', async (req, res) => {
+  try {
+    const { lat, long, employee } = req.body;
+
+    let restaurants = [];
+
+    restaurants = await Users.aggregate([
+      {
+        $geoNear: {
+          near: { type: 'Point', coordinates: [long, lat] },
+          distanceField: 'dist',
+          maxDistance: employee === true ? 20000 : 3000,
+          query: {
+            available: true,
+            pickupDeals: true,
+            type: 'admin',
+            status: 'active',
+            shopType: 'restaurant',
+          },
+          spherical: true,
+        },
+      },
+    ]);
+
+    // const openRestaurants = await checkOpenRestaurants(restaurants);
+
+    let pickupDeals = [];
+
+    await Promise.all(
+      restaurants.map(async ({ _id: martId }) => {
+        const [restaurant, products, options] = await Promise.all([
+          Users.findById(martId),
+
+          Products.find({
+            martId,
+            pickupDeal: true,
+            available: 'in stock',
+          }),
+
+          Flavours.findOne({ martId }),
+        ]);
+
+        if (products.length > 0) {
+          const { specifications: flavourSpecifications } = options;
+          const details = [];
+
+          for (const product of products) {
+            product.restaurant = restaurant;
+
+            if (product.type === 'deal') {
+              const { specifications } = product;
+
+              await Promise.all(
+                specifications.map(
+                  ({ productName, productType, flavourType }) => {
+                    flavourSpecifications.map(specification => {
+                      if (
+                        productType === specification.productType &&
+                        flavourType === specification.flavourType
+                      ) {
+                        details.push({
+                          title: productName,
+                          data: specification.data,
+                        });
+                      }
+                    });
+                  }
+                )
+              );
+
+              product.specifications = details;
+            }
+
+            pickupDeals = [...pickupDeals, product];
+          }
+        }
+      })
+    );
+
+    return res.json({
+      status: '200',
+      pickupDeals,
     });
   } catch (err) {
     console.log(err);
