@@ -33,35 +33,35 @@ router.post('/allProducts', async (req, res) => {
 
     let finalData = [];
 
-    client.get(martId, async (err, data) => {
-      if (err) console.log(err);
+    // client.get(martId, async (err, data) => {
+    //   if (err) console.log(err);
 
-      const restaurant = await Users.findById(martId).lean();
+    const restaurant = await Users.findById(martId).lean();
 
-      if (userLatitude) {
-        const deliveryCharges = await calculateDeliveryCharges(
-          userLatitude,
-          userLongitude,
-          martLatitude,
-          martLongitude
-        );
+    if (userLatitude) {
+      const deliveryCharges = await calculateDeliveryCharges(
+        userLatitude,
+        userLongitude,
+        martLatitude,
+        martLongitude
+      );
 
-        restaurant.deliveryCharges = deliveryCharges;
-      }
+      restaurant.deliveryCharges = deliveryCharges;
+    }
 
-      if (data !== null) {
-        return res.json({ status: '200', data: JSON.parse(data), restaurant });
-      }
+    // if (data !== null) {
+    //   return res.json({ status: '200', data: JSON.parse(data), restaurant });
+    // }
 
-      const [{ categories }, options] = await Promise.all([
-        Categories.findOne({ martId })
-          .select('categories')
-          .lean(),
+    const [{ categories }, options] = await Promise.all([
+      Categories.findOne({ martId })
+        .select('categories')
+        .lean(),
 
-        Flavours.findOne({ martId }).lean(),
-      ]);
+      Flavours.findOne({ martId }).lean(),
+    ]);
 
-      /*   const { name } = restaurant;
+    /*   const { name } = restaurant;
       if (userId && userId !== '') {
         const customer = await Users.findById(userId).select('name');
         console.log(`${customer.name} opened ${name}`);
@@ -69,66 +69,66 @@ router.post('/allProducts', async (req, res) => {
         console.log(`${name} has been opened`);
       } */
 
-      for (const category of categories) {
-        const query = {
-          category,
-          martId,
-          available: 'in stock',
-        };
+    for (const category of categories) {
+      const query = {
+        category,
+        martId,
+        available: 'in stock',
+      };
 
-        const products = await Products.find(query).sort({
-          dealNumber: 1,
-          productName: 1,
-          quantity: -1,
-        });
-
-        if (products.length > 0) {
-          const filteredProducts = products.filter(
-            ({ type, drinks }) => type === 'deal' || drinks === true
-          );
-
-          if (filteredProducts.length > 0) {
-            for (const product of filteredProducts) {
-              const { type, regular, drinks } = product;
-
-              if (product.dealFlavours) {
-                product.flavours = options.dealFlavours;
-              } else {
-                if (
-                  (type === 'deal' && !regular) ||
-                  (type === 'deal' && regular === undefined)
-                ) {
-                  product.flavours = options.flavours;
-                }
-
-                if (type === 'deal' && regular) {
-                  product.flavours = options.regularFlavours;
-                }
-              }
-
-              if (drinks === true) {
-                product.allDrinks = options.drinks;
-              }
-            }
-          }
-
-          const data = {
-            category: query.category,
-            data: products,
-          };
-
-          finalData = [...finalData, data];
-        }
-      }
-
-      res.json({
-        status: '200',
-        data: finalData,
-        restaurant,
+      const products = await Products.find(query).sort({
+        dealNumber: 1,
+        productName: 1,
+        quantity: -1,
       });
 
-      client.setex(martId, 600, JSON.stringify(finalData));
+      if (products.length > 0) {
+        const filteredProducts = products.filter(
+          ({ type, drinks }) => type === 'deal' || drinks === true
+        );
+
+        if (filteredProducts.length > 0) {
+          for (const product of filteredProducts) {
+            const { type, regular, drinks } = product;
+
+            if (product.dealFlavours) {
+              product.flavours = options.dealFlavours;
+            } else {
+              if (
+                (type === 'deal' && !regular) ||
+                (type === 'deal' && regular === undefined)
+              ) {
+                product.flavours = options.flavours;
+              }
+
+              if (type === 'deal' && regular) {
+                product.flavours = options.regularFlavours;
+              }
+            }
+
+            if (drinks === true) {
+              product.allDrinks = options.drinks;
+            }
+          }
+        }
+
+        const data = {
+          category: query.category,
+          data: products,
+        };
+
+        finalData = [...finalData, data];
+      }
+    }
+
+    res.json({
+      status: '200',
+      data: finalData,
+      restaurant,
     });
+
+    //   client.setex(martId, 600, JSON.stringify(finalData));
+    // });
   } catch (err) {
     console.log(err);
     return res.json({
