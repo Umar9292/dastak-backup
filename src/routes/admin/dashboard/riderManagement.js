@@ -13,6 +13,7 @@ router.post('/allRiders', async (req, res) => {
 
     const riders = await Users.find({
       city,
+      status: { $eq: 'inactive' },
       type: 'rider',
       $or: [
         { pendingCollection: { $gt: 0 } },

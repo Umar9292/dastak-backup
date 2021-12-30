@@ -1,34 +1,48 @@
-// const axios = require('axios');
+/* eslint-disable camelcase */
+const axios = require('axios');
+const crypto = require('crypto');
 
-/* const test = async () => {
-  const data = {
-    pp_Language: 'EN',
-    pp_MerchantID: 'MC25672',
-    pp_Password: 'sxsu7z9sw1',
-    pp_TxnRefNo: '50',
-    pp_Amount: '10000',
-    pp_TxnCurrency: 'PKR',
-    pp_TxnDateTime: '20211022231031',
-    pp_BillReference: 'billRef',
-    pp_Description: 'Description of transaction',
-    pp_TxnExpiryDateTime: '20211023231031',
-    pp_MobileNumber: '03123456789',
-    pp_CNIC: '345678',
-    pp_SecureHash:
-      '95CE035F285A506B876DEC53130939C26364EA9B140C107CE7BB926F6A58F908',
-  };
+const test = async () => {
+  try {
+    const str =
+      '2813a08s52&20000&order2&345678&Description of transaction&EN&MC25672&03123456789&sxsu7z9sw1&125045&PKR&20211229154831&20211229155831';
 
-  const result = await axios.post(
-    'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction',
-    data
-  );
+    const secret = '2813a08s52';
+    const sha256Hasher = crypto.createHmac('sha256', secret);
+    const hash = sha256Hasher.update(str).digest('hex');
 
-  console.log(result.data);
+    console.log(hash);
 
-  return result;
+    const data = {
+      pp_Amount: '20000',
+      pp_BillReference: 'order2',
+      pp_CNIC: '345678',
+      pp_Description: 'Description of transaction',
+      pp_Language: 'EN',
+      pp_MerchantID: 'MC25672',
+      pp_MobileNumber: '03123456789',
+      pp_Password: 'sxsu7z9sw1',
+      pp_TxnRefNo: '125045',
+      pp_TxnCurrency: 'PKR',
+      pp_TxnDateTime: '20211229154831',
+      pp_TxnExpiryDateTime: '20211229155831',
+      pp_SecureHash: hash,
+    };
+
+    const result = await axios.post(
+      'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction',
+      data
+    );
+
+    console.log(result.data);
+
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
-test(); */
+test();
 
 /* const refundTest = async () => {
   const data = {

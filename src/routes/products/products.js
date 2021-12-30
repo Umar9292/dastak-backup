@@ -12,9 +12,6 @@ const { notifyUser } = require('../../notificationHandler/handler');
 const {
   openRestaurants: checkOpenRestaurants,
 } = require('../../routes/marts/openRestaurants/openRestaurants');
-const {
-  calculateDeliveryCharges,
-} = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
 
 const client = createClient(process.env.REDIS_URL);
 
@@ -139,112 +136,90 @@ const router = Router();
 
 router.post('/allProducts', async (req, res) => {
   try {
-    const {
-      martId,
-      userLatitude,
-      userLongitude,
-      martLatitude,
-      martLongitude,
-    } = req.body;
+    const { martId } = req.body;
 
     let finalData = [];
 
-    client.get(martId, async (err, data) => {
-      if (err) console.log(err);
+    // client.get(martId, async (err, data) => {
+    //   if (err) console.log(err);
 
-      if (data !== null) {
-        finalData = JSON.parse(data);
-      }
+    //   if (data !== null) {
+    //     finalData = JSON.parse(data);
+    //   }
 
-      const [restaurant, deliveryCharges] = await Promise.all([
-        Users.findById(martId).lean(),
+    // if (data !== null) {
+    //   return res.json({ status: '200', data: finalData, restaurant });
+    // }
 
-        calculateDeliveryCharges(
-          userLatitude,
-          userLongitude,
-          martLatitude,
-          martLongitude
-        ),
-      ]);
+    const [{ categories }, options] = await Promise.all([
+      Categories.findOne({ martId })
+        .select('categories')
+        .lean(),
 
-      restaurant.deliveryCharges = deliveryCharges;
+      Flavours.findOne({ martId }).lean(),
+    ]);
 
-      if (data !== null) {
-        return res.json({ status: '200', data: finalData, restaurant });
-      }
+    for (const category of categories) {
+      const query = {
+        category,
+        martId,
+        available: 'in stock',
+      };
 
-      const [{ categories }, options] = await Promise.all([
-        Categories.findOne({ martId })
-          .select('categories')
-          .lean(),
-
-        Flavours.findOne({ martId }).lean(),
-      ]);
-
-      for (const category of categories) {
-        const query = {
-          category,
-          martId,
-          available: 'in stock',
-        };
-
-        const products = await Products.find(query).sort({
-          dealNumber: 1,
-          productName: 1,
-          quantity: -1,
-        });
-
-        if (products.length > 0) {
-          const filteredProducts = products.filter(
-            ({ type }) => type === 'deal'
-          );
-
-          const { specifications: flavourSpecifications } = options;
-          const details = [];
-
-          if (filteredProducts.length > 0) {
-            for (const product of filteredProducts) {
-              const { specifications } = product;
-
-              await Promise.all(
-                specifications.map(
-                  ({ productName, productType, flavourType }) => {
-                    flavourSpecifications.map(specification => {
-                      if (
-                        productType === specification.productType &&
-                        flavourType === specification.flavourType
-                      ) {
-                        details.push({
-                          title: productName,
-                          data: specification.data,
-                        });
-                      }
-                    });
-                  }
-                )
-              );
-
-              product.specifications = details;
-            }
-          }
-
-          const data = {
-            category: query.category,
-            data: products,
-          };
-
-          finalData = [...finalData, data];
-        }
-      }
-
-      res.json({
-        status: '200',
-        data: finalData,
-        restaurant,
+      const products = await Products.find(query).sort({
+        dealNumber: 1,
+        productName: 1,
+        quantity: -1,
       });
 
-      client.setex(martId, 600, JSON.stringify(finalData));
+      if (products.length > 0) {
+        const filteredProducts = products.filter(({ type }) => type === 'deal');
+
+        const { specifications: flavourSpecifications } = options;
+        const details = [];
+
+        if (filteredProducts.length > 0) {
+          for (const product of filteredProducts) {
+            const { specifications } = product;
+
+            await Promise.all(
+              specifications.map(
+                ({ productName, productType, flavourType }) => {
+                  flavourSpecifications.map(specification => {
+                    if (
+                      productType === specification.productType &&
+                      flavourType === specification.flavourType
+                    ) {
+                      details.push({
+                        title: productName,
+                        data: specification.data,
+                      });
+                    }
+                  });
+                }
+              )
+            );
+
+            product.specifications = details;
+          }
+        }
+
+        const data = {
+          category: query.category,
+          data: products,
+        };
+
+        finalData = [...finalData, data];
+      }
+    }
+
+    res.json({
+      status: '200',
+      data: finalData,
     });
+
+    // client.setex(martId, 600, JSON.stringify(finalData));
+    // });
   } catch (err) {
     console.log(err);
     return res.json({
@@ -484,7 +459,7 @@ router.post('/updateProductsAvailability', async (req, res) => {
 
 router.post('/pickupDeals', async (req, res) => {
   try {
-    const { lat, long, employee } = req.body;
+    const { lat, long } = req.body;
 
     let restaurants = [];
 
@@ -493,7 +468,7 @@ router.post('/pickupDeals', async (req, res) => {
         $geoNear: {
           near: { type: 'Point', coordinates: [long, lat] },
           distanceField: 'dist',
-          maxDistance: employee === true ? 20000 : 3000,
+          maxDistance: 20000,
           query: {
             available: true,
             pickupDeals: true,
@@ -506,12 +481,12 @@ router.post('/pickupDeals', async (req, res) => {
       },
     ]);
 
-    // const openRestaurants = await checkOpenRestaurants(restaurants);
+    const openRestaurants = await checkOpenRestaurants(restaurants);
 
     let pickupDeals = [];
 
     await Promise.all(
-      restaurants.map(async ({ _id: martId }) => {
+      openRestaurants.map(async ({ _id: martId }) => {
         const [restaurant, products, options] = await Promise.all([
           Users.findById(martId),
 

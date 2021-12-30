@@ -10,14 +10,14 @@ const { openRestaurants } = require('./openRestaurants/openRestaurants');
 
 const router = Router();
 
-router.post('/allRestaurants', async (req, res) => {
+/* router.post('/allRestaurants', async (req, res) => {
   try {
     const { lat, long, employee, city } = req.body;
 
-    /* if (city === '') {
+    if (city === '') {
       city = await getCity(lat, long);
     }
- */
+
     if (employee === true && city !== '') {
       let allRestaurants = await Users.find({
         available: true,
@@ -118,6 +118,118 @@ router.post('/allRestaurants', async (req, res) => {
       data1: data1.length !== 0 ? data1 : undefined,
       label2: data2.length !== 0 ? 'Home Chefs' : undefined,
       data2: data2.length !== 0 ? data2 : undefined,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      data: 'Looks like an error occurred on our side. Kindly try again',
+      error: err.toString(),
+    });
+  }
+}); */
+
+router.post('/allRestaurants', async (req, res) => {
+  try {
+    const { lat, long, employee, city, flag } = req.body;
+
+    /* if (city === '') {
+      city = await getCity(lat, long);
+    }
+ */
+    if (flag === 'pickup') {
+      const allRestaurants = await Users.aggregate([
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [long, lat] },
+            distanceField: 'dist',
+            maxDistance: 20000,
+            query: {
+              available: true,
+              status: 'active',
+              shopType: 'restaurant',
+            },
+            spherical: true,
+          },
+        },
+        { $sort: { position: 1 } },
+      ]);
+
+      // allRestaurants = await openRestaurants(allRestaurants);
+
+      return res.json({
+        status: '200',
+        allRestaurants,
+      });
+    }
+
+    if (employee === true && city !== '') {
+      const allRestaurants = await Users.find({
+        available: true,
+        status: 'active',
+        shopType: 'restaurant',
+        city,
+      }).lean();
+
+      // allRestaurants = await openRestaurants(allRestaurants);
+
+      const featured = allRestaurants.filter(
+        ({ featured, city }) => featured && city
+      );
+
+      return res.json({
+        status: '200',
+        allRestaurants,
+        featured,
+      });
+    }
+
+    let [featured, allRestaurants] = await Promise.all([
+      Users.aggregate([
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [long, lat] },
+            distanceField: 'dist',
+            maxDistance: employee === true ? 20000 : 3000,
+            query: {
+              available: true,
+              status: 'active',
+              shopType: 'restaurant',
+              featured: true,
+            },
+            spherical: true,
+          },
+        },
+        { $sort: { position: 1 } },
+      ]),
+
+      Users.aggregate([
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [long, lat] },
+            distanceField: 'dist',
+            maxDistance: employee === true ? 20000 : 3000,
+            query: {
+              available: true,
+              type: 'admin',
+              status: 'active',
+              shopType: 'restaurant',
+            },
+            spherical: true,
+          },
+        },
+      ]),
+    ]);
+
+    [allRestaurants, featured] = await Promise.all([
+      openRestaurants(allRestaurants),
+      openRestaurants(featured),
+    ]);
+
+    return res.json({
+      status: '200',
+      allRestaurants,
+      featured,
     });
   } catch (err) {
     console.log(err);

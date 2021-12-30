@@ -31,6 +31,8 @@ const storeProductsRouter = require('./src/routes/stores/storeProducts');
 const updateProductRouter = require('./src/routes/stores/updatePrices');
 const otpVerificationRouter = require('./src/routes/user/otpVerification');
 const uploadPrescription = require('./src/routes/stores/uploadPrescription');
+const deliveryChargesRouter = require('./src/routes/user/deliveryCharges');
+const vouchersRouter = require('./src/routes/user/vouchers');
 
 const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -73,7 +75,14 @@ app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 app.use('/chat', chatRouter);
-app.use('/user', profileRouter, usersReviewRouter, otpVerificationRouter);
+app.use(
+  '/user',
+  profileRouter,
+  usersReviewRouter,
+  otpVerificationRouter,
+  deliveryChargesRouter,
+  vouchersRouter
+);
 app.use(
   '/stores',
   medicalStoresRouter,

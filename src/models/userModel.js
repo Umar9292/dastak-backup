@@ -29,6 +29,7 @@ const userModel = Schema(
       type: String,
       default: 'active',
     },
+    favouriteRestaurants: Array,
     riderAddress: String,
     employee: Boolean,
     available: Boolean,
