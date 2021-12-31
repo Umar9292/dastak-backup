@@ -415,9 +415,9 @@ router.post('/adminResponse', async (req, res) => {
       } else {
         let msg;
         if (orderStatus !== 'Pending') {
-          msg = `Dear ${user.name} your order# ${orderNum} has been cancelled.`;
+          msg = `Dear Dastak user your order# ${orderNum} from ${shop.name} has been cancelled.`;
         } else {
-          msg = `Dear ${user.name} your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
+          msg = `Dear Dastak user your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
         }
 
         await axios.get(
@@ -467,7 +467,7 @@ router.post('/adminResponse', async (req, res) => {
 
     if (status === 'Admin Accepted' && !customerNotified) {
       if (orderType === 'PickUp') {
-        const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's ready.`;
+        const msg = `Dear Dastak user your order# ${orderNum} from ${shop.name} is accepted and being prepared. We'll notify you once it's ready.`;
 
         if (user.type === 'admin') {
           const { playerIds } = user;
@@ -491,7 +491,7 @@ router.post('/adminResponse', async (req, res) => {
         });
       }
 
-      const msg = `Dear ${user.name} your order# ${orderNum} is accepted and being prepared. We'll notify you once it's dispatched.`;
+      const msg = `Dear Dastak user your order# ${orderNum} from ${shop.name}is accepted and being prepared. We'll notify you once it's dispatched.`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
       const [idleRiders, allRiders] = await Promise.all([
