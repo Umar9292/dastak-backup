@@ -491,7 +491,7 @@ router.post('/adminResponse', async (req, res) => {
         });
       }
 
-      const msg = `Dear Dastak user your order# ${orderNum} from ${shop.name}is accepted and being prepared. We'll notify you once it's dispatched.`;
+      const msg = `Dear Dastak user your order# ${orderNum} from ${shop.name} is accepted and being prepared. We'll notify you once it's dispatched.`;
       await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
       const [idleRiders, allRiders] = await Promise.all([
