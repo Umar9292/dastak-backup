@@ -1,11 +1,22 @@
 /* eslint-disable camelcase */
 const axios = require('axios');
 const crypto = require('crypto');
+const moment = require('moment-timezone');
 
 const test = async () => {
   try {
-    const str =
-      '2813a08s52&20000&order2&345678&Description of transaction&EN&MC25672&03123456789&sxsu7z9sw1&125045&PKR&20211229154831&20211229155831';
+    const currentDate = moment()
+      .tz('Asia/Karachi')
+      .format('YYYYMMDDHHmmss');
+
+    const expiryDate = moment()
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .format('YYYYMMDDHHmmss');
+
+    console.log(currentDate, expiryDate);
+
+    const str = `2813a08s52&20000&order2&345678&Description of transactions&EN&MC25672&03123456789&sxsu7z9sw1&PKR&${currentDate}&${expiryDate}&125050`;
 
     const secret = '2813a08s52';
     const sha256Hasher = crypto.createHmac('sha256', secret);
@@ -17,16 +28,26 @@ const test = async () => {
       pp_Amount: '20000',
       pp_BillReference: 'order2',
       pp_CNIC: '345678',
-      pp_Description: 'Description of transaction',
+      pp_Description: 'Description of transactions',
       pp_Language: 'EN',
       pp_MerchantID: 'MC25672',
       pp_MobileNumber: '03123456789',
       pp_Password: 'sxsu7z9sw1',
-      pp_TxnRefNo: '125045',
       pp_TxnCurrency: 'PKR',
-      pp_TxnDateTime: '20211229154831',
-      pp_TxnExpiryDateTime: '20211229155831',
+      pp_TxnDateTime: currentDate,
+      pp_TxnExpiryDateTime: expiryDate,
+      pp_TxnRefNo: '125050',
+      // pp_TxnType: 'mobile',
+      // pp_Version: '2.0',
       pp_SecureHash: hash,
+      // pp_SubMerchantID: '',
+      // pp_BankID: '',
+      // pp_ProductID: '',
+      // ppmpf_1: '',
+      // ppmpf_2: '',
+      // ppmpf_3: '',
+      // ppmpf_4: '',
+      // ppmpf_5: '',
     };
 
     const result = await axios.post(

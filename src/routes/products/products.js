@@ -549,4 +549,96 @@ router.post('/pickupDeals', async (req, res) => {
   }
 });
 
+router.post('/dastakDeals', async (req, res) => {
+  try {
+    const { lat, long } = req.body;
+
+    let restaurants = [];
+
+    restaurants = await Users.aggregate([
+      {
+        $geoNear: {
+          near: { type: 'Point', coordinates: [long, lat] },
+          distanceField: 'dist',
+          maxDistance: 20000,
+          query: {
+            available: true,
+            dastakDeals: true,
+            type: 'admin',
+            status: 'active',
+            shopType: 'restaurant',
+          },
+          spherical: true,
+        },
+      },
+    ]);
+
+    // const openRestaurants = await checkOpenRestaurants(restaurants);
+
+    let dastakDeals = [];
+
+    await Promise.all(
+      restaurants.map(async ({ _id: martId }) => {
+        const [restaurant, products, options] = await Promise.all([
+          Users.findById(martId),
+
+          Products.find({
+            martId,
+            dastakDeal: true,
+            available: 'in stock',
+          }),
+
+          Flavours.findOne({ martId }),
+        ]);
+
+        if (products.length > 0) {
+          const { specifications: flavourSpecifications } = options;
+          const details = [];
+
+          for (const product of products) {
+            product.restaurant = restaurant;
+
+            if (product.type === 'deal') {
+              const { specifications } = product;
+
+              await Promise.all(
+                specifications.map(
+                  ({ productName, productType, flavourType }) => {
+                    flavourSpecifications.map(specification => {
+                      if (
+                        productType === specification.productType &&
+                        flavourType === specification.flavourType
+                      ) {
+                        details.push({
+                          title: productName,
+                          data: specification.data,
+                        });
+                      }
+                    });
+                  }
+                )
+              );
+
+              product.specifications = details;
+            }
+
+            dastakDeals = [...dastakDeals, product];
+          }
+        }
+      })
+    );
+
+    return res.json({
+      status: '200',
+      dastakDeals,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;

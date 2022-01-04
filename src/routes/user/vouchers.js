@@ -8,7 +8,6 @@ const router = Router();
 router.post('/checkVoucher', async (req, res) => {
   try {
     const { voucherCode } = req.body;
-    console.log(req.body);
 
     const voucher = await Vouchers.findOne({ voucherCode });
     if (!voucher) {
