@@ -81,7 +81,10 @@ router.post('/placeOrder', async (req, res) => {
       martPhone: mart.phone,
       martAddress: mart.martAddress,
       time: formatedTime,
-      deliveryCharges: employee !== undefined ? '0' : deliveryCharges,
+      deliveryCharges:
+        employee !== undefined || orderType === 'pickUp'
+          ? '0'
+          : deliveryCharges,
       date,
       orderNum: todaysOrders + 1,
       orderTotal:

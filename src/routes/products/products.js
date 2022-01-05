@@ -481,12 +481,12 @@ router.post('/pickupDeals', async (req, res) => {
       },
     ]);
 
-    const openRestaurants = await checkOpenRestaurants(restaurants);
+    // const openRestaurants = await checkOpenRestaurants(restaurants);
 
     let pickupDeals = [];
 
     await Promise.all(
-      openRestaurants.map(async ({ _id: martId }) => {
+      restaurants.map(async ({ _id: martId }) => {
         const [restaurant, products, options] = await Promise.all([
           Users.findById(martId),
 
