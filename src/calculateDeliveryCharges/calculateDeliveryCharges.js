@@ -1,13 +1,13 @@
 require('dotenv').config();
-// const axios = require('axios');
+const axios = require('axios');
 
-exports.calculateDeliveryCharges = async () =>
-  // userLatitude,
-  // userLongitude,
-  // martLatitude,
-  // martLongitude
-  50;
-/* const result = await axios.get(
+exports.calculateDeliveryCharges = async (
+  userLatitude,
+  userLongitude,
+  martLatitude,
+  martLongitude
+) => {
+  const result = await axios.get(
     `https://us1.locationiq.com/v1/matrix/driving/${userLongitude},${userLatitude};${martLongitude},${martLatitude}?annotations=distance&key=${process.env.LOCATION_IQ_KEY}`
   );
 
@@ -32,4 +32,5 @@ exports.calculateDeliveryCharges = async () =>
     deliveryCharges = 50;
   }
 
-  return deliveryCharges; */
+  return deliveryCharges;
+};
