@@ -152,7 +152,9 @@ router.post('/sendOtp', async (req, res) => {
 
     const otpPhone = 92 + phone.substring(1, 11);
     const msg = `Your Dastak verification code is ${otp}`;
-    await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
+    await axios.get(
+      `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(msg)}`
+    );
 
     await new Otp({ phone, secret, otp }).save();
 
@@ -206,9 +208,9 @@ router.post('/validateOtp', async (req, res) => {
 });
 
 router.post('/forgotPassword', async (req, res) => {
-  const { email, newPassword } = req.body;
+  const { phone, newPassword } = req.body;
 
-  const user = await Users.findOne({ email });
+  const user = await Users.findOne({ phone });
   if (!user) {
     return res.json({
       status: '404',

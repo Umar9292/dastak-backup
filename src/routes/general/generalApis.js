@@ -530,4 +530,21 @@ router.get('/test', async (_req, res) => {
   }
 });
 
+router.get('/updateFares', async (_req, res) => {
+  try {
+    const riders = await Users.updateMany(
+      { type: 'rider', city: 'Jhang' },
+      { tillNoonFare: 70, nightFare: 70, lateNightFare: 80 }
+    );
+
+    return res.json({ riders });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
