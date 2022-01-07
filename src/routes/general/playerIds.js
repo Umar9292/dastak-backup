@@ -2,6 +2,7 @@ const Router = require('express/lib/router');
 
 const Users = require('../../models/userModel');
 const UniqueUsers = require('../../models/uniqueUsersModel');
+const Orders = require('../../models/ordersModel');
 
 const router = Router();
 
@@ -60,8 +61,13 @@ router.post('/userPlayerId', async (req, res) => {
       });
     }
 
+    const orders = await Orders.find({
+      userId: user._id,
+      $or: [{ status: { $ne: 'Delivered' } }, { status: { $ne: 'Rejected' } }],
+    });
+
     if (type === 'admin') {
-      return res.json({ status: '200', data: user });
+      return res.json({ status: '200', data: user, orders });
     }
 
     if (user.playerId !== playerId && user.playerId) {
@@ -80,6 +86,7 @@ router.post('/userPlayerId', async (req, res) => {
     res.json({
       status: '200',
       data: user,
+      orders,
     });
 
     const unique = await UniqueUsers.findOne();

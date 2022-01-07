@@ -225,7 +225,8 @@ router.post('/forgotPassword', async (req, res) => {
 
   return res.json({
     status: '200',
-    msg: 'Your password is updated successfully',
+    msg:
+      'Your password is updated successfully. Please Sign in to your account',
   });
 });
 

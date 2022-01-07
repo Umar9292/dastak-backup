@@ -533,7 +533,7 @@ router.get('/test', async (_req, res) => {
 router.get('/updateFares', async (_req, res) => {
   try {
     const riders = await Users.updateMany(
-      { type: 'rider', city: 'Jhang' },
+      { type: 'rider', city: 'Sargodha' },
       { tillNoonFare: 70, nightFare: 70, lateNightFare: 80 }
     );
 
