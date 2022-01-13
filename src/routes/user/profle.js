@@ -230,4 +230,8 @@ router.post('/forgotPassword', async (req, res) => {
   });
 });
 
+router.get('/jazzCashTest', async (req, res) => {
+  console.log(req.body);
+});
+
 module.exports = router;

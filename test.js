@@ -14,32 +14,33 @@ const test = async () => {
       .add(1, 'days')
       .format('YYYYMMDDHHmmss');
 
-    console.log(currentDate, expiryDate);
+    // console.log(currentDate, expiryDate);
 
-    const str = `2813a08s52&20000&order2&345678&Description of transactions&EN&MC25672&03123456789&sxsu7z9sw1&PKR&${currentDate}&${expiryDate}&125050`;
+    const str = `2y8htx8218&100&order2&623791&Description of transactions&EN&00280104&03346939992&cg02s2c7u4&PKR&${currentDate}&${expiryDate}&125085`;
 
-    const secret = '2813a08s52';
+    const secret = '2y8htx8218';
     const sha256Hasher = crypto.createHmac('sha256', secret);
     const hash = sha256Hasher.update(str).digest('hex');
 
     console.log(hash);
 
     const data = {
-      pp_Amount: '20000',
+      pp_Amount: '100',
       pp_BillReference: 'order2',
-      pp_CNIC: '345678',
+      pp_CNIC: '623791',
       pp_Description: 'Description of transactions',
       pp_Language: 'EN',
-      pp_MerchantID: 'MC25672',
-      pp_MobileNumber: '03123456789',
-      pp_Password: 'sxsu7z9sw1',
+      pp_MerchantID: '00280104',
+      pp_MobileNumber: '03346939992',
+      pp_Password: 'cg02s2c7u4',
+      // pp_ReturnUrl: 'https://192.168.1.2:8080/user/jazzCashTest',
       pp_TxnCurrency: 'PKR',
       pp_TxnDateTime: currentDate,
       pp_TxnExpiryDateTime: expiryDate,
-      pp_TxnRefNo: '125050',
+      pp_TxnRefNo: '125085',
+      pp_SecureHash: hash,
       // pp_TxnType: 'mobile',
       // pp_Version: '2.0',
-      pp_SecureHash: hash,
       // pp_SubMerchantID: '',
       // pp_BankID: '',
       // pp_ProductID: '',
@@ -50,8 +51,13 @@ const test = async () => {
       // ppmpf_5: '',
     };
 
-    const result = await axios.post(
+    /* const result = await axios.post(
       'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction',
+      data
+    ); */
+
+    const result = await axios.post(
+      'https://payments.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction',
       data
     );
 

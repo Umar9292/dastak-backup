@@ -63,6 +63,7 @@ router.post('/userPlayerId', async (req, res) => {
 
     const orders = await Orders.find({
       userId: user._id,
+      orderType: 'Delivery',
       $or: [{ status: { $ne: 'Delivered' } }, { status: { $ne: 'Rejected' } }],
     });
 
