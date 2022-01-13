@@ -331,15 +331,19 @@ router.post('/dastakDeals', async (req, res) => {
           for (const product of products) {
             const { regular, drinks, type } = product;
 
-            if (
-              (type === 'deal' && !regular) ||
-              (type === 'deal' && regular === undefined)
-            ) {
-              product.flavours = options.flavours;
-            }
+            if (product.dealFlavours) {
+              product.flavours = options.dealFlavours;
+            } else {
+              if (
+                (type === 'deal' && !regular) ||
+                (type === 'deal' && regular === undefined)
+              ) {
+                product.flavours = options.flavours;
+              }
 
-            if (type === 'deal' && regular === true) {
-              product.flavours = options.regularFlavours;
+              if (type === 'deal' && regular === true) {
+                product.flavours = options.regularFlavours;
+              }
             }
 
             if (drinks === true) {
