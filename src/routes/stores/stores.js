@@ -2,7 +2,7 @@ const Router = require('express/lib/router');
 
 const Users = require('../../models/userModel');
 
-const { getCity } = require('../../geoCoder/getCity');
+// const { getCity } = require('../../geoCoder/getCity');
 const {
   openRestaurants,
 } = require('../../routes/marts/openRestaurants/openRestaurants');
@@ -11,9 +11,9 @@ const router = Router();
 
 router.post('/allStores', async (req, res) => {
   try {
-    let { lat, long, employee, city } = req.body;
+    const { lat, long, employee } = req.body;
 
-    if (employee === true) {
+    /* if (employee === true) {
       if (city === '') {
         city = await getCity(lat, long);
       }
@@ -27,25 +27,23 @@ router.post('/allStores', async (req, res) => {
       });
 
       return res.json({ status: '200', allStores });
-    }
+    } */
 
-    let [allStores] = await Promise.all([
-      Users.aggregate([
-        {
-          $geoNear: {
-            near: { type: 'Point', coordinates: [long, lat] },
-            distanceField: 'dist',
-            maxDistance: 3500,
-            query: {
-              available: true,
-              type: 'admin',
-              status: 'active',
-              shopType: { $in: ['store', 'pharmacy'] },
-            },
-            spherical: true,
+    let allStores = await Users.aggregate([
+      {
+        $geoNear: {
+          near: { type: 'Point', coordinates: [long, lat] },
+          distanceField: 'dist',
+          maxDistance: employee === true ? 20000 : 3500,
+          query: {
+            available: true,
+            type: 'admin',
+            status: 'active',
+            shopType: { $in: ['store', 'pharmacy'] },
           },
+          spherical: true,
         },
-      ]),
+      },
     ]);
 
     allStores = await openRestaurants(allStores);

@@ -1,7 +1,41 @@
 require('dotenv').config();
-const axios = require('axios');
+// const axios = require('axios');
+const { getPreciseDistance } = require('geolib');
 
 exports.calculateDeliveryCharges = async (
+  userLatitude,
+  userLongitude,
+  martLatitude,
+  martLongitude
+) => {
+  const distance =
+    getPreciseDistance(
+      { latitude: userLatitude, longitude: userLongitude },
+      { latitude: martLatitude, longitude: martLongitude }
+    ) / 1000;
+
+  let deliveryCharges = 0;
+
+  if (distance <= 0.8) {
+    deliveryCharges = 30;
+  }
+
+  if (distance > 0.8 && distance <= 1.7) {
+    deliveryCharges = 35;
+  }
+
+  if (distance > 1.7 && distance <= 3.6) {
+    deliveryCharges = 40;
+  }
+
+  if (distance > 3.6) {
+    deliveryCharges = 50;
+  }
+
+  return deliveryCharges;
+};
+
+/* exports.calculateDeliveryCharges = async (
   userLatitude,
   userLongitude,
   martLatitude,
@@ -34,3 +68,4 @@ exports.calculateDeliveryCharges = async (
 
   return deliveryCharges;
 };
+ */
