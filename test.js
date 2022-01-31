@@ -16,15 +16,15 @@ const test = async () => {
 
     // console.log(currentDate, expiryDate);
 
-    const str = `2y8htx8218&100&order2&623791&Description of transactions&EN&00280104&03346939992&cg02s2c7u4&PKR&${currentDate}&${expiryDate}&125085`;
+    const str = `2813a08s52&100&order2&Description of transactions&EN&MC25672&sxsu7z9sw1&PKR&${currentDate}&${expiryDate}&125085&MPAY&1.1`;
 
-    const secret = '2y8htx8218';
+    const secret = '2813a08s52';
     const sha256Hasher = crypto.createHmac('sha256', secret);
     const hash = sha256Hasher.update(str).digest('hex');
 
     console.log(hash);
 
-    const data = {
+    /* const data = {
       pp_Amount: '100',
       pp_BillReference: 'order2',
       pp_CNIC: '623791',
@@ -49,6 +49,33 @@ const test = async () => {
       // ppmpf_3: '',
       // ppmpf_4: '',
       // ppmpf_5: '',
+    }; */
+
+    const data = {
+      pp_Amount: '100',
+      pp_BillReference: 'order2',
+      // pp_CNIC: '623791',
+      pp_Description: 'Description of transactions',
+      pp_Language: 'EN',
+      pp_MerchantID: 'MC25672',
+      // pp_MobileNumber: '03346939992',
+      pp_Password: 'sxsu7z9sw1',
+      // pp_ReturnUrl: 'https://192.168.1.2:8080/user/jazzCashTest',
+      pp_TxnCurrency: 'PKR',
+      pp_TxnDateTime: currentDate,
+      pp_TxnExpiryDateTime: expiryDate,
+      pp_TxnRefNo: '125085',
+      pp_SecureHash: hash,
+      // pp_TxnType: 'mobile',
+      // pp_Version: '2.0',
+      // pp_SubMerchantID: '',
+      // pp_BankID: '',
+      // pp_ProductID: '',
+      // ppmpf_1: '',
+      // ppmpf_2: '',
+      // ppmpf_3: '',
+      // ppmpf_4: '',
+      // ppmpf_5: '',
     };
 
     /* const result = await axios.post(
@@ -56,14 +83,14 @@ const test = async () => {
       data
     ); */
 
-    const result = await axios.post(
+    /*  const result = await axios.post(
       'https://payments.jazzcash.com.pk/ApplicationAPI/API/2.0/Purchase/DoMWalletTransaction',
       data
     );
 
-    console.log(result.data);
+    console.log(result.data); */
 
-    return result;
+    // return result;
   } catch (err) {
     console.log(err);
   }
