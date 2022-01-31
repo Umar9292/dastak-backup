@@ -148,7 +148,7 @@ router.post('/allProducts', async (req, res) => {
       }
 
       if (data !== null) {
-        return res.json({ status: '200', data: finalData, restaurant });
+        return res.json({ status: '200', data: finalData });
       }
 
       const [{ categories }, options] = await Promise.all([
