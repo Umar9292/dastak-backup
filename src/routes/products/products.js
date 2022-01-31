@@ -140,86 +140,88 @@ router.post('/allProducts', async (req, res) => {
 
     let finalData = [];
 
-    // client.get(martId, async (err, data) => {
-    //   if (err) console.log(err);
+    client.get(martId, async (err, data) => {
+      if (err) console.log(err);
 
-    //   if (data !== null) {
-    //     finalData = JSON.parse(data);
-    //   }
+      if (data !== null) {
+        finalData = JSON.parse(data);
+      }
 
-    // if (data !== null) {
-    //   return res.json({ status: '200', data: finalData, restaurant });
-    // }
+      if (data !== null) {
+        return res.json({ status: '200', data: finalData, restaurant });
+      }
 
-    const [{ categories }, options] = await Promise.all([
-      Categories.findOne({ martId })
-        .select('categories')
-        .lean(),
+      const [{ categories }, options] = await Promise.all([
+        Categories.findOne({ martId })
+          .select('categories')
+          .lean(),
 
-      Flavours.findOne({ martId }).lean(),
-    ]);
+        Flavours.findOne({ martId }).lean(),
+      ]);
 
-    for (const category of categories) {
-      const query = {
-        category,
-        martId,
-        available: 'in stock',
-      };
-
-      const products = await Products.find(query).sort({
-        dealNumber: 1,
-        productName: 1,
-        quantity: -1,
-      });
-
-      if (products.length > 0) {
-        const filteredProducts = products.filter(({ type }) => type === 'deal');
-
-        const { specifications: flavourSpecifications } = options;
-        const details = [];
-
-        if (filteredProducts.length > 0) {
-          for (const product of filteredProducts) {
-            const { specifications } = product;
-
-            await Promise.all(
-              specifications.map(
-                ({ productName, productType, flavourType }) => {
-                  flavourSpecifications.map(specification => {
-                    if (
-                      productType === specification.productType &&
-                      flavourType === specification.flavourType
-                    ) {
-                      details.push({
-                        title: productName,
-                        data: specification.data,
-                      });
-                    }
-                  });
-                }
-              )
-            );
-
-            product.specifications = details;
-          }
-        }
-
-        const data = {
-          category: query.category,
-          data: products,
+      for (const category of categories) {
+        const query = {
+          category,
+          martId,
+          available: 'in stock',
         };
 
-        finalData = [...finalData, data];
+        const products = await Products.find(query).sort({
+          dealNumber: 1,
+          productName: 1,
+          quantity: -1,
+        });
+
+        if (products.length > 0) {
+          const filteredProducts = products.filter(
+            ({ type }) => type === 'deal'
+          );
+
+          const { specifications: flavourSpecifications } = options;
+          const details = [];
+
+          if (filteredProducts.length > 0) {
+            for (const product of filteredProducts) {
+              const { specifications } = product;
+
+              await Promise.all(
+                specifications.map(
+                  ({ productName, productType, flavourType }) => {
+                    flavourSpecifications.map(specification => {
+                      if (
+                        productType === specification.productType &&
+                        flavourType === specification.flavourType
+                      ) {
+                        details.push({
+                          title: productName,
+                          data: specification.data,
+                        });
+                      }
+                    });
+                  }
+                )
+              );
+
+              product.specifications = details;
+            }
+          }
+
+          const data = {
+            category: query.category,
+            data: products,
+          };
+
+          finalData = [...finalData, data];
+        }
       }
-    }
 
-    res.json({
-      status: '200',
-      data: finalData,
+      res.json({
+        status: '200',
+        data: finalData,
+      });
+
+      client.setex(martId, 600, JSON.stringify(finalData));
     });
-
-    // client.setex(martId, 600, JSON.stringify(finalData));
-    // });
   } catch (err) {
     console.log(err);
     return res.json({
@@ -485,12 +487,12 @@ router.post('/pickupDeals', async (req, res) => {
       },
     ]);
 
-    // const openRestaurants = await checkOpenRestaurants(restaurants);
+    const openRestaurants = await checkOpenRestaurants(restaurants);
 
     let pickupDeals = [];
 
     await Promise.all(
-      restaurants.map(async ({ _id: martId }) => {
+      openRestaurants.map(async ({ _id: martId }) => {
         const [restaurant, products, options] = await Promise.all([
           Users.findById(martId),
 
@@ -577,12 +579,12 @@ router.post('/dastakDeals', async (req, res) => {
       },
     ]);
 
-    // const openRestaurants = await checkOpenRestaurants(restaurants);
+    const openRestaurants = await checkOpenRestaurants(restaurants);
 
     let dastakDeals = [];
 
     await Promise.all(
-      restaurants.map(async ({ _id: martId }) => {
+      openRestaurants.map(async ({ _id: martId }) => {
         const [restaurant, products, options] = await Promise.all([
           Users.findById(martId),
 
