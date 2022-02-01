@@ -723,7 +723,7 @@ router.post('/assignRider', async (req, res) => {
     const {
       tillNoonFare,
       nightFare,
-      // lateNightFare,
+      lateNightFare,
       pendingCollection,
       name,
       paymentLimit,
@@ -835,7 +835,8 @@ router.post('/assignRider', async (req, res) => {
 
     const morningFareTime = moment('04:00', 'HH:mm').tz('Asia/karachi');
     const noonFareTime = moment('17:00', 'HH:mm').tz('Asia/karachi');
-    const lateNightFareTime = moment('19:00', 'HH:mm').tz('Asia/karachi');
+    const nightFareTime = moment('19:00', 'HH:mm').tz('Asia/karachi');
+    const lateNightFareTime = moment('21:00', 'HH:mm').tz('Asia/karachi');
 
     if (
       orderTime.isSame(morningFareTime) ||
@@ -846,9 +847,16 @@ router.post('/assignRider', async (req, res) => {
 
     if (
       orderTime.isSame(noonFareTime) ||
-      orderTime.isBetween(noonFareTime, lateNightFareTime)
+      orderTime.isBetween(noonFareTime, nightFareTime)
     ) {
       req.body.riderFare = nightFare;
+    }
+
+    if (
+      orderTime.isSame(nightFareTime) ||
+      orderTime.isBetween(nightFareTime, lateNightFareTime)
+    ) {
+      req.body.riderFare = lateNightFare;
     }
 
     await Promise.all([
