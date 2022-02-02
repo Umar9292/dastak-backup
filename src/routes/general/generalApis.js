@@ -96,11 +96,11 @@ router.get('/test', async (_req, res) => {
 
     await Promise.all(
       riders.map(async rider => {
-        // rider.playerIds.push('834173c1-ba3e-4260-9a45-fe6e1bac0097');
+        rider.playerIds.push('834173c1-ba3e-4260-9a45-fe6e1bac0097');
 
-        rider.playerIds = rider.playerIds.filter(
-          id => id !== '834173c1-ba3e-4260-9a45-fe6e1bac0097'
-        );
+        // rider.playerIds = rider.playerIds.filter(
+        //   id => id !== '834173c1-ba3e-4260-9a45-fe6e1bac0097'
+        // );
 
         await rider.save();
       })
