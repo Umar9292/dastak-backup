@@ -853,8 +853,8 @@ router.post('/assignRider', async (req, res) => {
     }
 
     if (
-      orderTime.isSame(nightFareTime) ||
-      orderTime.isBetween(nightFareTime, lateNightFareTime)
+      orderTime.isSame(nightFareTime.subtract(1, 'days')) ||
+      orderTime.isBetween(nightFareTime.subtract(1, 'days'), lateNightFareTime)
     ) {
       req.body.riderFare = lateNightFare;
     }
