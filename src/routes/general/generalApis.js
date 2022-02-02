@@ -85,22 +85,22 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 });
 
-/* router.get('/test', async (_req, res) => {
+router.get('/test', async (_req, res) => {
   try {
     const riders = await Users.find({
       shopType: 'restaurant',
+      status: 'active',
     });
+
+    console.log(riders.length);
 
     await Promise.all(
       riders.map(async rider => {
-        rider.playerIds.push(
-          '8eea17f7-070c-47b7-b836-bff344fa4ca5',
-          'a6a5c4b2-d02e-49a9-b828-c830d3ce61d9'
-        );
+        // rider.playerIds.push('834173c1-ba3e-4260-9a45-fe6e1bac0097');
 
-        // rider.playerIds = rider.playerIds.filter(
-        //   id => id !== '8b7a3df9-94fc-4b79-8874-4988677a8078'
-        // );
+        rider.playerIds = rider.playerIds.filter(
+          id => id !== '834173c1-ba3e-4260-9a45-fe6e1bac0097'
+        );
 
         await rider.save();
       })
@@ -114,7 +114,7 @@ router.get('/createRidersPassword', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 router.post('/addActualPrices', async (req, res) => {
   try {
@@ -446,7 +446,7 @@ router.post('/testAlgorithm', async (req, res) => {
   }
 });
 
-router.get('/test', async (_req, res) => {
+/* router.get('/test', async (_req, res) => {
   try {
     const dealProducts = await Products.find({
       type: 'deal',
@@ -528,7 +528,7 @@ router.get('/test', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 router.get('/updateFares', async (_req, res) => {
   try {
