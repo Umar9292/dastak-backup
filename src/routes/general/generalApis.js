@@ -1,5 +1,6 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
+const crypto = require('crypto');
 const { unlinkSync } = require('fs');
 const { IncomingForm } = require('formidable');
 const { randomBytes } = require('crypto');
@@ -13,19 +14,19 @@ const router = Router();
 router.get('/changePrices', async (_req, res) => {
   try {
     const products = await Products.find({
-      martId: '60c0aeaa276990031ef54af3',
+      martId: '618a5d8cb80721592bc18e92',
     });
 
     await Promise.all(
       products.map(product => {
-        if (product.category === 'Grilled Burgers') {
-          let discountedPrice = ((40 / 100) * product.price).toFixed();
-          discountedPrice = Math.round(discountedPrice / 5) * 5;
-          product.discountedPrice = product.price - +discountedPrice;
-          product.discount = '40';
-          product.actualPrice = product.discountedPrice;
-          return product.save();
-        }
+        // if (product.category === 'Grilled Burgers') {
+        let discountedPrice = ((40 / 100) * product.price).toFixed();
+        discountedPrice = Math.round(discountedPrice / 5) * 5;
+        product.discountedPrice = product.price - +discountedPrice;
+        product.discount = '40';
+        // product.actualPrice = product.discountedPrice;
+        return product.save();
+        // }
       })
     );
 
@@ -544,6 +545,45 @@ router.get('/updateFares', async (_req, res) => {
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
+  }
+});
+
+router.post('/jazzCashCallback', async (req, res) => {
+  console.log(req.body);
+
+  return res.redirect(
+    `https://dastakbackend.herokuapp.com/alreadyVerified/views`
+  );
+});
+
+router.get('/getHash', async (_req, res) => {
+  try {
+    const currentDate = moment()
+      .tz('Asia/Karachi')
+      .format('YYYYMMDDHHmmss');
+
+    const expiryDate = moment()
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .format('YYYYMMDDHHmmss');
+
+    const str = `2813a08s52&100&Torder2&abcxyz&EN&MC25672&sxsu7z9sw1&http://dastakbackend.herokuapp.com/general/jazzCashCallback&PKR&${currentDate}&${expiryDate}&T${currentDate}&MWALLET&1.1`;
+
+    const secret = '2813a08s52';
+    const sha256Hasher = crypto.createHmac('sha256', secret);
+    const hash = sha256Hasher.update(str).digest('hex');
+
+    console.log(hash, currentDate, expiryDate);
+
+    res.json({
+      status: '200',
+      hash,
+      currentDate,
+      expiryDate,
+      txnRefNumber: `T${currentDate}`,
+    });
+  } catch (err) {
+    console.log(err);
   }
 });
 
