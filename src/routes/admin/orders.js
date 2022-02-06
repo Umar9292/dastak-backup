@@ -836,26 +836,18 @@ router.post('/assignRider', async (req, res) => {
     const morningFareTime = moment('04:00', 'HH:mm').tz('Asia/karachi');
     const noonFareTime = moment('17:00', 'HH:mm').tz('Asia/karachi');
     const nightFareTime = moment('19:00', 'HH:mm').tz('Asia/karachi');
-    const lateNightFareTime = moment('21:00', 'HH:mm').tz('Asia/karachi');
 
     if (
       orderTime.isSame(morningFareTime) ||
       orderTime.isBetween(morningFareTime, noonFareTime)
     ) {
       req.body.riderFare = tillNoonFare;
-    }
-
-    if (
+    } else if (
       orderTime.isSame(noonFareTime) ||
       orderTime.isBetween(noonFareTime, nightFareTime)
     ) {
       req.body.riderFare = nightFare;
-    }
-
-    if (
-      orderTime.isSame(nightFareTime.subtract(1, 'days')) ||
-      orderTime.isBetween(nightFareTime.subtract(1, 'days'), lateNightFareTime)
-    ) {
+    } else {
       req.body.riderFare = lateNightFare;
     }
 
