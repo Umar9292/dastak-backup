@@ -551,9 +551,9 @@ router.get('/updateFares', async (_req, res) => {
 router.post('/jazzCashCallback', async (req, res) => {
   console.log(req.body);
 
-  return res.redirect(
+  /* return res.redirect(
     `https://dastakbackend.herokuapp.com/alreadyVerified/views`
-  );
+  ); */
 });
 
 router.get('/getHash', async (_req, res) => {
@@ -567,7 +567,7 @@ router.get('/getHash', async (_req, res) => {
       .add(1, 'days')
       .format('YYYYMMDDHHmmss');
 
-    const str = `2y8htx8218&100&Torder2&abcxyz&EN&00280104&cg02s2c7u4&https://dastakbackend.herokuapp.com/general/jazzCashCallback&PKR&${currentDate}&${expiryDate}&T${currentDate}&MIGS&1.1`;
+    const str = `2y8htx8218&100&Torder2&abcxyz&EN&00280104&cg02s2c7u4&https://dastakbackend.herokuapp.com/general/jazzCashCallback&PKR&${currentDate}&${expiryDate}&T${currentDate}&MWALLET&1.1`;
 
     const secret = '2y8htx8218';
     const sha256Hasher = crypto.createHmac('sha256', secret);
