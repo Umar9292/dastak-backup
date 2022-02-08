@@ -567,9 +567,9 @@ router.get('/getHash', async (_req, res) => {
       .add(1, 'days')
       .format('YYYYMMDDHHmmss');
 
-    const str = `2813a08s52&100&Torder2&abcxyz&EN&MC25672&sxsu7z9sw1&https://dastakbackend.herokuapp.com/general/jazzCashCallback&PKR&${currentDate}&${expiryDate}&T${currentDate}&MWALLET&1.1`;
+    const str = `2y8htx8218&100&Torder2&abcxyz&EN&00280104&cg02s2c7u4&https://dastakbackend.herokuapp.com/general/jazzCashCallback&PKR&${currentDate}&${expiryDate}&T${currentDate}&MWALLET&1.1`;
 
-    const secret = '2813a08s52';
+    const secret = '2y8htx8218';
     const sha256Hasher = crypto.createHmac('sha256', secret);
     const hash = sha256Hasher.update(str).digest('hex');
 
