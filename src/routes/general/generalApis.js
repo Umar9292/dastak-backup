@@ -551,9 +551,9 @@ router.get('/updateFares', async (_req, res) => {
 router.post('/jazzCashCallback', async (req, res) => {
   console.log(req.body);
 
-  /* return res.redirect(
+  return res.redirect(
     `https://dastakbackend.herokuapp.com/alreadyVerified/views`
-  ); */
+  );
 });
 
 router.get('/getHash', async (_req, res) => {
