@@ -601,7 +601,7 @@ router.get('/alfaTest', async (req, res) => {
       cipher.update(redirectionString, 'utf8', 'base64') +
       cipher.final('base64');
 
-    const body = {
+    /*     const body = {
       AuthToken,
       RequestHash: redirectionHash,
       ChannelId: '1001',
@@ -624,10 +624,11 @@ router.get('/alfaTest', async (req, res) => {
       body
     );
 
-    console.log(doc.data);
+    console.log(doc.data); */
 
     return res.json({
       status: '200',
+      randomString,
       redirectionHash,
       AuthToken: result.data.AuthToken,
     });
