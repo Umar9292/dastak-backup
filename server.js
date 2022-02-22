@@ -33,6 +33,8 @@ const otpVerificationRouter = require('./src/routes/user/otpVerification');
 const uploadPrescription = require('./src/routes/stores/uploadPrescription');
 const deliveryChargesRouter = require('./src/routes/user/deliveryCharges');
 const vouchersRouter = require('./src/routes/user/vouchers');
+const easyPaisaRouter = require('./src/routes/paymentMethods/easyPaisa');
+const cardRouter = require('./src/routes/paymentMethods/creditDebitCard');
 
 const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -75,6 +77,7 @@ app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 app.use('/chat', chatRouter);
+app.use('/paymentMethod', easyPaisaRouter, cardRouter);
 app.use(
   '/user',
   profileRouter,

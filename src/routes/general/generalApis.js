@@ -15,16 +15,16 @@ const router = Router();
 router.get('/changePrices', async (_req, res) => {
   try {
     const products = await Products.find({
-      martId: '618a5d8cb80721592bc18e92',
+      martId: '5fc4fa6f86e50a04fb5df67f',
     });
 
     await Promise.all(
       products.map(product => {
         // if (product.category === 'Grilled Burgers') {
-        let discountedPrice = ((40 / 100) * product.price).toFixed();
+        let discountedPrice = ((20 / 100) * product.price).toFixed();
         discountedPrice = Math.round(discountedPrice / 5) * 5;
-        product.discountedPrice = product.price - +discountedPrice;
-        product.discount = '40';
+        product.price += +discountedPrice;
+        // product.discount = '40';
         // product.actualPrice = product.discountedPrice;
         return product.save();
         // }
@@ -557,89 +557,10 @@ router.post('/jazzCashCallback', async (req, res) => {
   );
 });
 
-router.get('/alfaTest', async (req, res) => {
-  try {
-    const key1 = 'pwq3HgMxFCPHwEVp';
-    const key2 = '4726651892310964';
-
-    const randomString = crypto.randomBytes(6).toString('hex');
-
-    const handShakeString = `HS_ChannelId=1001&HS_MerchantId=13619&HS_StoreId=020000&HS_MerchantHash=zWsOsg0VNuBwmQH5oZC9rqye/+tv5+AXRYQS/HpxSYG67qUjRhrrAa/b79m78NXZJo8VJwLIgW0=&HS_MerchantUsername=nyqoba&HS_MerchantPassword=53P2WUBwaPNvFzk4yqF7CA==&HS_ReturnURL=http://192.168.1.8:8080/general/alfaCallback&HS_IsRedirectionRequest=0&HS_TransactionReferenceNumber=${randomString}`;
-
-    const handShakeCipher = crypto.createCipheriv('AES-128-CBC', key1, key2);
-    const handShakeHash =
-      handShakeCipher.update(handShakeString, 'utf8', 'base64') +
-      handShakeCipher.final('base64');
-
-    const handShakeData = {
-      HS_RequestHash: handShakeHash,
-      HS_IsRedirectionRequest: '0',
-      HS_ChannelId: '1001',
-      HS_ReturnURL: 'http://192.168.1.8:8080/general/alfaCallback',
-      HS_MerchantId: '13619',
-      HS_StoreId: '020000',
-      HS_MerchantHash:
-        'zWsOsg0VNuBwmQH5oZC9rqye/+tv5+AXRYQS/HpxSYG67qUjRhrrAa/b79m78NXZJo8VJwLIgW0=',
-      HS_MerchantUsername: 'nyqoba',
-      HS_MerchantPassword: '53P2WUBwaPNvFzk4yqF7CA==',
-      HS_TransactionReferenceNumber: randomString,
-    };
-
-    const result = await axios.post(
-      'https://sandbox.bankalfalah.com/HS/HS/HS',
-      handShakeData
-    );
-
-    console.log(result.data);
-
-    const { AuthToken } = result.data;
-
-    const redirectionString = `AuthToken=${AuthToken}&RequestHash=null&ChannelId=1001&Currency=PKR&IsBIN=0&ReturnURL=http://192.168.1.8:8080/general/alfaCallback&MerchantId=13619&StoreId=020000&MerchantHash=zWsOsg0VNuBwmQH5oZC9rqye/+tv5+AXRYQS/HpxSYG67qUjRhrrAa/b79m78NXZJo8VJwLIgW0=&MerchantUsername=nyqoba&MerchantPassword=53P2WUBwaPNvFzk4yqF7CA==&TransactionTypeId=3&TransactionReferenceNumber=${randomString}&TransactionAmount=100&`;
-
-    const cipher = crypto.createCipheriv('AES-128-CBC', key1, key2);
-    const redirectionHash =
-      cipher.update(redirectionString, 'utf8', 'base64') +
-      cipher.final('base64');
-
-    /*     const body = {
-      AuthToken,
-      RequestHash: redirectionHash,
-      ChannelId: '1001',
-      Currency: 'PKR',
-      IsBIN: '0',
-      ReturnURL: 'http://192.168.1.8:8080/general/alfaTest',
-      MerchantId: '13619',
-      StoreId: '020000',
-      MerchantHash:
-        'zWsOsg0VNuBwmQH5oZC9rqye/+tv5+AXRYQS/HpxSYG67qUjRhrrAa/b79m78NXZJo8VJwLIgW0=',
-      MerchantUsername: 'nyqoba',
-      MerchantPassword: '53P2WUBwaPNvFzk4yqF7CA==',
-      TransactionTypeId: '3',
-      TransactionReferenceNumber: randomString,
-      TransactionAmount: '100',
-    };
-
-    const doc = await axios.post(
-      'https://sandbox.bankalfalah.com/SSO/SSO/SSO',
-      body
-    );
-
-    console.log(doc.data); */
-
-    return res.json({
-      status: '200',
-      randomString,
-      redirectionHash,
-      AuthToken: result.data.AuthToken,
-    });
-  } catch (err) {
-    console.log(err);
-    return res.json({ status: '404' });
-  }
-});
-
 router.get('/alfaCallback', async (req, res) => {
   console.log(req.query);
+
+  return res.redirect('https://onelink.to/zqd5vu');
 });
 
 router.get('/getHash', async (_req, res) => {
