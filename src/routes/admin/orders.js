@@ -164,9 +164,20 @@ router.post('/checkTime', async (req, res) => {
 
     const orderTime = moment().tz('Asia/karachi');
 
-    let { openingTime, closingTime, shopType, name } = await Users.findById(
-      martId
-    ).select('-password -__v');
+    let {
+      openingTime,
+      closingTime,
+      shopType,
+      name,
+      available,
+    } = await Users.findById(martId).select('-password -__v');
+
+    if (!available) {
+      return res.json({
+        status: '404',
+        msg: `Sorry the ${shopType} is not available due to some reason`,
+      });
+    }
 
     openingTime = moment(openingTime, 'HH:mm:ssa').tz('Asia/karachi');
     closingTime = moment(closingTime, 'HH:mm:ssa').tz('Asia/karachi');

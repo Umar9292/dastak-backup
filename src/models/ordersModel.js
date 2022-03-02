@@ -6,6 +6,9 @@ const ordersModel = Schema(
       type: Boolean,
       default: false,
     },
+    paymentStatus: String,
+    paymentType: String,
+    transactionId: String,
     collectionSubmitted: {
       type: Boolean,
       default: false,
