@@ -1,7 +1,5 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
-const crypto = require('crypto');
-const axios = require('axios');
 const { unlinkSync } = require('fs');
 const { IncomingForm } = require('formidable');
 const { randomBytes } = require('crypto');
@@ -555,43 +553,6 @@ router.post('/jazzCashCallback', async (req, res) => {
   return res.redirect(
     `https://dastakbackend.herokuapp.com/alreadyVerified/views`
   );
-});
-
-router.get('/alfaCallback', async (req, res) => {
-  console.log(req.query);
-
-  return res.redirect('https://onelink.to/zqd5vu');
-});
-
-router.get('/getHash', async (_req, res) => {
-  try {
-    const currentDate = moment()
-      .tz('Asia/Karachi')
-      .format('YYYYMMDDHHmmss');
-
-    const expiryDate = moment()
-      .tz('Asia/Karachi')
-      .add(1, 'days')
-      .format('YYYYMMDDHHmmss');
-
-    const str = `2y8htx8218&100&Torder2&abcxyz&EN&00280104&cg02s2c7u4&https://dastakbackend.herokuapp.com/general/jazzCashCallback&PKR&${currentDate}&${expiryDate}&T${currentDate}&MWALLET&1.1`;
-
-    const secret = '2y8htx8218';
-    const sha256Hasher = crypto.createHmac('sha256', secret);
-    const hash = sha256Hasher.update(str).digest('hex');
-
-    console.log(hash, currentDate, expiryDate);
-
-    res.json({
-      status: '200',
-      hash,
-      currentDate,
-      expiryDate,
-      txnRefNumber: `T${currentDate}`,
-    });
-  } catch (err) {
-    console.log(err);
-  }
 });
 
 module.exports = router;
