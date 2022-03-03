@@ -7,6 +7,7 @@ const ordersModel = Schema(
       default: false,
     },
     paymentStatus: String,
+    serviceCharges: String,
     paymentType: String,
     transactionId: String,
     collectionSubmitted: {

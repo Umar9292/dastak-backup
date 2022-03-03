@@ -54,17 +54,6 @@ router.post('/placeOrder', async (req, res) => {
       Orders.countDocuments({ martId, date }),
     ]);
 
-    if (!mart.available) {
-      return res.json({
-        status: '404',
-        msg: `Sorry the ${mart.shopType} is not available due to some reason`,
-      });
-    }
-
-    if (+orderTotal < mart.minimumOrder) {
-      return res.json({ msg: `Minimun order is Rs ${mart.minimumOrder}` });
-    }
-
     const orderTime = moment().tz('Asia/karachi');
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
@@ -150,72 +139,6 @@ router.post('/placeOrder', async (req, res) => {
     }
   } catch (err) {
     console.log(err);
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
-router.post('/checkTime', async (req, res) => {
-  try {
-    const { martId } = req.body;
-
-    const orderTime = moment().tz('Asia/karachi');
-
-    let {
-      openingTime,
-      closingTime,
-      shopType,
-      name,
-      available,
-    } = await Users.findById(martId).select('-password -__v');
-
-    if (!available) {
-      return res.json({
-        status: '404',
-        msg: `Sorry the ${shopType} is not available due to some reason`,
-      });
-    }
-
-    openingTime = moment(openingTime, 'HH:mm:ssa').tz('Asia/karachi');
-    closingTime = moment(closingTime, 'HH:mm:ssa').tz('Asia/karachi');
-
-    openingTime = moment(openingTime).subtract(5, 'hours');
-    closingTime = moment(closingTime).subtract(5, 'hours');
-
-    const openingTimeOffSet = moment(openingTime).format('a');
-    const closingTimeOffSet = moment(closingTime).format('a');
-
-    if (
-      (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
-      (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
-    ) {
-      closingTime = moment(closingTime).add(1, 'days');
-    }
-
-    if (
-      orderTime.isBetween(
-        `${openingTime.toISOString()}`,
-        `${closingTime.toISOString()}`
-      )
-    ) {
-      return res.json({ status: '200' });
-    }
-
-    if (shopType === 'mart') {
-      return res.json({
-        status: '204',
-        msg: `${name} has been closed. You can still place your order but it will be entertained after it opens at ${openingTime}`,
-      });
-    }
-
-    return res.json({
-      status: '404',
-      msg: `${name} is closed`,
-    });
-  } catch (err) {
     return res.json({
       status: '404',
       error: err.toString(),
