@@ -49,6 +49,12 @@ const io = socketIo(server, {
 });
 io.adapter(redis(process.env.REDIS_URL));
 
+io.on('connection', socket => {
+  console.log('user connected');
+
+  socket.on('disconnect', () => console.log('user disconnected'));
+});
+
 server.listen(port, () => console.log(`Listening on port ${port}\n`));
 
 exports.emitMessage = chat => {

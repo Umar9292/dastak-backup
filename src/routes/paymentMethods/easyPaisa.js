@@ -40,8 +40,6 @@ const easyPaisa = async (orderTotal, easyPaisaPhone, email, userId, params) => {
     },
   });
 
-  console.log(result);
-
   const { responseCode } = result.data;
 
   if (responseCode === '0001') {
