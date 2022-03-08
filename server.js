@@ -33,7 +33,6 @@ const otpVerificationRouter = require('./src/routes/user/otpVerification');
 const uploadPrescription = require('./src/routes/stores/uploadPrescription');
 const deliveryChargesRouter = require('./src/routes/user/deliveryCharges');
 const vouchersRouter = require('./src/routes/user/vouchers');
-const easyPaisaRouter = require('./src/routes/paymentMethods/easyPaisa');
 const cardRouter = require('./src/routes/paymentMethods/creditDebitCard');
 
 const Users = require('./src/models/userModel');
@@ -56,7 +55,12 @@ exports.emitMessage = chat => {
   io.emit('newMessage', chat);
 };
 
+exports.emitEPResponse = (flag, msg) => {
+  io.emit(flag, msg);
+};
+
 const chatRouter = require('./src/routes/chat/chat');
+const easyPaisaRouter = require('./src/routes/paymentMethods/easyPaisa');
 
 app.disable('etag');
 app.disable('x-powered-by');
