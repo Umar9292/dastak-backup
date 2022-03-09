@@ -190,4 +190,30 @@ router.get('/alfaCallback', async (req, res) => {
   }
 });
 
+router.post('/v1/checkCardPaymentStatus', async (req, res) => {
+  try {
+    const { transactionId } = req.body;
+
+    let result = await axios.get(
+      `${process.env.ALFA_IPN_URL}/${transactionId}`
+    );
+
+    result = JSON.parse(result.data);
+    const { ResponseCode, TransactionStatus } = result;
+
+    if (ResponseCode === '00' && TransactionStatus === 'Paid') {
+      return res.json({ status: '200', msg: 'Your order has been placed.' });
+    }
+
+    await Orders.deleteOne({ transactionId });
+    return res.json({ status: '404' });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      msg: 'Looks like an error occurred on our side. Kindly try again',
+    });
+  }
+});
+
 module.exports = router;
