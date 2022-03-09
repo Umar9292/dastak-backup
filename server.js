@@ -48,6 +48,7 @@ const io = socketIo(server, {
   transports: ['websocket'],
 });
 io.adapter(redis(process.env.REDIS_URL));
+// io.adapter(redis({ host: '127.0.0.1', port: 6379 }));
 
 io.on('connection', socket => {
   console.log('user connected');
@@ -61,8 +62,8 @@ exports.emitMessage = chat => {
   io.emit('newMessage', chat);
 };
 
-exports.emitEPResponse = (flag, msg) => {
-  io.emit(flag, msg);
+exports.emitEPResponse = (event, data) => {
+  io.emit(event, data);
 };
 
 const chatRouter = require('./src/routes/chat/chat');
