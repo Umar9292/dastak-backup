@@ -41,7 +41,6 @@ const easyPaisa = async (orderTotal, easyPaisaPhone, email, userId, params) => {
   });
 
   const { responseCode } = result.data;
-  console.log(responseCode);
 
   if (responseCode === '0001') {
     const msg =
@@ -50,7 +49,6 @@ const easyPaisa = async (orderTotal, easyPaisaPhone, email, userId, params) => {
   }
 
   if (responseCode === '0002') {
-    console.log('Incorrect number');
     const msg = 'Dear customer the phone number you have entered is incorrect.';
     return emitEPResponse('incorrectNumber', { msg, userId });
   }

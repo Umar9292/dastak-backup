@@ -48,13 +48,6 @@ const io = socketIo(server, {
   transports: ['websocket'],
 });
 io.adapter(redis(process.env.REDIS_URL));
-// io.adapter(redis({ host: '127.0.0.1', port: 6379 }));
-
-io.on('connection', socket => {
-  console.log('user connected');
-
-  socket.on('disconnect', () => console.log('user disconnected'));
-});
 
 server.listen(port, () => console.log(`Listening on port ${port}\n`));
 
