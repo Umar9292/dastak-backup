@@ -97,9 +97,9 @@ router.get('/alfaCallback', async (req, res) => {
   console.log(req.query);
 
   if (TS === 'F') {
-    // await Orders.deleteOne({ transactionId: O });
+    await Orders.deleteOne({ transactionId: O });
 
-    return res.redirect('http://192.168.18.11:8080/cardFailed/views');
+    return res.redirect('https://dastakbackend.herokuapp.com/cardFailed/views');
   }
 
   if (TS === 'P') {
@@ -155,7 +155,7 @@ router.get('/alfaCallback', async (req, res) => {
       });
     });
 
-    res.redirect('http://192.168.18.11:8080/cardSuccessful/views');
+    res.redirect('http://dastakbackend.herokuapp.com/cardSuccessful/views');
 
     const user = await Users.findById(order.userId).select('-password -__v');
 
@@ -205,8 +205,8 @@ router.post('/v1/checkCardPaymentStatus', async (req, res) => {
       return res.json({ status: '200', msg: 'Your order has been placed.' });
     }
 
+    res.json({ status: '404' });
     await Orders.deleteOne({ transactionId });
-    return res.json({ status: '404' });
   } catch (err) {
     console.log(err);
     return res.json({
