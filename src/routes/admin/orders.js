@@ -526,7 +526,7 @@ router.post('/specificUserOrders', async (req, res) => {
 
 router.post('/restaurantResponse', async (req, res) => {
   try {
-    const { orderId, status, customerNotified } = req.body;
+    const { orderId, status } = req.body;
 
     const {
       status: orderStatus,
