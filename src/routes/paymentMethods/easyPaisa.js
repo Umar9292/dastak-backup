@@ -5,6 +5,7 @@ const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-20
 
 const Users = require('../../models/userModel');
 const Orders = require('../../models/ordersModel');
+const WalletHistory = require('../../models/walletHistory');
 
 const { emitEPResponse } = require('../../../server');
 const { checkTime } = require('../../checkTime/checkTime');
@@ -20,7 +21,17 @@ const {
 
 const router = Router();
 
-const easyPaisa = async (orderTotal, easyPaisaPhone, email, userId, params) => {
+const easyPaisa = async params => {
+  const {
+    orderTotal,
+    easyPaisaPhone,
+    email,
+    userId,
+    paymentType,
+    onlineAmount,
+    walletAmount,
+  } = params;
+
   const transactionId = `EP${moment()
     .tz('Asia/Karachi')
     .format('YYYYMMDD')}${crypto.randomBytes(2).toString('hex')}`;
@@ -28,7 +39,7 @@ const easyPaisa = async (orderTotal, easyPaisaPhone, email, userId, params) => {
   const data = {
     orderId: transactionId,
     storeId: process.env.EASYPAISA_STOREID,
-    transactionAmount: orderTotal,
+    transactionAmount: paymentType === 'split' ? onlineAmount : orderTotal,
     transactionType: 'MA',
     mobileAccountNo: easyPaisaPhone,
     emailAddress: email,
@@ -135,6 +146,23 @@ const easyPaisa = async (orderTotal, easyPaisaPhone, email, userId, params) => {
 
     const user = await Users.findById(userId).select('-password -__v');
 
+    if (paymentType === 'split') {
+      user.wallet.amount -= walletAmount;
+      user.save();
+
+      const history = {
+        type: 'Deduction',
+        amount: walletAmount,
+        userId,
+        orderId: order._id,
+        time: moment()
+          .tz('Asia/karachi')
+          .format('DD-MM-YYYY hh:mm a'),
+      };
+
+      new WalletHistory(history).save();
+    }
+
     const count = orderData.products.reduce((a, b) => a + b.count, 0);
 
     if (mart.email && mart.email !== '' && user.email.includes('@')) {
@@ -170,23 +198,24 @@ const easyPaisa = async (orderTotal, easyPaisaPhone, email, userId, params) => {
 
 router.post('/v1/easyPaisa', async (req, res) => {
   try {
-    const { orderTotal, easyPaisaPhone, email, martId, userId } = req.body;
+    const { martId } = req.body;
+    console.log(req.body);
     // const Credentials = Buffer.from(
     //   'Dastak:7ed6bcb0da9fd70ee294c1595c037e01'
     // ).toString('base64');
 
-    const restaurantIsOpen = await checkTime(martId);
+    // const restaurantIsOpen = await checkTime(martId);
 
-    if (!restaurantIsOpen) {
-      return res.json({
-        status: '404',
-        msg: 'Sorry, the restaurant got closed.',
-      });
-    }
+    // if (!restaurantIsOpen) {
+    //   return res.json({
+    //     status: '404',
+    //     msg: 'Sorry, the restaurant got closed.',
+    //   });
+    // }
 
     res.json({ status: '200', msg: 'Your payment is being processed.' });
 
-    easyPaisa(orderTotal, easyPaisaPhone, email, userId, req.body);
+    easyPaisa(req.body);
   } catch (err) {
     console.log(err);
     return res.json({

@@ -6,8 +6,11 @@ const ordersModel = Schema(
       type: Boolean,
       default: false,
     },
+    walletAmount: Number,
+    onlineAmount: Number,
     paymentStatus: String,
     serviceCharges: String,
+    paymentMethod: String,
     paymentType: String,
     transactionId: String,
     collectionSubmitted: {

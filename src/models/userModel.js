@@ -14,6 +14,21 @@ const GeoSchema = Schema({
 const userModel = Schema(
   {
     verified: Boolean,
+    topUp: {
+      transactionId: String,
+      amount: Number,
+      status: String,
+    },
+    wallet: {
+      amount: {
+        type: Number,
+        default: 0,
+      },
+      isUsable: {
+        type: Boolean,
+        default: true,
+      },
+    },
     superAdmin: Boolean,
     geometry: GeoSchema,
     easyPaisaPhone: String,

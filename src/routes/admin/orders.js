@@ -4,6 +4,7 @@ const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-20
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
+const WalletHistory = require('../../models/walletHistory');
 
 const { getAddress } = require('../../geoCoder/getAddress');
 const {
@@ -19,7 +20,6 @@ const {
 const {
   notifyUser,
   notifyAdmin,
-  notifyRiders,
 } = require('../../notificationHandler/handler');
 
 const router = Router();
@@ -36,6 +36,8 @@ router.post('/placeOrder', async (req, res) => {
       longitude,
       orderType,
       deliveryCharges,
+      walletAmount,
+      paymentType,
     } = params;
 
     const date = moment()
@@ -109,6 +111,23 @@ router.post('/placeOrder', async (req, res) => {
     ); */
 
     const user = await Users.findById(userId).select('-password -__v');
+
+    if (paymentType === 'wallet') {
+      user.wallet.amount -= walletAmount;
+      user.save();
+
+      const history = {
+        type: 'Deduction',
+        amount: walletAmount,
+        userId,
+        orderId: order._id,
+        time: moment()
+          .tz('Asia/karachi')
+          .format('DD-MM-YYYY hh:mm a'),
+      };
+
+      new WalletHistory(history).save();
+    }
 
     const count = params.products.reduce((a, b) => a + b.count, 0);
 
@@ -280,7 +299,7 @@ router.post('/specificUserOrders', async (req, res) => {
   }
 });
 
-router.post('/adminResponse', async (req, res) => {
+/* router.post('/adminResponse', async (req, res) => {
   try {
     const {
       orderNum,
@@ -495,6 +514,196 @@ router.post('/adminResponse', async (req, res) => {
         msg: 'Customer has been notified',
       });
     }
+  } catch (err) {
+    console.error(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
+
+router.post('/restaurantResponse', async (req, res) => {
+  try {
+    const { orderId, status, customerNotified } = req.body;
+
+    const {
+      status: orderStatus,
+      paymentMethod,
+      orderType,
+    } = await Orders.findById(orderId)
+      .select('status paymentMethod orderNum orderType')
+      .lean();
+
+    if (orderStatus === 'Rejected') {
+      return res.json({ status: '404', msg: 'Already Rejected' });
+    }
+
+    if (
+      orderStatus !== 'Pending' &&
+      status !== 'Rejected' &&
+      orderType !== 'PickUp'
+    ) {
+      return res.json({ status: '404', msg: 'Already Accepted' });
+    }
+
+    const order = await Orders.findByIdAndUpdate(orderId, {
+      $set: req.body,
+    });
+
+    if (status === 'Delivered') {
+      return res.json({
+        status: '200',
+        msg: 'Order completed.',
+      });
+    }
+
+    const [user, shop] = await Promise.all([
+      Users.findById(order.userId)
+        .select('playerId phone wallet')
+        .lean(),
+
+      Users.findById(order.martId)
+        .select('name')
+        .lean(),
+    ]);
+
+    const otpPhone = 92 + user.phone.substring(1, 11);
+
+    if (status === 'Rejected') {
+      if (paymentMethod === 'COD' || orderType === 'PickUp') {
+        const msg = `Dear Dastak user, ${shop.name} could not accept your order at the moment due to some reason. We are sorry for the inconvenience.`;
+
+        axios.get(
+          `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
+            msg
+          )}`
+        );
+
+        notifyUser(msg, user.playerId, { flag: 'orderCancelled' });
+      } else {
+        const msg = `Dear Dastak user, ${shop.name} could not accept your order at the moment due to some reason. Don't worry the amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
+
+        axios.get(
+          `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
+            msg
+          )}`
+        );
+
+        notifyUser(msg, user.playerId, { flag: 'orderCancelled' });
+
+        const refund = {
+          type: 'Refund',
+          transactionId: order.transactionId,
+          amount: order.orderTotal,
+          userId: user._id,
+          orderId,
+          time: moment()
+            .tz('Asia/karachi')
+            .format('MM-DD-YYYY hh:mm a'),
+        };
+
+        await Promise.all([
+          Users.findByIdAndUpdate(order.userId, {
+            wallet: user.wallet.amount + order.orderTotal,
+          }),
+
+          new WalletHistory(refund).save(),
+        ]);
+      }
+
+      return res.json({
+        status: '200',
+        msg: 'Order successfully cancelled',
+      });
+    }
+
+    /* if (status === 'Admin Accepted' && !customerNotified) {
+      if (orderType === 'PickUp') {
+        const msg = `Dear Dastak user your order# ${order.orderNum} from ${shop.name} is accepted and being prepared. We'll notify you once it's ready.`;
+
+        await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
+
+        await axios.get(
+          `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
+            msg
+          )}`
+        );
+
+        return res.json({
+          status: '200',
+          msg: 'Order successfully accepted',
+        });
+      }
+
+      const msg = `Dear Dastak user your order# ${orderNum} from ${shop.name} is accepted and being prepared. We'll notify you once it's dispatched.`;
+      await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
+
+      const [idleRiders, allRiders] = await Promise.all([
+        Users.find({
+          type: 'rider',
+          status: 'idle',
+          available: true,
+          city: order.city,
+        })
+          .select('name playerId')
+          .lean(),
+
+        Users.find({
+          type: 'rider',
+          available: true,
+          city: order.city,
+        })
+          .select('name playerId')
+          .lean(),
+      ]);
+
+      if (idleRiders.length === 0) {
+        allRiders.forEach(async rider => {
+          const { name, playerId } = rider;
+
+          await notifyRiders(name, ridersMessage, playerId, {
+            flag: 'riderNotified',
+          });
+        });
+      } else {
+        idleRiders.forEach(async rider => {
+          const { name, playerId } = rider;
+
+          await notifyRiders(name, ridersMessage, playerId, {
+            flag: 'riderNotified',
+          });
+        });
+      }
+
+      order.orderNum = orderNum;
+      order.save();
+
+      res.json({
+        status: '200',
+        msg: 'Order successfully accepted',
+      });
+
+      await axios.get(
+        `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
+          msg
+        )}`
+      );
+
+      const adminMessage = `The order number ${orderNum} has been Accepted by ${shop.name}`;
+      orderStatusEmail(adminMessage);
+    } */
+
+    /*  if (status === 'Admin Accepted' && customerNotified) {
+      const msg = `Dear ${user.name} your order# ${orderNum} for ${shop.name} is now ready. Kindly pick it up`;
+      await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
+
+      return res.json({
+        status: '200',
+        msg: 'Customer has been notified',
+      });
+    } */
   } catch (err) {
     console.error(err);
     return res.json({

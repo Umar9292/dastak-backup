@@ -12,14 +12,21 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
   try {
     const {
       martId,
+      userId,
       martLatitude,
       martLongitude,
       userLatitude,
       userLongitude,
     } = req.body;
 
-    const [restaurant, deliveryCharges] = await Promise.all([
-      Users.findById(martId).lean(),
+    const [restaurant, user, deliveryCharges] = await Promise.all([
+      Users.findById(martId)
+        .select('-password -__v')
+        .lean(),
+
+      Users.findById(userId)
+        .select('-password -__v')
+        .lean(),
 
       calculateDeliveryCharges(
         userLatitude,
@@ -35,6 +42,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
     return res.json({
       status: '200',
       restaurant,
+      user,
     });
   } catch (err) {
     return res.json({

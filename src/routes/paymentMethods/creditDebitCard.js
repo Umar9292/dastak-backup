@@ -5,6 +5,7 @@ const moment = require('moment-timezone');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
+const WalletHistory = require('../../models/walletHistory');
 
 const { getAddress } = require('../../geoCoder/getAddress');
 const { notifyAdmin } = require('../../notificationHandler/handler');
@@ -27,13 +28,16 @@ const {
   ALFA_MERCHANT_USERNAME,
   ALFA_MERCHANT_PASSWORD,
   ALFA_HANDSHAKE_URL,
+  CARD_FAILED_URL,
+  TOPUP_SUCCESSFUL_URL,
+  CARD_SUCCESS_URL,
 } = process.env;
 
 const router = Router();
 
 router.post('/v1/card', async (req, res) => {
   try {
-    const { orderTotal } = req.body;
+    const { orderTotal, onlineAmount, paymentType } = req.body;
 
     const transactionId = `A${moment()
       .tz('Asia/Karachi')
@@ -69,7 +73,9 @@ router.post('/v1/card', async (req, res) => {
     const result = await axios.post(ALFA_HANDSHAKE_URL, handShakeData);
     const { AuthToken } = result.data;
 
-    const redirectionString = `AuthToken=${AuthToken}&ChannelId=${ALFA_CHANNEL_ID}&Currency=PKR&IsBIN=0&ReturnURL=${ALFA_RETURN_URL}&MerchantId=${ALFA_MERCHANT_ID}&StoreId=${ALFA_STORE_ID}&MerchantHash=${ALFA_MERCHANT_HASH}&MerchantUsername=${ALFA_MERCHANT_USERNAME}&MerchantPassword=${ALFA_MERCHANT_PASSWORD}&TransactionTypeId=3&TransactionReferenceNumber=${transactionId}&TransactionAmount=${orderTotal}`;
+    const redirectionString = `AuthToken=${AuthToken}&ChannelId=${ALFA_CHANNEL_ID}&Currency=PKR&IsBIN=0&ReturnURL=${ALFA_RETURN_URL}&MerchantId=${ALFA_MERCHANT_ID}&StoreId=${ALFA_STORE_ID}&MerchantHash=${ALFA_MERCHANT_HASH}&MerchantUsername=${ALFA_MERCHANT_USERNAME}&MerchantPassword=${ALFA_MERCHANT_PASSWORD}&TransactionTypeId=3&TransactionReferenceNumber=${transactionId}&TransactionAmount=${
+      paymentType === 'split' ? onlineAmount : orderTotal
+    }`;
 
     const cipher = crypto.createCipheriv('AES-128-CBC', ALFA_KEY_1, ALFA_KEY_2);
     const redirectionHash =
@@ -94,18 +100,61 @@ router.post('/v1/card', async (req, res) => {
 router.get('/alfaCallback', async (req, res) => {
   const { TS, O } = req.query;
 
-  console.log(req.query);
+  const transactionType = O.substring(0, 2);
+
+  if (transactionType === 'ATO' && TS === 'F') {
+    await Users.updateOne(
+      { 'topUp.transactionId': O },
+      { 'topUp.status': 'Failed' }
+    );
+
+    return res.redirect(CARD_FAILED_URL);
+  }
+
+  if (transactionType === 'ATO' && TS === 'P') {
+    const user = await Users.findOne({ 'topUp.transactionId': O }).select(
+      'wallet topUp'
+    );
+
+    const { amount } = user.topUp;
+    user.wallet.amount += amount;
+    user.topUp.status = 'Successful';
+    await user.save();
+
+    const topUp = {
+      type: 'Top Up',
+      amount,
+      transactionId: O,
+      userId: user._id,
+      topUpMethod: 'Credit/Debit Card',
+      time: moment()
+        .tz('Asia/karachi')
+        .format('MM-DD-YYYY hh:mm a'),
+    };
+
+    new WalletHistory(topUp).save();
+
+    return res.redirect(TOPUP_SUCCESSFUL_URL);
+  }
 
   if (TS === 'F') {
     await Orders.deleteOne({ transactionId: O });
 
-    return res.redirect('https://dastakbackend.herokuapp.com/cardFailed/views');
+    return res.redirect(CARD_FAILED_URL);
   }
 
   if (TS === 'P') {
     const order = await Orders.findOne({ transactionId: O });
 
-    const { martId, latitude, longitude, products, orderTotal } = order;
+    const {
+      martId,
+      latitude,
+      longitude,
+      products,
+      orderTotal,
+      paymentType,
+      walletAmount,
+    } = order;
 
     const date = moment()
       .tz('Asia/Karachi')
@@ -155,9 +204,26 @@ router.get('/alfaCallback', async (req, res) => {
       });
     });
 
-    res.redirect('http://dastakbackend.herokuapp.com/cardSuccessful/views');
+    res.redirect(CARD_SUCCESS_URL);
 
     const user = await Users.findById(order.userId).select('-password -__v');
+
+    if (paymentType === 'split') {
+      user.wallet.amount -= walletAmount;
+      user.save();
+
+      const history = {
+        type: 'Deduction',
+        amount: walletAmount,
+        userId: user._id,
+        orderId: order._id,
+        time: moment()
+          .tz('Asia/karachi')
+          .format('DD-MM-YYYY hh:mm a'),
+      };
+
+      new WalletHistory(history).save();
+    }
 
     const orderProducts = JSON.parse(products);
     const count = orderProducts.reduce((a, b) => a + b.count, 0);

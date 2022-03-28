@@ -34,6 +34,8 @@ const uploadPrescription = require('./src/routes/stores/uploadPrescription');
 const deliveryChargesRouter = require('./src/routes/user/deliveryCharges');
 const vouchersRouter = require('./src/routes/user/vouchers');
 const cardRouter = require('./src/routes/paymentMethods/creditDebitCard');
+const dastakWalletRouter = require('./src/routes/dastakWallet/dastakWallet');
+const cardTopUpRouter = require('./src/routes/dastakWallet/walletTopUp/cardTopUp');
 
 const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -61,6 +63,7 @@ exports.emitEPResponse = (event, data) => {
 
 const chatRouter = require('./src/routes/chat/chat');
 const easyPaisaRouter = require('./src/routes/paymentMethods/easyPaisa');
+const easyPaisaTopUpRouter = require('./src/routes/dastakWallet/walletTopUp/easyPaisaTopUp');
 
 app.disable('etag');
 app.disable('x-powered-by');
@@ -81,7 +84,14 @@ app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 app.use('/chat', chatRouter);
-app.use('/paymentMethod', easyPaisaRouter, cardRouter);
+app.use('/dastakWallet', dastakWalletRouter);
+app.use(
+  '/paymentMethod',
+  easyPaisaRouter,
+  cardRouter,
+  cardTopUpRouter,
+  easyPaisaTopUpRouter
+);
 app.use(
   '/user',
   profileRouter,
