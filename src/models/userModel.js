@@ -45,6 +45,8 @@ const userModel = Schema(
       type: String,
       default: 'active',
     },
+    details: String,
+    prepTime: String,
     favouriteRestaurants: Array,
     riderAddress: String,
     employee: Boolean,

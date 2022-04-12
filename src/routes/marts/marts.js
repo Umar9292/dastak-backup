@@ -4,6 +4,7 @@ const moment = require('moment-timezone');
 const Users = require('../../models/userModel');
 const Reviews = require('../../models/reviewsModel');
 const Orders = require('../../models/ordersModel');
+const PaymentHistories = require('../../models/paymentHistoryModel');
 
 // const { getCity } = require('../../geoCoder/getCity');
 const { openRestaurants } = require('./openRestaurants/openRestaurants');
@@ -342,6 +343,24 @@ router.post('/availabilityStatus', async (req, res) => {
       msg: 'Status updated',
       data: shop,
     });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/paymentHistory', async (req, res) => {
+  try {
+    const { martId } = req.body;
+
+    const paymentHistory = await PaymentHistories.find({ martId })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json({ status: '200', data: paymentHistory });
   } catch (err) {
     return res.json({
       status: '404',

@@ -28,6 +28,7 @@ const {
   ALFA_MERCHANT_USERNAME,
   ALFA_MERCHANT_PASSWORD,
   ALFA_HANDSHAKE_URL,
+  ALFA_IPN_URL,
   CARD_FAILED_URL,
   TOPUP_SUCCESSFUL_URL,
   CARD_SUCCESS_URL,
@@ -260,9 +261,7 @@ router.post('/v1/checkCardPaymentStatus', async (req, res) => {
   try {
     const { transactionId } = req.body;
 
-    let result = await axios.get(
-      `${process.env.ALFA_IPN_URL}/${transactionId}`
-    );
+    let result = await axios.get(`${ALFA_IPN_URL}/${transactionId}`);
 
     result = JSON.parse(result.data);
     const { ResponseCode, TransactionStatus } = result;

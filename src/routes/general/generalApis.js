@@ -7,25 +7,26 @@ const { randomBytes } = require('crypto');
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
 const Orders = require('../../models/ordersModel');
+const Categories = require('../../models/categoriesModel');
 
 const router = Router();
 
 router.get('/changePrices', async (_req, res) => {
   try {
     const products = await Products.find({
-      martId: '5fc4fa6f86e50a04fb5df67f',
+      martId: '62457d7bff94eb2fc79ee3db',
     });
 
     await Promise.all(
       products.map(product => {
-        // if (product.category === 'Grilled Burgers') {
-        let discountedPrice = ((20 / 100) * product.price).toFixed();
-        discountedPrice = Math.round(discountedPrice / 5) * 5;
-        product.price += +discountedPrice;
-        // product.discount = '40';
-        // product.actualPrice = product.discountedPrice;
-        return product.save();
-        // }
+        if (product.category !== 'Dastak Deals') {
+          // let discountedPrice = ((30 / 100) * product.price).toFixed();
+          // discountedPrice = Math.round(discountedPrice / 5) * 5;
+          // product.discountedPrice = product.price - +discountedPrice;
+          product.discount = '0';
+          // product.actualPrice = product.discountedPrice;
+          return product.save();
+        }
       })
     );
 
@@ -85,7 +86,7 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 });
 
-router.get('/test', async (_req, res) => {
+/* router.get('/test', async (_req, res) => {
   try {
     const riders = await Users.find({
       shopType: 'restaurant',
@@ -114,7 +115,7 @@ router.get('/test', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 router.post('/addActualPrices', async (req, res) => {
   try {
@@ -553,6 +554,36 @@ router.post('/jazzCashCallback', async (req, res) => {
   return res.redirect(
     `https://dastakbackend.herokuapp.com/alreadyVerified/views`
   );
+});
+
+router.get('/test', async (_req, res) => {
+  try {
+    const restaurants = await Categories.find();
+
+    restaurants.map(restaurant => {
+      const { categories } = restaurant;
+      const newCategories = [];
+      categories.map(category => {
+        newCategories.push({
+          name: category.name.name,
+          startTime: '',
+          endTime: '',
+        });
+
+        restaurant.categories = newCategories;
+      });
+
+      restaurant.save();
+    });
+
+    res.json({ status: '200' });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
 });
 
 module.exports = router;

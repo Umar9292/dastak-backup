@@ -12,7 +12,7 @@ router.post('/signUpOtp', async (req, res) => {
   try {
     const { phone } = req.body;
 
-    const user = await Users.findOne({ phone, verified: true });
+    const user = await Users.findOne({ phone, verified: true, type: 'user' });
     if (user) {
       return res.json({
         status: '404',
@@ -26,11 +26,11 @@ router.post('/signUpOtp', async (req, res) => {
 
     const otpPhone = 92 + phone.substring(1, 11);
     const msg = `Your Dastak verification code is ${otp}`;
-    await axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
+    axios.get(`${process.env.OTP_URL}&to=${otpPhone}&message=${msg}`);
 
-    await new Otp({ phone, secret, otp }).save();
+    new Otp({ phone, secret, otp }).save();
 
-    return res.json({ status: '200' });
+    res.json({ status: '200' });
   } catch (err) {
     console.log(err);
     return res.json({
@@ -44,7 +44,6 @@ router.post('/signUpOtp', async (req, res) => {
 router.post('/verifySignUpOtp', async (req, res) => {
   try {
     const { phone, otp, password } = req.body;
-    console.log(req.body);
 
     const doc = await Otp.findOne({ phone, otp }).select('secret');
 
@@ -99,7 +98,7 @@ router.post('/signIn', async (req, res) => {
     if (user.status === 'inactive') {
       return res.json({
         status: '404',
-        msg: `You account has been temporarily blocked. Kindly contact support@dask.store for more details.`,
+        msg: `You account has been temporarily blocked. Kindly contact support@dastak.store for more details.`,
       });
     }
 
@@ -121,6 +120,7 @@ router.post('/signIn', async (req, res) => {
       data: user,
     });
   } catch (err) {
+    console.log(err);
     res.json({
       status: '404',
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience`,
@@ -131,9 +131,9 @@ router.post('/signIn', async (req, res) => {
 
 router.post('/signOut', async (req, res) => {
   try {
-    await Users.findByIdAndUpdate(req.body.userId, { playerId: '' });
+    Users.findByIdAndUpdate(req.body.userId, { playerId: '' });
 
-    return res.json({ status: '200' });
+    res.json({ status: '200' });
   } catch (err) {
     return res.json({
       status: '404',
