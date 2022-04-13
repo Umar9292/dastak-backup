@@ -168,7 +168,14 @@ router.post('/placeOrder', async (req, res) => {
 
 router.post('/deliveredOrders', async (req, res) => {
   try {
-    const { martId, filter, startDate, endDate } = req.body;
+    let { martId, filter, startDate, endDate } = req.body;
+
+    startDate = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    endDate = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
 
     let deliveredOrdersQuery;
     if (filter) {
@@ -250,6 +257,7 @@ router.post('/deliveredOrders', async (req, res) => {
       totalToPay,
     });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
