@@ -240,7 +240,7 @@ router.post('/allRestaurantProducts', async (req, res) => {
     const finalData = await Promise.all(
       categories.map(async category => {
         const query = {
-          category,
+          category: category.name,
           martId,
         };
 
