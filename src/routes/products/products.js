@@ -168,8 +168,14 @@ router.post('/allProducts', async (req, res) => {
         let { startTime, endTime, name } = category;
 
         if (startTime !== '') {
-          startTime = moment(startTime, 'HH:mm').tz('Asia/Karachi');
-          endTime = moment(endTime, 'HH:mm').tz('Asia/Karachi');
+          startTime = moment(startTime, 'HH:mm')
+            .tz('Asia/Karachi')
+            .subtract(5, 'hours');
+          endTime = moment(endTime, 'HH:mm')
+            .tz('Asia/Karachi')
+            .subtract(5, 'hours');
+
+          console.log(startTime, endTime);
 
           const openingTimeOffSet = moment(startTime).format('a');
           const closingTimeOffSet = moment(endTime).format('a');
