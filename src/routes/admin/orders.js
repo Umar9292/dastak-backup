@@ -761,9 +761,8 @@ router.post('/restaurantResponse', async (req, res) => {
   }
 });
 
-router.post('/adminAcceptedOrders', async (req, res) => {
+/* router.post('/adminAcceptedOrders', async (req, res) => {
   try {
-    // Todo: Change this api, availbe and city should come from front end
     const { riderId } = req.body;
 
     const { name, available, city, status } = await Users.findById(riderId)
@@ -824,7 +823,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 /* router.post('/adminAcceptedOrders', async (req, res) => {
   try {
@@ -863,6 +862,7 @@ router.post('/adminAcceptedOrders', async (req, res) => {
   }
 });
  */
+
 router.post('/assignRider', async (req, res) => {
   try {
     const { orderId, riderName, riderId, admin } = req.body;
@@ -1192,6 +1192,68 @@ router.post('/assignRider', async (req, res) => {
     });
   }
 }); */
+
+router.post('/riderOngoingOrders', async (req, res) => {
+  try {
+    const { riderId, city, status } = req.body;
+
+    let upcoming = [];
+
+    const idleRiders = await Users.countDocuments({
+      type: 'rider',
+      status: 'idle',
+      available: true,
+      city,
+    });
+
+    if (idleRiders > 0) {
+      if (status === 'idle') {
+        upcoming = await Orders.find({
+          status: 'Admin Accepted',
+          orderType: 'Delivery',
+          city,
+        })
+          .sort({
+            createdAt: -1,
+          })
+          .lean();
+      }
+    } else {
+      upcoming = await Orders.find({
+        status: 'Admin Accepted',
+        orderType: 'Delivery',
+        city,
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .lean();
+    }
+
+    const accepted = await Orders.find({
+      riderId,
+      status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+      orderType: 'Delivery',
+      city,
+    })
+      .sort({
+        createdAt: -1,
+      })
+      .lean();
+
+    return res.json({
+      status: '200',
+      upcoming,
+      accepted,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
 
 router.post('/riderOrders', async (req, res) => {
   try {

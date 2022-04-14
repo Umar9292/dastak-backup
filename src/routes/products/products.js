@@ -1,4 +1,5 @@
 const Router = require('express/lib/router');
+const moment = require('moment-timezone');
 const { createClient } = require('redis');
 
 const Users = require('../../models/userModel');
@@ -140,88 +141,121 @@ router.post('/allProducts', async (req, res) => {
 
     let finalData = [];
 
-    client.get(martId, async (err, data) => {
-      if (err) console.log(err);
+    // client.get(martId, async (err, data) => {
+    //   if (err) console.log(err);
 
-      if (data !== null) {
-        finalData = JSON.parse(data);
-      }
+    //   if (data !== null) {
+    //     finalData = JSON.parse(data);
+    //   }
 
-      if (data !== null) {
-        return res.json({ status: '200', data: finalData });
-      }
+    //   if (data !== null) {
+    //     return res.json({ status: '200', data: finalData });
+    //   }
 
-      const [{ categories }, options] = await Promise.all([
-        Categories.findOne({ martId })
-          .select('categories')
-          .lean(),
+    const [{ categories }, options] = await Promise.all([
+      Categories.findOne({ martId })
+        .select('categories')
+        .lean(),
 
-        Flavours.findOne({ martId }).lean(),
-      ]);
+      Flavours.findOne({ martId }).lean(),
+    ]);
 
-      for (const category of categories) {
-        const query = {
-          category,
-          martId,
-          available: 'in stock',
-        };
+    const currentTime = moment().tz('Asia/Karachi');
+    let filteredCategories = [];
 
-        const products = await Products.find(query).sort({
-          dealNumber: 1,
-          productName: 1,
-          quantity: -1,
-        });
+    await Promise.all(
+      categories.map(category => {
+        let { startTime, endTime, name } = category;
 
-        if (products.length > 0) {
-          const filteredProducts = products.filter(
-            ({ type }) => type === 'deal'
-          );
+        if (startTime !== '') {
+          startTime = moment(startTime, 'HH:mm').tz('Asia/Karachi');
+          endTime = moment(endTime, 'HH:mm').tz('Asia/Karachi');
 
-          const { specifications: flavourSpecifications } = options;
-          const details = [];
+          const openingTimeOffSet = moment(startTime).format('a');
+          const closingTimeOffSet = moment(endTime).format('a');
 
-          if (filteredProducts.length > 0) {
-            for (const product of filteredProducts) {
-              const { specifications } = product;
-
-              await Promise.all(
-                specifications.map(
-                  ({ productName, productType, flavourType }) => {
-                    flavourSpecifications.map(specification => {
-                      if (
-                        productType === specification.productType &&
-                        flavourType === specification.flavourType
-                      ) {
-                        details.push({
-                          title: productName,
-                          data: specification.data,
-                        });
-                      }
-                    });
-                  }
-                )
-              );
-
-              product.specifications = details;
-            }
+          if (
+            (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+            (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+          ) {
+            endTime = moment(endTime).add(1, 'days');
           }
 
-          const data = {
-            category: query.category,
-            data: products,
-          };
-
-          finalData = [...finalData, data];
+          if (
+            currentTime.isSameOrAfter(startTime.toISOString()) &&
+            currentTime.isBefore(endTime.toISOString())
+          ) {
+            filteredCategories = [...filteredCategories, name];
+          }
+        } else {
+          filteredCategories = [...filteredCategories, name];
         }
-      }
+      })
+    );
 
-      res.json({
-        status: '200',
-        data: finalData,
+    console.log(filteredCategories);
+
+    for (const category of filteredCategories) {
+      const query = {
+        category,
+        martId,
+        available: 'in stock',
+      };
+
+      const products = await Products.find(query).sort({
+        dealNumber: 1,
+        productName: 1,
+        quantity: -1,
       });
 
-      client.setex(martId, 600, JSON.stringify(finalData));
+      if (products.length > 0) {
+        const filteredProducts = products.filter(({ type }) => type === 'deal');
+
+        const { specifications: flavourSpecifications } = options;
+        const details = [];
+
+        if (filteredProducts.length > 0) {
+          for (const product of filteredProducts) {
+            const { specifications } = product;
+
+            await Promise.all(
+              specifications.map(
+                ({ productName, productType, flavourType }) => {
+                  flavourSpecifications.map(specification => {
+                    if (
+                      productType === specification.productType &&
+                      flavourType === specification.flavourType
+                    ) {
+                      details.push({
+                        title: productName,
+                        data: specification.data,
+                      });
+                    }
+                  });
+                }
+              )
+            );
+
+            product.specifications = details;
+          }
+        }
+
+        const data = {
+          category: query.category,
+          data: products,
+        };
+
+        finalData = [...finalData, data];
+      }
+    }
+
+    res.json({
+      status: '200',
+      data: finalData,
     });
+
+    //   client.setex(martId, 600, JSON.stringify(finalData));
+    // });
   } catch (err) {
     console.log(err);
     return res.json({
@@ -259,24 +293,6 @@ router.post('/allRestaurantProducts', async (req, res) => {
     return res.json({
       status: '200',
       data: finalData,
-    });
-  } catch (err) {
-    return res.json({
-      status: '404',
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
-
-router.post('/allCategories', async (req, res) => {
-  try {
-    const { martId } = req.body;
-
-    const { categories } = await Categories.findOne({ martId });
-
-    return res.json({
-      status: '200',
-      data: categories,
     });
   } catch (err) {
     return res.json({

@@ -565,7 +565,7 @@ router.get('/test', async (_req, res) => {
       const newCategories = [];
       categories.map(category => {
         newCategories.push({
-          name: category.name.name,
+          name: category.name,
           startTime: '',
           endTime: '',
         });
