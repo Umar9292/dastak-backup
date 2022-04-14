@@ -141,127 +141,125 @@ router.post('/allProducts', async (req, res) => {
 
     let finalData = [];
 
-    // client.get(martId, async (err, data) => {
-    //   if (err) console.log(err);
+    client.get(martId, async (err, data) => {
+      if (err) console.log(err);
 
-    //   if (data !== null) {
-    //     finalData = JSON.parse(data);
-    //   }
+      if (data !== null) {
+        finalData = JSON.parse(data);
+      }
 
-    //   if (data !== null) {
-    //     return res.json({ status: '200', data: finalData });
-    //   }
+      if (data !== null) {
+        return res.json({ status: '200', data: finalData });
+      }
 
-    const [{ categories }, options] = await Promise.all([
-      Categories.findOne({ martId })
-        .select('categories')
-        .lean(),
+      const [{ categories }, options] = await Promise.all([
+        Categories.findOne({ martId })
+          .select('categories')
+          .lean(),
 
-      Flavours.findOne({ martId }).lean(),
-    ]);
+        Flavours.findOne({ martId }).lean(),
+      ]);
 
-    const currentTime = moment().tz('Asia/Karachi');
-    let filteredCategories = [];
+      const currentTime = moment().tz('Asia/Karachi');
+      let filteredCategories = [];
 
-    await Promise.all(
-      categories.map(category => {
-        let { startTime, endTime, name } = category;
+      await Promise.all(
+        categories.map(category => {
+          let { startTime, endTime, name } = category;
 
-        if (startTime !== '') {
-          startTime = moment(startTime, 'HH:mm')
-            .tz('Asia/Karachi')
-            .subtract(5, 'hours');
-          endTime = moment(endTime, 'HH:mm')
-            .tz('Asia/Karachi')
-            .subtract(5, 'hours');
+          if (startTime !== '') {
+            startTime = moment(startTime, 'HH:mm')
+              .tz('Asia/Karachi')
+              .subtract(5, 'hours');
+            endTime = moment(endTime, 'HH:mm')
+              .tz('Asia/Karachi')
+              .subtract(5, 'hours');
 
-          console.log(startTime, endTime);
+            const openingTimeOffSet = moment(startTime).format('a');
+            const closingTimeOffSet = moment(endTime).format('a');
 
-          const openingTimeOffSet = moment(startTime).format('a');
-          const closingTimeOffSet = moment(endTime).format('a');
+            if (
+              (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+              (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+            ) {
+              endTime = moment(endTime).add(1, 'days');
+            }
 
-          if (
-            (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
-            (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
-          ) {
-            endTime = moment(endTime).add(1, 'days');
-          }
-
-          if (
-            currentTime.isSameOrAfter(startTime.toISOString()) &&
-            currentTime.isBefore(endTime.toISOString())
-          ) {
+            if (
+              currentTime.isSameOrAfter(startTime.toISOString()) &&
+              currentTime.isBefore(endTime.toISOString())
+            ) {
+              filteredCategories = [...filteredCategories, name];
+            }
+          } else {
             filteredCategories = [...filteredCategories, name];
           }
-        } else {
-          filteredCategories = [...filteredCategories, name];
-        }
-      })
-    );
+        })
+      );
 
-    console.log(filteredCategories);
-
-    for (const category of filteredCategories) {
-      const query = {
-        category,
-        martId,
-        available: 'in stock',
-      };
-
-      const products = await Products.find(query).sort({
-        dealNumber: 1,
-        productName: 1,
-        quantity: -1,
-      });
-
-      if (products.length > 0) {
-        const filteredProducts = products.filter(({ type }) => type === 'deal');
-
-        const { specifications: flavourSpecifications } = options;
-        const details = [];
-
-        if (filteredProducts.length > 0) {
-          for (const product of filteredProducts) {
-            const { specifications } = product;
-
-            await Promise.all(
-              specifications.map(
-                ({ productName, productType, flavourType }) => {
-                  flavourSpecifications.map(specification => {
-                    if (
-                      productType === specification.productType &&
-                      flavourType === specification.flavourType
-                    ) {
-                      details.push({
-                        title: productName,
-                        data: specification.data,
-                      });
-                    }
-                  });
-                }
-              )
-            );
-
-            product.specifications = details;
-          }
-        }
-
-        const data = {
-          category: query.category,
-          data: products,
+      for (const category of filteredCategories) {
+        const query = {
+          category,
+          martId,
+          available: 'in stock',
         };
 
-        finalData = [...finalData, data];
+        const products = await Products.find(query).sort({
+          dealNumber: 1,
+          productName: 1,
+          quantity: -1,
+        });
+
+        if (products.length > 0) {
+          const filteredProducts = products.filter(
+            ({ type }) => type === 'deal'
+          );
+
+          const { specifications: flavourSpecifications } = options;
+          const details = [];
+
+          if (filteredProducts.length > 0) {
+            for (const product of filteredProducts) {
+              const { specifications } = product;
+
+              await Promise.all(
+                specifications.map(
+                  ({ productName, productType, flavourType }) => {
+                    flavourSpecifications.map(specification => {
+                      if (
+                        productType === specification.productType &&
+                        flavourType === specification.flavourType
+                      ) {
+                        details.push({
+                          title: productName,
+                          data: specification.data,
+                        });
+                      }
+                    });
+                  }
+                )
+              );
+
+              product.specifications = details;
+            }
+          }
+
+          const data = {
+            category: query.category,
+            data: products,
+          };
+
+          finalData = [...finalData, data];
+        }
       }
-    }
 
-    res.json({
-      status: '200',
-      data: finalData,
+      res.json({
+        status: '200',
+        data: finalData,
+      });
+
+      client.setex(martId, 600, JSON.stringify(finalData));
     });
-
-    //   client.setex(martId, 600, JSON.stringify(finalData));
-    // });
   } catch (err) {
     console.log(err);
     return res.json({
