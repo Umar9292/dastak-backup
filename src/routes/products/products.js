@@ -215,10 +215,11 @@ router.post('/allProducts', async (req, res) => {
             ({ type }) => type === 'deal'
           );
 
-          const { specifications: flavourSpecifications } = options;
           const details = [];
 
           if (filteredProducts.length > 0) {
+            const { specifications: flavourSpecifications } = options;
+
             for (const product of filteredProducts) {
               const { specifications } = product;
 

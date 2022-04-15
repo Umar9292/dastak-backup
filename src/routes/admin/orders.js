@@ -1365,15 +1365,15 @@ router.post('/changeOrderStatus', async (req, res) => {
       ]);
 
       rider.pendingCollection += order.orderTotal;
-      rider.save();
+      await rider.save();
 
       if (riderOrders === 0) {
-        Users.findByIdAndUpdate(order.riderId, {
+        await Users.findByIdAndUpdate(order.riderId, {
           status: 'idle',
         });
       }
 
-      Users.findByIdAndUpdate(order.riderId, {
+      await Users.findByIdAndUpdate(order.riderId, {
         orderCount: rider.orderCount - 1,
       });
 
