@@ -204,11 +204,7 @@ router.post('/allProducts', async (req, res) => {
           available: 'in stock',
         };
 
-        const products = await Products.find(query).sort({
-          dealNumber: 1,
-          productName: 1,
-          quantity: -1,
-        });
+        const products = await Products.find(query).sort({ price: 1 });
 
         if (products.length > 0) {
           const filteredProducts = products.filter(
