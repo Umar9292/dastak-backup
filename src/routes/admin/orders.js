@@ -1259,23 +1259,14 @@ router.post('/riderOrders', async (req, res) => {
   try {
     const { riderId } = req.body;
 
-    const [{ fareType, pendingCollection }, accepted] = await Promise.all([
-      Users.findById(riderId).lean(),
+    const { fareType, pendingCollection } = await Users.findById(
+      riderId
+    ).lean();
 
-      Orders.find({
-        riderId,
-        status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
-      })
-        .sort({
-          createdAt: -1,
-        })
-        .lean(),
-    ]);
-
-    let delivered;
+    let deliveredOrders;
 
     if (fareType === 'salary') {
-      delivered = await Orders.find({
+      deliveredOrders = await Orders.find({
         riderId,
         paidToRider: false,
         status: 'Delivered',
@@ -1283,7 +1274,7 @@ router.post('/riderOrders', async (req, res) => {
         createdAt: -1,
       });
     } else {
-      delivered = await Orders.find({
+      deliveredOrders = await Orders.find({
         riderId,
         paidToRider: false,
         riderFare: { $gt: 0 },
@@ -1295,28 +1286,16 @@ router.post('/riderOrders', async (req, res) => {
         .lean();
     }
 
-    const totalRidersFare = delivered.reduce((a, b) => a + b.riderFare, 0);
-    const totalOrdersAmount = pendingCollection;
-    delivered = delivered.filter(order => order.reason === '');
-
-    await Promise.all(
-      accepted.map(async order => {
-        const { martId } = order;
-
-        const { geometry } = await Users.findById(martId)
-          .select('geometry')
-          .lean();
-
-        const [longitude, latitude] = geometry.coordinates;
-        order.martLatitude = latitude.toString();
-        order.martLongitude = longitude.toString();
-      })
+    const totalRidersFare = deliveredOrders.reduce(
+      (a, b) => a + b.riderFare,
+      0
     );
+    const totalOrdersAmount = pendingCollection;
+    deliveredOrders = deliveredOrders.filter(order => order.reason === '');
 
     return res.json({
       status: '200',
-      accepted,
-      delivered,
+      deliveredOrders,
       totalOrdersAmount,
       totalRidersFare,
     });
@@ -1364,8 +1343,10 @@ router.post('/changeOrderStatus', async (req, res) => {
         Users.findById(order.riderId),
       ]);
 
-      rider.pendingCollection += order.orderTotal;
-      await rider.save();
+      if (order.paymentType === 'COD') {
+        rider.pendingCollection += order.orderTotal;
+        await rider.save();
+      }
 
       if (riderOrders === 0) {
         await Users.findByIdAndUpdate(order.riderId, {
