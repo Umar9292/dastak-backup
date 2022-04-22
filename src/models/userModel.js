@@ -29,6 +29,8 @@ const userModel = Schema(
         default: true,
       },
     },
+    startShift: String,
+    endShift: String,
     superAdmin: Boolean,
     geometry: GeoSchema,
     easyPaisaPhone: String,

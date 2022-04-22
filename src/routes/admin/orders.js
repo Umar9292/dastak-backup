@@ -1195,19 +1195,25 @@ router.post('/assignRider', async (req, res) => {
 
 router.post('/riderOngoingOrders', async (req, res) => {
   try {
-    const { riderId, city, status } = req.body;
+    const { riderId, city } = req.body;
 
     let upcoming = [];
 
-    const idleRiders = await Users.countDocuments({
-      type: 'rider',
-      status: 'idle',
-      available: true,
-      city,
-    });
+    const [idleRiders, { available, status }] = await Promise.all([
+      Users.countDocuments({
+        type: 'rider',
+        status: 'idle',
+        available: true,
+        city,
+      }),
 
-    if (idleRiders > 0) {
-      if (status === 'idle') {
+      Users.findById(riderId)
+        .select('available status')
+        .lean(),
+    ]);
+
+    if (idleRiders >= 0) {
+      if (status === 'idle' && available) {
         upcoming = await Orders.find({
           status: 'Admin Accepted',
           orderType: 'Delivery',

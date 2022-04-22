@@ -5,8 +5,11 @@ const Chats = require('../../models/chatModel');
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
 
-const { notifyUser } = require('../../notificationHandler/handler');
 const { emitMessage } = require('../../../server');
+const {
+  notifyUser,
+  notifyRiders,
+} = require('../../notificationHandler/handler');
 
 const router = Router();
 
@@ -37,16 +40,14 @@ router.post('/newMessage', async (req, res) => {
 
     res.json({ status: '200' });
 
-    const msg = `New message from ${chat[chat.length - 1].type}: ${
-      chat[chat.length - 1].txt
-    }`;
+    const msg = `New message from ${chat[0].type}: ${chat[0].txt}`;
 
-    if (chat[chat.length - 1].type === 'user') {
-      const { playerId } = await Users.findById(riderId)
-        .select('playerId')
+    if (chat[0].type === 'user') {
+      const { playerId, name } = await Users.findById(riderId)
+        .select('playerId name')
         .lean();
 
-      await notifyUser(msg, playerId, {
+      await notifyRiders(name, msg, playerId, {
         flag: 'riderMsg',
       });
     } else {
