@@ -98,7 +98,7 @@ router.post('/v1/checkCardTopUpStatus', async (req, res) => {
     if (ResponseCode === '00' && TransactionStatus === 'Paid') {
       return res.json({
         status: '200',
-        msg: `Dear Dastak user amount of rs ${TransactionAmount} has been added to your dastak wallet.`,
+        msg: `Dear Dastak user amount of RS ${TransactionAmount} has been added to your dastak wallet.`,
       });
     }
 

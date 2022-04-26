@@ -1329,13 +1329,13 @@ router.post('/changeOrderStatus', async (req, res) => {
 
     if (status === 'Rider Picked Up') {
       const { latitude, longitude } = await Users.findById(martId)
-        .select('latitude logitude')
+        .select('latitude longitude')
         .lean();
 
       const distance =
         getPreciseDistance(
           { latitude: riderLatitude, longitude: riderLongitude },
-          { latitude, longitude }
+          { latitude: +latitude, longitude: +longitude }
         ) / 1000;
 
       if (distance > 0.1) {
@@ -1421,6 +1421,7 @@ router.post('/changeOrderStatus', async (req, res) => {
     const message = `Order# ${order.orderNum} has been picked up by ${order.riderName}`;
     orderStatusEmail(message);
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),

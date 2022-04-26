@@ -48,7 +48,7 @@ const easyPaisaTopUp = async (amount, easyPaisaPhone, email, userId) => {
   }
 
   if (responseCode === '0000') {
-    const successMsg = `Dear Dastak user amount of rs ${amount} has been added to your dastak wallet.`;
+    const successMsg = `Dear Dastak user amount of RS ${amount} has been added to your dastak wallet.`;
     emitEPResponse('paymentSuccessful', { successMsg, userId });
 
     const topUp = {
