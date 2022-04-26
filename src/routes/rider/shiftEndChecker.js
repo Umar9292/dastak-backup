@@ -15,7 +15,9 @@ exports.shiftEndChecker = async () => {
     riders.map(rider => {
       let { name, playerId, endShift } = rider;
 
-      endShift = moment(endShift, 'HH:mm').tz('Asia/karachi');
+      endShift = moment(endShift, 'HH:mm')
+        .tz('Asia/karachi')
+        .subtract(5, 'hours');
 
       if (currentTime.isAfter(endShift)) {
         const msg = 'Your shift has ended.';
