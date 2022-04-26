@@ -14,7 +14,7 @@ exports.notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
     data: toBeSentData,
     ios_sound: 'dastak.wav',
     android_sound: 'dastak',
-    android_channel_id: '89c63241-377d-49b6-8605-271517dc0a71',
+    android_channel_id: '0d6eaed6-91e1-42d1-9722-9622d9d40592',
     small_icon: 'ic_stat_onesignal_default',
     large_icon:
       'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
