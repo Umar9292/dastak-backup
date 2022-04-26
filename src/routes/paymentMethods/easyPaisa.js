@@ -75,26 +75,15 @@ const easyPaisa = async params => {
       'Payment processed successfully. Your order has been placed.';
     emitEPResponse('paymentSuccessful', { successMsg, userId });
 
-    const {
-      martId,
-      products,
-      latitude,
-      longitude,
-      orderType,
-      deliveryCharges,
-    } = params;
+    const { martId, products, latitude, longitude } = params;
 
     const date = moment()
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
 
-    const [mart, { employee }, todaysOrders] = await Promise.all([
+    const [mart, todaysOrders] = await Promise.all([
       Users.findById(martId)
         .select('-password -__v')
-        .lean(),
-
-      Users.findById(userId)
-        .select('employee')
         .lean(),
 
       Orders.countDocuments({ martId, date }),
@@ -117,16 +106,8 @@ const easyPaisa = async params => {
       martPhone: mart.phone,
       martAddress: mart.martAddress,
       time: formatedTime,
-      deliveryCharges:
-        employee !== undefined || orderType === 'pickUp'
-          ? '0'
-          : deliveryCharges,
       date,
       orderNum: todaysOrders + 1,
-      orderTotal:
-        employee !== undefined && orderType !== 'PickUp'
-          ? orderTotal - deliveryCharges
-          : orderTotal,
       dateForSearching: moment(date, 'DD-MM-YYYY')
         .tz('Asia/Karachi')
         .toISOString(),
@@ -199,19 +180,15 @@ const easyPaisa = async params => {
 router.post('/v1/easyPaisa', async (req, res) => {
   try {
     const { martId } = req.body;
-    console.log(req.body);
-    // const Credentials = Buffer.from(
-    //   'Dastak:7ed6bcb0da9fd70ee294c1595c037e01'
-    // ).toString('base64');
 
-    // const restaurantIsOpen = await checkTime(martId);
+    const restaurantIsOpen = await checkTime(martId);
 
-    // if (!restaurantIsOpen) {
-    //   return res.json({
-    //     status: '404',
-    //     msg: 'Sorry, the restaurant got closed.',
-    //   });
-    // }
+    if (!restaurantIsOpen) {
+      return res.json({
+        status: '404',
+        msg: 'Sorry, the restaurant got closed.',
+      });
+    }
 
     res.json({ status: '200', msg: 'Your payment is being processed.' });
 
