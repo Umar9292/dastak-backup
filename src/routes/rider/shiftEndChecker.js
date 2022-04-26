@@ -12,7 +12,7 @@ exports.shiftEndChecker = async () => {
   const currentTime = moment().tz('Asia/karachi');
 
   if (riders.length > 0) {
-    riders.map(rider => {
+    riders.map(async rider => {
       let { name, playerId, endShift } = rider;
 
       endShift = moment(endShift, 'HH:mm')
@@ -25,7 +25,7 @@ exports.shiftEndChecker = async () => {
 
         rider.available = false;
         rider.status = 'idle';
-        rider.save();
+        await rider.save();
       }
     });
   }
