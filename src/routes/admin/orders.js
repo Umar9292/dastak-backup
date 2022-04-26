@@ -629,7 +629,7 @@ router.post('/restaurantResponse', async (req, res) => {
           )}`
         );
 
-        notifyUser(msg, user.playerId, { flag: 'orderCancelled' });
+        notifyUser(msg, user.playerId, { flag: 'refund' });
 
         const refund = {
           type: 'Refund',
@@ -644,7 +644,7 @@ router.post('/restaurantResponse', async (req, res) => {
 
         await Promise.all([
           Users.findByIdAndUpdate(order.userId, {
-            wallet: user.wallet.amount + order.orderTotal,
+            'wallet.amount': user.wallet.amount + order.orderTotal,
           }),
 
           new WalletHistory(refund).save(),
