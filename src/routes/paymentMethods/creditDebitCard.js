@@ -133,7 +133,7 @@ router.get('/alfaCallback', async (req, res) => {
         .format('MM-DD-YYYY hh:mm a'),
     };
 
-    new WalletHistory(topUp).save();
+    await new WalletHistory(topUp).save();
 
     return res.redirect(TOPUP_SUCCESSFUL_URL);
   }
@@ -200,7 +200,7 @@ router.get('/alfaCallback', async (req, res) => {
 
     const { playerIds: restaurantPlayerIds } = mart;
     restaurantPlayerIds.forEach(async playerId => {
-      await notifyAdmin(info, adminMessage, playerId, {
+      notifyAdmin(info, adminMessage, playerId, {
         flag: 'adminReceived',
       });
     });
@@ -211,7 +211,7 @@ router.get('/alfaCallback', async (req, res) => {
 
     if (paymentType === 'split') {
       user.wallet.amount -= walletAmount;
-      user.save();
+      await user.save();
 
       const history = {
         type: 'Deduction',
@@ -223,7 +223,7 @@ router.get('/alfaCallback', async (req, res) => {
           .format('DD-MM-YYYY hh:mm a'),
       };
 
-      new WalletHistory(history).save();
+      await new WalletHistory(history).save();
     }
 
     const orderProducts = JSON.parse(products);
