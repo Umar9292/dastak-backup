@@ -1,6 +1,7 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
+const { getPreciseDistance } = require('geolib');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
@@ -73,13 +74,11 @@ router.post('/placeOrder', async (req, res) => {
       martAddress: mart.martAddress,
       time: formatedTime,
       deliveryCharges:
-        employee !== undefined || orderType === 'pickUp'
-          ? '0'
-          : deliveryCharges,
+        employee || orderType === 'pickUp' ? '0' : deliveryCharges,
       date,
       orderNum: todaysOrders + 1,
       orderTotal:
-        employee !== undefined && orderType !== 'PickUp'
+        employee && orderType !== 'PickUp'
           ? orderTotal - deliveryCharges
           : orderTotal,
       dateForSearching: moment(date, 'DD-MM-YYYY')
@@ -1316,7 +1315,7 @@ router.post('/riderOrders', async (req, res) => {
 
 router.post('/changeOrderStatus', async (req, res) => {
   try {
-    const { orderId, status } = req.body;
+    const { orderId, status, martId, riderLatitude, riderLongitude } = req.body;
 
     const currentTime = moment().tz('Asia/karachi');
 
@@ -1326,6 +1325,25 @@ router.post('/changeOrderStatus', async (req, res) => {
         status: '404',
         msg: 'Order is already delivered',
       });
+    }
+
+    if (status === 'Rider Picked Up') {
+      const { latitude, longitude } = await Users.findById(martId)
+        .select('latitude logitude')
+        .lean();
+
+      const distance =
+        getPreciseDistance(
+          { latitude: riderLatitude, longitude: riderLongitude },
+          { latitude, longitude }
+        ) / 1000;
+
+      if (distance > 0.1) {
+        return res.json({
+          status: '404',
+          msg: 'Kindly go near the restaurant.',
+        });
+      }
     }
 
     const order = await Orders.findByIdAndUpdate(
