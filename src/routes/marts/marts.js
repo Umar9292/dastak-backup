@@ -139,7 +139,7 @@ router.post('/allRestaurants', async (req, res) => {
     }
  */
     if (flag === 'pickup') {
-      const allRestaurants = await Users.aggregate([
+      let allRestaurants = await Users.aggregate([
         {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
@@ -156,7 +156,7 @@ router.post('/allRestaurants', async (req, res) => {
         { $sort: { position: 1 } },
       ]);
 
-      // allRestaurants = await openRestaurants(allRestaurants);
+      allRestaurants = await openRestaurants(allRestaurants);
 
       return res.json({
         status: '200',
@@ -165,14 +165,14 @@ router.post('/allRestaurants', async (req, res) => {
     }
 
     if (employee === true && city !== '') {
-      const allRestaurants = await Users.find({
+      let allRestaurants = await Users.find({
         available: true,
         status: 'active',
         shopType: 'restaurant',
         city,
       }).lean();
 
-      // allRestaurants = await openRestaurants(allRestaurants);
+      allRestaurants = await openRestaurants(allRestaurants);
 
       const featured = allRestaurants.filter(
         ({ featured, city }) => featured && city
