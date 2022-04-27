@@ -9,6 +9,9 @@ const WalletHistory = require('../../models/walletHistory');
 
 const { getAddress } = require('../../geoCoder/getAddress');
 const {
+  calculateRiderFare,
+} = require('../../calculateRiderFare/calculateRiderFare');
+const {
   orderStatusEmail,
 } = require('../../emailHandler/orderConfirmationEmail/orderStatusEmail');
 const {
@@ -563,7 +566,14 @@ router.post('/specificUserOrders', async (req, res) => {
 
 router.post('/restaurantResponse', async (req, res) => {
   try {
-    const { orderId, status, customerNotified } = req.body;
+    const {
+      orderId,
+      status,
+      customerNotified,
+      orderLatitude,
+      orderLongitude,
+      martId,
+    } = req.body;
 
     const {
       status: orderStatus,
@@ -585,6 +595,21 @@ router.post('/restaurantResponse', async (req, res) => {
     ) {
       return res.json({ status: '404', msg: 'Already Accepted' });
     }
+
+    const { geometry } = await Users.findById(martId)
+      .select('geometry')
+      .lean();
+
+    const [longitude, latitude] = geometry.coordinates;
+
+    req.body.riderFare = await calculateRiderFare(
+      +orderLatitude,
+      +orderLongitude,
+      latitude,
+      longitude
+    );
+
+    console.log(req.body.riderFare);
 
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
@@ -894,9 +919,7 @@ router.post('/assignRider', async (req, res) => {
       Orders.findById(orderId),
 
       Users.findById(riderId)
-        .select(
-          'tillNoonFare nightFare lateNightFare pendingCollection name paymentLimit orderCount'
-        )
+        .select('pendingCollection name paymentLimit orderCount')
         .lean(),
 
       Orders.find({
@@ -909,15 +932,7 @@ router.post('/assignRider', async (req, res) => {
         .lean(),
     ]);
 
-    const {
-      tillNoonFare,
-      nightFare,
-      lateNightFare,
-      pendingCollection,
-      name,
-      paymentLimit,
-      orderCount,
-    } = rider;
+    const { pendingCollection, name, paymentLimit, orderCount } = rider;
 
     if (pendingCollection >= paymentLimit) {
       return res.json({
@@ -1017,7 +1032,7 @@ router.post('/assignRider', async (req, res) => {
     } else {
       order.assignedBy = 'admin';
     }
-
+    /* 
     const orderTime = moment(order.time, 'HH:mma')
       .tz('Asia/karachi')
       .subtract(5, 'hours');
@@ -1039,6 +1054,7 @@ router.post('/assignRider', async (req, res) => {
     } else {
       req.body.riderFare = lateNightFare;
     }
+ */
 
     await Promise.all([
       Orders.findByIdAndUpdate(orderId, { $set: req.body }),
