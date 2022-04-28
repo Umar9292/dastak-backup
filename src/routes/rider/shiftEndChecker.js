@@ -10,6 +10,7 @@ exports.shiftEndChecker = async () => {
   );
 
   const currentTime = moment().tz('Asia/karachi');
+  console.log(currentTime);
 
   if (riders.length > 0) {
     riders.map(async rider => {
