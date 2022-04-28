@@ -8,6 +8,7 @@ const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
 const Orders = require('../../models/ordersModel');
 const Categories = require('../../models/categoriesModel');
+const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
 
 const router = Router();
 
@@ -447,7 +448,7 @@ router.post('/testAlgorithm', async (req, res) => {
   }
 });
 
-/* router.get('/test', async (_req, res) => {
+/* router.get('/addSpecificationsInProducts', async (_req, res) => {
   try {
     const dealProducts = await Products.find({
       type: 'deal',
@@ -548,15 +549,15 @@ router.get('/updateFares', async (_req, res) => {
   }
 });
 
-router.post('/jazzCashCallback', async (req, res) => {
+/* router.post('/jazzCashCallback', async (req, res) => {
   console.log(req.body);
 
   return res.redirect(
     `https://dastakbackend.herokuapp.com/alreadyVerified/views`
   );
-});
+}); */
 
-router.get('/test', async (_req, res) => {
+router.get('/modifyCategories', async (_req, res) => {
   try {
     const restaurants = await Categories.find();
 
@@ -574,6 +575,85 @@ router.get('/test', async (_req, res) => {
       });
 
       restaurant.save();
+    });
+
+    res.json({ status: '200' });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.get('/modifyFlavoursAndDrinks', async (_req, res) => {
+  try {
+    const flavoursAndDrinks = await FlavoursAndDrinks.find();
+
+    flavoursAndDrinks.map(async doc => {
+      let data = [];
+
+      if (doc.flavours) {
+        await Promise.all(
+          doc.flavours.map(flavour => {
+            const { name } = flavour;
+
+            data = [...data, { count: 0, txt: name }];
+          })
+        );
+
+        const specifications = {
+          productType: 'pizza',
+          flavourType: 'regular',
+          data,
+        };
+
+        doc.specifications = [...doc.specifications, specifications];
+        await doc.save();
+      }
+
+      if (doc.regularFlavours) {
+        let data = [];
+
+        await Promise.all(
+          doc.regularFlavours.map(flavour => {
+            const { name } = flavour;
+
+            data = [...data, { count: 0, txt: name }];
+          })
+        );
+
+        const specifications = {
+          productType: 'pizza',
+          flavourType: 'regular',
+          data,
+        };
+
+        doc.specifications = [...doc.specifications, specifications];
+        await doc.save();
+      }
+
+      if (doc.drinks) {
+        let data = [];
+
+        await Promise.all(
+          doc.drinks.map(drink => {
+            const { name } = drink;
+
+            data = [...data, { count: 0, txt: name }];
+          })
+        );
+
+        const specifications = {
+          productType: 'drinks',
+          flavourType: 'regular',
+          data,
+        };
+
+        doc.specifications = [...doc.specifications, specifications];
+        await doc.save();
+      }
     });
 
     res.json({ status: '200' });
