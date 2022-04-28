@@ -1227,7 +1227,7 @@ router.post('/riderOngoingOrders', async (req, res) => {
         .lean(),
     ]);
 
-    if (idleRiders >= 0) {
+    if (idleRiders > 0) {
       if (status === 'idle' && available) {
         upcoming = await Orders.find({
           status: 'Admin Accepted',
