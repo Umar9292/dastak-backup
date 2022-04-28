@@ -613,9 +613,10 @@ router.post('/dastakDeals', async (req, res) => {
 
         if (products.length > 0) {
           const { specifications: flavourSpecifications } = options;
-          const details = [];
 
           for (const product of products) {
+            const details = [];
+
             product.restaurant = restaurant;
 
             if (product.type === 'deal') {
