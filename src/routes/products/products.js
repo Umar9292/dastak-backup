@@ -207,12 +207,12 @@ router.post('/allProducts', async (req, res) => {
             ({ type }) => type === 'deal'
           );
 
-          const details = [];
-
           if (filteredProducts.length > 0) {
             const { specifications: flavourSpecifications } = options;
 
             for (const product of filteredProducts) {
+              const details = [];
+
               const { specifications } = product;
 
               await Promise.all(
