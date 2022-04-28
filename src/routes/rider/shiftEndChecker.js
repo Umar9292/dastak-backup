@@ -19,6 +19,8 @@ exports.shiftEndChecker = async () => {
         .tz('Asia/karachi')
         .subtract(5, 'hours');
 
+      console.log(endShift);
+
       if (currentTime.isAfter(endShift)) {
         const msg = 'Your shift has ended.';
         notifyRiders(name, msg, playerId, {});
