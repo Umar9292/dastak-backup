@@ -609,8 +609,6 @@ router.post('/restaurantResponse', async (req, res) => {
       longitude
     );
 
-    console.log(req.body.riderFare);
-
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
