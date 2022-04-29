@@ -138,7 +138,7 @@ router.post('/restaurantCollections', async (req, res) => {
         );
 
         const totalOfDeliveryOrders = deliveryOrders.reduce(
-          (a, b) => a + b.orderTotal,
+          (a, b) => a + b.orderTotal + +b.discount,
           0
         );
 
