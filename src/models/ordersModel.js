@@ -13,6 +13,7 @@ const ordersModel = Schema(
     paymentMethod: String,
     paymentType: String,
     transactionId: String,
+    prepTime: String,
     collectionSubmitted: {
       type: Boolean,
       default: false,
