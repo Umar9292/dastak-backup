@@ -3,6 +3,7 @@ const {
   oneSignalUserClient,
   oneSignalVendorClient,
   oneSignalRiderClient,
+  oneSignalAdminClient,
 } = require('../../utils/onSignalConfig');
 
 exports.notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
@@ -21,6 +22,25 @@ exports.notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
   });
 
   const { data } = await oneSignalVendorClient.sendNotification(notification);
+  return data.id ? console.log(info) : console.log(data.errors[0]);
+};
+
+exports.notifySuperAdmin = async (info, msg, whomToSend, toBeSentData) => {
+  const notification = new Notification({
+    contents: {
+      en: msg,
+    },
+    include_player_ids: [whomToSend],
+    data: toBeSentData,
+    ios_sound: 'dastak.wav',
+    android_sound: 'dastak',
+    android_channel_id: '9ad27650-17cc-43b3-9a07-7864b1860aa4',
+    small_icon: 'ic_stat_onesignal_default',
+    large_icon:
+      'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
+  });
+
+  const { data } = await oneSignalAdminClient.sendNotification(notification);
   return data.id ? console.log(info) : console.log(data.errors[0]);
 };
 

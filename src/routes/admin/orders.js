@@ -25,6 +25,7 @@ const {
   notifyUser,
   notifyAdmin,
   notifyRiders,
+  notifySuperAdmin,
 } = require('../../notificationHandler/handler');
 
 const router = Router();
@@ -112,7 +113,19 @@ router.post('/placeOrder', async (req, res) => {
       `${process.env.SMS_URL}&mobile=${mart.phone}&message=${msg}`
     ); */
 
-    const user = await Users.findById(userId).select('-password -__v');
+    const [user, admins] = await Promise.all([
+      Users.findById(userId).select('-password -__v'),
+
+      Users.find({ superAdmin: true, status: 'active' })
+        .select('playerId')
+        .lean(),
+    ]);
+
+    admins.forEach(admin => {
+      notifySuperAdmin(info, adminMessage, admin.playerId, {
+        flag: 'adminReceived',
+      });
+    });
 
     if (paymentType === 'wallet') {
       user.wallet.amount -= orderTotal;
