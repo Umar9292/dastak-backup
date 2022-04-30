@@ -2,12 +2,16 @@ const Router = require('express/lib/router');
 
 const router = Router();
 
+const CitiesModel = require('../../models/citiesModel');
+
 router.post('/checkVersion', async (req, res) => {
   try {
     const { platform, version } = req.body;
 
+    const { cities } = await CitiesModel.findOne({}).lean();
+
     if (platform === 'ios' && version === '1.6.7') {
-      return res.json({ status: '200', showCategories: 'false' });
+      return res.json({ status: '200', cities, showCategories: 'false' });
     }
 
     /*   if (platform === 'ios' && version !== '1.4.5') {
@@ -26,9 +30,9 @@ router.post('/checkVersion', async (req, res) => {
 
     if (
       platform === 'android' &&
-      (version === '1.6.4' || version === '1.6.5')
+      (version === '1.6.4' || version === '1.6.5' || version === '1.6.6')
     ) {
-      return res.json({ status: '200', showCategories: 'false' });
+      return res.json({ status: '200', cities, showCategories: 'false' });
     }
 
     /* if (platform === 'android' && version !== '1.4.4') {
