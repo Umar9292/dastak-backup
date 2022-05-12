@@ -1250,7 +1250,7 @@ router.post('/riderOngoingOrders', async (req, res) => {
           })
           .lean();
       }
-    } else {
+    } else if (available) {
       upcoming = await Orders.find({
         status: 'Admin Accepted',
         orderType: 'Delivery',
