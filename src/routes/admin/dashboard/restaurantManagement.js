@@ -50,8 +50,6 @@ router.post('/restaurantCollections', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    console.log(start, end);
-
     const restaurants = await Orders.distinct('martId', {
       paid: false,
       status: 'Delivered',
@@ -141,13 +139,10 @@ router.post('/restaurantCollections', async (req, res) => {
           })
         );
 
-        console.log(deliveryOrders);
         const totalOfDeliveryOrders = deliveryOrders.reduce(
           (a, b) => a + b.orderTotal + +b.discount,
           0
         );
-
-        console.log(totalOfDeliveryOrders);
 
         const deliveryCharges = deliveryOrders.reduce(
           (a, b) => a + +b.deliveryCharges,
