@@ -50,6 +50,8 @@ router.post('/restaurantCollections', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
+    console.log(start, end);
+
     const restaurants = await Orders.distinct('martId', {
       paid: false,
       status: 'Delivered',
@@ -59,6 +61,8 @@ router.post('/restaurantCollections', async (req, res) => {
       },
       city,
     });
+
+    console.log(restaurants);
 
     let data = await Promise.all(
       restaurants.map(async martId => {
@@ -74,7 +78,7 @@ router.post('/restaurantCollections', async (req, res) => {
             },
           })
             .select(
-              'riderFare deliveryCharges martName products orderType orderTotal orderNum date time'
+              'riderFare deliveryCharges martName products orderType orderTotal orderNum date time discount'
             )
             .sort({ createdAt: -1 })
             .lean(),
@@ -137,10 +141,13 @@ router.post('/restaurantCollections', async (req, res) => {
           })
         );
 
+        console.log(deliveryOrders);
         const totalOfDeliveryOrders = deliveryOrders.reduce(
           (a, b) => a + b.orderTotal + +b.discount,
           0
         );
+
+        console.log(totalOfDeliveryOrders);
 
         const deliveryCharges = deliveryOrders.reduce(
           (a, b) => a + +b.deliveryCharges,

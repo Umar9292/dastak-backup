@@ -352,44 +352,29 @@ router.post('/specificUserOrders', async (req, res) => {
   }
 });
 
-/* router.post('/adminResponse', async (req, res) => {
+router.post('/cancelOrder', async (req, res) => {
   try {
-    const {
-      orderNum,
-      type,
-      reason,
-      orderId,
-      status,
-      orderType,
-      customerNotified,
-    } = req.body;
+    const { orderId, reason, refundToCustomer, refundToRestaurant } = req.body;
 
-    const { status: orderStatus } = await Orders.findById(orderId)
-      .select('status')
+    const {
+      status,
+      paymentMethod,
+      orderType,
+      orderTotal,
+    } = await Orders.findById(orderId)
+      .select('status paymentMethod orderType orderTotal')
       .lean();
 
-    if (orderStatus === 'Rejected') {
+    if (status === 'Rejected') {
       return res.json({ status: '404', msg: 'Already Rejected' });
     }
 
-    if (
-      orderStatus !== 'Pending' &&
-      status !== 'Rejected' &&
-      orderType !== 'PickUp'
-    ) {
-      return res.json({ status: '404', msg: 'Already Accepted' });
-    }
-
     const order = await Orders.findByIdAndUpdate(orderId, {
-      $set: req.body,
+      status: 'Rejected',
+      refundToCustomer,
+      refundToRestaurant,
+      reason,
     });
-
-    if (status === 'Delivered') {
-      return res.json({
-        status: '200',
-        msg: 'Order completed.',
-      });
-    }
 
     const [user, shop] = await Promise.all([
       Users.findById(order.userId),
@@ -399,174 +384,57 @@ router.post('/specificUserOrders', async (req, res) => {
         .lean(),
     ]);
 
-    const ridersMessage = `New order from ${shop.name}`;
     const otpPhone = 92 + user.phone.substring(1, 11);
 
-    if (status === 'Rejected') {
-      if (type !== undefined && type === 'user') {
-        const msg = `Order# ${order.orderNum} has been cancelled.`;
+    if (
+      paymentMethod === 'COD' ||
+      orderType === 'PickUp' ||
+      !refundToCustomer
+    ) {
+      const msg = `Dear Dastak user, ${shop.name} could not accept your order at the moment due to some reason. We are sorry for the inconvenience.`;
 
-        const { playerIds } = shop;
-
-        playerIds.forEach(async playerId => {
-          await notifyUser(msg, playerId, { flag: 'orderRejected' });
-        });
-
-        if (order.riderId) {
-          const { playerId: ridersPlayerId } = await Users.findById(
-            order.riderId
-          )
-            .select('playerId')
-            .lean();
-
-          await notifyUser(msg, ridersPlayerId, { flag: 'orderRejected' });
-        }
-      } else {
-        let msg;
-        if (orderStatus !== 'Pending') {
-          msg = `Dear Dastak user your order# ${orderNum} from ${shop.name} has been cancelled.`;
-        } else {
-          msg = `Dear Dastak user your order# ${orderNum} could not be accepted by ${shop.shopType} because ${reason}`;
-        }
-
-        await axios.get(
-          `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
-            msg
-          )}`
-        );
-
-        if (user.type === 'admin') {
-          const { playerIds } = shop;
-
-          playerIds.forEach(async playerId => {
-            await notifyUser(msg, playerId, { flag: 'orderRejected' });
-          });
-        } else {
-          await notifyUser(msg, user.playerId, { flag: 'orderRejected' });
-        }
-
-        const adminMessage = `The order number ${orderNum} has been rejected by ${shop.name} because it's ${reason}`;
-        orderStatusEmail(adminMessage);
-      }
-
-      order.reason = reason;
-      order.orderNum = orderNum;
-      await order.save();
-
-      res.json({
-        status: '200',
-        msg: 'Order successfully cancelled',
-      });
-
-      if (order.riderId) {
-        const ongoingOrders = await Orders.countDocuments({
-          riderId: order.riderId,
-          status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
-        });
-
-        if (ongoingOrders === 0) {
-          await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
-        }
-
-        const rider = await Users.findById(order.riderId).select('orderCount');
-        rider.orderCount -= 1;
-        await rider.save();
-      }
-    }
-
-    if (status === 'Admin Accepted' && !customerNotified) {
-      if (orderType === 'PickUp') {
-        const msg = `Dear Dastak user your order# ${orderNum} from ${shop.name} is accepted and being prepared. We'll notify you once it's ready.`;
-
-        if (user.type === 'admin') {
-          const { playerIds } = user;
-
-          playerIds.forEach(async playerId => {
-            await notifyUser(msg, playerId, { flag: 'preparingOrder' });
-          });
-        } else {
-          await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
-        }
-
-        await axios.get(
-          `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
-            msg
-          )}`
-        );
-
-        return res.json({
-          status: '200',
-          msg: 'Order successfully accepted',
-        });
-      }
-
-      const msg = `Dear Dastak user your order# ${orderNum} from ${shop.name} is accepted and being prepared. We'll notify you once it's dispatched.`;
-      await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
-
-      const [idleRiders, allRiders] = await Promise.all([
-        Users.find({
-          type: 'rider',
-          status: 'idle',
-          available: true,
-          city: order.city,
-        })
-          .select('name playerId')
-          .lean(),
-
-        Users.find({
-          type: 'rider',
-          available: true,
-          city: order.city,
-        })
-          .select('name playerId')
-          .lean(),
-      ]);
-
-      if (idleRiders.length === 0) {
-        allRiders.forEach(async rider => {
-          const { name, playerId } = rider;
-
-          await notifyRiders(name, ridersMessage, playerId, {
-            flag: 'riderNotified',
-          });
-        });
-      } else {
-        idleRiders.forEach(async rider => {
-          const { name, playerId } = rider;
-
-          await notifyRiders(name, ridersMessage, playerId, {
-            flag: 'riderNotified',
-          });
-        });
-      }
-
-      order.orderNum = orderNum;
-      order.save();
-
-      res.json({
-        status: '200',
-        msg: 'Order successfully accepted',
-      });
-
-      await axios.get(
+      axios.get(
         `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
           msg
         )}`
       );
 
-      const adminMessage = `The order number ${orderNum} has been Accepted by ${shop.name}`;
-      orderStatusEmail(adminMessage);
+      notifyUser(msg, user.playerId, { flag: 'orderCancelled' });
+    } else {
+      const msg = `Dear Dastak user, ${shop.name} could not accept your order at the moment due to some reason. Don't worry the amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
+
+      axios.get(
+        `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
+          msg
+        )}`
+      );
+
+      notifyUser(msg, user.playerId, { flag: 'refund' });
+
+      const refund = {
+        type: 'Refund',
+        transactionId: order.transactionId,
+        amount: orderTotal,
+        userId: user._id,
+        orderId,
+        time: moment()
+          .tz('Asia/karachi')
+          .format('MM-DD-YYYY hh:mm a'),
+      };
+
+      await Promise.all([
+        Users.findByIdAndUpdate(order.userId, {
+          'wallet.amount': user.wallet.amount + orderTotal,
+        }),
+
+        new WalletHistory(refund).save(),
+      ]);
     }
 
-    if (status === 'Admin Accepted' && customerNotified) {
-      const msg = `Dear ${user.name} your order# ${orderNum} for ${shop.name} is now ready. Kindly pick it up`;
-      await notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
-
-      return res.json({
-        status: '200',
-        msg: 'Customer has been notified',
-      });
-    }
+    return res.json({
+      status: '200',
+      msg: 'Order cancelled',
+    });
   } catch (err) {
     console.error(err);
     return res.json({
@@ -575,7 +443,7 @@ router.post('/specificUserOrders', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 router.post('/restaurantResponse', async (req, res) => {
   try {
