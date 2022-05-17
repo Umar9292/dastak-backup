@@ -5,6 +5,7 @@ const { connect } = require('mongoose');
 
 const { dbUrl } = require('./utils/dbUrls');
 const { shiftEndChecker } = require('./src/routes/rider/shiftEndChecker');
+const { shiftStartChecker } = require('./src/routes/rider/shiftStartChecker');
 
 if (cluster.isMaster) {
   connect(
@@ -20,6 +21,7 @@ if (cluster.isMaster) {
         console.log(err);
       } else {
         setInterval(() => {
+          shiftStartChecker();
           shiftEndChecker();
         }, 10000);
 
