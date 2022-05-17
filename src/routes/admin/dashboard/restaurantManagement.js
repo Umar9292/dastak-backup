@@ -53,6 +53,7 @@ router.post('/restaurantCollections', async (req, res) => {
     const restaurants = await Orders.distinct('martId', {
       paid: false,
       status: 'Delivered',
+      refundToRestaurant: true,
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -60,13 +61,12 @@ router.post('/restaurantCollections', async (req, res) => {
       city,
     });
 
-    console.log(restaurants);
-
     let data = await Promise.all(
       restaurants.map(async martId => {
         const [orders, restaurant] = await Promise.all([
           Orders.find({
             paid: false,
+            refundToRestaurant: true,
             status: 'Delivered',
             martId,
             city,
@@ -261,6 +261,7 @@ router.post('/previouslyPaidAmount', async (req, res) => {
     const restaurants = await Orders.distinct('martId', {
       paid: true,
       status: 'Delivered',
+      refundToRestaurant: true,
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -274,6 +275,7 @@ router.post('/previouslyPaidAmount', async (req, res) => {
           Orders.find({
             paid: true,
             status: 'Delivered',
+            refundToRestaurant: true,
             martId,
             city,
             dateForSearching: {
@@ -375,6 +377,7 @@ router.post('/expensesTillNow', async (req, res) => {
     const restaurants = await Orders.distinct('martId', {
       status: 'Delivered',
       city,
+      refundToRestaurant: true,
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -387,6 +390,7 @@ router.post('/expensesTillNow', async (req, res) => {
           Orders.find({
             status: 'Delivered',
             martId,
+            refundToRestaurant: true,
             city,
             dateForSearching: { $gte: start, $lte: end },
           })

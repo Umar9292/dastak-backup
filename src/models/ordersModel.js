@@ -6,7 +6,7 @@ const ordersModel = Schema(
       type: Boolean,
       default: false,
     },
-    redundToCustomer: Boolean,
+    refundToCustomer: Boolean,
     refundToRestaurant: Boolean,
     walletAmount: Number,
     onlineAmount: Number,
