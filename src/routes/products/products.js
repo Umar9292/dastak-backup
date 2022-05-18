@@ -299,7 +299,7 @@ router.post('/allRestaurantProducts', async (req, res) => {
   }
 });
 
-router.post('/productAvailability', async (req, res) => {
+router.post('/updateSingleProduct', async (req, res) => {
   try {
     const { productId, shopType } = req.body;
 
@@ -366,7 +366,7 @@ router.get('/addAvailability', async (req, res) => {
   }
 });
 
-router.post('/updateProductsAvailability', async (req, res) => {
+router.post('/updateAllProducts', async (req, res) => {
   try {
     const { category, martId } = req.body;
 
