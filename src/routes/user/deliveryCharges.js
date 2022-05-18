@@ -39,10 +39,17 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
     restaurant.deliveryCharges = deliveryCharges;
     restaurant.password = null;
 
+    if (userId !== undefined) {
+      return res.json({
+        status: '200',
+        restaurant,
+        user,
+      });
+    }
+
     return res.json({
       status: '200',
       restaurant,
-      user,
     });
   } catch (err) {
     return res.json({

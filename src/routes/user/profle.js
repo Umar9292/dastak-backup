@@ -151,7 +151,7 @@ router.post('/sendOtp', async (req, res) => {
     const otp = Speakeasy.totp({ secret, encoding: 'base32' });
 
     const otpPhone = 92 + phone.substring(1, 11);
-    const msg = `Your Dastak verification code is ${otp}`;
+    const msg = `Your OTP code for Dastak app is ${otp}. For any issues, contact us at 03213345718.`;
     await axios.get(
       `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(msg)}`
     );

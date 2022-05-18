@@ -11,8 +11,6 @@ exports.shiftStartChecker = async () => {
     status: 'idle',
   }).select('name playerId startShift endShift');
 
-  console.log(riders.length);
-
   const currentTime = moment().tz('Asia/karachi');
 
   if (riders.length > 0) {
