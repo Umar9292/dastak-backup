@@ -20,6 +20,16 @@ router.post('/signIn', async (req, res) => {
       });
     }
 
+    if (user.type !== 'rider') {
+      const result = await compare(password, user.password);
+      if (!result) {
+        return res.json({
+          status: '404',
+          msg: `Number or password is invalid`,
+        });
+      }
+    }
+
     if (user.type === 'rider' && user.password !== password) {
       return res.json({
         status: '404',
