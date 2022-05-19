@@ -452,6 +452,7 @@ router.post('/rejectedOrders', async (req, res) => {
     const rejectedOrders = await Orders.find({
       martId,
       status: 'Rejected',
+      refundToRestaurant: false,
       dateForSearching: { $gte: start, $lte: end },
     })
       .sort({ createdAt: -1 })

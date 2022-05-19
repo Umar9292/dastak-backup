@@ -195,15 +195,19 @@ router.post('/deliveredOrders', async (req, res) => {
     let deliveredOrdersQuery;
     if (filter) {
       deliveredOrdersQuery = {
-        paid: false,
-        status: 'Delivered',
+        $or: [
+          { status: 'Delivered' },
+          { status: 'Rejected', refundToRestaurant: true },
+        ],
         martId,
         dateForSearching: { $gte: startDate, $lte: endDate },
       };
     } else {
       deliveredOrdersQuery = {
-        paid: false,
-        status: 'Delivered',
+        $or: [
+          { status: 'Delivered' },
+          { status: 'Rejected', refundToRestaurant: true },
+        ],
         martId,
       };
     }
