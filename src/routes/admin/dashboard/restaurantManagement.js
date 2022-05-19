@@ -4,6 +4,7 @@ const { orderBy } = require('lodash');
 
 const Users = require('../../../models/userModel');
 const Orders = require('../../../models/ordersModel');
+const PaymentHistory = require('../../../models/paymentHistoryModel');
 
 const router = Router();
 
@@ -51,8 +52,10 @@ router.post('/restaurantCollections', async (req, res) => {
       .toISOString();
 
     const restaurants = await Orders.distinct('martId', {
-      $or: [{ paid: false }, { refundToRestaurant: true }],
-      status: { $in: ['Delivered', 'Rejected'] },
+      $or: [
+        { status: 'Delivered', paid: false },
+        { status: 'Rejected', refundToRestaurant: true },
+      ],
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -64,8 +67,10 @@ router.post('/restaurantCollections', async (req, res) => {
       restaurants.map(async martId => {
         const [orders, restaurant] = await Promise.all([
           Orders.find({
-            $or: [{ paid: false }, { refundToRestaurant: true }],
-            status: { $in: ['Delivered', 'Rejected'] },
+            $or: [
+              { status: 'Delivered', paid: false },
+              { status: 'Rejected', refundToRestaurant: true },
+            ],
             martId,
             city,
             dateForSearching: {
@@ -159,6 +164,7 @@ router.post('/restaurantCollections', async (req, res) => {
         return {
           martId,
           martName,
+          orderCount: deliveryOrders.length,
           ourProfit,
           totalOfDeliveryOrders,
           dealPayment: dealPaymentToShowRestaurant,
@@ -212,15 +218,24 @@ router.post('/paidToOwners', async (req, res) => {
     restaurants = JSON.parse(restaurants);
 
     await Promise.all(
-      restaurants.map(async ({ id }) => {
+      restaurants.map(async ({ id, paidAmount, orderCount }) => {
+        const history = {
+          martId: id,
+          startDate,
+          endDate,
+          paidAmount,
+          orderCount,
+        };
         await Promise.all([
-          Users.findById(id),
+          new PaymentHistory(history).save(),
 
           Orders.updateMany(
             {
               martId: id,
-              paid: false,
-              status: { $in: ['Delivered', 'Rider Picked Up'] },
+              $or: [
+                { status: 'Delivered', paid: false },
+                { status: 'Rejected', refundToRestaurant: true },
+              ],
               dateForSearching: {
                 $gte: startDate,
                 $lte: endDate,
@@ -372,8 +387,10 @@ router.post('/expensesTillNow', async (req, res) => {
 
     const restaurants = await Orders.distinct('martId', {
       city,
-      $or: [{ refundToRestaurant: true }],
-      status: { $in: ['Delivered', 'Rejected'] },
+      $or: [
+        { status: 'Delivered' },
+        { status: 'Rejected', refundToRestaurant: true },
+      ],
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -384,8 +401,10 @@ router.post('/expensesTillNow', async (req, res) => {
       restaurants.map(async martId => {
         const [orders, { name: martName, percentage }] = await Promise.all([
           Orders.find({
-            $or: [{ refundToRestaurant: true }],
-            status: { $in: ['Delivered', 'Rejected'] },
+            $or: [
+              { status: 'Delivered' },
+              { status: 'Rejected', refundToRestaurant: true },
+            ],
             martId,
             city,
             dateForSearching: { $gte: start, $lte: end },
