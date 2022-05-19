@@ -9,6 +9,8 @@ exports.shiftStartChecker = async () => {
     type: 'rider',
     available: false,
     status: 'idle',
+    startShift: { $ne: '' },
+    endShift: { $ne: '' },
   }).select('name playerId startShift endShift');
 
   const currentTime = moment().tz('Asia/karachi');

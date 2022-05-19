@@ -6,7 +6,7 @@ const { notifyRiders } = require('../../notificationHandler/handler');
 
 exports.shiftEndChecker = async () => {
   const riders = await Users.find({ type: 'rider', available: true }).select(
-    'name playerId endShift'
+    'name playerId startShift endShift'
   );
 
   const currentTime = moment().tz('Asia/karachi');
@@ -23,6 +23,8 @@ exports.shiftEndChecker = async () => {
         const msg = 'Your shift has ended.';
         notifyRiders(name, msg, playerId, {});
 
+        rider.startShift = '';
+        rider.endShift = '';
         rider.available = false;
         rider.status = 'idle';
         await rider.save();
