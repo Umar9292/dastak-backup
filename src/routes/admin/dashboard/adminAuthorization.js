@@ -9,7 +9,10 @@ router.post('/authorization', async (req, res) => {
     const { adminId } = req.body;
 
     const user = await User.findById({ _id: adminId }).lean();
-    if (!user || !user.superAdmin) {
+    if (
+      !user ||
+      (user.adminType !== 'admin' && user.adminType !== 'super admin')
+    ) {
       return res.json({
         status: '404',
         msg: `You are not authorized.`,
