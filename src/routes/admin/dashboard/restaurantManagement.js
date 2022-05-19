@@ -51,9 +51,8 @@ router.post('/restaurantCollections', async (req, res) => {
       .toISOString();
 
     const restaurants = await Orders.distinct('martId', {
-      paid: false,
-      status: 'Delivered',
-      refundToRestaurant: true,
+      $or: [{ paid: false }, { refundToRestaurant: true }],
+      status: { $in: ['Delivered', 'Rejected'] },
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -65,9 +64,8 @@ router.post('/restaurantCollections', async (req, res) => {
       restaurants.map(async martId => {
         const [orders, restaurant] = await Promise.all([
           Orders.find({
-            paid: false,
-            refundToRestaurant: true,
-            status: 'Delivered',
+            $or: [{ paid: false }, { refundToRestaurant: true }],
+            status: { $in: ['Delivered', 'Rejected'] },
             martId,
             city,
             dateForSearching: {
@@ -260,8 +258,7 @@ router.post('/previouslyPaidAmount', async (req, res) => {
 
     const restaurants = await Orders.distinct('martId', {
       paid: true,
-      status: 'Delivered',
-      refundToRestaurant: true,
+      status: { $in: ['Delivered', 'Rejected'] },
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -274,8 +271,7 @@ router.post('/previouslyPaidAmount', async (req, res) => {
         const [orders, restaurant] = await Promise.all([
           Orders.find({
             paid: true,
-            status: 'Delivered',
-            refundToRestaurant: true,
+            status: { $in: ['Delivered', 'Rejected'] },
             martId,
             city,
             dateForSearching: {
@@ -375,9 +371,9 @@ router.post('/expensesTillNow', async (req, res) => {
       .toISOString();
 
     const restaurants = await Orders.distinct('martId', {
-      status: 'Delivered',
       city,
-      refundToRestaurant: true,
+      $or: [{ refundToRestaurant: true }],
+      status: { $in: ['Delivered', 'Rejected'] },
       dateForSearching: {
         $gte: start,
         $lte: end,
@@ -388,9 +384,9 @@ router.post('/expensesTillNow', async (req, res) => {
       restaurants.map(async martId => {
         const [orders, { name: martName, percentage }] = await Promise.all([
           Orders.find({
-            status: 'Delivered',
+            $or: [{ refundToRestaurant: true }],
+            status: { $in: ['Delivered', 'Rejected'] },
             martId,
-            refundToRestaurant: true,
             city,
             dateForSearching: { $gte: start, $lte: end },
           })
