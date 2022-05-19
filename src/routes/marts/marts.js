@@ -387,8 +387,10 @@ router.post('/previousPayments', async (req, res) => {
 
     const orders = await Orders.find({
       martId,
-      paid: true,
-      status: 'Delivered',
+      $or: [
+        { status: 'Delivered', paid: true },
+        { status: 'Rejected', refundToRestaurant: true, paid: true },
+      ],
       dateForSearching: { $gte: start, $lte: end },
     })
       .sort({ createdAt: -1 })
