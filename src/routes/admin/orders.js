@@ -116,7 +116,10 @@ router.post('/placeOrder', async (req, res) => {
     const [user, admins] = await Promise.all([
       Users.findById(userId).select('-password -__v'),
 
-      Users.find({ superAdmin: true, status: 'active' })
+      Users.find({
+        adminType: { $in: ['admin', 'superAdmin'] },
+        status: 'active',
+      })
         .select('playerId')
         .lean(),
     ]);

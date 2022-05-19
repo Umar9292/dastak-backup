@@ -31,7 +31,7 @@ const userModel = Schema(
     },
     startShift: String,
     endShift: String,
-    superAdmin: Boolean,
+    adminType: String,
     geometry: GeoSchema,
     easyPaisaPhone: String,
     city: String,

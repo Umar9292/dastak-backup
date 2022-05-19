@@ -10,21 +10,14 @@ router.post('/signIn', async (req, res) => {
     const { phone, password } = req.body;
 
     const user = await User.findOne({ phone }).lean();
-    if (!user || !user.superAdmin) {
+    if (
+      !user ||
+      (user.adminType !== 'admin' && user.adminType !== 'super admin')
+    ) {
       return res.json({
         status: '404',
         msg: `You are not authorized.`,
       });
-    }
-
-    if (user.type !== 'rider') {
-      const result = await compare(password, user.password);
-      if (!result) {
-        return res.json({
-          status: '404',
-          msg: `Number or password is invalid`,
-        });
-      }
     }
 
     if (user.type === 'rider' && user.password !== password) {
