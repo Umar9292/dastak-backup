@@ -6,6 +6,49 @@ const Orders = require('../../models/ordersModel');
 
 const router = Router();
 
+router.post('/superAdminPlayerId', async (req, res) => {
+  try {
+    const { userId, playerId } = req.body;
+
+    const superAdmin = await Users.findById(userId);
+    const { status } = superAdmin;
+
+    if (status === 'inactive') {
+      return res.json({
+        status: '404',
+        msg:
+          'Your account has temporarily been blocked. Kindly contact support@dastak.store for more details or contact the following number 03124133513.',
+      });
+    }
+
+    if (
+      superAdmin.superAdminPlayerId !== playerId &&
+      superAdmin.superAdminPlayerId !== ''
+    ) {
+      return res.json({
+        status: '404',
+        msg:
+          'You have been logged out from this device, because you logged in on another device. If that was not you, please log in again and reset your Password',
+      });
+    }
+
+    superAdmin.superAdminPlayerId = playerId;
+    await superAdmin.save();
+
+    return res.json({
+      status: '200',
+      data: superAdmin,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 router.post('/adminPlayerId', async (req, res) => {
   try {
     const { userId, playerId } = req.body;
@@ -14,12 +57,13 @@ router.post('/adminPlayerId', async (req, res) => {
 
     const { playerIds, status } = admin;
 
-    if (status === 'inactive')
+    if (status === 'inactive') {
       return res.json({
         status: '404',
         msg:
           'Your account has temporarily been blocked. Kindly contact support@dastak.store for more details or contact the following number 03124133513.',
       });
+    }
 
     const isPlayerIdThere = playerIds.some(id => id === playerId);
 

@@ -10,7 +10,10 @@ const WalletHistory = require('../../models/walletHistory');
 const { emitEPResponse } = require('../../../server');
 const { checkTime } = require('../../checkTime/checkTime');
 const { getAddress } = require('../../geoCoder/getAddress');
-const { notifyAdmin } = require('../../notificationHandler/handler');
+const {
+  notifyAdmin,
+  notifySuperAdmin,
+} = require('../../notificationHandler/handler');
 const {
   emailOrderDetailsToCustomer,
 } = require('../../emailHandler/customerEmail/customerEmail');
@@ -125,7 +128,22 @@ const easyPaisa = async params => {
       });
     });
 
-    const user = await Users.findById(userId).select('-password -__v');
+    const [user, admins] = await Promise.all([
+      Users.findById(userId).select('-password -__v'),
+
+      Users.find({
+        adminType: { $in: ['admin', 'superAdmin'] },
+        status: 'active',
+      })
+        .select('superAdminPlayerId')
+        .lean(),
+    ]);
+
+    admins.forEach(admin => {
+      notifySuperAdmin(info, adminMessage, admin.superAdminPlayerId, {
+        flag: 'adminReceived',
+      });
+    });
 
     if (paymentType === 'split') {
       user.wallet.amount -= walletAmount;

@@ -120,12 +120,12 @@ router.post('/placeOrder', async (req, res) => {
         adminType: { $in: ['admin', 'superAdmin'] },
         status: 'active',
       })
-        .select('playerId')
+        .select('superAdminPlayerId')
         .lean(),
     ]);
 
     admins.forEach(admin => {
-      notifySuperAdmin(info, adminMessage, admin.playerId, {
+      notifySuperAdmin(info, adminMessage, admin.superAdminPlayerId, {
         flag: 'adminReceived',
       });
     });

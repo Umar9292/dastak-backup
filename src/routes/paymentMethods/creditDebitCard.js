@@ -8,7 +8,10 @@ const Users = require('../../models/userModel');
 const WalletHistory = require('../../models/walletHistory');
 
 const { getAddress } = require('../../geoCoder/getAddress');
-const { notifyAdmin } = require('../../notificationHandler/handler');
+const {
+  notifyAdmin,
+  notifySuperAdmin,
+} = require('../../notificationHandler/handler');
 const {
   emailOrderDetails,
   notifyRestaurantByEmail,
@@ -207,7 +210,22 @@ router.get('/alfaCallback', async (req, res) => {
 
     res.redirect(CARD_SUCCESS_URL);
 
-    const user = await Users.findById(order.userId).select('-password -__v');
+    const [user, admins] = await Promise.all([
+      Users.findById(order.userId).select('-password -__v'),
+
+      Users.find({
+        adminType: { $in: ['admin', 'superAdmin'] },
+        status: 'active',
+      })
+        .select('superAdminPlayerId')
+        .lean(),
+    ]);
+
+    admins.forEach(admin => {
+      notifySuperAdmin(info, adminMessage, admin.superAdminPlayerId, {
+        flag: 'adminReceived',
+      });
+    });
 
     if (paymentType === 'split') {
       user.wallet.amount -= walletAmount;

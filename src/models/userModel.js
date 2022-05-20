@@ -29,6 +29,7 @@ const userModel = Schema(
         default: true,
       },
     },
+    superAdminPlayerId: String,
     startShift: String,
     endShift: String,
     adminType: String,
