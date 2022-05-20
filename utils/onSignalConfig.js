@@ -23,7 +23,7 @@ exports.oneSignalAdminClient = new Client({
 
   app: {
     appAuthKey: process.env.ONE_SIGNAL_APP_AUTH_KEY,
-    appId: process.env.ONE_SIGNAL_VENDOR_APP_ID,
+    appId: process.env.ONE_SIGNAL_ADMIN_APP_ID,
   },
 });
 
