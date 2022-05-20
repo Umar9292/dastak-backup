@@ -117,7 +117,7 @@ router.post('/placeOrder', async (req, res) => {
       Users.findById(userId).select('-password -__v'),
 
       Users.find({
-        adminType: { $in: ['admin', 'superAdmin'] },
+        adminType: { $in: ['admin', 'super admin'] },
         status: 'active',
       })
         .select('superAdminPlayerId')
