@@ -106,7 +106,9 @@ router.post('/restaurantCollections', async (req, res) => {
         let dealPaymentToShowRestaurant = 0;
 
         await Promise.all(
-          orders.map(async ({ products, orderType }) => {
+          orders.map(async order => {
+            const { products, orderType, paymentType, orderTotal } = order;
+
             await Promise.all(
               products.map(async product => {
                 const { net, count } = product;
@@ -139,6 +141,18 @@ router.post('/restaurantCollections', async (req, res) => {
                 }
               })
             );
+            let serviceChargePercentage = 0;
+
+            if (paymentType === 'split') {
+              serviceChargePercentage = (
+                (2.25 / 100) *
+                order.onlineAmount
+              ).toFixed();
+            } else {
+              serviceChargePercentage = ((2.25 / 100) * orderTotal).toFixed();
+            }
+
+            ourProfit += +serviceChargePercentage;
           })
         );
 
