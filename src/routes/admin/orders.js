@@ -810,6 +810,7 @@ router.post('/assignRider', async (req, res) => {
 
       Orders.find({
         collectionSubmitted: false,
+        paymentType: 'COD',
         status: 'Delivered',
         date: currentDate,
         riderId,
@@ -871,6 +872,7 @@ router.post('/assignRider', async (req, res) => {
     if (time.isSameOrBefore(depositTimeLowerLimit)) {
       const previousDateOrders = await Orders.find({
         riderId,
+        paymentType: 'COD',
         date: previousDate,
         status: 'Delivered',
         collectionSubmitted: false,
