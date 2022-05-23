@@ -398,7 +398,7 @@ router.post('/cancelOrder', async (req, res) => {
       orderType === 'PickUp' ||
       !refundToCustomer
     ) {
-      const msg = `Dear Dastak user, ${shop.name} could not accept your order at the moment due to some reason. We are sorry for the inconvenience.`;
+      const msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. We are sorry for the inconvenience.`;
 
       axios.get(
         `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
@@ -408,7 +408,7 @@ router.post('/cancelOrder', async (req, res) => {
 
       notifyUser(msg, user.playerId, { flag: 'orderCancelled' });
     } else {
-      const msg = `Dear Dastak user, ${shop.name} could not accept your order at the moment due to some reason. Don't worry the amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
+      const msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. Don't worry the amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
 
       axios.get(
         `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
