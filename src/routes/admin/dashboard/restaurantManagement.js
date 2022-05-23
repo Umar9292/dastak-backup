@@ -104,6 +104,7 @@ router.post('/restaurantCollections', async (req, res) => {
         let ourProfit = 0;
         let pickUpPercentage = 0;
         let dealPaymentToShowRestaurant = 0;
+        let serviceChargePercentage = 0;
 
         await Promise.all(
           orders.map(async order => {
@@ -147,7 +148,6 @@ router.post('/restaurantCollections', async (req, res) => {
                 }
               })
             );
-            let serviceChargePercentage = 0;
 
             if (paymentMethod === 'Debit/Credit Card') {
               if (paymentType === 'split') {
@@ -170,8 +170,6 @@ router.post('/restaurantCollections', async (req, res) => {
                 serviceChargePercentage = ((4 / 100) * orderTotal).toFixed();
               }
             }
-
-            ourProfit += +serviceChargePercentage;
           })
         );
 
@@ -191,7 +189,12 @@ router.post('/restaurantCollections', async (req, res) => {
           dealPayment +
           (nonDealPayment - ourPercentage - ourProfit - pickUpPercentage);
 
-        ourProfit += ourPercentage + deliveryCharges + pickUpPercentage;
+        ourProfit +=
+          ourPercentage +
+          deliveryCharges +
+          pickUpPercentage +
+          serviceChargePercentage;
+
         nonDealPayment = nonDealPayment - ourPercentage - pickUpPercentage;
 
         return {
@@ -456,9 +459,18 @@ router.post('/expensesTillNow', async (req, res) => {
         let dealPayment = 0;
         let nonDealPayment = 0;
         let ourProfit = 0;
+        let serviceChargePercentage = 0;
 
         await Promise.all(
-          orders.map(async ({ products, orderType }) => {
+          orders.map(async order => {
+            const {
+              products,
+              orderType,
+              paymentType,
+              paymentMethod,
+              orderTotal,
+            } = order;
+
             await Promise.all(
               products.map(async product => {
                 const { net, count } = product;
@@ -490,6 +502,28 @@ router.post('/expensesTillNow', async (req, res) => {
                 }
               })
             );
+
+            if (paymentMethod === 'Debit/Credit Card') {
+              if (paymentType === 'split') {
+                serviceChargePercentage = (
+                  (2.75 / 100) *
+                  order.onlineAmount
+                ).toFixed();
+              } else {
+                serviceChargePercentage = ((2.75 / 100) * orderTotal).toFixed();
+              }
+            }
+
+            if (paymentMethod === 'Easypaisa') {
+              if (paymentType === 'split') {
+                serviceChargePercentage = (
+                  (4 / 100) *
+                  order.onlineAmount
+                ).toFixed();
+              } else {
+                serviceChargePercentage = ((4 / 100) * orderTotal).toFixed();
+              }
+            }
           })
         );
 
@@ -506,7 +540,11 @@ router.post('/expensesTillNow', async (req, res) => {
         const totalPaid =
           dealPayment + (nonDealPayment - ourPercentage - ourProfit);
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
-        ourProfit += ourPercentage + deliveryCharges - ridersFare;
+        ourProfit +=
+          ourPercentage +
+          serviceChargePercentage +
+          deliveryCharges -
+          ridersFare;
 
         return {
           deliveryCharges,
