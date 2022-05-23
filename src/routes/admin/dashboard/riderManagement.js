@@ -242,6 +242,7 @@ router.post('/ridersFare', async (req, res) => {
         $gte: start,
         $lte: end,
       },
+      paymentType: 'COD',
       status: 'Delivered',
       orderType: 'Delivery',
       paidToRider: false,
@@ -253,6 +254,7 @@ router.post('/ridersFare', async (req, res) => {
         const orders = await Orders.find({
           city,
           riderId,
+          paymentType: 'COD',
           paidToRider: false,
           orderType: 'Delivery',
           status: 'Delivered',
