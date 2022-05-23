@@ -79,7 +79,7 @@ router.post('/restaurantCollections', async (req, res) => {
             },
           })
             .select(
-              'riderFare deliveryCharges martName products orderType orderTotal orderNum date time discount'
+              'riderFare deliveryCharges martName products paymentType paymentMethod onlineAmount orderType orderTotal orderNum date time discount'
             )
             .sort({ createdAt: -1 })
             .lean(),
@@ -150,7 +150,7 @@ router.post('/restaurantCollections', async (req, res) => {
             );
 
             if (paymentMethod === 'Debit/Credit Card') {
-              if (paymentType === 'split') {
+              if (paymentType === 'split' || paymentType === 'online') {
                 serviceChargePercentage = (
                   (2.75 / 100) *
                   order.onlineAmount
@@ -161,7 +161,7 @@ router.post('/restaurantCollections', async (req, res) => {
             }
 
             if (paymentMethod === 'Easypaisa') {
-              if (paymentType === 'split') {
+              if (paymentType === 'split' || paymentType === 'online') {
                 serviceChargePercentage = (
                   (4 / 100) *
                   order.onlineAmount
@@ -448,7 +448,7 @@ router.post('/expensesTillNow', async (req, res) => {
             dateForSearching: { $gte: start, $lte: end },
           })
             .select(
-              'riderFare deliveryCharges martName products orderType orderTotal'
+              'riderFare deliveryCharges paymentType paymentMethod onlineAmount martName products orderType orderTotal'
             )
             .sort({ createdAt: -1 })
             .lean(),
@@ -506,7 +506,7 @@ router.post('/expensesTillNow', async (req, res) => {
             );
 
             if (paymentMethod === 'Debit/Credit Card') {
-              if (paymentType === 'split') {
+              if (paymentType === 'split' || paymentType === 'online') {
                 serviceChargePercentage = (
                   (2.75 / 100) *
                   order.onlineAmount
@@ -517,7 +517,7 @@ router.post('/expensesTillNow', async (req, res) => {
             }
 
             if (paymentMethod === 'Easypaisa') {
-              if (paymentType === 'split') {
+              if (paymentType === 'split' || paymentType === 'online') {
                 serviceChargePercentage = (
                   (4 / 100) *
                   order.onlineAmount
