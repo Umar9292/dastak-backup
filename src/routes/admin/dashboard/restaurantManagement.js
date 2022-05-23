@@ -107,7 +107,13 @@ router.post('/restaurantCollections', async (req, res) => {
 
         await Promise.all(
           orders.map(async order => {
-            const { products, orderType, paymentType, orderTotal } = order;
+            const {
+              products,
+              orderType,
+              paymentType,
+              paymentMethod,
+              orderTotal,
+            } = order;
 
             await Promise.all(
               products.map(async product => {
@@ -143,13 +149,26 @@ router.post('/restaurantCollections', async (req, res) => {
             );
             let serviceChargePercentage = 0;
 
-            if (paymentType === 'split') {
-              serviceChargePercentage = (
-                (2.25 / 100) *
-                order.onlineAmount
-              ).toFixed();
-            } else {
-              serviceChargePercentage = ((2.25 / 100) * orderTotal).toFixed();
+            if (paymentMethod === 'Debit/Credit Card') {
+              if (paymentType === 'split') {
+                serviceChargePercentage = (
+                  (2.75 / 100) *
+                  order.onlineAmount
+                ).toFixed();
+              } else {
+                serviceChargePercentage = ((2.75 / 100) * orderTotal).toFixed();
+              }
+            }
+
+            if (paymentMethod === 'Easypaisa') {
+              if (paymentType === 'split') {
+                serviceChargePercentage = (
+                  (4 / 100) *
+                  order.onlineAmount
+                ).toFixed();
+              } else {
+                serviceChargePercentage = ((4 / 100) * orderTotal).toFixed();
+              }
             }
 
             ourProfit += +serviceChargePercentage;
