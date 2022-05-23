@@ -9,6 +9,17 @@ router.post('/addShift', async (req, res) => {
   try {
     const { riderId, startShift, endShift } = req.body;
 
+    const {
+      startShift: currentStartShift,
+      endShift: currentEndShift,
+    } = await Users.findById(riderId)
+      .select('startShift endShift')
+      .lean();
+
+    if (currentStartShift !== '' && currentEndShift !== '') {
+      return res.json({ status: '404', msg: 'You already have a shift.' });
+    }
+
     const currentTime = moment().tz('Asia/karachi');
 
     const start = moment(startShift, 'HH:mm:ssa').tz('Asia/karachi');
@@ -28,7 +39,7 @@ router.post('/addShift', async (req, res) => {
       }
     );
 
-    res.json({ status: '200', rider, msg: 'Shif added.' });
+    res.json({ status: '200', rider, msg: 'Shift added.' });
   } catch (err) {
     console.log(err);
     return res.json({
