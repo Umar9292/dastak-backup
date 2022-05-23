@@ -189,11 +189,13 @@ router.post('/restaurantCollections', async (req, res) => {
           dealPayment +
           (nonDealPayment - ourPercentage - ourProfit - pickUpPercentage);
 
+        console.log(serviceChargePercentage);
+
         ourProfit +=
           ourPercentage +
           deliveryCharges +
           pickUpPercentage +
-          serviceChargePercentage;
+          +serviceChargePercentage;
 
         nonDealPayment = nonDealPayment - ourPercentage - pickUpPercentage;
 
@@ -542,7 +544,7 @@ router.post('/expensesTillNow', async (req, res) => {
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
         ourProfit +=
           ourPercentage +
-          serviceChargePercentage +
+          +serviceChargePercentage +
           deliveryCharges -
           ridersFare;
 
