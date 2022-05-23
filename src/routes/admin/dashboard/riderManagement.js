@@ -242,7 +242,6 @@ router.post('/ridersFare', async (req, res) => {
         $gte: start,
         $lte: end,
       },
-      paymentType: 'COD',
       status: 'Delivered',
       orderType: 'Delivery',
       paidToRider: false,
@@ -254,7 +253,6 @@ router.post('/ridersFare', async (req, res) => {
         const orders = await Orders.find({
           city,
           riderId,
-          paymentType: 'COD',
           paidToRider: false,
           orderType: 'Delivery',
           status: 'Delivered',
@@ -264,7 +262,9 @@ router.post('/ridersFare', async (req, res) => {
           },
         });
 
-        const collection = orders.reduce((a, b) => a + b.orderTotal, 0);
+        const codOrders = orders.filter(order => order.paymentType === 'COD');
+        const collection = codOrders.reduce((a, b) => a + b.orderTotal, 0);
+
         const riderFare = orders.reduce((a, b) => a + b.riderFare, 0);
 
         return {
