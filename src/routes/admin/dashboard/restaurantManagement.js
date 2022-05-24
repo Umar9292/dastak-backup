@@ -105,6 +105,7 @@ router.post('/restaurantCollections', async (req, res) => {
         let pickUpPercentage = 0;
         let dealPaymentToShowRestaurant = 0;
         let serviceChargePercentage = 0;
+        let totalDiscount = 0;
 
         await Promise.all(
           orders.map(async order => {
@@ -150,7 +151,7 @@ router.post('/restaurantCollections', async (req, res) => {
               })
             );
 
-            ourProfit -= +discount;
+            totalDiscount += +discount;
 
             if (paymentMethod === 'Debit/Credit Card') {
               if (paymentType === 'split' || paymentType === 'online') {
@@ -192,13 +193,12 @@ router.post('/restaurantCollections', async (req, res) => {
           dealPayment +
           (nonDealPayment - ourPercentage - ourProfit - pickUpPercentage);
 
-        console.log(serviceChargePercentage);
-
         ourProfit +=
           ourPercentage +
           deliveryCharges +
           pickUpPercentage +
-          +serviceChargePercentage;
+          +serviceChargePercentage -
+          totalDiscount;
 
         nonDealPayment = nonDealPayment - ourPercentage - pickUpPercentage;
 
@@ -465,6 +465,7 @@ router.post('/expensesTillNow', async (req, res) => {
         let nonDealPayment = 0;
         let ourProfit = 0;
         let serviceChargePercentage = 0;
+        let totalDiscount = 0;
 
         await Promise.all(
           orders.map(async order => {
@@ -509,7 +510,7 @@ router.post('/expensesTillNow', async (req, res) => {
               })
             );
 
-            ourProfit -= +discount;
+            totalDiscount += +discount;
 
             if (paymentMethod === 'Debit/Credit Card') {
               if (paymentType === 'split' || paymentType === 'online') {
@@ -545,14 +546,18 @@ router.post('/expensesTillNow', async (req, res) => {
         );
 
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
+
         const totalPaid =
           dealPayment + (nonDealPayment - ourPercentage - ourProfit);
+
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
+
         ourProfit +=
           ourPercentage +
           +serviceChargePercentage +
           deliveryCharges -
-          ridersFare;
+          ridersFare -
+          totalDiscount;
 
         return {
           deliveryCharges,
