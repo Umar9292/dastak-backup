@@ -563,7 +563,7 @@ router.post('/restaurantResponse', async (req, res) => {
           const refund = {
             type: 'Refund',
             transactionId: order.transactionId,
-            amount: order.orderTotal,
+            amount: discount,
             userId: user._id,
             orderId,
             time: moment()
@@ -573,7 +573,7 @@ router.post('/restaurantResponse', async (req, res) => {
 
           await Promise.all([
             Users.findByIdAndUpdate(order.userId, {
-              'wallet.amount': user.wallet.amount + order.orderTotal,
+              'wallet.amount': user.wallet.amount + discount,
             }),
 
             new WalletHistory(refund).save(),
