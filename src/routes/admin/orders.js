@@ -497,6 +497,10 @@ router.post('/restaurantResponse', async (req, res) => {
       longitude
     );
 
+    if (status === 'Rejected') {
+      req.body.refundToRestaurant = false;
+    }
+
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
