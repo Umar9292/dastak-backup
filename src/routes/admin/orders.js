@@ -399,7 +399,13 @@ router.post('/cancelOrder', async (req, res) => {
       orderType === 'PickUp' ||
       !refundToCustomer
     ) {
-      const msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. We are sorry for the inconvenience.`;
+      let msg = '';
+
+      if (!refundToCustomer) {
+        msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. We are sorry for the inconvenience.`;
+      } else {
+        msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. Don't worry the voucher amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
+      }
 
       axios.get(
         `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
@@ -407,7 +413,9 @@ router.post('/cancelOrder', async (req, res) => {
         )}`
       );
 
-      notifyUser(msg, user.playerId, { flag: 'orderCancelled' });
+      notifyUser(msg, user.playerId, {
+        flag: !refundToCustomer ? 'orderCancelled' : 'refund',
+      });
 
       if (paymentMethod === 'COD' && refundToCustomer) {
         const refund = {
@@ -549,15 +557,22 @@ router.post('/restaurantResponse', async (req, res) => {
 
     if (status === 'Rejected') {
       if (paymentMethod === 'COD' || orderType === 'PickUp') {
-        const msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. We are sorry for the inconvenience.`;
+        let msg = '';
 
+        if (+discount === 0) {
+          msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. We are sorry for the inconvenience.`;
+        } else {
+          msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. Don't worry the voucher amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
+        }
         axios.get(
           `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
             msg
           )}`
         );
 
-        notifyUser(msg, user.playerId, { flag: 'orderCancelled' });
+        notifyUser(msg, user.playerId, {
+          flag: +discount === 0 ? 'orderCancelled' : 'refund',
+        });
 
         if (paymentMethod === 'COD' && +discount > 0) {
           const refund = {
