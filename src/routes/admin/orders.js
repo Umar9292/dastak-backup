@@ -423,7 +423,7 @@ router.post('/cancelOrder', async (req, res) => {
 
         await Promise.all([
           Users.findByIdAndUpdate(order.userId, {
-            'wallet.amount': user.wallet.amount + discount,
+            'wallet.amount': user.wallet.amount + +discount,
           }),
 
           new WalletHistory(refund).save(),
@@ -573,7 +573,7 @@ router.post('/restaurantResponse', async (req, res) => {
 
           await Promise.all([
             Users.findByIdAndUpdate(order.userId, {
-              'wallet.amount': user.wallet.amount + discount,
+              'wallet.amount': user.wallet.amount + +discount,
             }),
 
             new WalletHistory(refund).save(),
