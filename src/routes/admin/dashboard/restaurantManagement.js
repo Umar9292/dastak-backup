@@ -114,6 +114,7 @@ router.post('/restaurantCollections', async (req, res) => {
               paymentType,
               paymentMethod,
               orderTotal,
+              discount,
             } = order;
 
             await Promise.all(
@@ -148,6 +149,8 @@ router.post('/restaurantCollections', async (req, res) => {
                 }
               })
             );
+
+            ourProfit -= +discount;
 
             if (paymentMethod === 'Debit/Credit Card') {
               if (paymentType === 'split' || paymentType === 'online') {
@@ -448,7 +451,7 @@ router.post('/expensesTillNow', async (req, res) => {
             dateForSearching: { $gte: start, $lte: end },
           })
             .select(
-              'riderFare deliveryCharges paymentType paymentMethod onlineAmount martName products orderType orderTotal'
+              'riderFare deliveryCharges discount paymentType paymentMethod onlineAmount martName products orderType orderTotal'
             )
             .sort({ createdAt: -1 })
             .lean(),
@@ -470,6 +473,7 @@ router.post('/expensesTillNow', async (req, res) => {
               orderType,
               paymentType,
               paymentMethod,
+              discount,
               orderTotal,
             } = order;
 
@@ -504,6 +508,8 @@ router.post('/expensesTillNow', async (req, res) => {
                 }
               })
             );
+
+            ourProfit -= +discount;
 
             if (paymentMethod === 'Debit/Credit Card') {
               if (paymentType === 'split' || paymentType === 'online') {
