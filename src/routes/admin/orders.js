@@ -368,8 +368,9 @@ router.post('/cancelOrder', async (req, res) => {
       paymentMethod,
       orderType,
       orderTotal,
+      discount,
     } = await Orders.findById(orderId)
-      .select('status paymentMethod orderType orderTotal')
+      .select('status paymentMethod orderType orderTotal discount')
       .lean();
 
     if (status === 'Rejected') {
@@ -407,6 +408,27 @@ router.post('/cancelOrder', async (req, res) => {
       );
 
       notifyUser(msg, user.playerId, { flag: 'orderCancelled' });
+
+      if (paymentMethod === 'COD' && refundToCustomer) {
+        const refund = {
+          type: 'Refund',
+          transactionId: order.transactionId,
+          amount: discount,
+          userId: user._id,
+          orderId,
+          time: moment()
+            .tz('Asia/karachi')
+            .format('MM-DD-YYYY hh:mm a'),
+        };
+
+        await Promise.all([
+          Users.findByIdAndUpdate(order.userId, {
+            'wallet.amount': user.wallet.amount + discount,
+          }),
+
+          new WalletHistory(refund).save(),
+        ]);
+      }
     } else {
       const msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. Don't worry the amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
 
@@ -468,8 +490,9 @@ router.post('/restaurantResponse', async (req, res) => {
       paymentMethod,
       orderType,
       orderNum,
+      discount,
     } = await Orders.findById(orderId)
-      .select('status paymentMethod orderNum orderType')
+      .select('status paymentMethod orderNum orderType discount')
       .lean();
 
     if (orderStatus === 'Rejected') {
@@ -535,6 +558,27 @@ router.post('/restaurantResponse', async (req, res) => {
         );
 
         notifyUser(msg, user.playerId, { flag: 'orderCancelled' });
+
+        if (paymentMethod === 'COD' && +discount > 0) {
+          const refund = {
+            type: 'Refund',
+            transactionId: order.transactionId,
+            amount: order.orderTotal,
+            userId: user._id,
+            orderId,
+            time: moment()
+              .tz('Asia/karachi')
+              .format('MM-DD-YYYY hh:mm a'),
+          };
+
+          await Promise.all([
+            Users.findByIdAndUpdate(order.userId, {
+              'wallet.amount': user.wallet.amount + order.orderTotal,
+            }),
+
+            new WalletHistory(refund).save(),
+          ]);
+        }
       } else {
         const msg = `Dear Dastak user, ${shop.name} could not accept your order at the moment due to some reason. Don't worry the amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
 
