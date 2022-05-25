@@ -420,7 +420,7 @@ router.post('/cancelOrder', async (req, res) => {
       if (paymentMethod === 'COD' && refundToCustomer) {
         const refund = {
           type: 'Refund',
-          transactionId: order.transactionId,
+          transactionId: order._id,
           amount: discount,
           userId: user._id,
           orderId,
@@ -577,7 +577,7 @@ router.post('/restaurantResponse', async (req, res) => {
         if (paymentMethod === 'COD' && +discount > 0) {
           const refund = {
             type: 'Refund',
-            transactionId: order.transactionId,
+            transactionId: order._id,
             amount: discount,
             userId: user._id,
             orderId,
