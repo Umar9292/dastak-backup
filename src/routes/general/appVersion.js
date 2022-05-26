@@ -12,7 +12,7 @@ router.post('/checkVersion', async (req, res) => {
 
     const { cities } = await CitiesModel.findOne({}).lean();
 
-    if (platform === 'ios' && version === '1.6.7') {
+    if (platform === 'ios' && version === '2.0.0') {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
 
@@ -22,7 +22,7 @@ router.post('/checkVersion', async (req, res) => {
       });
     } */
 
-    if (platform === 'ios' && version === '1.6.7') {
+    if (platform === 'ios' && version !== '2.0.0') {
       return res.json({
         status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
@@ -30,10 +30,7 @@ router.post('/checkVersion', async (req, res) => {
       });
     }
 
-    if (
-      platform === 'android' &&
-      (version === '1.6.4' || version === '1.6.5' || version === '1.6.6')
-    ) {
+    if (platform === 'android' && version === '2.0.0') {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
 
@@ -43,10 +40,7 @@ router.post('/checkVersion', async (req, res) => {
       });
     } */
 
-    if (
-      platform === 'android' &&
-      (version === '1.6.4' || version === '1.6.5')
-    ) {
+    if (platform === 'android' && version !== '2.0.0') {
       return res.json({
         status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
