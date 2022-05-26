@@ -167,11 +167,7 @@ router.post('/ordersTillNow', async (req, res) => {
 
 router.post('/updateOrder', async (req, res) => {
   try {
-    const { orderId, products, orderType } = req.body;
-
-    if (products) {
-      req.body.products = JSON.parse(products);
-    }
+    const { orderId, orderType } = req.body;
 
     const order = await Orders.findById(orderId).select(
       'orderTotal martName orderType city'
@@ -232,6 +228,7 @@ router.post('/updateOrder', async (req, res) => {
 
     return res.json({ status: '200', msg: 'Order type changed successfully' });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
