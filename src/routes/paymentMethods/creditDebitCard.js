@@ -120,14 +120,14 @@ router.get('/alfaCallback', async (req, res) => {
       'wallet topUp'
     );
 
-    const { amount } = user.topUp;
-    user.wallet.amount += amount;
+    const { actualAmount } = user.topUp;
+    user.wallet.amount += actualAmount;
     user.topUp.status = 'Successful';
     await user.save();
 
     const topUp = {
       type: 'Top Up',
-      amount,
+      amount: actualAmount,
       transactionId: O,
       userId: user._id,
       topUpMethod: 'Credit/Debit Card',

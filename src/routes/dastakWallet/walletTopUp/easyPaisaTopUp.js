@@ -8,7 +8,13 @@ const { emitEPResponse } = require('../../../../server');
 const Users = require('../../../models/userModel');
 const WalletHistory = require('../../../models/walletHistory');
 
-const easyPaisaTopUp = async (amount, easyPaisaPhone, email, userId) => {
+const easyPaisaTopUp = async (
+  amount,
+  easyPaisaPhone,
+  email,
+  userId,
+  actualAmount
+) => {
   const transactionId = `EPTO${moment()
     .tz('Asia/Karachi')
     .format('YYYYMMDD')}${crypto.randomBytes(2).toString('hex')}`;
@@ -55,7 +61,7 @@ const easyPaisaTopUp = async (amount, easyPaisaPhone, email, userId) => {
 
     const topUp = {
       type: 'Top Up',
-      amount,
+      amount: actualAmount,
       userId,
       easyPaisaPhone,
       transactionId,
@@ -67,7 +73,7 @@ const easyPaisaTopUp = async (amount, easyPaisaPhone, email, userId) => {
 
     await Promise.all([
       Users.findByIdAndUpdate(userId, {
-        $inc: { 'wallet.amount': amount },
+        $inc: { 'wallet.amount': actualAmount },
       }),
 
       new WalletHistory(topUp).save(),
@@ -80,11 +86,11 @@ const easyPaisaTopUp = async (amount, easyPaisaPhone, email, userId) => {
 
 router.post('/v1/easyPaisaTopUp', async (req, res) => {
   try {
-    const { amount, easyPaisaPhone, email, userId } = req.body;
+    const { amount, easyPaisaPhone, email, userId, actualAmount } = req.body;
 
     res.json({ status: '200', msg: 'Your payment is being processed.' });
 
-    easyPaisaTopUp(amount, easyPaisaPhone, email, userId);
+    easyPaisaTopUp(amount, easyPaisaPhone, email, userId, actualAmount);
   } catch (err) {
     console.log(err);
     return res.json({

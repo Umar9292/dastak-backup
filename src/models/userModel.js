@@ -17,6 +17,7 @@ const userModel = Schema(
     topUp: {
       transactionId: String,
       amount: Number,
+      actualAmount: String,
       status: String,
     },
     wallet: {

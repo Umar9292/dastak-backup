@@ -22,7 +22,7 @@ const router = Router();
 
 router.post('/v1/cardTopUp', async (req, res) => {
   try {
-    const { userId, amount } = req.body;
+    const { userId, amount, actualAmount } = req.body;
 
     const transactionId = `ATO${moment()
       .tz('Asia/Karachi')
@@ -30,6 +30,7 @@ router.post('/v1/cardTopUp', async (req, res) => {
 
     const topUp = {
       transactionId,
+      actualAmount,
       amount,
     };
 
