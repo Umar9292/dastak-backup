@@ -54,17 +54,12 @@ io.adapter(redis(process.env.REDIS_URL));
 
 server.listen(port, () => console.log(`Listening on port ${port}\n`));
 
-let currentSocket = '';
-io.on('connection', socket => {
-  currentSocket = socket;
-});
-
 exports.emitMessage = chat => {
-  currentSocket.emit('newMessage', chat);
+  io.emit('newMessage', chat);
 };
 
 exports.emitEPResponse = (event, data) => {
-  currentSocket.emit(event, data);
+  io.emit(event, data);
 };
 
 const chatRouter = require('./src/routes/chat/chat');
