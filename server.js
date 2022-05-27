@@ -59,7 +59,7 @@ exports.emitMessage = chat => {
 };
 
 exports.emitEPResponse = (event, data) => {
-  console.log('In emmition');
+  console.log('In emmition', event, data);
   io.emit(event, data);
 };
 
