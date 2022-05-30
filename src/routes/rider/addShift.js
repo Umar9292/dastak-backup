@@ -22,10 +22,10 @@ router.post('/addShift', async (req, res) => {
 
     const currentTime = moment().tz('Asia/karachi');
 
-    const start = moment(startShift, 'HH:mm:ssa')
+    const start = moment(startShift, 'HH:mm')
       .tz('Asia/karachi')
       .subtract(5, 'hours');
-    const end = moment(endShift, 'HH:mm:ssa')
+    const end = moment(endShift, 'HH:mm')
       .tz('Asia/karachi')
       .subtract(5, 'hours');
 
