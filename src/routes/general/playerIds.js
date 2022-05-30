@@ -21,10 +21,10 @@ router.post('/superAdminPlayerId', async (req, res) => {
       });
     }
 
-    if (
-      superAdmin.superAdminPlayerId !== playerId &&
-      superAdmin.superAdminPlayerId !== ''
-    ) {
+    if (superAdmin.superAdminPlayerId !== playerId) {
+      superAdmin.superAdminPlayerId = '';
+      await superAdmin.save();
+
       return res.json({
         status: '404',
         msg:

@@ -583,7 +583,7 @@ router.post('/dastakDeals', async (req, res) => {
           maxDistance: 20000,
           query: {
             available: true,
-            dastakDeals: true,
+            dastakDeal: true,
             type: 'admin',
             status: 'active',
             shopType: 'restaurant',
