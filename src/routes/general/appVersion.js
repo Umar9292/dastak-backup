@@ -6,38 +6,35 @@ router.post('/checkVersion', async (req, res) => {
   try {
     const { platform, version } = req.body;
 
-    if (platform === 'ios' && version === '1.6.7') {
+    if (platform === 'ios' && version === '2.0.0') {
       return res.json({ status: '200', showCategories: 'false' });
     }
 
-    /*   if (platform === 'ios' && version !== '1.4.5') {
+    if (platform === 'ios' && version !== '2.0.0') {
       return res.json({
-        msg: `Our app is being updated to make the experience even better for you. Kindly try again in 24 hours.`,
+        msg: `Our app is being updated to make the experience even better for you. Kindly try again in few hours.`,
       });
-    } */
+    }
 
-    if (platform === 'ios' && version === '1.6.7') {
+    /* if (platform === 'ios' && version === '1.6.7') {
       return res.json({
         status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
         showCategories: 'false',
       });
-    }
+    } */
 
-    if (
-      platform === 'android' &&
-      (version === '1.6.4' || version === '1.6.5')
-    ) {
+    if (platform === 'android' && version === '2.0.0') {
       return res.json({ status: '200', showCategories: 'false' });
     }
 
-    /* if (platform === 'android' && version !== '1.4.4') {
+    if (platform === 'android' && version !== '2.0.0') {
       return res.json({
-        msg: `Our app is being updated to make the experience even better for you. Kindly try again in 24 hours.`,
+        msg: `Our app is being updated to make the experience even better for you. Kindly try again in few hours.`,
       });
-    } */
+    }
 
-    if (
+    /* if (
       platform === 'android' &&
       (version === '1.6.4' || version === '1.6.5')
     ) {
@@ -46,7 +43,7 @@ router.post('/checkVersion', async (req, res) => {
         msg: `A new update is now available. kindly update your App to get the best experience`,
         showCategories: 'false',
       });
-    }
+    } */
   } catch (err) {
     return res.json({
       status: '404',
