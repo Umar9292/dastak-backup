@@ -28,14 +28,6 @@ router.post('/v1/cardTopUp', async (req, res) => {
       .tz('Asia/Karachi')
       .format('YYYYMMDD')}${crypto.randomBytes(2).toString('hex')}`;
 
-    const topUp = {
-      transactionId,
-      actualAmount,
-      amount,
-    };
-
-    await Users.findByIdAndUpdate(userId, { topUp });
-
     const handShakeString = `HS_ChannelId=${ALFA_CHANNEL_ID}&HS_MerchantId=${ALFA_MERCHANT_ID}&HS_StoreId=${ALFA_STORE_ID}&HS_MerchantHash=${ALFA_MERCHANT_HASH}&HS_MerchantUsername=${ALFA_MERCHANT_USERNAME}&HS_MerchantPassword=${ALFA_MERCHANT_PASSWORD}&HS_ReturnURL=${ALFA_RETURN_URL}&HS_IsRedirectionRequest=0&HS_TransactionReferenceNumber=${transactionId}`;
 
     const handShakeCipher = crypto.createCipheriv(
@@ -70,12 +62,20 @@ router.post('/v1/cardTopUp', async (req, res) => {
       cipher.update(redirectionString, 'utf8', 'base64') +
       cipher.final('base64');
 
-    return res.json({
+    res.json({
       status: '200',
       transactionId,
       redirectionHash,
       AuthToken,
     });
+
+    const topUp = {
+      transactionId,
+      actualAmount,
+      amount,
+    };
+
+    await Users.findByIdAndUpdate(userId, { topUp });
   } catch (err) {
     console.log(err);
     return res.json({
