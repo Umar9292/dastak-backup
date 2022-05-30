@@ -16,37 +16,37 @@ router.post('/checkVersion', async (req, res) => {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
 
-    /*   if (platform === 'ios' && version !== '1.4.5') {
-      return res.json({
-        msg: `Our app is being updated to make the experience even better for you. Kindly try again in 24 hours.`,
-      });
-    } */
-
     if (platform === 'ios' && version !== '2.0.0') {
+      return res.json({
+        msg: `Our app is being updated to make the experience even better for you. Kindly try again in few hours.`,
+      });
+    }
+
+    /* if (platform === 'ios' && version !== '2.0.0') {
       return res.json({
         status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
         showCategories: 'false',
       });
-    }
+    }  */
 
     if (platform === 'android' && version === '2.0.0') {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
 
-    /* if (platform === 'android' && version !== '1.4.4') {
-      return res.json({
-        msg: `Our app is being updated to make the experience even better for you. Kindly try again in 24 hours.`,
-      });
-    } */
-
     if (platform === 'android' && version !== '2.0.0') {
+      return res.json({
+        msg: `Our app is being updated to make the experience even better for you. Kindly try again in few hours.`,
+      });
+    }
+
+    /* if (platform === 'android' && version !== '2.0.0') {
       return res.json({
         status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
         showCategories: 'false',
       });
-    }
+    } */
   } catch (err) {
     return res.json({
       status: '404',
