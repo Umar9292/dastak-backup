@@ -13,18 +13,18 @@ exports.shiftStartChecker = async () => {
     endShift: { $ne: '' },
   }).select('name playerId startShift endShift');
 
-  const currentTime = moment().tz('Asia/karachi');
+  const currentTime = moment().tz('Asia/Karachi');
 
   if (riders.length > 0) {
     riders.map(async rider => {
       let { name, playerId, startShift, endShift } = rider;
 
       startShift = moment(startShift, 'HH:mm')
-        .tz('Asia/karachi')
+        .tz('Asia/Karachi')
         .subtract(5, 'hours');
 
       endShift = moment(endShift, 'HH:mm')
-        .tz('Asia/karachi')
+        .tz('Asia/Karachi')
         .subtract(5, 'hours');
 
       if (
