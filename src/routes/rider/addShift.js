@@ -1,5 +1,5 @@
 const Router = require('express/lib/router');
-const moment = require('moment-timezone');
+const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
 const Users = require('../../models/userModel');
 
@@ -24,12 +24,11 @@ router.post('/addShift', async (req, res) => {
 
     console.log(currentTime);
 
-    const start = moment(startShift, 'HH:mm')
-      .tz('Asia/karachi')
-      .subtract(5, 'hours');
-    const end = moment(endShift, 'HH:mm')
-      .tz('Asia/karachi')
-      .subtract(5, 'hours');
+    let start = moment(startShift, 'HH:mm').tz('Asia/karachi');
+    let end = moment(endShift, 'HH:mm').tz('Asia/karachi');
+
+    start = moment(start).subtract(5, 'hours');
+    end = moment(end).subtract(5, 'hours');
 
     console.log(start, end);
 
