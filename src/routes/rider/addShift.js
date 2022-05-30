@@ -22,6 +22,8 @@ router.post('/addShift', async (req, res) => {
 
     const currentTime = moment().tz('Asia/karachi');
 
+    console.log(currentTime);
+
     const start = moment(startShift, 'HH:mm')
       .tz('Asia/karachi')
       .subtract(5, 'hours');
