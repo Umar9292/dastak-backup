@@ -6,6 +6,7 @@
         "no-unused-vars": "warn",
         "prefer-destructuring": "warn",
         "no-shadow": "off",
-        "array-callback-return": "off"
+        "array-callback-return": "off",
+        "no-nested-ternary": "off"
     }
 }

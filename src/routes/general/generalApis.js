@@ -1,12 +1,12 @@
 const Router = require('express/lib/router');
-const moment = require('moment-timezone');
-const { unlinkSync } = require('fs');
-const { IncomingForm } = require('formidable');
+// const moment = require('moment-timezone');
+// const { unlinkSync } = require('fs');
+// const { IncomingForm } = require('formidable');
 const { randomBytes } = require('crypto');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
-const Orders = require('../../models/ordersModel');
+// const Orders = require('../../models/ordersModel');
 const Categories = require('../../models/categoriesModel');
 const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
 
@@ -118,7 +118,7 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-router.post('/addActualPrices', async (req, res) => {
+/* router.post('/addActualPrices', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
 
@@ -194,7 +194,7 @@ router.post('/addActualPrices', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 /* router.post('/addActualPrices', async (req, res) => {
   try {
@@ -264,7 +264,7 @@ router.post('/addActualPrices', async (req, res) => {
   }
 }); */
 
-router.post('/dealCount', async (req, res) => {
+/* router.post('/dealCount', async (req, res) => {
   try {
     const { martId, startDate, endDate, dealName } = req.body;
 
@@ -323,9 +323,9 @@ router.post('/dealCount', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
-router.post('/unpayRestaurant', async (req, res) => {
+/* router.post('/unpayRestaurant', async (req, res) => {
   try {
     const { martId, startDate, endDate } = req.body;
 
@@ -355,9 +355,9 @@ router.post('/unpayRestaurant', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
-router.post('/uploadPicture', (req, res) => {
+/* router.post('/uploadPicture', (req, res) => {
   try {
     const form = new IncomingForm();
 
@@ -387,9 +387,9 @@ router.post('/uploadPicture', (req, res) => {
         'Looks like something went wrong on our side. Sorry for the incinvenience',
     });
   }
-});
+}); */
 
-router.post('/testAlgorithm', async (req, res) => {
+/* router.post('/testAlgorithm', async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
 
@@ -446,9 +446,9 @@ router.post('/testAlgorithm', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
-/* router.get('/addSpecificationsInProducts', async (_req, res) => {
+router.get('/addSpecificationsInProducts', async (_req, res) => {
   try {
     const dealProducts = await Products.find({
       type: 'deal',
@@ -483,7 +483,11 @@ router.post('/testAlgorithm', async (req, res) => {
               {
                 productName: `Small Pizza ${smallPizzaCount}`,
                 productType: 'pizza',
-                flavourType: product.regular ? 'regular' : 'dealFlavours',
+                flavourType: product.regular
+                  ? 'regular'
+                  : product.dealFlavours
+                  ? 'deal'
+                  : 'special',
               },
             ];
 
@@ -496,7 +500,11 @@ router.post('/testAlgorithm', async (req, res) => {
               {
                 productName: `Medium Pizza ${mediumPizzaCount}`,
                 productType: 'pizza',
-                flavourType: product.regular ? 'regular' : 'dealFlavours',
+                flavourType: product.regular
+                  ? 'regular'
+                  : product.dealFlavours
+                  ? 'deal'
+                  : 'special',
               },
             ];
 
@@ -509,7 +517,11 @@ router.post('/testAlgorithm', async (req, res) => {
               {
                 productName: `Large Pizza ${largePizzaCount}`,
                 productType: 'pizza',
-                flavourType: product.regular ? 'regular' : 'dealFlavours',
+                flavourType: product.regular
+                  ? 'regular'
+                  : product.dealFlavours
+                  ? 'deal'
+                  : 'special',
               },
             ];
 
@@ -530,7 +542,7 @@ router.post('/testAlgorithm', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 router.get('/updateFares', async (_req, res) => {
   try {
@@ -566,7 +578,7 @@ router.get('/modifyCategories', async (_req, res) => {
       const newCategories = [];
       categories.map(category => {
         newCategories.push({
-          name: category.name,
+          name: category,
           startTime: '',
           endTime: '',
         });
@@ -605,7 +617,7 @@ router.get('/modifyFlavoursAndDrinks', async (_req, res) => {
 
         const specifications = {
           productType: 'pizza',
-          flavourType: 'regular',
+          flavourType: 'special',
           data,
         };
 
@@ -627,6 +639,27 @@ router.get('/modifyFlavoursAndDrinks', async (_req, res) => {
         const specifications = {
           productType: 'pizza',
           flavourType: 'regular',
+          data,
+        };
+
+        doc.specifications = [...doc.specifications, specifications];
+        await doc.save();
+      }
+
+      if (doc.dealFlavours) {
+        let data = [];
+
+        await Promise.all(
+          doc.dealFlavours.map(flavour => {
+            const { name } = flavour;
+
+            data = [...data, { count: 0, txt: name }];
+          })
+        );
+
+        const specifications = {
+          productType: 'pizza',
+          flavourType: 'deal',
           data,
         };
 

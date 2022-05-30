@@ -8,7 +8,7 @@ router.post('/checkVersion', async (req, res) => {
   try {
     const { platform, version } = req.body;
 
-    const url = process.env.DEV_URL;
+    const url = process.env.URL;
 
     const { cities } = await CitiesModel.findOne({}).lean();
 
