@@ -237,6 +237,23 @@ router.post('/updateOrder', async (req, res) => {
   }
 });
 
+router.post('/updateRiderFare', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    await Orders.findByIdAndUpdate(orderId, { $set: req.body });
+
+    return res.json({ status: '200', msg: 'Rider fare updated successfully' });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 router.post('/reOpenOrder', async (req, res) => {
   try {
     const { orderId } = req.body;

@@ -21,7 +21,10 @@ router.post('/superAdminPlayerId', async (req, res) => {
       });
     }
 
-    if (superAdmin.superAdminPlayerId !== playerId) {
+    if (
+      superAdmin.superAdminPlayerId !== playerId &&
+      superAdmin.superAdminPlayerId !== ''
+    ) {
       superAdmin.superAdminPlayerId = '';
       await superAdmin.save();
 
