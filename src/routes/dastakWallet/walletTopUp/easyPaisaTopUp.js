@@ -36,8 +36,6 @@ const easyPaisaTopUp = async (
 
   const { responseCode } = result.data;
 
-  console.log(responseCode);
-
   if (responseCode === '0001') {
     const msg =
       'Dear customer seems like you have cancelled the payment request.';

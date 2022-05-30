@@ -54,14 +54,11 @@ io.adapter(redis(process.env.REDIS_URL));
 
 server.listen(port, () => console.log(`Listening on port ${port}\n`));
 
-io.on('connection', socket => console.log('connected'));
-
 exports.emitMessage = chat => {
   io.emit('newMessage', chat);
 };
 
 exports.emitEPResponse = (event, data) => {
-  console.log('In emmition', event, data);
   io.emit(event, data);
 };
 
