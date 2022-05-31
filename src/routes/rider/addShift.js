@@ -1,4 +1,5 @@
 const Router = require('express/lib/router');
+const { add } = require('lodash');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
 const Users = require('../../models/userModel');
@@ -20,16 +21,18 @@ router.post('/addShift', async (req, res) => {
       return res.json({ status: '404', msg: 'You already have a shift.' });
     }
 
-    const currentTime = moment().tz('Asia/Karachi');
+    const currentTime = moment()
+      .tz('Asia/Karachi')
+      .add(9, 'hours');
 
     console.log(currentTime, startShift, endShift);
 
     const start = moment(startShift, 'HH:mm')
       .tz('Asia/Karachi')
+      .add(1, 'days')
       .subtract(5, 'hours');
-    const end = moment(endShift, 'HH:mm')
-      .tz('Asia/Karachi')
-      .subtract(5, 'hours');
+    const end = moment(endShift, 'HH:mm').tz('Asia/Karachi');
+    add(1, 'days').subtract(5, 'hours');
 
     console.log(start, end);
 

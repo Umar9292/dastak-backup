@@ -9,7 +9,10 @@ exports.shiftEndChecker = async () => {
     'name playerId startShift endShift'
   );
 
-  const currentTime = moment().tz('Asia/Karachi');
+  const currentTime = moment()
+    .tz('Asia/Karachi')
+    .add(9, 'hours');
+
   console.log(currentTime);
 
   if (riders.length > 0) {
