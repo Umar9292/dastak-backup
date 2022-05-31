@@ -36,8 +36,6 @@ router.post('/addShift', async (req, res) => {
       end = moment(end).add(1, 'days');
     }
 
-    console.log(start, end);
-
     const rider = await Users.findByIdAndUpdate(
       riderId,
       {

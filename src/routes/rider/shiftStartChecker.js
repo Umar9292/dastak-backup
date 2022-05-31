@@ -33,8 +33,6 @@ exports.shiftStartChecker = async () => {
         endShift = moment(endShift).add(1, 'days');
       }
 
-      console.log(startShift, endShift);
-
       if (
         currentTime.isSameOrAfter(startShift) &&
         currentTime.isSameOrBefore(endShift)
