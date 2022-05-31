@@ -1264,6 +1264,8 @@ router.post('/changeOrderStatus', async (req, res) => {
   try {
     const { orderId, status, martId, riderLatitude, riderLongitude } = req.body;
 
+    console.log(riderLatitude, riderLongitude);
+
     const currentTime = moment().tz('Asia/karachi');
 
     const { status: currentOrderStatus } = await Orders.findById(orderId);
