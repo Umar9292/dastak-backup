@@ -1,5 +1,4 @@
 const Router = require('express/lib/router');
-const { add } = require('lodash');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
 const Users = require('../../models/userModel');
