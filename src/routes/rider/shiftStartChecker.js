@@ -27,7 +27,7 @@ exports.shiftStartChecker = async () => {
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
 
-      console.log(startShift, endShift);
+      console.log('Start shift checker', startShift, endShift);
 
       if (
         currentTime.isSameOrAfter(startShift) &&
