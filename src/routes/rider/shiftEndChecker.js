@@ -1,3 +1,4 @@
+const { add } = require('lodash');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
 const Users = require('../../models/userModel');
@@ -21,6 +22,7 @@ exports.shiftEndChecker = async () => {
 
       endShift = moment(endShift, 'HH:mm')
         .tz('Asia/Karachi')
+        .add(9, 'hours')
         .subtract(5, 'hours');
 
       console.log(endShift);
