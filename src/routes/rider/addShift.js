@@ -31,8 +31,10 @@ router.post('/addShift', async (req, res) => {
       .tz('Asia/Karachi')
       .add(1, 'days')
       .subtract(5, 'hours');
-    const end = moment(endShift, 'HH:mm').tz('Asia/Karachi');
-    add(1, 'days').subtract(5, 'hours');
+    const end = moment(endShift, 'HH:mm')
+      .tz('Asia/Karachi')
+      .add(1, 'days')
+      .subtract(5, 'hours');
 
     console.log(start, end);
 
