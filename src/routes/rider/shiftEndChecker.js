@@ -24,8 +24,6 @@ exports.shiftEndChecker = async () => {
         endShift = moment(endShift).add(1, 'days');
       }
 
-      console.log(endShift);
-
       if (currentTime.isAfter(endShift)) {
         const msg = 'Your shift has ended.';
         notifyRiders(name, msg, playerId, {});
