@@ -986,29 +986,6 @@ router.post('/assignRider', async (req, res) => {
     } else {
       order.assignedBy = 'admin';
     }
-    /* 
-    const orderTime = moment(order.time, 'HH:mma')
-      .tz('Asia/karachi')
-      .subtract(5, 'hours');
-
-    const morningFareTime = moment('04:00', 'HH:mm').tz('Asia/karachi');
-    const noonFareTime = moment('17:00', 'HH:mm').tz('Asia/karachi');
-    const nightFareTime = moment('19:00', 'HH:mm').tz('Asia/karachi');
-
-    if (
-      orderTime.isSame(morningFareTime) ||
-      orderTime.isBetween(morningFareTime, noonFareTime)
-    ) {
-      req.body.riderFare = tillNoonFare;
-    } else if (
-      orderTime.isSame(noonFareTime) ||
-      orderTime.isBetween(noonFareTime, nightFareTime)
-    ) {
-      req.body.riderFare = nightFare;
-    } else {
-      req.body.riderFare = lateNightFare;
-    }
- */
 
     await Promise.all([
       Orders.findByIdAndUpdate(orderId, { $set: req.body }),
@@ -1286,6 +1263,8 @@ router.post('/riderOrders', async (req, res) => {
 router.post('/changeOrderStatus', async (req, res) => {
   try {
     const { orderId, status, martId, riderLatitude, riderLongitude } = req.body;
+
+    console.log(riderLatitude, riderLongitude);
 
     const currentTime = moment().tz('Asia/karachi');
 
