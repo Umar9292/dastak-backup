@@ -12,8 +12,6 @@ exports.shiftEndChecker = async () => {
   const currentTime = moment().tz('Asia/Karachi');
   const hour = moment(currentTime).format('H');
 
-  console.log(currentTime);
-
   if (riders.length > 0) {
     riders.map(async rider => {
       let { name, playerId, endShift } = rider;
