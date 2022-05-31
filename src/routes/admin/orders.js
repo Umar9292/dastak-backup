@@ -1362,7 +1362,11 @@ router.post('/changeOrderStatus', async (req, res) => {
     order.pickUpTime = pickUpTime;
     order.save();
 
-    res.json({ status: '200', data: order });
+    res.json({
+      status: '200',
+      data: order,
+      msg: 'Order picked up successfully.',
+    });
 
     const user = await Users.findById(order.userId);
 

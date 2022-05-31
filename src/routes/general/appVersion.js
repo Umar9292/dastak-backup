@@ -56,4 +56,25 @@ router.post('/checkVersion', async (req, res) => {
   }
 });
 
+router.post('/ridersCheckVersion', async (req, res) => {
+  try {
+    const { version } = req.body;
+
+    if (version === '1.2') {
+      return res.json({ status: '200' });
+    }
+
+    return res.json({
+      status: '404',
+      msg: `A new update is now available. kindly update your App to get the best experience`,
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience`,
+      error: err.toString(),
+    });
+  }
+});
+
 module.exports = router;
