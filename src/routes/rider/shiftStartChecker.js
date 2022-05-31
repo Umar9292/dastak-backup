@@ -13,8 +13,6 @@ exports.shiftStartChecker = async () => {
     endShift: { $ne: '' },
   }).select('name playerId startShift endShift');
 
-  console.log(riders);
-
   const currentTime = moment().tz('Asia/Karachi');
   const hour = moment(currentTime).format('H');
 
