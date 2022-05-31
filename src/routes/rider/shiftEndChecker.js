@@ -9,9 +9,8 @@ exports.shiftEndChecker = async () => {
     'name playerId startShift endShift'
   );
 
-  const currentTime = moment()
-    .tz('Asia/Karachi')
-    .add(9, 'hours');
+  const currentTime = moment().tz('Asia/Karachi');
+  const hour = moment(currentTime).format('H');
 
   console.log(currentTime);
 
@@ -21,8 +20,11 @@ exports.shiftEndChecker = async () => {
 
       endShift = moment(endShift, 'HH:mm')
         .tz('Asia/Karachi')
-        .add(1, 'days')
         .subtract(5, 'hours');
+
+      if (+hour <= 3) {
+        endShift = moment(endShift).add(1, 'days');
+      }
 
       console.log(endShift);
 

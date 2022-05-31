@@ -20,20 +20,21 @@ router.post('/addShift', async (req, res) => {
       return res.json({ status: '404', msg: 'You already have a shift.' });
     }
 
-    const currentTime = moment()
-      .tz('Asia/Karachi')
-      .add(9, 'hours');
+    const currentTime = moment().tz('Asia/Karachi');
+    const hour = moment(currentTime).format('H');
 
-    console.log(currentTime, startShift, endShift);
+    let start = moment(startShift, 'HH:mm')
+      .tz('Asia/Karachi')
+      .subtract(5, 'hours');
 
-    const start = moment(startShift, 'HH:mm')
+    let end = moment(endShift, 'HH:mm')
       .tz('Asia/Karachi')
-      .add(1, 'days')
       .subtract(5, 'hours');
-    const end = moment(endShift, 'HH:mm')
-      .tz('Asia/Karachi')
-      .add(1, 'days')
-      .subtract(5, 'hours');
+
+    if (+hour <= 3) {
+      start = moment(start).add(1, 'days');
+      end = moment(end).add(1, 'days');
+    }
 
     console.log(start, end);
 

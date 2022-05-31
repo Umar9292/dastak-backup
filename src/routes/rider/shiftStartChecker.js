@@ -14,6 +14,7 @@ exports.shiftStartChecker = async () => {
   }).select('name playerId startShift endShift');
 
   const currentTime = moment().tz('Asia/Karachi');
+  const hour = moment(currentTime).format('H');
 
   if (riders.length > 0) {
     riders.map(async rider => {
@@ -26,6 +27,13 @@ exports.shiftStartChecker = async () => {
       endShift = moment(endShift, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
+
+      console.log(startShift, endShift);
+
+      if (+hour <= 3) {
+        startShift = moment(startShift).add(1, 'days');
+        endShift = moment(endShift).add(1, 'days');
+      }
 
       if (
         currentTime.isSameOrAfter(startShift) &&
