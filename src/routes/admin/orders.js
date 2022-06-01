@@ -1182,7 +1182,7 @@ router.post('/riderOngoingOrders', async (req, res) => {
         .lean();
     }
 
-    const accepted = await Orders.find({
+    let accepted = await Orders.find({
       riderId,
       status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
       orderType: 'Delivery',
@@ -1192,6 +1192,21 @@ router.post('/riderOngoingOrders', async (req, res) => {
         createdAt: -1,
       })
       .lean();
+
+    accepted = await Promise.all(
+      accepted.map(async order => {
+        const { martId } = order;
+
+        const { geometry } = await Users.findById(martId)
+          .select('geometry')
+          .lean();
+
+        const [longitude, latitude] = geometry.coordinates;
+        order.martLatitude = latitude.toString();
+        order.martLongitude = longitude.toString();
+        return order;
+      })
+    );
 
     return res.json({
       status: '200',
