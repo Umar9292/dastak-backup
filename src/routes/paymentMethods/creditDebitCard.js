@@ -184,6 +184,7 @@ router.get('/alfaCallback', async (req, res) => {
       {
         paymentStatus: 'Paid',
         products: await JSON.parse(order.products),
+        address: order.address,
         city: mart.city,
         martId: mart._id,
         martName: mart.name,
