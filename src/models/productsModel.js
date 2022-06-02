@@ -7,6 +7,8 @@ const productsModel = Schema(
       default: 'in stock',
       type: String,
     },
+    startTime: String,
+    endTime: String,
     actualPrice: Number,
     dealFlavours: Boolean,
     dastakDeal: Boolean,

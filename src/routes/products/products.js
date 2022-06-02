@@ -501,60 +501,90 @@ router.post('/pickupDeals', async (req, res) => {
       },
     ]);
 
-    const openRestaurants = await checkOpenRestaurants(restaurants);
-
     let pickupDeals = [];
 
-    await Promise.all(
-      openRestaurants.map(async ({ _id: martId }) => {
-        const [restaurant, products, options] = await Promise.all([
-          Users.findById(martId),
+    if (restaurants.length > 0) {
+      const openRestaurants = await checkOpenRestaurants(restaurants);
 
-          Products.find({
-            martId,
-            pickupDeal: true,
-            available: 'in stock',
-          }),
+      const currentTime = moment().tz('Asia/Karachi');
 
-          Flavours.findOne({ martId }),
-        ]);
+      await Promise.all(
+        openRestaurants.map(async ({ _id: martId }) => {
+          const [restaurant, products, options] = await Promise.all([
+            Users.findById(martId),
 
-        if (products.length > 0) {
-          const { specifications: flavourSpecifications } = options;
-          const details = [];
+            Products.find({
+              martId,
+              pickupDeal: true,
+              available: 'in stock',
+            }),
 
-          for (const product of products) {
-            product.restaurant = restaurant;
+            Flavours.findOne({ martId }),
+          ]);
 
-            if (product.type === 'deal') {
-              const { specifications } = product;
+          const availableProducts = products.filter(product => {
+            const productOpening = moment(product.startTime, 'HH:mm')
+              .tz('Asia/Karachi')
+              .subtract(5, 'hours');
+            let productClosing = moment(restaurant.endtime, 'HH:mm')
+              .tz('Asia/Karachi')
+              .subtract(5, 'hours');
 
-              await Promise.all(
-                specifications.map(
-                  ({ productName, productType, flavourType }) => {
-                    flavourSpecifications.map(specification => {
-                      if (
-                        productType === specification.productType &&
-                        flavourType === specification.flavourType
-                      ) {
-                        details.push({
-                          title: productName,
-                          data: specification.data,
-                        });
-                      }
-                    });
-                  }
-                )
-              );
+            const openingTimeOffSet = moment(productOpening).format('a');
+            const closingTimeOffSet = moment(productClosing).format('a');
 
-              product.specifications = details;
+            if (
+              (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
+              (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+            ) {
+              productClosing = moment(productClosing).add(1, 'days');
             }
 
-            pickupDeals = [...pickupDeals, product];
+            if (
+              currentTime.isSameOrAfter(productOpening) &&
+              currentTime.isBefore(productClosing)
+            ) {
+              return product;
+            }
+          });
+
+          if (availableProducts.length > 0) {
+            const { specifications: flavourSpecifications } = options;
+            const details = [];
+
+            for (const product of availableProducts) {
+              product.restaurant = restaurant;
+
+              if (product.type === 'deal') {
+                const { specifications } = product;
+
+                await Promise.all(
+                  specifications.map(
+                    ({ productName, productType, flavourType }) => {
+                      flavourSpecifications.map(specification => {
+                        if (
+                          productType === specification.productType &&
+                          flavourType === specification.flavourType
+                        ) {
+                          details.push({
+                            title: productName,
+                            data: specification.data,
+                          });
+                        }
+                      });
+                    }
+                  )
+                );
+
+                product.specifications = details;
+              }
+
+              pickupDeals = [...pickupDeals, product];
+            }
           }
-        }
-      })
-    );
+        })
+      );
+    }
 
     return res.json({
       status: '200',
