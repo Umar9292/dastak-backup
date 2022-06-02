@@ -471,6 +471,21 @@ router.post('/cancelOrder', async (req, res) => {
       ]);
     }
 
+    if (order.riderId) {
+      const ongoingOrders = await Orders.countDocuments({
+        riderId: order.riderId,
+        status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+      });
+
+      if (ongoingOrders === 0) {
+        await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
+      }
+
+      await Users.findByIdAndUpdate(order.riderId, {
+        $inc: { orderCount: -1 },
+      });
+    }
+
     return res.json({
       status: '200',
       msg: 'Order cancelled',
