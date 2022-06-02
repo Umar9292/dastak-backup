@@ -71,6 +71,10 @@ router.post('/verifySignUpOtp', async (req, res) => {
 
     req.body.verified = true;
     req.body.password = await hash(password, 10);
+    req.body.wallet = {
+      amount: 50,
+      isUsable: true,
+    };
     const user = await new Users(req.body).save();
 
     return res.json({ status: '200', data: user });
