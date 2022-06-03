@@ -1294,8 +1294,6 @@ router.post('/changeOrderStatus', async (req, res) => {
   try {
     const { orderId, status, martId, riderLatitude, riderLongitude } = req.body;
 
-    console.log(riderLatitude, riderLongitude);
-
     const currentTime = moment().tz('Asia/karachi');
 
     const { status: currentOrderStatus } = await Orders.findById(orderId);
@@ -1336,30 +1334,32 @@ router.post('/changeOrderStatus', async (req, res) => {
       order.timeWhenDelivered = timeWhenDelivered;
       await order.save();
 
-      const query = {
-        riderId: order.riderId,
-        status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
-      };
+      if (order.orderType === 'Delivery') {
+        const query = {
+          riderId: order.riderId,
+          status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+        };
 
-      const [riderOrders, rider] = await Promise.all([
-        Orders.countDocuments(query),
-        Users.findById(order.riderId),
-      ]);
+        const [riderOrders, rider] = await Promise.all([
+          Orders.countDocuments(query),
+          Users.findById(order.riderId),
+        ]);
 
-      if (order.paymentType === 'COD') {
-        rider.pendingCollection += order.orderTotal;
-        await rider.save();
-      }
+        if (order.paymentType === 'COD') {
+          rider.pendingCollection += order.orderTotal;
+          await rider.save();
+        }
 
-      if (riderOrders === 0) {
+        if (riderOrders === 0) {
+          await Users.findByIdAndUpdate(order.riderId, {
+            status: 'idle',
+          });
+        }
+
         await Users.findByIdAndUpdate(order.riderId, {
-          status: 'idle',
+          orderCount: rider.orderCount - 1,
         });
       }
-
-      await Users.findByIdAndUpdate(order.riderId, {
-        orderCount: rider.orderCount - 1,
-      });
 
       const message = `Order# ${order.orderNum} has been delivered by ${order.riderName}`;
       orderStatusEmail(message);
