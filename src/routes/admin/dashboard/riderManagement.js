@@ -182,11 +182,13 @@ router.post('/removeRider', async (req, res) => {
       await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
     }
 
-    const rider = await Users.findById(order.riderId).select('orderCount');
+    const rider = await Users.findById(order.riderId).select(
+      'name playerId orderCount'
+    );
     rider.orderCount -= 1;
     await rider.save();
 
-    res.json({ status: '200', msg: 'Rider has bee removed from this order.' });
+    res.json({ status: '200', msg: 'Rider has been removed from this order.' });
 
     const availableRiders = await Users.find({
       type: 'rider',
