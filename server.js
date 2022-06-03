@@ -4,9 +4,9 @@ const cors = require('cors');
 const logger = require('morgan');
 const helmet = require('helmet');
 const { join } = require('path');
-const { config } = require('cloudinary');
+// const { config } = require('cloudinary');
 const compression = require('compression');
-const { connect, connection } = require('mongoose');
+const { connect } = require('mongoose');
 const { createServer } = require('http');
 const socketIo = require('socket.io');
 const redis = require('socket.io-redis');
@@ -37,10 +37,11 @@ const cardRouter = require('./src/routes/paymentMethods/creditDebitCard');
 const dastakWalletRouter = require('./src/routes/dastakWallet/dastakWallet');
 const cardTopUpRouter = require('./src/routes/dastakWallet/walletTopUp/cardTopUp');
 const ridersShiftRouter = require('./src/routes/rider/addShift');
+const riderSignupRouter = require('./src/routes/admin/dashboard/riderSignUp');
 
-const Users = require('./src/models/userModel');
+// const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
-const { notifyUser } = require('./src/notificationHandler/handler');
+// const { notifyUser } = require('./src/notificationHandler/handler');
 
 const port = process.env.PORT || 8080;
 
@@ -117,7 +118,8 @@ app.use(
   restaurantsManagementRouter,
   usersManagementRouter,
   adminSignInRouter,
-  adminAutorizationRouter
+  adminAutorizationRouter,
+  riderSignupRouter
 );
 
 connect(
@@ -137,7 +139,7 @@ connect(
   }
 );
 
-connection.once('open', () => {
+/* connection.once('open', () => {
   const changeStream = connection.collection('users').watch();
 
   changeStream.on('change', async change => {
@@ -153,12 +155,13 @@ connection.once('open', () => {
       }
     }
   });
-});
+}); */
 
-config({
+/* config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
 });
+ */
 
 // module.exports = app;
