@@ -134,6 +134,8 @@ router.post('/allRestaurants', async (req, res) => {
   try {
     const { lat, long, employee, city, flag } = req.body;
 
+    console.log(req.body);
+
     /* if (city === '') {
       city = await getCity(lat, long);
     }
