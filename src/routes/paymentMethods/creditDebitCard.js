@@ -9,6 +9,7 @@ const WalletHistory = require('../../models/walletHistory');
 
 const { getAddress } = require('../../geoCoder/getAddress');
 const {
+  notifyUser,
   notifyAdmin,
   notifySuperAdmin,
 } = require('../../notificationHandler/handler');
@@ -47,7 +48,12 @@ router.post('/v1/card', async (req, res) => {
       .tz('Asia/Karachi')
       .format('YYYYMMDD')}${crypto.randomBytes(2).toString('hex')}`;
 
+    const date = moment()
+      .tz('Asia/Karachi')
+      .format('DD-MM-YYYY');
+
     req.body.transactionId = transactionId;
+    req.body.date = date;
     await new Orders(req.body).save();
 
     const handShakeString = `HS_ChannelId=${ALFA_CHANNEL_ID}&HS_MerchantId=${ALFA_MERCHANT_ID}&HS_StoreId=${ALFA_STORE_ID}&HS_MerchantHash=${ALFA_MERCHANT_HASH}&HS_MerchantUsername=${ALFA_MERCHANT_USERNAME}&HS_MerchantPassword=${ALFA_MERCHANT_PASSWORD}&HS_ReturnURL=${ALFA_RETURN_URL}&HS_IsRedirectionRequest=0&HS_TransactionReferenceNumber=${transactionId}`;
@@ -103,6 +109,9 @@ router.post('/v1/card', async (req, res) => {
 
 router.get('/alfaCallback', async (req, res) => {
   const { TS, O } = req.query;
+
+  const msg = `Transaction id ${O} with transaction status ${TS}`;
+  notifyUser(msg, '3409385a-a407-47db-b934-313b8c32de0c', {});
 
   const transactionType = O.substring(0, 2);
 
@@ -286,6 +295,8 @@ router.post('/v1/checkCardPaymentStatus', async (req, res) => {
     const { ResponseCode, TransactionStatus } = result;
 
     if (ResponseCode === '00' && TransactionStatus === 'Paid') {
+      const msg = `IPN Transaction id = ${transactionId} & transaction status = ${TransactionStatus}`;
+      notifyUser(msg, '3409385a-a407-47db-b934-313b8c32de0c', {});
       return res.json({ status: '200', msg: 'Your order has been placed.' });
     }
 

@@ -56,6 +56,8 @@ const easyPaisa = async params => {
 
   const { responseCode } = result.data;
 
+  console.log('Easy Paisa ResponseCode: ', responseCode);
+
   if (responseCode === '0001') {
     const msg =
       'Dear customer seems like you have cancelled the payment request.';
