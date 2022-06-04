@@ -295,6 +295,8 @@ router.post('/v1/checkCardPaymentStatus', async (req, res) => {
     const { ResponseCode, TransactionStatus } = result;
 
     if (ResponseCode === '00' && TransactionStatus === 'Paid') {
+      const msg = `Transaction id = ${transactionId} & transaction status = ${TransactionStatus}`;
+      notifyUser(msg, '3409385a-a407-47db-b934-313b8c32de0c', {});
       return res.json({ status: '200', msg: 'Your order has been placed.' });
     }
 
