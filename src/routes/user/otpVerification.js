@@ -1,10 +1,12 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const Speakeasy = require('speakeasy');
+const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 const { hash, compare } = require('bcrypt');
 
 const Users = require('../../models/userModel');
 const Otp = require('../../models/otpModel');
+const WalletHistory = require('../../models/walletHistory');
 
 const router = Router();
 
@@ -76,6 +78,17 @@ router.post('/verifySignUpOtp', async (req, res) => {
       isUsable: true,
     };
     const user = await new Users(req.body).save();
+
+    const history = {
+      type: 'Voucher',
+      amount: 50,
+      userId: user._id,
+      time: moment()
+        .tz('Asia/karachi')
+        .format('DD-MM-YYYY hh:mm a'),
+    };
+
+    await new WalletHistory(history).save();
 
     return res.json({
       status: '200',
