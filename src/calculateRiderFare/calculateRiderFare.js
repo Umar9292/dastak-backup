@@ -15,32 +15,20 @@ exports.calculateRiderFare = async (
 
   let riderFare = 0;
 
-  if (distance <= 0.8) {
+  if (distance <= 2.4) {
     riderFare = 75;
   }
 
-  if (distance > 0.8 && distance <= 1.7) {
-    riderFare = 75;
-  }
-
-  if (distance > 1.7 && distance <= 2.6) {
-    riderFare = 75;
-  }
-
-  if (distance > 2.6 && distance <= 3.5) {
+  if (distance > 2.4 && distance <= 3.5) {
     riderFare = 85;
   }
 
-  if (distance > 3.5 && distance <= 4.4) {
-    riderFare = 85;
-  }
-
-  if (distance > 4.4 && distance <= 5.3) {
+  if (distance > 3.5 && distance <= 4.5) {
     riderFare = 90;
   }
 
-  if (distance > 5.3) {
-    riderFare = 95;
+  if (distance > 4.5) {
+    riderFare = 100;
   }
 
   return riderFare;
