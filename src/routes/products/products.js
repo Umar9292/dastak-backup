@@ -526,7 +526,7 @@ router.post('/pickupDeals', async (req, res) => {
             const productOpening = moment(product.startTime, 'HH:mm')
               .tz('Asia/Karachi')
               .subtract(5, 'hours');
-            let productClosing = moment(product.endtime, 'HH:mm')
+            let productClosing = moment(product.endTime, 'HH:mm')
               .tz('Asia/Karachi')
               .subtract(5, 'hours');
 
@@ -549,13 +549,13 @@ router.post('/pickupDeals', async (req, res) => {
           });
 
           if (availableProducts.length > 0) {
-            const { specifications: flavourSpecifications } = options;
             const details = [];
 
             for (const product of availableProducts) {
               product.restaurant = restaurant;
 
               if (product.type === 'deal') {
+                const { specifications: flavourSpecifications } = options;
                 const { specifications } = product;
 
                 await Promise.all(
