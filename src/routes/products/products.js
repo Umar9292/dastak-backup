@@ -526,7 +526,7 @@ router.post('/pickupDeals', async (req, res) => {
             const productOpening = moment(product.startTime, 'HH:mm')
               .tz('Asia/Karachi')
               .subtract(5, 'hours');
-            let productClosing = moment(restaurant.endtime, 'HH:mm')
+            let productClosing = moment(product.endtime, 'HH:mm')
               .tz('Asia/Karachi')
               .subtract(5, 'hours');
 
