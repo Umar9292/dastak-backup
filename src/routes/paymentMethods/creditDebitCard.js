@@ -297,6 +297,15 @@ router.post('/v1/checkCardPaymentStatus', async (req, res) => {
     if (ResponseCode === '00' && TransactionStatus === 'Paid') {
       const msg = `IPN Transaction id = ${transactionId} & transaction status = ${TransactionStatus}`;
       notifyUser(msg, '3409385a-a407-47db-b934-313b8c32de0c', {});
+
+      const order = await Orders.findOne({ transactionId })
+        .select('martName')
+        .lean();
+
+      if (order.martName === undefined) {
+        axios.get(`${ALFA_RETURN_URL}?TS=P&O=${transactionId}`);
+      }
+
       return res.json({ status: '200', msg: 'Your order has been placed.' });
     }
 
