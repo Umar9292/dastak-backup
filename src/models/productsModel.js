@@ -15,6 +15,7 @@ const productsModel = Schema(
     restaurant: Object,
     imgUrl: String,
     productName: String,
+    pickupDeal: Boolean,
     regular: Boolean,
     lunchTimeStart: String,
     lunchTimeEnd: String,
