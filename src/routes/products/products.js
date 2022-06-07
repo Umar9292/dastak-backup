@@ -549,13 +549,13 @@ router.post('/pickupDeals', async (req, res) => {
           });
 
           if (availableProducts.length > 0) {
-            const { specifications: flavourSpecifications } = options;
             const details = [];
 
             for (const product of availableProducts) {
               product.restaurant = restaurant;
 
               if (product.type === 'deal') {
+                const { specifications: flavourSpecifications } = options;
                 const { specifications } = product;
 
                 await Promise.all(
