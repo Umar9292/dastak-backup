@@ -1162,7 +1162,7 @@ router.post('/riderOngoingOrders', async (req, res) => {
       upcoming,
       accepted,
       // idleRiders,
-      // { available, status },
+      { available },
     ] = await Promise.all([
       Orders.find({
         status: 'Admin Accepted',
@@ -1190,11 +1190,11 @@ router.post('/riderOngoingOrders', async (req, res) => {
         status: 'idle',
         available: true,
         city,
-      }),
+      }), */
 
       Users.findById(riderId)
-        .select('available status')
-        .lean(), */
+        .select('available')
+        .lean(),
     ]);
 
     /* if (idleRiders > 0) {
@@ -1220,6 +1220,10 @@ router.post('/riderOngoingOrders', async (req, res) => {
         })
         .lean();
     } */
+
+    if (!available) {
+      upcoming = [];
+    }
 
     accepted = await Promise.all(
       accepted.map(async order => {
