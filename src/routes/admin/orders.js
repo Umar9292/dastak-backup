@@ -1158,10 +1158,34 @@ router.post('/riderOngoingOrders', async (req, res) => {
   try {
     const { riderId, city } = req.body;
 
-    let upcoming = [];
+    let [
+      upcoming,
+      accepted,
+      // idleRiders,
+      // { available, status },
+    ] = await Promise.all([
+      Orders.find({
+        status: 'Admin Accepted',
+        orderType: 'Delivery',
+        city,
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .lean(),
 
-    const [idleRiders, { available, status }] = await Promise.all([
-      Users.countDocuments({
+      Orders.find({
+        riderId,
+        status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
+        orderType: 'Delivery',
+        city,
+      })
+        .sort({
+          createdAt: -1,
+        })
+        .lean(),
+
+      /*  Users.countDocuments({
         type: 'rider',
         status: 'idle',
         available: true,
@@ -1170,10 +1194,10 @@ router.post('/riderOngoingOrders', async (req, res) => {
 
       Users.findById(riderId)
         .select('available status')
-        .lean(),
+        .lean(), */
     ]);
 
-    if (idleRiders > 0) {
+    /* if (idleRiders > 0) {
       if (status === 'idle' && available) {
         upcoming = await Orders.find({
           status: 'Admin Accepted',
@@ -1195,18 +1219,7 @@ router.post('/riderOngoingOrders', async (req, res) => {
           createdAt: -1,
         })
         .lean();
-    }
-
-    let accepted = await Orders.find({
-      riderId,
-      status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
-      orderType: 'Delivery',
-      city,
-    })
-      .sort({
-        createdAt: -1,
-      })
-      .lean();
+    } */
 
     accepted = await Promise.all(
       accepted.map(async order => {
