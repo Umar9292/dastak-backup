@@ -1,12 +1,12 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const Speakeasy = require('speakeasy');
-const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
+// const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 const { hash, compare } = require('bcrypt');
 
 const Users = require('../../models/userModel');
 const Otp = require('../../models/otpModel');
-const WalletHistory = require('../../models/walletHistory');
+// const WalletHistory = require('../../models/walletHistory');
 
 const router = Router();
 
@@ -73,13 +73,13 @@ router.post('/verifySignUpOtp', async (req, res) => {
 
     req.body.verified = true;
     req.body.password = await hash(password, 10);
-    req.body.wallet = {
+    /* req.body.wallet = {
       amount: 50,
       isUsable: true,
-    };
+    }; */
     const user = await new Users(req.body).save();
 
-    const history = {
+    /* const history = {
       type: 'Voucher',
       amount: 50,
       userId: user._id,
@@ -88,12 +88,12 @@ router.post('/verifySignUpOtp', async (req, res) => {
         .format('DD-MM-YYYY hh:mm a'),
     };
 
-    await new WalletHistory(history).save();
+    await new WalletHistory(history).save(); */
 
     return res.json({
       status: '200',
       data: user,
-      showVoucher: true,
+      showVoucher: false,
       voucherMsg:
         'You have been rewarded with Rs.50 in your Dastak Wallet that you can use with online payments. Enjoy and order your favorite food now.',
     });
