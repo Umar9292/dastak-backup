@@ -21,8 +21,7 @@ exports.notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
       'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
   });
 
-  const { data } = await oneSignalVendorClient.sendNotification(notification);
-  return data.id ? console.log(info) : console.log(data.errors[0]);
+  await oneSignalVendorClient.sendNotification(notification);
 };
 
 exports.notifySuperAdmin = async (info, msg, whomToSend, toBeSentData) => {
@@ -40,8 +39,7 @@ exports.notifySuperAdmin = async (info, msg, whomToSend, toBeSentData) => {
       'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
   });
 
-  const { data } = await oneSignalAdminClient.sendNotification(notification);
-  return data.id ? console.log(info) : console.log(data.errors[0]);
+  await oneSignalAdminClient.sendNotification(notification);
 };
 
 exports.notifyUser = async (msg, whomToSend, toBeSentData) => {
@@ -59,8 +57,7 @@ exports.notifyUser = async (msg, whomToSend, toBeSentData) => {
       'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
   });
 
-  const { data } = await oneSignalUserClient.sendNotification(notification);
-  return data.id ? console.log('User Notified') : console.log(data.errors[0]);
+  await oneSignalUserClient.sendNotification(notification);
 };
 
 exports.notifyRiders = async (riderName, msg, whomToSend, toBeSentData) => {
@@ -78,8 +75,5 @@ exports.notifyRiders = async (riderName, msg, whomToSend, toBeSentData) => {
       'https://res.cloudinary.com/hmwday8rj/image/upload/v1596543000/ios_icon_rrtypi.png',
   });
 
-  const { data } = await oneSignalRiderClient.sendNotification(notification);
-  return data.id
-    ? console.log(`${riderName} Notified`)
-    : console.log(data.errors[0]);
+  await oneSignalRiderClient.sendNotification(notification);
 };
