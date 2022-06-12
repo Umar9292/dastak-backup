@@ -129,8 +129,6 @@ router.post('/userPlayerId', async (req, res) => {
     user.playerId = playerId;
     await user.save();
 
-    console.log(`${user.name} came into the app`);
-
     res.json({
       status: '200',
       data: user,
