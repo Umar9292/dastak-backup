@@ -75,8 +75,6 @@ router.post('/adminPlayerId', async (req, res) => {
       await admin.save();
     }
 
-    console.log(`${admin.name} opened the app`);
-
     return res.json({
       status: '200',
       data: admin,
