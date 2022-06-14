@@ -4,7 +4,7 @@ const moment = require('moment-timezone');
 const Orders = require('../../../models/ordersModel');
 const Users = require('../../../models/userModel');
 
-const { notifyRiders } = require('../../../notificationHandler/handler');
+// const { notifyRiders } = require('../../../notificationHandler/handler');
 
 const router = Router();
 
@@ -165,7 +165,7 @@ router.post('/ordersTillNow', async (req, res) => {
   }
 });
 
-router.post('/updateOrder', async (req, res) => {
+/* router.post('/updateOrder', async (req, res) => {
   try {
     const { orderId, orderType } = req.body;
 
@@ -235,7 +235,7 @@ router.post('/updateOrder', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 router.post('/updateRiderFare', async (req, res) => {
   try {

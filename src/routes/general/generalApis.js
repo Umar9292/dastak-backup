@@ -5,14 +5,14 @@ const Router = require('express/lib/router');
 const { randomBytes } = require('crypto');
 
 const Users = require('../../models/userModel');
-const Products = require('../../models/productsModel');
+// const Products = require('../../models/productsModel');
 // const Orders = require('../../models/ordersModel');
-const Categories = require('../../models/categoriesModel');
-const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
+// const Categories = require('../../models/categoriesModel');
+// const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
 
 const router = Router();
 
-router.get('/changePrices', async (_req, res) => {
+/* router.get('/changePrices', async (_req, res) => {
   try {
     const products = await Products.find({
       martId: '62457d7bff94eb2fc79ee3db',
@@ -39,7 +39,7 @@ router.get('/changePrices', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 router.post('/closeRestaurants', async (req, res) => {
   try {
@@ -448,7 +448,7 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-router.get('/addSpecificationsInProducts', async (_req, res) => {
+/* router.get('/addSpecificationsInProducts', async (_req, res) => {
   try {
     const dealProducts = await Products.find({
       type: 'deal',
@@ -542,9 +542,9 @@ router.get('/addSpecificationsInProducts', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
-router.get('/updateFares', async (_req, res) => {
+/* router.get('/updateFares', async (_req, res) => {
   try {
     const riders = await Users.updateMany(
       { type: 'rider', city: 'Sargodha' },
@@ -559,7 +559,7 @@ router.get('/updateFares', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 /* router.post('/jazzCashCallback', async (req, res) => {
   console.log(req.body);
@@ -569,7 +569,7 @@ router.get('/updateFares', async (_req, res) => {
   );
 }); */
 
-router.get('/modifyCategories', async (_req, res) => {
+/* router.get('/modifyCategories', async (_req, res) => {
   try {
     const restaurants = await Categories.find();
 
@@ -597,9 +597,9 @@ router.get('/modifyCategories', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
-router.get('/modifyFlavoursAndDrinks', async (_req, res) => {
+/* router.get('/modifyFlavoursAndDrinks', async (_req, res) => {
   try {
     const flavoursAndDrinks = await FlavoursAndDrinks.find();
 
@@ -697,6 +697,6 @@ router.get('/modifyFlavoursAndDrinks', async (_req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 module.exports = router;
