@@ -20,10 +20,10 @@ if (cluster.isMaster) {
       if (err) {
         console.log(err);
       } else {
-        // setInterval(() => {
-        //   shiftStartChecker();
-        //   shiftEndChecker();
-        // }, 10000);
+        setInterval(() => {
+          shiftStartChecker();
+          shiftEndChecker();
+        }, 10000);
 
         console.log('Connected to database');
       }
