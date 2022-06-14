@@ -62,6 +62,18 @@ router.post('/checkVersion', async (req, res) => {
   }
 });
 
+router.post('/vendorCheckVersion', async (_req, res) => {
+  try {
+    return res.json({ status: '200' });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience`,
+      error: err.toString(),
+    });
+  }
+});
+
 router.post('/ridersCheckVersion', async (req, res) => {
   try {
     const { version } = req.body;
