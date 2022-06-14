@@ -20,17 +20,17 @@ if (cluster.isMaster) {
       if (err) {
         console.log(err);
       } else {
-        setInterval(() => {
-          shiftStartChecker();
-          shiftEndChecker();
-        }, 10000);
+        // setInterval(() => {
+        //   shiftStartChecker();
+        //   shiftEndChecker();
+        // }, 10000);
 
         console.log('Connected to database');
       }
     }
   );
 
-  for (let i = 0; i < 5; i += 1) {
+  for (let i = 0; i < 1; i += 1) {
     cluster.fork();
   }
 

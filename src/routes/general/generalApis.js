@@ -1,12 +1,13 @@
 const Router = require('express/lib/router');
-// const moment = require('moment-timezone');
+const moment = require('moment-timezone');
 // const { unlinkSync } = require('fs');
 // const { IncomingForm } = require('formidable');
 const { randomBytes } = require('crypto');
+const { uniqBy } = require('lodash');
 
 const Users = require('../../models/userModel');
 // const Products = require('../../models/productsModel');
-// const Orders = require('../../models/ordersModel');
+const Orders = require('../../models/ordersModel');
 // const Categories = require('../../models/categoriesModel');
 // const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
 
@@ -698,5 +699,58 @@ router.get('/createRidersPassword', async (_req, res) => {
     });
   }
 }); */
+
+router.post('/averageRestaurantMetrics', async (req, res) => {
+  try {
+    let { startDate, endDate, dateRange } = req.body;
+
+    startDate = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/karachi')
+      .toISOString();
+    endDate = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/karachi')
+      .toISOString();
+
+    const orders = await Orders.find({
+      status: 'Delivered',
+      dateForSearching: { $gte: startDate, $lte: endDate },
+    })
+      .select('orderTotal martId martName')
+      .lean();
+
+    const overallAvgOrderTotal =
+      orders.reduce((a, b) => a + b.orderTotal, 0) / orders.length;
+
+    const restaurants = uniqBy(orders, 'martId');
+
+    const avgOrdersPerRestaurant = await Promise.all(
+      restaurants.map(async ({ martId, martName }) => {
+        const restaurantOrders = await Orders.find({
+          martId,
+          status: 'Delivered',
+          reason: '',
+          dateForSearching: { $gte: startDate, $lte: endDate },
+        })
+          .select('orderTotal')
+          .lean();
+
+        const avgOrderAmount =
+          restaurantOrders.reduce((a, b) => a + b.orderTotal, 0) /
+          restaurantOrders.length;
+
+        return {
+          restaurant: martName,
+          avgOrders: restaurantOrders.length / dateRange,
+          avgOrderAmount,
+        };
+      })
+    );
+
+    res.json({ overallAvgOrderTotal, avgOrdersPerRestaurant });
+  } catch (error) {
+    console.log(error);
+    return res.json({ status: '404' });
+  }
+});
 
 module.exports = router;
