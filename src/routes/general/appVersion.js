@@ -30,10 +30,7 @@ router.post('/checkVersion', async (req, res) => {
       });
     }
 
-    if (
-      platform === 'android' &&
-      (version === '2.0.0' || version === '2.0.1' || version === '2.0.2')
-    ) {
+    if (platform === 'android' && version === '2.0.1') {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
 
@@ -43,10 +40,7 @@ router.post('/checkVersion', async (req, res) => {
       });
     } */
 
-    if (
-      platform === 'android' &&
-      (version !== '2.0.0' || version !== '2.0.1' || version !== '2.0.2')
-    ) {
+    if (platform === 'android' && version !== '2.0.1') {
       return res.json({
         status: '404',
         msg: `A new update is now available. kindly update your App to get the best experience`,
