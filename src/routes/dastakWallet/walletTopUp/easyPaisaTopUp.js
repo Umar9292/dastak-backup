@@ -1,14 +1,14 @@
 const router = require('express/lib/router')();
-const axios = require('axios');
+/* const axios = require('axios');
 const crypto = require('crypto');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
 const { emitEPResponse } = require('../../../../server');
 
 const Users = require('../../../models/userModel');
-const WalletHistory = require('../../../models/walletHistory');
+const WalletHistory = require('../../../models/walletHistory'); */
 
-const easyPaisaTopUp = async (
+/* const easyPaisaTopUp = async (
   amount,
   easyPaisaPhone,
   email,
@@ -80,15 +80,21 @@ const easyPaisaTopUp = async (
 
   const msg = 'System error. Kindly try again.';
   return emitEPResponse('systemError', msg);
-};
+}; */
 
 router.post('/v1/easyPaisaTopUp', async (req, res) => {
   try {
-    const { amount, easyPaisaPhone, email, userId, actualAmount } = req.body;
+    // const { amount, easyPaisaPhone, email, userId, actualAmount } = req.body;
 
-    res.json({ status: '200', msg: 'Your payment is being processed.' });
+    return res.json({
+      status: '404',
+      msg:
+        'There is some technical issue with Easypaisa. We are working hard to get it back up as soon as possible. You can still use card payments for topup. Thankyou for your paitience',
+    });
 
-    easyPaisaTopUp(amount, easyPaisaPhone, email, userId, actualAmount);
+    /* res.json({ status: '200', msg: 'Your payment is being processed.' });
+
+    easyPaisaTopUp(amount, easyPaisaPhone, email, userId, actualAmount); */
   } catch (err) {
     console.log(err);
     return res.json({
