@@ -165,11 +165,11 @@ router.post('/ordersTillNow', async (req, res) => {
   }
 });
 
-/* router.post('/updateOrder', async (req, res) => {
+router.post('/updateOrder', async (req, res) => {
   try {
-    const { orderId, orderType } = req.body;
+    const { orderId } = req.body;
 
-    const order = await Orders.findById(orderId).select(
+    /*  const order = await Orders.findById(orderId).select(
       'orderTotal martName orderType city'
     );
 
@@ -222,7 +222,7 @@ router.post('/ordersTillNow', async (req, res) => {
       req.body.deliveryCharges = '0';
       order.orderTotal -= 30;
       await order.save();
-    }
+    } */
 
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
@@ -235,7 +235,7 @@ router.post('/ordersTillNow', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 router.post('/updateRiderFare', async (req, res) => {
   try {
