@@ -48,7 +48,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
     if (userId !== undefined) {
       return res.json({
         status: '200',
-        easyPaisa: false,
+        easyPaisa: true,
         card: true,
         restaurant,
         address,
@@ -58,7 +58,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
 
     return res.json({
       status: '202',
-      easyPaisa: false,
+      easyPaisa: true,
       card: true,
       restaurant,
       address,
