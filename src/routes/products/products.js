@@ -517,7 +517,7 @@ router.post('/pickupDeals', async (req, res) => {
               martId,
               pickupDeal: true,
               available: 'in stock',
-            }),
+            }).sort({ price: 1 }),
 
             Flavours.findOne({ martId }),
           ]);
@@ -636,7 +636,7 @@ router.post('/dastakDeals', async (req, res) => {
             martId,
             dastakDeal: true,
             available: 'in stock',
-          }),
+          }).sort({ price: 1 }),
 
           Flavours.findOne({ martId }),
         ]);
