@@ -1,5 +1,5 @@
 const Router = require('express/lib/router');
-/* const axios = require('axios');
+const axios = require('axios');
 const crypto = require('crypto');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
@@ -20,11 +20,11 @@ const {
 const {
   emailOrderDetails,
   notifyRestaurantByEmail,
-} = require('../../emailHandler/orderEmail/orderEmail'); */
+} = require('../../emailHandler/orderEmail/orderEmail');
 
 const router = Router();
 
-/* const easyPaisa = async params => {
+const easyPaisa = async params => {
   const {
     orderTotal,
     easyPaisaPhone,
@@ -195,19 +195,19 @@ const router = Router();
 
   const msg = 'System error. Kindly try again.';
   return emitEPResponse('systemError', msg);
-}; */
+};
 
 router.post('/v1/easyPaisa', async (req, res) => {
   try {
-    // const { martId } = req.body;
+    const { martId } = req.body;
 
-    return res.json({
+    /* return res.json({
       status: '404',
       msg:
         'There is some technical issue with Easypaisa. We are working hard to get it back up as soon as possible. You can still use card payments or COD. Thankyou for your paitience',
-    });
+    }); */
 
-    /* const restaurantIsOpen = await checkTime(martId);
+    const restaurantIsOpen = await checkTime(martId);
 
     if (!restaurantIsOpen) {
       return res.json({
@@ -218,7 +218,7 @@ router.post('/v1/easyPaisa', async (req, res) => {
 
     res.json({ status: '200', msg: 'Your payment is being processed.' });
 
-    easyPaisa(req.body); */
+    easyPaisa(req.body);
   } catch (err) {
     console.log(err);
     return res.json({
