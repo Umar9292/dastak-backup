@@ -81,7 +81,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
     const user = await new Users(req.body).save();
 
     const history = {
-      type: 'Voucher',
+      type: 'Reward',
       amount: 100,
       userId: user._id,
       time: moment()
