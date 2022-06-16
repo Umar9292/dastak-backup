@@ -99,7 +99,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
         'You have been rewarded with Rs.100 in your Dastak Wallet. Enjoy and order your favorite food now.',
     });
 
-    VoucherSignups.updateOne(
+    await VoucherSignups.updateOne(
       {},
       { $inc: { signupCount: 1, totalAmount: 100 } }
     );
