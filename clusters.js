@@ -4,7 +4,7 @@ const cluster = require('cluster');
 const os = require('os');
 const { connect } = require('mongoose');
 
-console.log(os.cpus().length);
+console.log(os.cpus());
 
 const { dbUrl } = require('./utils/dbUrls');
 const { shiftEndChecker } = require('./src/routes/rider/shiftEndChecker');
