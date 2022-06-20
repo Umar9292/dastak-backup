@@ -41,6 +41,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
     restaurant.password = null;
 
     let { address } = req.body;
+    console.log(address);
     if (address === 'Current Location') {
       address = await getAddress(userLatitude, userLongitude);
     }
