@@ -56,9 +56,18 @@ router.post('/checkVersion', async (req, res) => {
   }
 });
 
-router.post('/vendorCheckVersion', async (_req, res) => {
+router.post('/vendorCheckVersion', async (req, res) => {
   try {
-    return res.json({ status: '200' });
+    const { version } = req.body;
+
+    if (version === '1.2' || version === '1.3') {
+      return res.json({ status: '200' });
+    }
+
+    return res.json({
+      status: '404',
+      msg: `A new update is now available which includes performance improvements. Kindly update your app, it won't take much of your time. Thankyou`,
+    });
   } catch (err) {
     return res.json({
       status: '404',
