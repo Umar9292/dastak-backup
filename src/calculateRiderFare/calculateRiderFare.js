@@ -1,7 +1,10 @@
 require('dotenv').config();
 const { getPreciseDistance } = require('geolib');
 
+const OrderFares = require('../models/orderFaresModel');
+
 exports.calculateRiderFare = async (
+  city,
   orderLatitude,
   oderLongitude,
   martLatitude,
@@ -15,32 +18,36 @@ exports.calculateRiderFare = async (
 
   let riderFare = 0;
 
+  const { riderFares } = await OrderFares.findOne({ city })
+    .select('riderFares')
+    .lean();
+
   if (distance <= 0.8) {
-    riderFare = 85;
+    riderFare = Object.values(riderFares[0])[0];
   }
 
   if (distance > 0.8 && distance <= 1.7) {
-    riderFare = 85;
+    riderFare = Object.values(riderFares[0])[2];
   }
 
   if (distance > 1.7 && distance <= 2.6) {
-    riderFare = 85;
+    riderFare = Object.values(riderFares[0])[3];
   }
 
   if (distance > 2.6 && distance <= 3.5) {
-    riderFare = 95;
+    riderFare = Object.values(riderFares[0])[4];
   }
 
   if (distance > 3.5 && distance <= 4.4) {
-    riderFare = 95;
+    riderFare = Object.values(riderFares[0])[5];
   }
 
   if (distance > 4.4 && distance <= 5.3) {
-    riderFare = 100;
+    riderFare = Object.values(riderFares[0])[6];
   }
 
   if (distance > 5.3) {
-    riderFare = 110;
+    riderFare = Object.values(riderFares[0])[7];
   }
 
   return riderFare;

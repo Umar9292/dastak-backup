@@ -517,8 +517,9 @@ router.post('/restaurantResponse', async (req, res) => {
       orderType,
       orderNum,
       discount,
+      city,
     } = await Orders.findById(orderId)
-      .select('status paymentMethod orderNum orderType discount')
+      .select('status paymentMethod orderNum orderType discount city')
       .lean();
 
     if (orderStatus === 'Rejected') {
@@ -540,6 +541,7 @@ router.post('/restaurantResponse', async (req, res) => {
     const [longitude, latitude] = geometry.coordinates;
 
     req.body.riderFare = await calculateRiderFare(
+      city,
       +orderLatitude,
       +orderLongitude,
       latitude,

@@ -2,7 +2,7 @@ const Router = require('express/lib/router');
 
 const Users = require('../../models/userModel');
 
-const { getAddress } = require('../../geoCoder/getAddress');
+// const { getAddress } = require('../../geoCoder/getAddress');
 const {
   calculateDeliveryCharges,
 } = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
@@ -20,7 +20,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
       userLongitude,
     } = req.body;
 
-    const [restaurant, user, deliveryCharges] = await Promise.all([
+    const [restaurant, user] = await Promise.all([
       Users.findById(martId)
         .select('-password -__v')
         .lean(),
@@ -28,22 +28,23 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
       Users.findById(userId)
         .select('-password -__v')
         .lean(),
-
-      calculateDeliveryCharges(
-        userLatitude,
-        userLongitude,
-        martLatitude,
-        martLongitude
-      ),
     ]);
+
+    const deliveryCharges = await calculateDeliveryCharges(
+      restaurant.city,
+      userLatitude,
+      userLongitude,
+      martLatitude,
+      martLongitude
+    );
 
     restaurant.deliveryCharges = deliveryCharges;
     restaurant.password = null;
 
-    let { address } = req.body;
-    if (address === 'Current Location') {
-      address = await getAddress(userLatitude, userLongitude);
-    }
+    // let { address } = req.body;
+    // if (address === 'Current Location') {
+    //   address = await getAddress(userLatitude, userLongitude);
+    // }
 
     if (userId !== undefined) {
       return res.json({
@@ -51,7 +52,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
         easyPaisa: true,
         card: true,
         restaurant,
-        address,
+        // address,
         user,
       });
     }
@@ -61,7 +62,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
       easyPaisa: true,
       card: true,
       restaurant,
-      address,
+      // address,
     });
   } catch (err) {
     return res.json({
