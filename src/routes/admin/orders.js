@@ -886,7 +886,7 @@ router.post('/assignRider', async (req, res) => {
       Orders.findById(orderId),
 
       Users.findById(riderId)
-        .select('pendingCollection name paymentLimit orderCount')
+        .select('pendingCollection name paymentLimit orderCount fareType')
         .lean(),
 
       Orders.find({
