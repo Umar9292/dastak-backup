@@ -999,9 +999,13 @@ router.post('/assignRider', async (req, res) => {
     }
 
     if (admin === undefined) {
-      order.assignedBy = name;
+      req.body.assignedBy = name;
     } else {
-      order.assignedBy = 'admin';
+      req.body.assignedBy = 'admin';
+    }
+
+    if (rider.fareType && rider.fareType === 'salary') {
+      req.body.riderFare = rider.tillNoonFare;
     }
 
     await Promise.all([
@@ -1017,8 +1021,6 @@ router.post('/assignRider', async (req, res) => {
       status: '200',
       msg: 'This order is now assigned to you.',
     });
-
-    await order.save();
 
     const { playerIds } = await Users.findById(order.martId);
 
