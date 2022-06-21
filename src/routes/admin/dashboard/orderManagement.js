@@ -169,61 +169,6 @@ router.post('/updateOrder', async (req, res) => {
   try {
     const { orderId } = req.body;
 
-    /*  const order = await Orders.findById(orderId).select(
-      'orderTotal martName orderType city'
-    );
-
-    if (orderType === 'Delivery' && order.orderType !== 'Delivery') {
-      req.body.deliveryCharges = '30';
-      order.orderTotal += 30;
-      await order.save();
-
-      const [idleRiders, allRiders] = await Promise.all([
-        Users.find({
-          type: 'rider',
-          status: 'idle',
-          available: true,
-          city: order.city,
-        })
-          .select('name playerId')
-          .lean(),
-
-        Users.find({
-          type: 'rider',
-          available: true,
-          city: order.city,
-        })
-          .select('name playerId')
-          .lean(),
-      ]);
-
-      const ridersMessage = `New order from ${order.martName}`;
-
-      if (idleRiders.length === 0) {
-        allRiders.forEach(async rider => {
-          const { name, playerId } = rider;
-
-          await notifyRiders(name, ridersMessage, playerId, {
-            flag: 'riderNotified',
-          });
-        });
-      } else {
-        idleRiders.forEach(async rider => {
-          const { name, playerId } = rider;
-
-          await notifyRiders(name, ridersMessage, playerId, {
-            flag: 'riderNotified',
-          });
-        });
-      }
-    }
-
-    if (orderType === 'PickUp' && order.orderType !== 'PickUp') {
-      req.body.deliveryCharges = '0';
-      order.orderTotal -= 30;
-      await order.save();
-    } */
-
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
     return res.json({ status: '200', msg: 'Order type changed successfully' });
