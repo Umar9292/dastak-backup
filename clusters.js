@@ -2,11 +2,13 @@
 require('dotenv').config();
 const cluster = require('cluster');
 const { connect } = require('mongoose');
+const OS = require('os');
 
 const { dbUrl } = require('./utils/dbUrls');
 const { shiftEndChecker } = require('./src/routes/rider/shiftEndChecker');
 const { shiftStartChecker } = require('./src/routes/rider/shiftStartChecker');
 
+console.log(OS.cpus().length);
 if (cluster.isMaster) {
   connect(
     dbUrl,
