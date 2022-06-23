@@ -853,8 +853,7 @@ router.post('/restaurantResponse', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
- */
+}); */
 
 router.post('/assignRider', async (req, res) => {
   try {
