@@ -15,7 +15,7 @@ const {
 } = require('../../routes/marts/openRestaurants/openRestaurants');
 
 const client = createClient(process.env.REDIS_URL, {
-  rejectUnauthorized: false,
+  tls: { rejectUnauthorized: false },
 });
 
 const router = Router();

@@ -10,7 +10,7 @@ const {
 } = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
 
 const client = createClient(process.env.REDIS_URL, {
-  rejectUnauthorized: false,
+  tls: { rejectUnauthorized: false },
 });
 
 const router = Router();
