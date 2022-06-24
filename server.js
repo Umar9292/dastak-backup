@@ -53,7 +53,7 @@ const io = socketIo(server, {
 });
 io.adapter(
   redis(process.env.REDIS_URL, {
-    tls: { rejectUnauthorized: true, requestCert: true, agent: false },
+    tls: { rejectUnauthorized: false, requestCert: false, agent: false },
   })
 );
 
