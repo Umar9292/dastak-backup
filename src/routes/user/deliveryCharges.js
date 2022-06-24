@@ -2,7 +2,7 @@ const Router = require('express/lib/router');
 
 const Users = require('../../models/userModel');
 
-// const { getAddress } = require('../../geoCoder/getAddress');
+const { getAddress } = require('../../geoCoder/getAddress');
 const {
   calculateDeliveryCharges,
 } = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
@@ -41,10 +41,10 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
     restaurant.deliveryCharges = deliveryCharges;
     restaurant.password = null;
 
-    // let { address } = req.body;
-    // if (address === 'Current Location') {
-    //   address = await getAddress(userLatitude, userLongitude);
-    // }
+    let { address } = req.body;
+    if (address === 'Current Location') {
+      address = await getAddress(userLatitude, userLongitude);
+    }
 
     if (userId !== undefined) {
       return res.json({
@@ -52,7 +52,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
         easyPaisa: true,
         card: true,
         restaurant,
-        // address,
+        address,
         user,
       });
     }
@@ -62,7 +62,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
       easyPaisa: true,
       card: true,
       restaurant,
-      // address,
+      address,
     });
   } catch (err) {
     return res.json({
