@@ -52,7 +52,9 @@ const io = socketIo(server, {
   transports: ['websocket'],
 });
 io.adapter(
-  redis(process.env.REDIS_URL, { tls: { rejectUnauthorized: false } })
+  redis(process.env.REDIS_URL, {
+    tls: { rejectUnauthorized: false, requestCert: true, agent: false },
+  })
 );
 
 server.listen(port, () => console.log(`Listening on port ${port}\n`));
