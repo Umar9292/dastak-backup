@@ -68,8 +68,8 @@ router.post('/restaurantCollections', async (req, res) => {
         const [orders, restaurant] = await Promise.all([
           Orders.find({
             $or: [
-              { status: 'Delivered', paid: false },
-              { status: 'Rejected', refundToRestaurant: true, paid: false },
+              { status: 'Delivered' },
+              { status: 'Rejected', refundToRestaurant: true },
             ],
             martId,
             city,
