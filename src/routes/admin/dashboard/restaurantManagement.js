@@ -195,7 +195,7 @@ router.post('/restaurantCollections', async (req, res) => {
 
         ourProfit +=
           ourPercentage +
-          deliveryCharges +
+          // deliveryCharges +
           pickUpPercentage +
           +serviceChargePercentage -
           totalDiscount;

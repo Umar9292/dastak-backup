@@ -65,6 +65,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
       address,
     });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
