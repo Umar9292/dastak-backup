@@ -195,7 +195,6 @@ router.post('/restaurantCollections', async (req, res) => {
 
         ourProfit +=
           ourPercentage +
-          // deliveryCharges +
           pickUpPercentage +
           +serviceChargePercentage -
           totalDiscount;
@@ -226,6 +225,7 @@ router.post('/restaurantCollections', async (req, res) => {
       (a, b) => a + b.totalOfDeliveryOrders,
       0
     );
+    const orderCount = data.reduce((a, b) => a + b.orderCount, 0);
 
     data = orderBy(data, ['totalToPay'], ['desc']);
 
@@ -234,6 +234,7 @@ router.post('/restaurantCollections', async (req, res) => {
       data,
       totalProfit,
       amountToPay,
+      orderCount,
       totalCollection,
     });
   } catch (err) {
