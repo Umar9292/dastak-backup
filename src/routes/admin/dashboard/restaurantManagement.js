@@ -182,10 +182,10 @@ router.post('/restaurantCollections', async (req, res) => {
           0
         );
 
-        const deliveryCharges = deliveryOrders.reduce(
-          (a, b) => a + +b.deliveryCharges,
-          0
-        );
+        // const deliveryCharges = deliveryOrders.reduce(
+        //   (a, b) => a + +b.deliveryCharges,
+        //   0
+        // );
 
         const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
 
