@@ -36,7 +36,7 @@ exports.calculateDeliveryCharges = async (
   }
 
   if (distance > 3.6) {
-    deliveryCharges = 60;
+    deliveryCharges = Object.values(orderFares.deliveryCharges[0])[3];
   }
 
   return deliveryCharges;
