@@ -104,10 +104,12 @@ router.post('/reAssignRider', async (req, res) => {
     const { orderId, riderId } = req.body;
 
     const {
+      name: newRidersName,
+      playerId: newRidersPlayerId,
       status: newRidersStatus,
       orderCount: newRidersOrderCount,
     } = await Users.findById(riderId)
-      .select('status orderCount tillNoonFare nightFare lateNightFare')
+      .select('name playerId status orderCount')
       .lean();
 
     const {
@@ -149,6 +151,11 @@ router.post('/reAssignRider', async (req, res) => {
 
     await Users.findByIdAndUpdate(riderId, {
       orderCount: newRidersOrderCount + 1,
+    });
+
+    const ridersMessage = 'A new order has been assigned to you.';
+    notifyRiders(newRidersName, ridersMessage, newRidersPlayerId, {
+      flag: 'riderNotified',
     });
 
     return res.json({ status: '200', msg: 'This order has been re assigned' });

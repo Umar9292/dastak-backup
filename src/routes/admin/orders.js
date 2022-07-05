@@ -887,7 +887,7 @@ router.post('/assignRider', async (req, res) => {
 
       Users.findById(riderId)
         .select(
-          'pendingCollection name paymentLimit orderCount fareType tillNoonFare'
+          'pendingCollection name paymentLimit orderCount fareType tillNoonFare playerId'
         )
         .lean(),
 
@@ -1002,6 +1002,11 @@ router.post('/assignRider', async (req, res) => {
       req.body.assignedBy = name;
     } else {
       req.body.assignedBy = 'admin';
+
+      const ridersMessage = 'A new order has been assigned to you.';
+      notifyRiders(name, ridersMessage, rider.playerId, {
+        flag: 'riderNotified',
+      });
     }
 
     if (rider.fareType && rider.fareType === 'salary') {
