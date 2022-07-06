@@ -24,19 +24,19 @@ exports.calculateDeliveryCharges = async (
     .lean();
 
   if (distance <= 0.8) {
-    deliveryCharges = Object.values(orderFares.deliveryCharges[0])[0];
+    deliveryCharges = Object.values(orderFares.deliveryCharges)[0];
   }
 
   if (distance > 0.8 && distance <= 1.7) {
-    deliveryCharges = Object.values(orderFares.deliveryCharges[0])[0];
+    deliveryCharges = Object.values(orderFares.deliveryCharges)[1];
   }
 
   if (distance > 1.7 && distance <= 3.6) {
-    deliveryCharges = Object.values(orderFares.deliveryCharges[0])[0];
+    deliveryCharges = Object.values(orderFares.deliveryCharges)[2];
   }
 
   if (distance > 3.6) {
-    deliveryCharges = Object.values(orderFares.deliveryCharges[0])[0];
+    deliveryCharges = Object.values(orderFares.deliveryCharges)[3];
   }
 
   return deliveryCharges;
