@@ -137,6 +137,7 @@ const easyPaisa = async params => {
       Users.find({
         adminType: { $in: ['admin', 'super admin'] },
         status: 'active',
+        city: mart.city,
       })
         .select('superAdminPlayerId')
         .lean(),

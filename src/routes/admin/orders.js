@@ -125,6 +125,7 @@ router.post('/placeOrder', async (req, res) => {
       Users.find({
         adminType: { $in: ['admin', 'super admin'] },
         status: 'active',
+        city: mart.city,
       })
         .select('superAdminPlayerId')
         .lean(),
