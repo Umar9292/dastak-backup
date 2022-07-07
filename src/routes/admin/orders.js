@@ -43,7 +43,10 @@ router.post('/placeOrder', async (req, res) => {
       orderType,
       deliveryCharges,
       paymentType,
+      dealCount,
     } = params;
+
+    console.log(params);
 
     const date = moment()
       .tz('Asia/Karachi')
@@ -135,7 +138,6 @@ router.post('/placeOrder', async (req, res) => {
 
     if (paymentType === 'wallet') {
       user.wallet.amount -= orderTotal;
-      user.save();
 
       const history = {
         type: 'Deduction',
@@ -147,8 +149,16 @@ router.post('/placeOrder', async (req, res) => {
           .format('DD-MM-YYYY hh:mm a'),
       };
 
-      new WalletHistory(history).save();
+      await new WalletHistory(history).save();
     }
+
+    if (user.dealCount === undefined) {
+      user.dealCount = dealCount;
+    } else {
+      user.dealCount += dealCount;
+    }
+
+    await user.save();
 
     const count = params.products.reduce((a, b) => a + b.count, 0);
 
@@ -410,7 +420,7 @@ router.post('/cancelOrder', async (req, res) => {
         msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. Don't worry the voucher amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
       }
 
-      axios.get(
+      await axios.get(
         `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
           msg
         )}`
@@ -486,6 +496,9 @@ router.post('/cancelOrder', async (req, res) => {
       });
     }
 
+    user.dealCount -= order.dealCount;
+    await user.save();
+
     return res.json({
       status: '200',
       msg: 'Order cancelled',
@@ -518,8 +531,9 @@ router.post('/restaurantResponse', async (req, res) => {
       orderNum,
       discount,
       city,
+      dealCount,
     } = await Orders.findById(orderId)
-      .select('status paymentMethod orderNum orderType discount city')
+      .select('status paymentMethod orderNum orderType discount city dealCount')
       .lean();
 
     if (orderStatus === 'Rejected') {
@@ -564,9 +578,7 @@ router.post('/restaurantResponse', async (req, res) => {
     }
 
     const [user, shop] = await Promise.all([
-      Users.findById(order.userId)
-        .select('playerId phone wallet')
-        .lean(),
+      Users.findById(order.userId).select('playerId phone wallet dealCount'),
 
       Users.findById(order.martId)
         .select('name')
@@ -644,6 +656,9 @@ router.post('/restaurantResponse', async (req, res) => {
           new WalletHistory(refund).save(),
         ]);
       }
+
+      user.dealCount -= dealCount;
+      await user.save();
 
       return res.json({
         status: '200',

@@ -30,6 +30,7 @@ const userModel = Schema(
         default: true,
       },
     },
+    dealCount: Number,
     superAdminPlayerId: String,
     startShift: String,
     endShift: String,

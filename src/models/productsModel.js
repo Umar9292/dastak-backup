@@ -7,6 +7,7 @@ const productsModel = Schema(
       default: 'in stock',
       type: String,
     },
+    maxCount: Number,
     startTime: String,
     endTime: String,
     actualPrice: Number,

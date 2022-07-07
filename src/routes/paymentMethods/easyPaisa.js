@@ -33,6 +33,7 @@ const easyPaisa = async params => {
     paymentType,
     onlineAmount,
     walletAmount,
+    dealCount,
   } = params;
 
   const transactionId = `EP${moment()
@@ -149,7 +150,6 @@ const easyPaisa = async params => {
 
     if (paymentType === 'split') {
       user.wallet.amount -= walletAmount;
-      user.save();
 
       const history = {
         type: 'Deduction',
@@ -161,8 +161,16 @@ const easyPaisa = async params => {
           .format('DD-MM-YYYY hh:mm a'),
       };
 
-      new WalletHistory(history).save();
+      await new WalletHistory(history).save();
     }
+
+    if (user.dealCount === undefined) {
+      user.dealCount = dealCount;
+    } else {
+      user.dealCount += dealCount;
+    }
+
+    await user.save();
 
     const count = orderData.products.reduce((a, b) => a + b.count, 0);
 

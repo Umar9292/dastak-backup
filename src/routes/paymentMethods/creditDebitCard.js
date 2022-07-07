@@ -167,6 +167,7 @@ router.get('/alfaCallback', async (req, res) => {
       orderTotal,
       paymentType,
       walletAmount,
+      dealCount,
     } = order;
 
     const date = moment()
@@ -239,7 +240,6 @@ router.get('/alfaCallback', async (req, res) => {
 
     if (paymentType === 'split') {
       user.wallet.amount -= walletAmount;
-      await user.save();
 
       const history = {
         type: 'Deduction',
@@ -253,6 +253,14 @@ router.get('/alfaCallback', async (req, res) => {
 
       await new WalletHistory(history).save();
     }
+
+    if (user.dealCount === undefined) {
+      user.dealCount = dealCount;
+    } else {
+      user.dealCount += dealCount;
+    }
+
+    await user.save();
 
     const orderProducts = JSON.parse(products);
     const count = orderProducts.reduce((a, b) => a + b.count, 0);
