@@ -629,7 +629,7 @@ router.post('/dastakDeals', async (req, res) => {
 
     await Promise.all(
       openRestaurants.map(async ({ _id: martId }) => {
-        const [restaurant, products, options] = await Promise.all([
+        const [restaurant, products] = await Promise.all([
           Users.findById(martId),
 
           Products.find({
@@ -637,19 +637,17 @@ router.post('/dastakDeals', async (req, res) => {
             dastakDeal: true,
             available: 'in stock',
           }).sort({ price: 1 }),
-
-          Flavours.findOne({ martId }),
         ]);
 
         if (products.length > 0) {
-          const { specifications: flavourSpecifications } = options;
-
           for (const product of products) {
             const details = [];
 
             product.restaurant = restaurant;
 
             if (product.type === 'deal') {
+              const options = await Flavours.findOne({ martId });
+              const { specifications: flavourSpecifications } = options;
               const { specifications } = product;
 
               await Promise.all(
