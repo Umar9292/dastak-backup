@@ -512,7 +512,7 @@ router.post('/pickupDeals', async (req, res) => {
 
       await Promise.all(
         openRestaurants.map(async ({ _id: martId }) => {
-          const [restaurant, products, options] = await Promise.all([
+          const [restaurant, products] = await Promise.all([
             Users.findById(martId),
 
             Products.find({
@@ -520,8 +520,6 @@ router.post('/pickupDeals', async (req, res) => {
               pickupDeal: true,
               available: 'in stock',
             }).sort({ price: 1 }),
-
-            Flavours.findOne({ martId }),
           ]);
 
           const availableProducts = products.filter(product => {
@@ -557,6 +555,7 @@ router.post('/pickupDeals', async (req, res) => {
               product.restaurant = restaurant;
 
               if (product.type === 'deal') {
+                const options = await Flavours.findOne({ martId });
                 const { specifications: flavourSpecifications } = options;
                 const { specifications } = product;
 
