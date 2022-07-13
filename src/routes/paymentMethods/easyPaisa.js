@@ -33,7 +33,6 @@ const easyPaisa = async params => {
     paymentType,
     onlineAmount,
     walletAmount,
-    dealCount,
   } = params;
 
   const transactionId = `EP${moment()
@@ -56,8 +55,6 @@ const easyPaisa = async params => {
   });
 
   const { responseCode } = result.data;
-
-  console.log('Easy Paisa ResponseCode: ', responseCode);
 
   if (responseCode === '0001') {
     const msg =
@@ -163,12 +160,6 @@ const easyPaisa = async params => {
       };
 
       await new WalletHistory(history).save();
-    }
-
-    if (user.dealCount === undefined) {
-      user.dealCount = dealCount;
-    } else {
-      user.dealCount += dealCount;
     }
 
     await user.save();

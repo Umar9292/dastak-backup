@@ -165,14 +165,14 @@ router.post('/allRestaurants', async (req, res) => {
     }
 
     if (employee === true && city !== '') {
-      let allRestaurants = await Users.find({
+      const allRestaurants = await Users.find({
         available: true,
         status: 'active',
         shopType: 'restaurant',
         city,
       }).lean();
 
-      allRestaurants = await openRestaurants(allRestaurants);
+      // allRestaurants = await openRestaurants(allRestaurants);
 
       const featured = allRestaurants.filter(
         ({ featured, city }) => featured && city

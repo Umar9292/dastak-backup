@@ -167,7 +167,6 @@ router.get('/alfaCallback', async (req, res) => {
       orderTotal,
       paymentType,
       walletAmount,
-      dealCount,
     } = order;
 
     const date = moment()
@@ -253,12 +252,6 @@ router.get('/alfaCallback', async (req, res) => {
       };
 
       await new WalletHistory(history).save();
-    }
-
-    if (user.dealCount === undefined) {
-      user.dealCount = dealCount;
-    } else {
-      user.dealCount += dealCount;
     }
 
     await user.save();

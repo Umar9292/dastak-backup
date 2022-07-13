@@ -204,7 +204,7 @@ router.post('/reOpenOrder', async (req, res) => {
     const { orderId } = req.body;
 
     const order = await Orders.findById(orderId).select(
-      'status riderId reason userId dealCount'
+      'status riderId reason userId'
     );
 
     if (order.riderId) {
@@ -219,14 +219,7 @@ router.post('/reOpenOrder', async (req, res) => {
     }
 
     order.reason = '';
-
-    await Promise.all([
-      Users.findByIdAndUpdate(order.userId, {
-        $inc: { dealCount: order.dealCount },
-      }),
-
-      order.save(),
-    ]);
+    await order.save();
 
     return res.json({ status: '200', msg: 'Order reopened' });
   } catch (err) {

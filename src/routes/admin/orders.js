@@ -43,7 +43,6 @@ router.post('/placeOrder', async (req, res) => {
       orderType,
       deliveryCharges,
       paymentType,
-      dealCount,
     } = params;
 
     const date = moment()
@@ -149,12 +148,6 @@ router.post('/placeOrder', async (req, res) => {
       };
 
       await new WalletHistory(history).save();
-    }
-
-    if (user.dealCount === undefined) {
-      user.dealCount = dealCount;
-    } else {
-      user.dealCount += dealCount;
     }
 
     await user.save();
@@ -495,9 +488,6 @@ router.post('/cancelOrder', async (req, res) => {
       });
     }
 
-    user.dealCount -= order.dealCount;
-    await user.save();
-
     return res.json({
       status: '200',
       msg: 'Order cancelled',
@@ -530,9 +520,8 @@ router.post('/restaurantResponse', async (req, res) => {
       orderNum,
       discount,
       city,
-      dealCount,
     } = await Orders.findById(orderId)
-      .select('status paymentMethod orderNum orderType discount city dealCount')
+      .select('status paymentMethod orderNum orderType discount city')
       .lean();
 
     if (orderStatus === 'Rejected') {
@@ -577,7 +566,7 @@ router.post('/restaurantResponse', async (req, res) => {
     }
 
     const [user, shop] = await Promise.all([
-      Users.findById(order.userId).select('playerId phone wallet dealCount'),
+      Users.findById(order.userId).select('playerId phone wallet'),
 
       Users.findById(order.martId)
         .select('name')
@@ -655,9 +644,6 @@ router.post('/restaurantResponse', async (req, res) => {
           new WalletHistory(refund).save(),
         ]);
       }
-
-      user.dealCount -= dealCount;
-      await user.save();
 
       return res.json({
         status: '200',

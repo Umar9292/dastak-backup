@@ -2,7 +2,6 @@
 require('dotenv').config();
 const cluster = require('cluster');
 const { connect } = require('mongoose');
-// const { schedule } = require('node-cron');
 // const OS = require('os');
 
 const { dbUrl } = require('./utils/dbUrls');
@@ -10,14 +9,6 @@ const { shiftEndChecker } = require('./src/routes/rider/shiftEndChecker');
 const { shiftStartChecker } = require('./src/routes/rider/shiftStartChecker');
 
 if (cluster.isMaster) {
-  /* schedule(
-    '1 20 17 * * *',
-    () => {
-      console.log('running every minute 1, 2, 4 and 5');
-    },
-    { scheduled: true, timezone: 'Asia/Karachi' }
-  ); */
-
   connect(
     dbUrl,
     {

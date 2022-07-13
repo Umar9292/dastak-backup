@@ -214,12 +214,13 @@ router.post('/allProducts', async (req, res) => {
             product => product.maxCount !== undefined
           );
 
-          if (userId !== '' && maxCountProducts > 0) {
+          if (userId !== '' && maxCountProducts.length > 0) {
             const date = moment()
               .tz('Asia/Karachi')
               .format('DD-MM-YYYY');
 
             const dealOrders = await Orders.find({
+              status: { $ne: 'Rejected' },
               userId,
               martId,
               date,
