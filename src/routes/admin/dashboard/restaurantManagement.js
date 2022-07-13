@@ -53,7 +53,7 @@ router.post('/restaurantCollections', async (req, res) => {
 
     const restaurants = await Orders.distinct('martId', {
       $or: [
-        { status: 'Delivered' },
+        { status: 'Delivered', paid: false },
         { status: 'Rejected', refundToRestaurant: true },
       ],
       dateForSearching: {
@@ -68,7 +68,7 @@ router.post('/restaurantCollections', async (req, res) => {
         const [orders, restaurant] = await Promise.all([
           Orders.find({
             $or: [
-              { status: 'Delivered' },
+              { status: 'Delivered', paid: false },
               { status: 'Rejected', refundToRestaurant: true },
             ],
             martId,
