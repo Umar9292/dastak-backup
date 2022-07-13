@@ -3,7 +3,7 @@ require('dotenv').config();
 const cluster = require('cluster');
 const { connect } = require('mongoose');
 // const { schedule } = require('node-cron');
-// const OS = require('os');
+const OS = require('os');
 
 const { dbUrl } = require('./utils/dbUrls');
 const { shiftEndChecker } = require('./src/routes/rider/shiftEndChecker');
@@ -40,7 +40,7 @@ if (cluster.isMaster) {
     }
   );
 
-  for (let i = 0; i < 5; i += 1) {
+  for (let i = 0; i < OS.cpus().length; i += 1) {
     cluster.fork();
   }
 
