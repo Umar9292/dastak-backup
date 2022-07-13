@@ -46,8 +46,6 @@ router.post('/placeOrder', async (req, res) => {
       dealCount,
     } = params;
 
-    console.log(params);
-
     const date = moment()
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
