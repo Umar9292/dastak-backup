@@ -2,7 +2,7 @@ require('dotenv').config();
 // const axios = require('axios');
 const { getPreciseDistance } = require('geolib');
 
-const OrderFares = require('../models/faresModel');
+const Fares = require('../models/faresModel');
 
 exports.calculateDeliveryCharges = async (
   city,
@@ -19,24 +19,24 @@ exports.calculateDeliveryCharges = async (
 
   let deliveryCharges = 0;
 
-  const orderFares = await OrderFares.findOne({ city })
+  const orderFares = await Fares.findOne({ city })
     .select('deliveryCharges')
     .lean();
 
   if (distance <= 0.8) {
-    deliveryCharges = Object.values(orderFares.deliveryCharges)[0];
+    deliveryCharges = Object.values(orderFares.deliveryCharges[0])[0];
   }
 
   if (distance > 0.8 && distance <= 1.7) {
-    deliveryCharges = Object.values(orderFares.deliveryCharges)[1];
+    deliveryCharges = Object.values(orderFares.deliveryCharges[0])[1];
   }
 
   if (distance > 1.7 && distance <= 3.6) {
-    deliveryCharges = Object.values(orderFares.deliveryCharges)[2];
+    deliveryCharges = Object.values(orderFares.deliveryCharges[0])[2];
   }
 
   if (distance > 3.6) {
-    deliveryCharges = Object.values(orderFares.deliveryCharges)[3];
+    deliveryCharges = Object.values(orderFares.deliveryCharges[0])[3];
   }
 
   return deliveryCharges;

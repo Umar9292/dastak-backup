@@ -27,27 +27,27 @@ exports.calculateRiderFare = async (
   }
 
   if (distance > 0.8 && distance <= 1.7) {
-    riderFare = Object.values(riderFares)[2];
+    riderFare = Object.values(riderFares)[1];
   }
 
   if (distance > 1.7 && distance <= 2.6) {
-    riderFare = Object.values(riderFares)[3];
+    riderFare = Object.values(riderFares)[2];
   }
 
   if (distance > 2.6 && distance <= 3.5) {
-    riderFare = Object.values(riderFares)[4];
+    riderFare = Object.values(riderFares)[3];
   }
 
   if (distance > 3.5 && distance <= 4.4) {
-    riderFare = Object.values(riderFares)[5];
+    riderFare = Object.values(riderFares)[4];
   }
 
   if (distance > 4.4 && distance <= 5.3) {
-    riderFare = Object.values(riderFares)[6];
+    riderFare = Object.values(riderFares)[5];
   }
 
   if (distance > 5.3) {
-    riderFare = Object.values(riderFares)[7];
+    riderFare = Object.values(riderFares)[6];
   }
 
   return riderFare;
