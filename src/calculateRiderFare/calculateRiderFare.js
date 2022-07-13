@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { getPreciseDistance } = require('geolib');
 
-const OrderFares = require('../models/orderFaresModel');
+const OrderFares = require('../models/faresModel');
 
 exports.calculateRiderFare = async (
   city,

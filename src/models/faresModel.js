@@ -12,4 +12,4 @@ const orderFares = Schema(
   }
 );
 
-module.exports = model('order fares', orderFares);
+module.exports = model('fares', orderFares);

@@ -2,7 +2,7 @@ require('dotenv').config();
 // const axios = require('axios');
 const { getPreciseDistance } = require('geolib');
 
-const OrderFares = require('../models/orderFaresModel');
+const OrderFares = require('../models/faresModel');
 
 exports.calculateDeliveryCharges = async (
   city,
