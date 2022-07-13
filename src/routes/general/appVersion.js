@@ -12,7 +12,7 @@ router.post('/checkVersion', async (req, res) => {
 
     const { cities } = await CitiesModel.findOne({}).lean();
 
-    if (platform === 'ios' && version === '2.0.1') {
+    if (platform === 'ios' && (version === '2.0.1' || version === '2.0.2')) {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
 
@@ -30,7 +30,10 @@ router.post('/checkVersion', async (req, res) => {
       });
     }
 
-    if (platform === 'android' && version === '2.0.1') {
+    if (
+      platform === 'android' &&
+      (version === '2.0.1' || version === '2.0.2')
+    ) {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
 
