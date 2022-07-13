@@ -4,6 +4,7 @@ const { createClient } = require('redis');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
+const Orders = require('../../models/ordersModel');
 const StoreProducts = require('../../models/storeProducts');
 const Flavours = require('../../models/flavoursAndDrinks');
 const Categories = require('../../models/categoriesModel');
@@ -135,7 +136,7 @@ const router = Router();
 
 router.post('/allProducts', async (req, res) => {
   try {
-    const { martId } = req.body;
+    const { martId, userId } = req.body;
 
     let finalData = [];
 
@@ -208,6 +209,33 @@ router.post('/allProducts', async (req, res) => {
           const filteredProducts = products.filter(
             ({ type }) => type === 'deal'
           );
+
+          const maxCountProducts = products.filter(
+            product => product.maxCount !== undefined
+          );
+
+          if (userId !== '' && maxCountProducts > 0) {
+            const date = moment()
+              .tz('Asia/Karachi')
+              .format('DD-MM-YYYY');
+
+            const dealOrders = await Orders.find({
+              userId,
+              martId,
+              date,
+              dealCount: { $gt: 0 },
+            })
+              .select('dealCount')
+              .lean();
+
+            if (dealOrders.length > 0) {
+              const dealCount = dealOrders.reduce((a, b) => a + b.dealCount, 0);
+
+              for (const product of maxCountProducts) {
+                product.maxCount -= dealCount;
+              }
+            }
+          }
 
           if (filteredProducts.length > 0) {
             const { specifications: flavourSpecifications } = options;
