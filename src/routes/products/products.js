@@ -140,6 +140,7 @@ router.post('/allProducts', async (req, res) => {
     const { martId, userId } = req.body;
 
     let finalData = [];
+    let maxCountProducts;
 
     client.get(martId, async (err, data) => {
       if (err) console.log(err);
@@ -211,7 +212,7 @@ router.post('/allProducts', async (req, res) => {
             ({ type }) => type === 'deal'
           );
 
-          const maxCountProducts = products.filter(
+          maxCountProducts = products.filter(
             product => product.maxCount !== undefined
           );
 
@@ -283,7 +284,9 @@ router.post('/allProducts', async (req, res) => {
         data: finalData,
       });
 
-      client.setex(martId, 600, JSON.stringify(finalData));
+      if (maxCountProducts.length === 0) {
+        client.setex(martId, 600, JSON.stringify(finalData));
+      }
     });
   } catch (err) {
     console.log(err);
