@@ -89,6 +89,8 @@ router.post('/restaurantCollections', async (req, res) => {
             .lean(),
         ]);
 
+        console.log({ name: orders[0].martName, orders: orders.length });
+
         const { name: martName, percentage } = restaurant;
 
         const deliveryOrders = orders.filter(
@@ -460,6 +462,8 @@ router.post('/expensesTillNow', async (req, res) => {
             .select('name percentage')
             .lean(),
         ]);
+
+        console.log({ name: orders[0].martName, orders: orders.length });
 
         let dealPayment = 0;
         let nonDealPayment = 0;
