@@ -5,8 +5,8 @@ const { connect } = require('mongoose');
 // const OS = require('os');
 
 const { dbUrl } = require('./utils/dbUrls');
-const { shiftEndChecker } = require('./src/routes/rider/shiftEndChecker');
-const { shiftStartChecker } = require('./src/routes/rider/shiftStartChecker');
+// const { shiftEndChecker } = require('./src/routes/rider/shiftEndChecker');
+// const { shiftStartChecker } = require('./src/routes/rider/shiftStartChecker');
 
 if (cluster.isMaster) {
   connect(
@@ -21,10 +21,10 @@ if (cluster.isMaster) {
       if (err) {
         console.log(err);
       } else {
-        setInterval(() => {
-          shiftStartChecker();
-          shiftEndChecker();
-        }, 10000);
+        // setInterval(() => {
+        //   shiftStartChecker();
+        //   shiftEndChecker();
+        // }, 10000);
 
         console.log('Connected to database');
       }
