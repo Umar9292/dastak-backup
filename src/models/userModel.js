@@ -39,7 +39,10 @@ const userModel = Schema(
     endShift: String,
     adminType: String,
     geometry: GeoSchema,
-    easyPaisaPhone: String,
+    easyPaisaPhone: {
+      type: String,
+      default: '',
+    },
     city: String,
     category: String,
     new: Boolean,
