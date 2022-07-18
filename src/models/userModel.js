@@ -30,6 +30,10 @@ const userModel = Schema(
         default: true,
       },
     },
+    deleted: {
+      type: Boolean,
+      default: false,
+    },
     superAdminPlayerId: String,
     startShift: String,
     endShift: String,

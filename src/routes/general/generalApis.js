@@ -1,13 +1,13 @@
 const Router = require('express/lib/router');
-const moment = require('moment-timezone');
+// const moment = require('moment-timezone');
 // const { unlinkSync } = require('fs');
 // const { IncomingForm } = require('formidable');
 const { randomBytes } = require('crypto');
-const { uniqBy } = require('lodash');
+// const { uniqBy } = require('lodash');
 
 const Users = require('../../models/userModel');
 // const Products = require('../../models/productsModel');
-const Orders = require('../../models/ordersModel');
+// const Orders = require('../../models/ordersModel');
 // const Categories = require('../../models/categoriesModel');
 // const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
 
@@ -700,7 +700,7 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-router.post('/averageRestaurantMetrics', async (req, res) => {
+/* router.post('/averageRestaurantMetrics', async (req, res) => {
   try {
     let { startDate, endDate, dateRange } = req.body;
 
@@ -751,6 +751,6 @@ router.post('/averageRestaurantMetrics', async (req, res) => {
     console.log(error);
     return res.json({ status: '404' });
   }
-});
+}); */
 
 module.exports = router;
