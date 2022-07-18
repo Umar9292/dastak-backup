@@ -514,7 +514,7 @@ router.post('/updateAllProducts', async (req, res) => {
 
 router.post('/pickupDeals', async (req, res) => {
   try {
-    const { lat, long } = req.body;
+    const { lat, long, userId } = req.body;
 
     let restaurants = [];
 
@@ -537,6 +537,7 @@ router.post('/pickupDeals', async (req, res) => {
     ]);
 
     let pickupDeals = [];
+    let maxCountProducts;
 
     if (restaurants.length > 0) {
       const openRestaurants = await checkOpenRestaurants(restaurants);
@@ -583,6 +584,37 @@ router.post('/pickupDeals', async (req, res) => {
 
           if (availableProducts.length > 0) {
             const details = [];
+
+            maxCountProducts = availableProducts.filter(
+              product => product.maxCount !== undefined
+            );
+
+            if (userId !== '' && maxCountProducts.length > 0) {
+              const date = moment()
+                .tz('Asia/Karachi')
+                .format('DD-MM-YYYY');
+
+              const dealOrders = await Orders.find({
+                status: { $ne: 'Rejected' },
+                userId,
+                martId,
+                date,
+                dealCount: { $gt: 0 },
+              })
+                .select('dealCount')
+                .lean();
+
+              if (dealOrders.length > 0) {
+                const dealCount = dealOrders.reduce(
+                  (a, b) => a + b.dealCount,
+                  0
+                );
+
+                for (const product of maxCountProducts) {
+                  product.maxCount -= dealCount;
+                }
+              }
+            }
 
             for (const product of availableProducts) {
               product.restaurant = restaurant;
@@ -635,11 +667,11 @@ router.post('/pickupDeals', async (req, res) => {
 
 router.post('/dastakDeals', async (req, res) => {
   try {
-    const { lat, long } = req.body;
+    const { lat, long, userId } = req.body;
+    let dastakDeals = [];
+    let maxCountProducts;
 
-    let restaurants = [];
-
-    restaurants = await Users.aggregate([
+    const restaurants = await Users.aggregate([
       {
         $geoNear: {
           near: { type: 'Point', coordinates: [long, lat] },
@@ -657,59 +689,92 @@ router.post('/dastakDeals', async (req, res) => {
       },
     ]);
 
-    const openRestaurants = await checkOpenRestaurants(restaurants);
+    if (restaurants.length > 0) {
+      const openRestaurants = await checkOpenRestaurants(restaurants);
 
-    let dastakDeals = [];
+      if (openRestaurants.length > 0) {
+        await Promise.all(
+          openRestaurants.map(async ({ _id: martId }) => {
+            const [restaurant, products] = await Promise.all([
+              Users.findById(martId),
 
-    await Promise.all(
-      openRestaurants.map(async ({ _id: martId }) => {
-        const [restaurant, products] = await Promise.all([
-          Users.findById(martId),
+              Products.find({
+                martId,
+                dastakDeal: true,
+                available: 'in stock',
+              }).sort({ price: 1 }),
+            ]);
 
-          Products.find({
-            martId,
-            dastakDeal: true,
-            available: 'in stock',
-          }).sort({ price: 1 }),
-        ]);
+            if (products.length > 0) {
+              for (const product of products) {
+                const details = [];
 
-        if (products.length > 0) {
-          for (const product of products) {
-            const details = [];
+                product.restaurant = restaurant;
 
-            product.restaurant = restaurant;
+                maxCountProducts = products.filter(
+                  product => product.maxCount !== undefined
+                );
 
-            if (product.type === 'deal') {
-              const options = await Flavours.findOne({ martId });
-              const { specifications: flavourSpecifications } = options;
-              const { specifications } = product;
+                if (userId !== '' && maxCountProducts.length > 0) {
+                  const date = moment()
+                    .tz('Asia/Karachi')
+                    .format('DD-MM-YYYY');
 
-              await Promise.all(
-                specifications.map(
-                  ({ productName, productType, flavourType }) => {
-                    flavourSpecifications.map(specification => {
-                      if (
-                        productType === specification.productType &&
-                        flavourType === specification.flavourType
-                      ) {
-                        details.push({
-                          title: productName,
-                          data: specification.data,
+                  const dealOrders = await Orders.find({
+                    status: { $ne: 'Rejected' },
+                    userId,
+                    martId,
+                    date,
+                    dealCount: { $gt: 0 },
+                  })
+                    .select('dealCount')
+                    .lean();
+
+                  if (dealOrders.length > 0) {
+                    const dealCount = dealOrders.reduce(
+                      (a, b) => a + b.dealCount,
+                      0
+                    );
+
+                    for (const product of maxCountProducts) {
+                      product.maxCount -= dealCount;
+                    }
+                  }
+                }
+
+                if (product.type === 'deal') {
+                  const options = await Flavours.findOne({ martId });
+                  const { specifications: flavourSpecifications } = options;
+                  const { specifications } = product;
+
+                  await Promise.all(
+                    specifications.map(
+                      ({ productName, productType, flavourType }) => {
+                        flavourSpecifications.map(specification => {
+                          if (
+                            productType === specification.productType &&
+                            flavourType === specification.flavourType
+                          ) {
+                            details.push({
+                              title: productName,
+                              data: specification.data,
+                            });
+                          }
                         });
                       }
-                    });
-                  }
-                )
-              );
+                    )
+                  );
 
-              product.specifications = details;
+                  product.specifications = details;
+                }
+
+                dastakDeals = [...dastakDeals, product];
+              }
             }
-
-            dastakDeals = [...dastakDeals, product];
-          }
-        }
-      })
-    );
+          })
+        );
+      }
+    }
 
     return res.json({
       status: '200',
