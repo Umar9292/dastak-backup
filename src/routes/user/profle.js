@@ -152,11 +152,16 @@ router.post('/sendOtp', async (req, res) => {
 
     const otpPhone = 92 + phone.substring(1, 11);
     const msg = `Your OTP code for Dastak app is ${otp}. For any issues, contact us at 03213345718.`;
-    await axios.get(
-      `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(msg)}`
-    );
 
-    await new Otp({ phone, secret, otp }).save();
+    await Promise.all([
+      axios.get(
+        `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
+          msg
+        )}`
+      ),
+
+      new Otp({ phone, secret, otp }).save(),
+    ]);
 
     return res.json({
       status: '200',
