@@ -54,7 +54,7 @@ router.post('/restaurantCollections', async (req, res) => {
     const restaurants = await Orders.distinct('martId', {
       $or: [
         { status: 'Delivered', paid: false },
-        { status: 'Rejected', refundToRestaurant: true },
+        { status: 'Rejected', refundToRestaurant: true, paid: false },
       ],
       dateForSearching: {
         $gte: start,
@@ -69,7 +69,7 @@ router.post('/restaurantCollections', async (req, res) => {
           Orders.find({
             $or: [
               { status: 'Delivered', paid: false },
-              { status: 'Rejected', refundToRestaurant: true },
+              { status: 'Rejected', refundToRestaurant: true, paid: false },
             ],
             martId,
             city,
@@ -226,7 +226,6 @@ router.post('/restaurantCollections', async (req, res) => {
       (a, b) => a + b.totalOfDeliveryOrders,
       0
     );
-    const orderCount = data.reduce((a, b) => a + b.orderCount, 0);
 
     data = orderBy(data, ['totalToPay'], ['desc']);
 
@@ -235,7 +234,6 @@ router.post('/restaurantCollections', async (req, res) => {
       data,
       totalProfit,
       amountToPay,
-      orderCount,
       totalCollection,
     });
   } catch (err) {
