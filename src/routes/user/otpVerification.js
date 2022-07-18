@@ -15,7 +15,15 @@ router.post('/signUpOtp', async (req, res) => {
   try {
     const { phone } = req.body;
 
-    const user = await Users.findOne({ phone, verified: true, type: 'user' });
+    const user = await Users.findOne({
+      phone,
+      verified: true,
+      deleted: false,
+      type: 'user',
+    })
+      .select('-password -__v')
+      .lean();
+
     if (user) {
       return res.json({
         status: '404',
@@ -119,7 +127,7 @@ router.post('/signIn', async (req, res) => {
   try {
     const { phone, password } = req.body;
 
-    const user = await Users.findOne({ phone });
+    const user = await Users.findOne({ phone, deleted: false });
     if (!user) {
       return res.json({
         status: '404',
