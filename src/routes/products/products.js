@@ -668,6 +668,7 @@ router.post('/pickupDeals', async (req, res) => {
 router.post('/dastakDeals', async (req, res) => {
   try {
     const { lat, long, userId } = req.body;
+
     let dastakDeals = [];
     let maxCountProducts;
 
@@ -706,41 +707,41 @@ router.post('/dastakDeals', async (req, res) => {
             ]);
 
             if (products.length > 0) {
+              maxCountProducts = products.filter(
+                product => product.maxCount !== undefined
+              );
+
+              if (userId !== '' && maxCountProducts.length > 0) {
+                const date = moment()
+                  .tz('Asia/Karachi')
+                  .format('DD-MM-YYYY');
+
+                const dealOrders = await Orders.find({
+                  status: { $ne: 'Rejected' },
+                  userId,
+                  martId,
+                  date,
+                  dealCount: { $gt: 0 },
+                })
+                  .select('dealCount')
+                  .lean();
+
+                if (dealOrders.length > 0) {
+                  const dealCount = dealOrders.reduce(
+                    (a, b) => a + b.dealCount,
+                    0
+                  );
+
+                  for (const product of maxCountProducts) {
+                    product.maxCount -= dealCount;
+                  }
+                }
+              }
+
               for (const product of products) {
                 const details = [];
 
                 product.restaurant = restaurant;
-
-                maxCountProducts = products.filter(
-                  product => product.maxCount !== undefined
-                );
-
-                if (userId !== '' && maxCountProducts.length > 0) {
-                  const date = moment()
-                    .tz('Asia/Karachi')
-                    .format('DD-MM-YYYY');
-
-                  const dealOrders = await Orders.find({
-                    status: { $ne: 'Rejected' },
-                    userId,
-                    martId,
-                    date,
-                    dealCount: { $gt: 0 },
-                  })
-                    .select('dealCount')
-                    .lean();
-
-                  if (dealOrders.length > 0) {
-                    const dealCount = dealOrders.reduce(
-                      (a, b) => a + b.dealCount,
-                      0
-                    );
-
-                    for (const product of maxCountProducts) {
-                      product.maxCount -= dealCount;
-                    }
-                  }
-                }
 
                 if (product.type === 'deal') {
                   const options = await Flavours.findOne({ martId });
