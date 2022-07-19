@@ -6,29 +6,29 @@ const { randomBytes } = require('crypto');
 // const { uniqBy } = require('lodash');
 
 const Users = require('../../models/userModel');
-// const Products = require('../../models/productsModel');
+const Products = require('../../models/productsModel');
 // const Orders = require('../../models/ordersModel');
 // const Categories = require('../../models/categoriesModel');
 // const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
 
 const router = Router();
 
-/* router.get('/changePrices', async (_req, res) => {
+router.get('/changePrices', async (_req, res) => {
   try {
     const products = await Products.find({
-      martId: '62457d7bff94eb2fc79ee3db',
+      martId: '62d67188252d83a0964ca631',
     });
 
     await Promise.all(
       products.map(product => {
-        if (product.category !== 'Dastak Deals') {
-          // let discountedPrice = ((30 / 100) * product.price).toFixed();
-          // discountedPrice = Math.round(discountedPrice / 5) * 5;
-          // product.discountedPrice = product.price - +discountedPrice;
-          product.discount = '0';
-          // product.actualPrice = product.discountedPrice;
-          return product.save();
-        }
+        // if (product.category !== 'Dastak Deals') {
+        let discountedPrice = ((20 / 100) * product.price).toFixed();
+        discountedPrice = Math.round(discountedPrice / 5) * 5;
+        product.price += +discountedPrice;
+        // product.discount = '0';
+        // product.actualPrice = product.discountedPrice;
+        return product.save();
+        // }
       })
     );
 
@@ -40,7 +40,7 @@ const router = Router();
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-}); */
+});
 
 router.post('/closeRestaurants', async (req, res) => {
   try {
