@@ -147,6 +147,7 @@ router.post('/allRestaurants', async (req, res) => {
             maxDistance: 20000,
             query: {
               available: true,
+              pickup: true,
               status: 'active',
               shopType: 'restaurant',
             },
@@ -165,14 +166,14 @@ router.post('/allRestaurants', async (req, res) => {
     }
 
     if (employee === true && city !== '') {
-      const allRestaurants = await Users.find({
+      let allRestaurants = await Users.find({
         available: true,
         status: 'active',
         shopType: 'restaurant',
         city,
       }).lean();
 
-      // allRestaurants = await openRestaurants(allRestaurants);
+      allRestaurants = await openRestaurants(allRestaurants);
 
       const featured = allRestaurants.filter(
         ({ featured, city }) => featured && city
