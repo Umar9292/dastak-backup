@@ -34,6 +34,10 @@ const userModel = Schema(
       type: Boolean,
       default: false,
     },
+    pickup: {
+      type: Boolean,
+      default: true,
+    },
     superAdminPlayerId: String,
     startShift: String,
     endShift: String,
