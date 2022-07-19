@@ -483,9 +483,12 @@ router.post('/cancelOrder', async (req, res) => {
         await Users.findByIdAndUpdate(order.riderId, { status: 'idle' });
       }
 
-      await Users.findByIdAndUpdate(order.riderId, {
+      const { playerId } = await Users.findByIdAndUpdate(order.riderId, {
         $inc: { orderCount: -1 },
       });
+
+      const msg = `Dear rider, order#${order.orderNum} from ${order.martName} has been cancelled.`;
+      await notifyRiders(msg, playerId, {});
     }
 
     return res.json({
