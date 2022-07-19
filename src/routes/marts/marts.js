@@ -192,7 +192,7 @@ router.post('/allRestaurants', async (req, res) => {
           $geoNear: {
             near: { type: 'Point', coordinates: [long, lat] },
             distanceField: 'dist',
-            maxDistance: employee === true ? 20000 : 3000,
+            maxDistance: employee === true ? 20000 : 4500,
             query: {
               available: true,
               status: 'active',
