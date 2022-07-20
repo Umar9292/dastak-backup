@@ -10,6 +10,7 @@ const WalletHistory = require('../../models/walletHistory');
 const { emitEPResponse } = require('../../../server');
 const { checkTime } = require('../../checkTime/checkTime');
 const { getAddress } = require('../../geoCoder/getAddress');
+const { getDistance } = require('../../geoCoder/getDistance');
 const {
   notifyAdmin,
   notifySuperAdmin,
@@ -78,7 +79,12 @@ const easyPaisa = async params => {
       'Payment processed successfully. Your order has been placed.';
     emitEPResponse('paymentSuccessful', { successMsg, userId });
 
-    const { martId, products, latitude, longitude } = params;
+    const {
+      martId,
+      products,
+      latitude: userLatitude,
+      longitude: userLongitude,
+    } = params;
 
     const date = moment()
       .tz('Asia/Karachi')
@@ -96,13 +102,22 @@ const easyPaisa = async params => {
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
     if (params.address === 'Current Location') {
-      params.address = await getAddress(latitude, longitude);
+      params.address = await getAddress(userLatitude, userLongitude);
     }
+
+    const [longitude, latitude] = mart.geometry.coordinates;
+    const distance = await getDistance(
+      +userLatitude,
+      +userLongitude,
+      latitude,
+      longitude
+    );
 
     const orderData = {
       ...params,
       transactionId,
       products: await JSON.parse(products),
+      distance: `${distance} km`,
       city: mart.city,
       martId: mart._id,
       martName: mart.name,

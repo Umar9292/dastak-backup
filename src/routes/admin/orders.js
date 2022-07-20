@@ -1,13 +1,13 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
-const { getPreciseDistance } = require('geolib');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
 const WalletHistory = require('../../models/walletHistory');
 
 const { getAddress } = require('../../geoCoder/getAddress');
+const { getDistance } = require('../../geoCoder/getDistance');
 const {
   calculateRiderFare,
 } = require('../../calculateRiderFare/calculateRiderFare');
@@ -38,8 +38,8 @@ router.post('/placeOrder', async (req, res) => {
       martId,
       userId,
       products,
-      latitude,
-      longitude,
+      latitude: userLatitude,
+      longitude: userLongitude,
       orderType,
       deliveryCharges,
       paymentType,
@@ -65,8 +65,16 @@ router.post('/placeOrder', async (req, res) => {
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
     if (params.address === 'Current Location') {
-      params.address = await getAddress(latitude, longitude);
+      params.address = await getAddress(userLatitude, userLongitude);
     }
+
+    const [longitude, latitude] = mart.geometry.coordinates;
+    const distance = await getDistance(
+      +userLatitude,
+      +userLongitude,
+      latitude,
+      longitude
+    );
 
     params = {
       ...params,
@@ -74,6 +82,7 @@ router.post('/placeOrder', async (req, res) => {
       paymentType: orderType === 'PickUp' ? 'COD' : req.body.paymentType,
       paymentMethod: orderType === 'PickUp' ? 'COD' : req.body.paymentMethod,
       products: await JSON.parse(products),
+      distance: `${distance} km`,
       city: mart.city,
       martId: mart._id,
       martName: mart.name,
@@ -1339,11 +1348,12 @@ router.post('/changeOrderStatus', async (req, res) => {
         .select('latitude longitude')
         .lean();
 
-      const distance =
-        getPreciseDistance(
-          { latitude: riderLatitude, longitude: riderLongitude },
-          { latitude: +latitude, longitude: +longitude }
-        ) / 1000;
+      const distance = await getDistance(
+        riderLatitude,
+        riderLongitude,
+        +latitude,
+        +longitude
+      );
 
       if (distance > 0.1) {
         return res.json({
