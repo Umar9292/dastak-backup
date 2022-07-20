@@ -8,6 +8,7 @@ const Users = require('../../models/userModel');
 const WalletHistory = require('../../models/walletHistory');
 
 const { getAddress } = require('../../geoCoder/getAddress');
+const { getDistance } = require('../../geoCoder/getDistance');
 const {
   notifyUser,
   notifyAdmin,
@@ -161,8 +162,8 @@ router.get('/alfaCallback', async (req, res) => {
 
     const {
       martId,
-      latitude,
-      longitude,
+      latitude: userLatitude,
+      longitude: userLongitude,
       products,
       orderTotal,
       paymentType,
@@ -185,14 +186,23 @@ router.get('/alfaCallback', async (req, res) => {
     const formatedTime = moment(orderTime, 'hh:mm').format('hh:mm a');
 
     if (order.address === 'Current Location') {
-      order.address = await getAddress(latitude, longitude);
+      order.address = await getAddress(userLatitude, userLongitude);
     }
+
+    const [longitude, latitude] = mart.geometry.coordinates;
+    const distance = await getDistance(
+      +userLatitude,
+      +userLongitude,
+      latitude,
+      longitude
+    );
 
     await Orders.updateOne(
       { transactionId: O },
       {
         paymentStatus: 'Paid',
         products: await JSON.parse(order.products),
+        distance: `${distance} km`,
         address: order.address,
         city: mart.city,
         martId: mart._id,

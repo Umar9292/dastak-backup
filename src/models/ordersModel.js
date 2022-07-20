@@ -6,6 +6,7 @@ const ordersModel = Schema(
       type: Boolean,
       default: false,
     },
+    distance: String,
     deviceData: Object,
     dealCount: Number,
     refundToCustomer: Boolean,
