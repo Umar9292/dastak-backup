@@ -1,20 +1,11 @@
 const moment = require('moment-timezone');
 
-const { getDistance } = require('../../../geoCoder/getDistance');
-
-exports.openRestaurants = async (userLatitude, userLongitude, restaurants) => {
+exports.openRestaurantsForPickup = async restaurants => {
   const currentTime = moment().tz('Asia/Karachi');
   let openRestaurants = [];
 
   await Promise.all(
     restaurants.map(async restaurant => {
-      const distance = await getDistance(
-        userLatitude,
-        userLongitude,
-        +restaurant.latitude,
-        +restaurant.longitude
-      );
-
       const restaurantOpening = moment(restaurant.openingTime, 'HH:mm')
         .tz('Asia/Karachi')
         .subtract(5, 'hours');
@@ -34,8 +25,7 @@ exports.openRestaurants = async (userLatitude, userLongitude, restaurants) => {
 
       if (
         currentTime.isSameOrAfter(restaurantOpening) &&
-        currentTime.isBefore(restaurantClosing) &&
-        distance <= restaurant.radius
+        currentTime.isBefore(restaurantClosing)
       ) {
         openRestaurants = [...openRestaurants, restaurant];
       }

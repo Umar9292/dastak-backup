@@ -14,7 +14,9 @@ const { notifyUser } = require('../../notificationHandler/handler');
 const {
   openRestaurants: checkOpenRestaurants,
 } = require('../../routes/marts/openRestaurants/openRestaurants');
-
+const {
+  openRestaurantsForPickup,
+} = require('../../routes/marts/openRestaurants/openRestaurantsForPickup');
 // const client = createClient(process.env.REDIS_URL, {
 //   tls: { rejectUnauthorized: false },
 // });
@@ -523,7 +525,7 @@ router.post('/pickupDeals', async (req, res) => {
         $geoNear: {
           near: { type: 'Point', coordinates: [long, lat] },
           distanceField: 'dist',
-          maxDistance: 20000,
+          maxDistance: 6000,
           query: {
             available: true,
             pickupDeals: true,
@@ -540,7 +542,7 @@ router.post('/pickupDeals', async (req, res) => {
     let maxCountProducts;
 
     if (restaurants.length > 0) {
-      const openRestaurants = await checkOpenRestaurants(restaurants);
+      const openRestaurants = await openRestaurantsForPickup(restaurants);
 
       const currentTime = moment().tz('Asia/Karachi');
 
@@ -691,7 +693,11 @@ router.post('/dastakDeals', async (req, res) => {
     ]);
 
     if (restaurants.length > 0) {
-      const openRestaurants = await checkOpenRestaurants(restaurants);
+      const openRestaurants = await checkOpenRestaurants(
+        lat,
+        long,
+        restaurants
+      );
 
       if (openRestaurants.length > 0) {
         await Promise.all(

@@ -8,6 +8,9 @@ const PaymentHistories = require('../../models/paymentHistoryModel');
 
 // const { getCity } = require('../../geoCoder/getCity');
 const { openRestaurants } = require('./openRestaurants/openRestaurants');
+const {
+  openRestaurantsForPickup,
+} = require('./openRestaurants/openRestaurantsForPickup');
 
 const router = Router();
 
@@ -130,14 +133,14 @@ const router = Router();
   }
 }); */
 
-router.post('/allRestaurants', async (req, res) => {
+/* router.post('/allRestaurants', async (req, res) => {
   try {
     const { lat, long, employee, city, flag } = req.body;
 
-    /* if (city === '') {
+    if (city === '') {
       city = await getCity(lat, long);
     }
- */
+
     if (flag === 'pickup') {
       let allRestaurants = await Users.aggregate([
         {
@@ -226,6 +229,119 @@ router.post('/allRestaurants', async (req, res) => {
     [allRestaurants, featured] = await Promise.all([
       openRestaurants(allRestaurants),
       openRestaurants(featured),
+    ]);
+
+    return res.json({
+      status: '200',
+      allRestaurants,
+      featured,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      data: 'Looks like an error occurred on our side. Kindly try again',
+      error: err.toString(),
+    });
+  }
+}); */
+
+router.post('/allRestaurants', async (req, res) => {
+  try {
+    const { lat, long, employee, city, flag } = req.body;
+
+    /* if (city === '') {
+      city = await getCity(lat, long);
+    }
+ */
+    if (flag === 'pickup') {
+      let allRestaurants = await Users.aggregate([
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [long, lat] },
+            distanceField: 'dist',
+            maxDistance: 6000,
+            query: {
+              available: true,
+              pickup: true,
+              status: 'active',
+              shopType: 'restaurant',
+            },
+            spherical: true,
+          },
+        },
+        { $sort: { position: 1 } },
+      ]);
+
+      allRestaurants = await openRestaurantsForPickup(allRestaurants);
+
+      return res.json({
+        status: '200',
+        allRestaurants,
+      });
+    }
+
+    if (employee === true && city !== '') {
+      let allRestaurants = await Users.find({
+        available: true,
+        status: 'active',
+        shopType: 'restaurant',
+        city,
+      }).lean();
+
+      allRestaurants = await openRestaurants(lat, long, allRestaurants);
+
+      const featured = allRestaurants.filter(
+        ({ featured, city }) => featured && city
+      );
+
+      return res.json({
+        status: '200',
+        allRestaurants,
+        featured,
+      });
+    }
+
+    let [featured, allRestaurants] = await Promise.all([
+      Users.aggregate([
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [long, lat] },
+            distanceField: 'dist',
+            maxDistance: employee === true ? 20000 : 6000,
+            query: {
+              available: true,
+              status: 'active',
+              shopType: 'restaurant',
+              featured: true,
+            },
+            spherical: true,
+          },
+        },
+        { $sort: { position: 1 } },
+      ]),
+
+      Users.aggregate([
+        {
+          $geoNear: {
+            near: { type: 'Point', coordinates: [long, lat] },
+            distanceField: 'dist',
+            maxDistance: employee === true ? 20000 : 6000,
+            query: {
+              available: true,
+              type: 'admin',
+              status: 'active',
+              shopType: 'restaurant',
+            },
+            spherical: true,
+          },
+        },
+      ]),
+    ]);
+
+    [allRestaurants, featured] = await Promise.all([
+      openRestaurants(lat, long, allRestaurants),
+      openRestaurants(lat, long, featured),
     ]);
 
     return res.json({
