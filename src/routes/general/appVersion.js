@@ -12,7 +12,7 @@ router.post('/checkVersion', async (req, res) => {
 
     const { cities } = await CitiesModel.findOne({}).lean();
 
-    if (platform === 'ios' && (version === '2.0.1' || version === '2.0.5')) {
+    if (platform === 'ios' && version === '2.0.5') {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
 
@@ -22,7 +22,7 @@ router.post('/checkVersion', async (req, res) => {
       });
     } */
 
-    if (platform === 'ios' && version !== '2.0.1') {
+    if (platform === 'ios' && version !== '2.0.5') {
       return res.json({
         status: '404',
         msg: `A new update is now available which includes performance improvements. Kindly update your app, it won't take much of your time. Thankyou`,
@@ -30,10 +30,7 @@ router.post('/checkVersion', async (req, res) => {
       });
     }
 
-    if (
-      platform === 'android' &&
-      (version === '2.0.1' || version === '2.0.4')
-    ) {
+    if (platform === 'android' && version === '2.0.4') {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
 
@@ -43,17 +40,17 @@ router.post('/checkVersion', async (req, res) => {
       });
     } */
 
-    if (platform === 'android' && version !== '2.0.1') {
+    if (platform === 'android' && version !== '2.0.4') {
       return res.json({
         status: '404',
-        msg: `A new update is now available. kindly update your App to get the best experience`,
+        msg: `A new update is now available. kindly update your App to get the best experience.`,
         showCategories: 'false',
       });
     }
   } catch (err) {
     return res.json({
       status: '404',
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience`,
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
       error: err.toString(),
     });
   }
@@ -84,18 +81,18 @@ router.post('/ridersCheckVersion', async (req, res) => {
   try {
     const { version } = req.body;
 
-    if (version === '1.4' || version === '1.5') {
+    if (version === '1.5') {
       return res.json({ status: '200' });
     }
 
     return res.json({
       status: '404',
-      msg: `A new update is now available. kindly update your App to get the best experience`,
+      msg: `A new update is now available. kindly update your App to get the best experience.`,
     });
   } catch (err) {
     return res.json({
       status: '404',
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience`,
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
       error: err.toString(),
     });
   }
