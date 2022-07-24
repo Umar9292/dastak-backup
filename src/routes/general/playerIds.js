@@ -92,19 +92,7 @@ router.post('/userPlayerId', async (req, res) => {
     const { userId, playerId } = req.body;
 
     const user = await Users.findById(userId);
-    const { status, type } = user;
-
-    if (
-      status === 'inactive' ||
-      playerId === 'c57690cb-3581-4a66-bc67-3a7069976311' ||
-      playerId === '21d178dc-3a1e-44fc-9f01-42dfc38ac064'
-    ) {
-      return res.json({
-        status: '404',
-        msg:
-          'Your account has temporarily been blocked. Kindly contact support@dastak.store for more details or contact the following number 03124133513.',
-      });
-    }
+    const { type } = user;
 
     const orders = await Orders.find({
       userId: user._id,
