@@ -88,6 +88,8 @@ router.post('/placeOrder', async (req, res) => {
       martName: mart.name,
       martPhone: mart.phone,
       martAddress: mart.martAddress,
+      martLatitude: mart.latitude,
+      martLongitude: mart.longitude,
       time: formatedTime,
       deliveryCharges:
         employee || orderType === 'pickUp' ? '0' : deliveryCharges,
@@ -522,18 +524,21 @@ router.post('/restaurantResponse', async (req, res) => {
       customerNotified,
       orderLatitude,
       orderLongitude,
-      martId,
     } = req.body;
 
     const {
       status: orderStatus,
+      martLatitude,
+      martLongitude,
       paymentMethod,
       orderType,
       orderNum,
       discount,
       city,
     } = await Orders.findById(orderId)
-      .select('status paymentMethod orderNum orderType discount city')
+      .select(
+        'martLatitude martLongitude status paymentMethod orderNum orderType discount city'
+      )
       .lean();
 
     if (orderStatus === 'Rejected') {
@@ -548,18 +553,12 @@ router.post('/restaurantResponse', async (req, res) => {
       return res.json({ status: '404', msg: 'Already Accepted' });
     }
 
-    const { geometry } = await Users.findById(martId)
-      .select('geometry')
-      .lean();
-
-    const [longitude, latitude] = geometry.coordinates;
-
     req.body.riderFare = await calculateRiderFare(
       city,
       +orderLatitude,
       +orderLongitude,
-      latitude,
-      longitude
+      +martLatitude,
+      +martLongitude
     );
 
     if (status === 'Rejected') {
@@ -596,7 +595,7 @@ router.post('/restaurantResponse', async (req, res) => {
         } else {
           msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. Don't worry the voucher amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
         }
-        axios.get(
+        await axios.get(
           `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
             msg
           )}`
@@ -629,7 +628,7 @@ router.post('/restaurantResponse', async (req, res) => {
       } else {
         const msg = `Dear Dastak user, ${shop.name} could not process your order at the moment due to some reason. Don't worry the amount will be refunded to your Dastak wallet and you can use that amount right away to place another order.`;
 
-        axios.get(
+        await axios.get(
           `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
             msg
           )}`
@@ -669,7 +668,7 @@ router.post('/restaurantResponse', async (req, res) => {
 
         notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
-        axios.get(
+        await axios.get(
           `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
             msg
           )}`
@@ -724,14 +723,14 @@ router.post('/restaurantResponse', async (req, res) => {
       }
 
       order.orderNum = orderNum;
-      order.save();
+      await order.save();
 
       res.json({
         status: '200',
         msg: 'Order successfully accepted',
       });
 
-      axios.get(
+      await axios.get(
         `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
           msg
         )}`
@@ -745,7 +744,7 @@ router.post('/restaurantResponse', async (req, res) => {
       const msg = `Dear ${user.name} your order# ${orderNum} for ${shop.name} is now ready. Kindly pick it up`;
       notifyUser(msg, user.playerId, { flag: 'preparingOrder' });
 
-      axios.get(
+      await axios.get(
         `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
           msg
         )}`
@@ -1246,21 +1245,6 @@ router.post('/riderOngoingOrders', async (req, res) => {
     if (!available) {
       upcoming = [];
     }
-
-    accepted = await Promise.all(
-      accepted.map(async order => {
-        const { martId } = order;
-
-        const { geometry } = await Users.findById(martId)
-          .select('geometry')
-          .lean();
-
-        const [longitude, latitude] = geometry.coordinates;
-        order.martLatitude = latitude.toString();
-        order.martLongitude = longitude.toString();
-        return order;
-      })
-    );
 
     return res.json({
       status: '200',
