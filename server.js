@@ -58,15 +58,10 @@ io.adapter(
 
 server.listen(port, () => console.log(`Listening on port ${port}\n`));
 
-exports.emitMessage = chat => {
-  io.emit('newMessage', chat);
-};
-
 exports.emitEPResponse = (event, data) => {
   io.emit(event, data);
 };
 
-const chatRouter = require('./src/routes/chat/chat');
 const easyPaisaRouter = require('./src/routes/paymentMethods/easyPaisa');
 const easyPaisaTopUpRouter = require('./src/routes/dastakWallet/walletTopUp/easyPaisaTopUp');
 
@@ -88,7 +83,6 @@ app.use('/marts', martsRouter);
 app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
-app.use('/chat', chatRouter);
 app.use('/dastakWallet', dastakWalletRouter);
 app.use('/rider', ridersShiftRouter);
 app.use(
