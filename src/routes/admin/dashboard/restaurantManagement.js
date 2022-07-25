@@ -461,8 +461,6 @@ router.post('/expensesTillNow', async (req, res) => {
             .lean(),
         ]);
 
-        console.log({ name: orders[0].martName, orders: orders.length });
-
         let dealPayment = 0;
         let nonDealPayment = 0;
         let ourProfit = 0;
