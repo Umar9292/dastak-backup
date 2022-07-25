@@ -1247,7 +1247,20 @@ router.post('/riderOngoingOrders', async (req, res) => {
       upcoming = [];
     }
 
-    accepted = await Promise.all(
+    [upcoming, accepted] = await Promise.all([
+      upcoming.map(async order => {
+        const { martId } = order;
+
+        const { geometry } = await Users.findById(martId)
+          .select('geometry')
+          .lean();
+
+        const [longitude, latitude] = geometry.coordinates;
+        order.martLatitude = latitude.toString();
+        order.martLongitude = longitude.toString();
+        return order;
+      }),
+
       accepted.map(async order => {
         const { martId } = order;
 
@@ -1259,8 +1272,8 @@ router.post('/riderOngoingOrders', async (req, res) => {
         order.martLatitude = latitude.toString();
         order.martLongitude = longitude.toString();
         return order;
-      })
-    );
+      }),
+    ]);
 
     return res.json({
       status: '200',
