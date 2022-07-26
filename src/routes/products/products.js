@@ -18,10 +18,10 @@ const {
   openRestaurantsForPickup,
 } = require('../../routes/marts/openRestaurants/openRestaurantsForPickup');
 
-// const client = createClient(process.env.REDIS_URL, {
-//   tls: { rejectUnauthorized: false },
-// });
-const client = createClient(process.env.REDIS_URL);
+const client = createClient(process.env.REDIS_URL, {
+  tls: { rejectUnauthorized: false },
+});
+// const client = createClient(process.env.REDIS_URL);
 
 const router = Router();
 
