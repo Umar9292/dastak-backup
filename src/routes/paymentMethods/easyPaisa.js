@@ -123,6 +123,8 @@ const easyPaisa = async params => {
       martName: mart.name,
       martPhone: mart.phone,
       martAddress: mart.martAddress,
+      martLatitude: mart.latitude,
+      martLongitude: mart.longitude,
       time: formatedTime,
       date,
       orderNum: todaysOrders + 1,

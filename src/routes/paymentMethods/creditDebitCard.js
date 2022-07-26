@@ -209,6 +209,8 @@ router.get('/alfaCallback', async (req, res) => {
         martName: mart.name,
         martPhone: mart.phone,
         martAddress: mart.martAddress,
+        martLatitude: mart.latitude,
+        martLongitude: mart.longitude,
         time: formatedTime,
         date,
         orderNum: todaysOrders + 1,

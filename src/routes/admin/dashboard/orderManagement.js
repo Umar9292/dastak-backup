@@ -17,10 +17,10 @@ router.post('/allOrders', async (req, res) => {
       .format('DD-MM-YYYY');
 
     const [
-      pending,
-      adminAccepted,
-      pickedUp,
-      todaysRejected,
+      upcoming,
+      accepted,
+      picked,
+      rejected,
       totalOrders,
     ] = await Promise.all([
       Orders.find({ status: 'Pending', city })
@@ -47,68 +47,6 @@ router.post('/allOrders', async (req, res) => {
         city,
         date: today,
       }).lean(),
-    ]);
-
-    const [upcoming, accepted, picked, rejected] = await Promise.all([
-      Promise.all(
-        pending.map(async order => {
-          const { martId } = order;
-
-          const { geometry } = await Users.findById(martId)
-            .select('geometry')
-            .lean();
-
-          const [longitude, latitude] = geometry.coordinates;
-          order.martLatitude = latitude.toString();
-          order.martLongitude = longitude.toString();
-          return order;
-        })
-      ),
-
-      Promise.all(
-        adminAccepted.map(async order => {
-          const { martId } = order;
-
-          const { geometry } = await Users.findById(martId)
-            .select('geometry')
-            .lean();
-
-          const [longitude, latitude] = geometry.coordinates;
-          order.martLatitude = latitude.toString();
-          order.martLongitude = longitude.toString();
-          return order;
-        })
-      ),
-
-      Promise.all(
-        pickedUp.map(async order => {
-          const { martId } = order;
-
-          const { geometry } = await Users.findById(martId)
-            .select('geometry')
-            .lean();
-
-          const [longitude, latitude] = geometry.coordinates;
-          order.martLatitude = latitude.toString();
-          order.martLongitude = longitude.toString();
-          return order;
-        })
-      ),
-
-      Promise.all(
-        todaysRejected.map(async order => {
-          const { martId } = order;
-
-          const { geometry } = await Users.findById(martId)
-            .select('geometry')
-            .lean();
-
-          const [longitude, latitude] = geometry.coordinates;
-          order.martLatitude = latitude.toString();
-          order.martLongitude = longitude.toString();
-          return order;
-        })
-      ),
     ]);
 
     return res.json({
