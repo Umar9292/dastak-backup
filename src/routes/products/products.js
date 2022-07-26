@@ -289,7 +289,7 @@ router.post('/allProducts', async (req, res) => {
         data: finalData,
       });
 
-      if (maxLimitProduct) {
+      if (!maxLimitProduct) {
         client.setex(martId, 600, JSON.stringify(finalData));
       }
     });
