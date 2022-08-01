@@ -302,6 +302,57 @@ router.post('/allProducts', async (req, res) => {
   }
 });
 
+router.post('/allCategories', async (req, res) => {
+  try {
+    const { martId } = req.body;
+
+    let { categories } = await Categories.findOne({ martId })
+      .select('categories')
+      .lean();
+
+    categories = await Promise.all(categories.map(category => category.name));
+
+    return res.json({
+      status: '200',
+      categories,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      msg: 'Looks like an error occurred on our side. Kindly try again',
+      error: err.toString(),
+    });
+  }
+});
+
+router.post('/addProduct', async (req, res) => {
+  try {
+    const { productName } = req.body;
+
+    const product = await Products.findOne({ productName });
+    if (product) {
+      return res.json({
+        status: '404',
+        msg: 'Product already added',
+      });
+    }
+
+    await new Products(req.body).save();
+
+    return res.json({
+      status: '200',
+      msg: 'Product Added Successfully',
+    });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 router.post('/allRestaurantProducts', async (req, res) => {
   try {
     const { martId } = req.body;

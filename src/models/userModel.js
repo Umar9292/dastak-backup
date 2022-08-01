@@ -38,6 +38,7 @@ const userModel = Schema(
       type: Boolean,
       default: true,
     },
+    device: Boolean,
     radius: Number,
     superAdminPlayerId: String,
     startShift: String,
