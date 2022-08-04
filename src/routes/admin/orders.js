@@ -1328,8 +1328,8 @@ router.post('/changeOrderStatus', async (req, res) => {
     }
 
     if (status === 'Rider Picked Up') {
-      const { latitude, longitude } = await Users.findById(martId)
-        .select('latitude longitude')
+      const { latitude, longitude, name } = await Users.findById(martId)
+        .select('latitude longitude name')
         .lean();
 
       const distance = await getDistance(
@@ -1341,7 +1341,7 @@ router.post('/changeOrderStatus', async (req, res) => {
 
       if (distance > 0.1) {
         await notifyUser(
-          `pickup issue ${riderLatitude} ${riderLongitude}`,
+          `pickup issue ${riderLatitude} ${riderLongitude}, ${name}`,
           'b9c64cdb-e60e-461d-afa6-04fe0d88dd39',
           {}
         );
