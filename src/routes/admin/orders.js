@@ -1340,6 +1340,12 @@ router.post('/changeOrderStatus', async (req, res) => {
       );
 
       if (distance > 0.1) {
+        await notifyUser(
+          `pickup issue ${riderLatitude} ${riderLongitude}`,
+          'b9c64cdb-e60e-461d-afa6-04fe0d88dd39',
+          {}
+        );
+
         return res.json({
           status: '404',
           msg: 'Kindly go near the restaurant.',
