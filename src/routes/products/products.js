@@ -219,9 +219,11 @@ router.post('/allProducts', async (req, res) => {
             product => product.maxCount !== undefined
           );
 
-          if (userId !== '' && maxCountProducts.length > 0) {
+          if (maxCountProducts.length > 0) {
             maxLimitProduct = true;
+          }
 
+          if (userId !== '' && maxCountProducts.length > 0) {
             const date = moment()
               .tz('Asia/Karachi')
               .format('DD-MM-YYYY');
