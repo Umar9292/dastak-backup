@@ -1315,7 +1315,7 @@ router.post('/riderOrders', async (req, res) => {
 
 router.post('/changeOrderStatus', async (req, res) => {
   try {
-    const { orderId, status, martId, riderLatitude, riderLongitude } = req.body;
+    const { orderId, status } = req.body;
 
     const currentTime = moment().tz('Asia/karachi');
 
@@ -1327,7 +1327,7 @@ router.post('/changeOrderStatus', async (req, res) => {
       });
     }
 
-    if (status === 'Rider Picked Up') {
+    /* if (status === 'Rider Picked Up') {
       const { latitude, longitude, name } = await Users.findById(martId)
         .select('latitude longitude name')
         .lean();
@@ -1351,7 +1351,10 @@ router.post('/changeOrderStatus', async (req, res) => {
           msg: 'Kindly go near the restaurant.',
         });
       }
-    }
+    } */
+
+    const pickUpTime = moment(currentTime, 'hh:mm').format('hh:mm a');
+    req.body.pickUpTime = pickUpTime;
 
     const order = await Orders.findByIdAndUpdate(
       orderId,
@@ -1399,10 +1402,6 @@ router.post('/changeOrderStatus', async (req, res) => {
         msg: 'Order successfully delivered',
       });
     }
-
-    const pickUpTime = moment(currentTime, 'hh:mm').format('hh:mm a');
-    order.pickUpTime = pickUpTime;
-    order.save();
 
     res.json({
       status: '200',
