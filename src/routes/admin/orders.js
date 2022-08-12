@@ -577,7 +577,7 @@ router.post('/restaurantResponse', async (req, res) => {
     }
 
     const [user, shop] = await Promise.all([
-      Users.findById(order.userId).select('playerId phone wallet'),
+      Users.findById(order.userId).select('playerId phone wallet name'),
 
       Users.findById(order.martId)
         .select('name')
