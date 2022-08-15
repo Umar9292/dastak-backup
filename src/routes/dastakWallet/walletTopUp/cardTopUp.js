@@ -25,7 +25,6 @@ const router = Router();
 router.post('/v1/cardTopUp', async (req, res) => {
   try {
     const { userId, amount, actualAmount } = req.body;
-    console.log(req.body);
 
     const transactionId = `ATO${moment()
       .tz('Asia/Karachi')
@@ -55,16 +54,7 @@ router.post('/v1/cardTopUp', async (req, res) => {
       HS_TransactionReferenceNumber: transactionId,
     };
 
-    const result = await axios.post(ALFA_HANDSHAKE_URL, handShakeData, {
-      httpsAgent: new https.Agent({
-        requestCert: true,
-        rejectUnauthorized: true,
-        cert: fs.readFileSync('./cert/cert.pem'),
-        key: fs.readFileSync('./cert/key.pem'),
-        // passphrase: 'Dastak@123',
-      }),
-    });
-
+    const result = await axios.post(ALFA_HANDSHAKE_URL, handShakeData);
     const { AuthToken } = result.data;
 
     const redirectionString = `AuthToken=${AuthToken}&ChannelId=${ALFA_CHANNEL_ID}&Currency=PKR&IsBIN=0&ReturnURL=${ALFA_RETURN_URL}&MerchantId=${ALFA_MERCHANT_ID}&StoreId=${ALFA_STORE_ID}&MerchantHash=${ALFA_MERCHANT_HASH}&MerchantUsername=${ALFA_MERCHANT_USERNAME}&MerchantPassword=${ALFA_MERCHANT_PASSWORD}&TransactionTypeId=3&TransactionReferenceNumber=${transactionId}&TransactionAmount=${amount}`;
