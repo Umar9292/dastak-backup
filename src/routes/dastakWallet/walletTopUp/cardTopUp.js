@@ -55,9 +55,6 @@ router.post('/v1/cardTopUp', async (req, res) => {
       HS_TransactionReferenceNumber: transactionId,
     };
 
-    const certi = fs.readFileSync('./cert/cert.pem');
-    console.log(certi.toString());
-
     const result = await axios.post(ALFA_HANDSHAKE_URL, handShakeData, {
       httpsAgent: new https.Agent({
         requestCert: true,
