@@ -2,6 +2,7 @@ const Router = require('express/lib/router');
 const axios = require('axios');
 const crypto = require('crypto');
 const https = require('https');
+const fs = require('fs');
 const moment = require('moment-timezone');
 
 const Users = require('../../../models/userModel');
@@ -54,9 +55,16 @@ router.post('/v1/cardTopUp', async (req, res) => {
       HS_TransactionReferenceNumber: transactionId,
     };
 
+    const certi = fs.readFileSync('./cert/cert.pem');
+    console.log(certi.toString());
+
     const result = await axios.post(ALFA_HANDSHAKE_URL, handShakeData, {
       httpsAgent: new https.Agent({
-        rejectUnauthorized: false,
+        requestCert: true,
+        rejectUnauthorized: true,
+        cert: fs.readFileSync('./cert/cert.pem'),
+        key: fs.readFileSync('./cert/key.pem'),
+        // passphrase: 'Dastak@123',
       }),
     });
 
