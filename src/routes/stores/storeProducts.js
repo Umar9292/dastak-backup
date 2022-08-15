@@ -1,5 +1,5 @@
 const Router = require('express/lib/router');
-const { createClient } = require('redis');
+// const { createClient } = require('redis');
 
 const Users = require('../../models/userModel');
 const StoreProducts = require('../../models/storeProducts');
@@ -9,9 +9,9 @@ const {
   calculateDeliveryCharges,
 } = require('../../calculateDeliveryCharges/calculateDeliveryCharges');
 
-const client = createClient(process.env.REDIS_URL, {
-  tls: { rejectUnauthorized: false },
-});
+// const client = createClient(process.env.REDIS_URL, {
+//   tls: { rejectUnauthorized: false },
+// });
 // const client = createClient(process.env.REDIS_URL);
 
 const router = Router();
@@ -41,65 +41,65 @@ router.post('/allProducts', async (req, res) => {
       });
     }
 
-    client.get(martId, async (err, data) => {
-      if (err) console.log(err);
+    // client.get(martId, async (err, data) => {
+    //   if (err) console.log(err);
 
-      const restaurant = await Users.findById(martId).lean();
+    const restaurant = await Users.findById(martId).lean();
 
-      const deliveryCharges = await calculateDeliveryCharges(
-        userLatitude,
-        userLongitude,
-        martLatitude,
-        martLongitude
-      );
+    const deliveryCharges = await calculateDeliveryCharges(
+      userLatitude,
+      userLongitude,
+      martLatitude,
+      martLongitude
+    );
 
-      restaurant.deliveryCharges = deliveryCharges;
+    restaurant.deliveryCharges = deliveryCharges;
 
-      if (data !== null) {
-        return res.json({ status: '200', data: JSON.parse(data), restaurant });
-      }
+    // if (data !== null) {
+    //   return res.json({ status: '200', data: JSON.parse(data), restaurant });
+    // }
 
-      const { categories } = await Categories.findOne({ martId })
-        .select('categories')
-        .lean();
+    const { categories } = await Categories.findOne({ martId })
+      .select('categories')
+      .lean();
 
-      const { name } = restaurant;
-      if (userId && userId !== '') {
-        const customer = await Users.findById(userId).select('name');
-        console.log(`${customer.name} opened ${name}`);
-      } else {
-        console.log(`${name} has been opened`);
-      }
+    const { name } = restaurant;
+    if (userId && userId !== '') {
+      const customer = await Users.findById(userId).select('name');
+      console.log(`${customer.name} opened ${name}`);
+    } else {
+      console.log(`${name} has been opened`);
+    }
 
-      for (const category of categories) {
-        const query = {
-          category,
-          martId,
-          available: 'in stock',
-        };
+    for (const category of categories) {
+      const query = {
+        category,
+        martId,
+        available: 'in stock',
+      };
 
-        const products = await StoreProducts.find(query).sort({
-          productName: 1,
-        });
-
-        if (products.length > 0) {
-          const data = {
-            category: query.category,
-            data: products,
-          };
-
-          finalData = [...finalData, data];
-        }
-      }
-
-      res.json({
-        status: '200',
-        data: finalData,
-        restaurant,
+      const products = await StoreProducts.find(query).sort({
+        productName: 1,
       });
 
-      client.setex(martId, 300, JSON.stringify(finalData));
+      if (products.length > 0) {
+        const data = {
+          category: query.category,
+          data: products,
+        };
+
+        finalData = [...finalData, data];
+      }
+    }
+
+    res.json({
+      status: '200',
+      data: finalData,
+      restaurant,
     });
+
+    //   client.setex(martId, 300, JSON.stringify(finalData));
+    // });
   } catch (err) {
     console.log(err);
     return res.json({
