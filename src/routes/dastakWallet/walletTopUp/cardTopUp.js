@@ -1,8 +1,6 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const crypto = require('crypto');
-const https = require('https');
-const fs = require('fs');
 const moment = require('moment-timezone');
 
 const Users = require('../../../models/userModel');
