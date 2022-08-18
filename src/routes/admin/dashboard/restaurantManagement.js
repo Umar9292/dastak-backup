@@ -1,10 +1,15 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
+const Exceljs = require('exceljs');
 const { orderBy } = require('lodash');
 
 const Users = require('../../../models/userModel');
 const Orders = require('../../../models/ordersModel');
 const PaymentHistory = require('../../../models/paymentHistoryModel');
+
+const {
+  sendCollection,
+} = require('../../../emailHandler/sendCollections/sendCollections');
 
 const router = Router();
 
@@ -203,6 +208,8 @@ router.post('/restaurantCollections', async (req, res) => {
         nonDealPayment = nonDealPayment - ourPercentage - pickUpPercentage;
 
         return {
+          bankCode: '61',
+          refNum: 'BASE LINE INTER BANK',
           martId,
           martName,
           orderCount: deliveryOrders.length,
@@ -226,6 +233,22 @@ router.post('/restaurantCollections', async (req, res) => {
       (a, b) => a + b.totalOfDeliveryOrders,
       0
     );
+
+    const workbook = new Exceljs.Workbook();
+    const worksheet = workbook.addWorksheet(`${startDate} - ${endDate}`);
+
+    worksheet.columns = [
+      { header: 'BANK_CODE', key: 'bankCode', width: 15 },
+      { header: 'ACCOUNTNUMBER', key: 'phone', width: 15 },
+      { header: 'BENENAME', key: 'martName', width: 15 },
+      { header: 'CUSTOMERREFERENCENUMBER', key: 'refNum', width: 15 },
+      { header: 'TRANSAMOUNT', key: 'totalToPay', width: 15 },
+    ];
+
+    await Promise.all(data.map(doc => worksheet.addRow(doc)));
+
+    await workbook.xlsx.writeFile(`${startDate} - ${endDate}.xlsx`);
+    sendCollection(`${startDate} - ${endDate}.xlsx`);
 
     data = orderBy(data, ['totalToPay'], ['desc']);
 

@@ -689,6 +689,7 @@ router.post('/restaurantResponse', async (req, res) => {
           status: 'idle',
           available: true,
           city: order.city,
+          zone: order.zone,
         })
           .select('name playerId')
           .lean(),
@@ -697,6 +698,7 @@ router.post('/restaurantResponse', async (req, res) => {
           type: 'rider',
           available: true,
           city: order.city,
+          zone: order.zone,
         })
           .select('name playerId')
           .lean(),
@@ -1177,7 +1179,7 @@ router.post('/assignRider', async (req, res) => {
 
 router.post('/riderOngoingOrders', async (req, res) => {
   try {
-    const { riderId, city } = req.body;
+    const { riderId, city, zone } = req.body;
 
     let [
       upcoming,
@@ -1188,6 +1190,7 @@ router.post('/riderOngoingOrders', async (req, res) => {
       Orders.find({
         status: 'Admin Accepted',
         orderType: 'Delivery',
+        zone,
         city,
       })
         .sort({
