@@ -377,7 +377,13 @@ router.post('/specificUserOrders', async (req, res) => {
 
 router.post('/cancelOrder', async (req, res) => {
   try {
-    const { orderId, reason, refundToCustomer, refundToRestaurant } = req.body;
+    const {
+      orderId,
+      reason,
+      refundToCustomer,
+      refundToRestaurant,
+      actions,
+    } = req.body;
 
     const {
       status,
@@ -395,6 +401,7 @@ router.post('/cancelOrder', async (req, res) => {
 
     const order = await Orders.findByIdAndUpdate(orderId, {
       status: 'Rejected',
+      $push: { actions },
       refundToCustomer,
       refundToRestaurant,
       reason,
@@ -535,9 +542,10 @@ router.post('/restaurantResponse', async (req, res) => {
       orderNum,
       discount,
       city,
+      actions,
     } = await Orders.findById(orderId)
       .select(
-        'martLatitude martLongitude status paymentMethod orderNum orderType discount city'
+        'martLatitude martLongitude status paymentMethod orderNum orderType discount city actions'
       )
       .lean();
 
@@ -563,6 +571,10 @@ router.post('/restaurantResponse', async (req, res) => {
 
     if (status === 'Rejected') {
       req.body.refundToRestaurant = false;
+    }
+
+    if (req.body.actions !== undefined) {
+      req.body.actions = [...actions, req.body.actions];
     }
 
     const order = await Orders.findByIdAndUpdate(orderId, {
@@ -901,7 +913,7 @@ router.post('/assignRider', async (req, res) => {
 
       Users.findById(riderId)
         .select(
-          'pendingCollection name paymentLimit orderCount fareType tillNoonFare playerId'
+          'pendingCollection name paymentLimit orderCount fareType tillNoonFare playerId actions'
         )
         .lean(),
 
@@ -1025,6 +1037,10 @@ router.post('/assignRider', async (req, res) => {
 
     if (rider.fareType && rider.fareType === 'salary') {
       req.body.riderFare = rider.tillNoonFare;
+    }
+
+    if (req.body.actions !== undefined) {
+      req.body.actions = [...order.actions, req.body.actions];
     }
 
     await Promise.all([
@@ -1322,7 +1338,9 @@ router.post('/changeOrderStatus', async (req, res) => {
 
     const currentTime = moment().tz('Asia/karachi');
 
-    const { status: currentOrderStatus } = await Orders.findById(orderId);
+    const { status: currentOrderStatus, actions } = await Orders.findById(
+      orderId
+    );
     if (currentOrderStatus === 'Delivered') {
       return res.json({
         status: '404',
@@ -1358,6 +1376,10 @@ router.post('/changeOrderStatus', async (req, res) => {
 
     const pickUpTime = moment(currentTime, 'hh:mm').format('hh:mm a');
     req.body.pickUpTime = pickUpTime;
+
+    if (req.body.actions !== undefined) {
+      req.body.actions = [...actions, req.body.actions];
+    }
 
     const order = await Orders.findByIdAndUpdate(
       orderId,

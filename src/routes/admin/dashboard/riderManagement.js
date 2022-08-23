@@ -101,7 +101,7 @@ router.post('/manageRiders', async (req, res) => {
 
 router.post('/reAssignRider', async (req, res) => {
   try {
-    const { orderId, riderId } = req.body;
+    const { orderId, riderId, riderName, riderPhone, actions } = req.body;
 
     const {
       name: newRidersName,
@@ -116,7 +116,10 @@ router.post('/reAssignRider', async (req, res) => {
       riderId: currentlyAssignedRidersId,
       status: ordersCurrentStatus,
     } = await Orders.findByIdAndUpdate(orderId, {
-      $set: req.body,
+      riderId,
+      riderName,
+      riderPhone,
+      $push: { actions },
     });
 
     const [
@@ -170,12 +173,13 @@ router.post('/reAssignRider', async (req, res) => {
 
 router.post('/removeRider', async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, actions } = req.body;
 
     const order = await Orders.findByIdAndUpdate(
       { _id: orderId },
       {
         $unset: { riderId: '', riderName: '', riderPhone: '' },
+        $push: { actions },
         status: 'Admin Accepted',
       }
     );

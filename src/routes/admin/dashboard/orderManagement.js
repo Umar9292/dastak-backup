@@ -105,7 +105,13 @@ router.post('/ordersTillNow', async (req, res) => {
 
 router.post('/updateOrder', async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, actions } = req.body;
+
+    const { actions: currentActions } = await Orders.findById(orderId)
+      .select('actions')
+      .lean();
+
+    req.body.actions = [...currentActions, actions];
 
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
@@ -122,9 +128,9 @@ router.post('/updateOrder', async (req, res) => {
 
 router.post('/updateRiderFare', async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, riderFare, actions } = req.body;
 
-    await Orders.findByIdAndUpdate(orderId, { $set: req.body });
+    await Orders.findByIdAndUpdate(orderId, { riderFare, $push: { actions } });
 
     return res.json({ status: '200', msg: 'Rider fare updated successfully' });
   } catch (err) {
@@ -139,10 +145,10 @@ router.post('/updateRiderFare', async (req, res) => {
 
 router.post('/reOpenOrder', async (req, res) => {
   try {
-    const { orderId } = req.body;
+    const { orderId, actions } = req.body;
 
     const order = await Orders.findById(orderId).select(
-      'status riderId reason userId'
+      'status riderId reason userId actions'
     );
 
     if (order.riderId) {
@@ -157,6 +163,7 @@ router.post('/reOpenOrder', async (req, res) => {
     }
 
     order.reason = '';
+    order.actions = [...order.actions, actions];
     await order.save();
 
     return res.json({ status: '200', msg: 'Order reopened' });

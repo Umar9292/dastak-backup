@@ -6,6 +6,10 @@ const ordersModel = Schema(
       type: Boolean,
       default: false,
     },
+    actions: {
+      type: Array,
+      default: [],
+    },
     zone: String,
     distance: String,
     deviceData: Object,
