@@ -5,6 +5,7 @@ const { orderBy } = require('lodash');
 
 const Users = require('../../../models/userModel');
 const Orders = require('../../../models/ordersModel');
+const Products = require('../../../models/productsModel');
 const PaymentHistory = require('../../../models/paymentHistoryModel');
 
 const {
@@ -37,6 +38,53 @@ router.post('/manageRestaurants', async (req, res) => {
 
     return res.json({ status: '200', activeRestaurants, inactiveRestaurants });
   } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/changePrices', async (req, res) => {
+  try {
+    const { martId, percentage, flag } = req.body;
+
+    const products = await Products.find({ martId });
+
+    if (flag === 'increasePrices') {
+      await Promise.all(
+        products.map(product => {
+          let discountedPrice = ((percentage / 100) * product.price).toFixed();
+          discountedPrice = Math.round(discountedPrice / 5) * 5;
+          product.price += +discountedPrice;
+          return product.save();
+        })
+      );
+    }
+
+    if (flag === 'discount') {
+      if (percentage === 0) {
+        await Products.updateMany({ martId }, { discount: '0' });
+      } else {
+        await Promise.all(
+          products.map(product => {
+            let discountedPrice = (
+              (percentage / 100) *
+              product.price
+            ).toFixed();
+            discountedPrice = Math.round(discountedPrice / 5) * 5;
+            product.discountedPrice = product.price - +discountedPrice;
+            product.discount = `${percentage}`;
+            return product.save();
+          })
+        );
+      }
+    }
+
+    return res.json({ status: '200', msg: 'Prices updated successfully.' });
+  } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
