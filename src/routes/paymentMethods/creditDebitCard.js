@@ -317,7 +317,7 @@ router.post('/v1/checkCardPaymentStatus', async (req, res) => {
         .lean();
 
       if (order.martName === undefined) {
-        axios.get(`${ALFA_RETURN_URL}?TS=P&O=${transactionId}`);
+        await axios.get(`${ALFA_RETURN_URL}?TS=P&O=${transactionId}`);
       }
 
       return res.json({ status: '200', msg: 'Your order has been placed.' });
