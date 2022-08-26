@@ -89,17 +89,32 @@ router.post('/v1/checkCardTopUpStatus', async (req, res) => {
   try {
     const { transactionId } = req.body;
 
+    const { topUp } = await Users.findOne({
+      'topUp.transactionId': transactionId,
+    })
+      .select('topUp')
+      .lean();
+
+    if (topUp.status === 'Successful') {
+      return res.json({
+        status: '200',
+        msg: `Dear Dastak user amount of RS ${topUp.actualAmount} has been added to your dastak wallet.`,
+      });
+    }
+
     let result = await axios.get(
       `${process.env.ALFA_IPN_URL}/${transactionId}`
     );
 
     result = JSON.parse(result.data);
-    const { ResponseCode, TransactionStatus, TransactionAmount } = result;
+    const { ResponseCode, TransactionStatus } = result;
 
     if (ResponseCode === '00' && TransactionStatus === 'Paid') {
+      await axios.get(`${ALFA_RETURN_URL}?TS=P&O=${transactionId}`);
+
       return res.json({
         status: '200',
-        msg: `Dear Dastak user amount of RS ${TransactionAmount} has been added to your dastak wallet.`,
+        msg: `Dear Dastak user amount of RS ${topUp.actualAmount} has been added to your dastak wallet.`,
       });
     }
 
