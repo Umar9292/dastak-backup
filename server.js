@@ -38,6 +38,7 @@ const dastakWalletRouter = require('./src/routes/dastakWallet/dastakWallet');
 const cardTopUpRouter = require('./src/routes/dastakWallet/walletTopUp/cardTopUp');
 const ridersShiftRouter = require('./src/routes/rider/addShift');
 const riderSignupRouter = require('./src/routes/admin/dashboard/riderSignUp');
+const easyPaisaOtpRouter = require('./src/routes/paymentMethods/easyPaisaOtp');
 
 // const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -90,7 +91,8 @@ app.use(
   easyPaisaRouter,
   cardRouter,
   cardTopUpRouter,
-  easyPaisaTopUpRouter
+  easyPaisaTopUpRouter,
+  easyPaisaOtpRouter
 );
 app.use(
   '/user',
