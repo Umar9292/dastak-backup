@@ -1235,7 +1235,7 @@ router.post('/riderOngoingOrders', async (req, res) => {
       upcoming.map(order => {
         const orderTime = moment(order.time, 'hh:mm a');
         console.log(orderTime);
-        const timeDifference = currentTime.diff(orderTime, 'minutes');
+        const timeDifference = orderTime.diff(currentTime, 'minutes');
 
         console.log(timeDifference);
 
