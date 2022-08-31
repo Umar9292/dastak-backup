@@ -1179,11 +1179,13 @@ router.post('/riderOngoingOrders', async (req, res) => {
   try {
     const { riderId, city } = req.body;
 
+    const currentTime = moment().tz('Asia/Karachi');
+
     let [
       upcoming,
       accepted,
-      // idleRiders,
-      { available },
+      idleRiders,
+      { available, status },
     ] = await Promise.all([
       Orders.find({
         status: 'Admin Accepted',
@@ -1206,44 +1208,44 @@ router.post('/riderOngoingOrders', async (req, res) => {
         })
         .lean(),
 
-      /*  Users.countDocuments({
+      Users.countDocuments({
         type: 'rider',
         status: 'idle',
         available: true,
         city,
-      }), */
+      }),
 
       Users.findById(riderId)
-        .select('available')
+        .select('available status')
         .lean(),
     ]);
 
-    /* if (idleRiders > 0) {
-      if (status === 'idle' && available) {
-        upcoming = await Orders.find({
-          status: 'Admin Accepted',
-          orderType: 'Delivery',
-          city,
-        })
-          .sort({
-            createdAt: -1,
-          })
-          .lean();
-      }
-    } else if (available) {
-      upcoming = await Orders.find({
-        status: 'Admin Accepted',
-        orderType: 'Delivery',
-        city,
-      })
-        .sort({
-          createdAt: -1,
-        })
-        .lean();
-    } */
-
     if (!available) {
-      upcoming = [];
+      return res.json({
+        status: '200',
+        upcoming: [],
+        accepted: [],
+      });
+    }
+
+    const filteredUpcomingOrders = upcoming.filter(order => {
+      const orderTime = moment(order.time, 'hh:mm a');
+      console.log(orderTime);
+      const timeDifference = currentTime.diff(orderTime, 'seconds');
+
+      if (timeDifference < 60) {
+        return order;
+      }
+    });
+
+    if (idleRiders > 0) {
+      if (status === 'idle' && filteredUpcomingOrders.length > 0) {
+        upcoming = filteredUpcomingOrders;
+      }
+
+      if (status === 'on delivery' && filteredUpcomingOrders.length > 0) {
+        upcoming = [];
+      }
     }
 
     return res.json({
