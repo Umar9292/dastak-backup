@@ -33,42 +33,4 @@ router.post('/easyPaisaOtp', async (req, res) => {
   }
 });
 
-router.post('/verifyEasypaisaOtp', async (req, res) => {
-  try {
-    const { phone, otp } = req.body;
-
-    const doc = await Otp.findOne({ phone, otp }).select('secret');
-
-    if (!doc) {
-      return res.json({
-        status: '404',
-        msg: `Sorry you've entered the wrong verification code.`,
-      });
-    }
-
-    const { secret } = doc;
-    const verified = Speakeasy.totp.verify({
-      secret,
-      encoding: 'base32',
-      token: otp,
-      window: 3,
-    });
-
-    if (!verified) {
-      return res.json({
-        status: '404',
-        msg: 'Your code is no longer valid. Kindly resend the code',
-      });
-    }
-
-    res.json({ status: '200' });
-  } catch (err) {
-    console.log(err);
-    return res.json({
-      status: '404',
-      msg: 'Looks like an error occurred on our side. Kindly try again',
-    });
-  }
-});
-
 module.exports = router;

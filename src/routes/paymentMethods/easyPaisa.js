@@ -1,10 +1,12 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const crypto = require('crypto');
+const Speakeasy = require('speakeasy');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
 const Users = require('../../models/userModel');
 const Orders = require('../../models/ordersModel');
+const Otp = require('../../models/otpModel');
 const WalletHistory = require('../../models/walletHistory');
 
 const { emitEPResponse } = require('../../../server');
@@ -216,13 +218,7 @@ const easyPaisa = async params => {
 
 router.post('/v1/easyPaisa', async (req, res) => {
   try {
-    const { martId } = req.body;
-
-    /* return res.json({
-      status: '404',
-      msg:
-        'There is some technical issue with Easypaisa. We are working hard to get it back up as soon as possible. You can still use card payments or COD. Thankyou for your paitience',
-    }); */
+    const { martId, easyPaisaPhone, otp } = req.body;
 
     const restaurantIsOpen = await checkTime(martId);
 
@@ -230,6 +226,32 @@ router.post('/v1/easyPaisa', async (req, res) => {
       return res.json({
         status: '404',
         msg: 'Sorry, the restaurant got closed.',
+      });
+    }
+
+    const doc = await Otp.findOne({ phone: easyPaisaPhone, otp }).select(
+      'secret'
+    );
+
+    if (!doc) {
+      return res.json({
+        status: '404',
+        msg: `Sorry you've entered the wrong verification code.`,
+      });
+    }
+
+    const { secret } = doc;
+    const verified = Speakeasy.totp.verify({
+      secret,
+      encoding: 'base32',
+      token: otp,
+      window: 3,
+    });
+
+    if (!verified) {
+      return res.json({
+        status: '404',
+        msg: 'Your code is no longer valid. Kindly resend the code',
       });
     }
 
