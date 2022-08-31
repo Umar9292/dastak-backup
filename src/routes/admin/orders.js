@@ -1236,6 +1236,8 @@ router.post('/riderOngoingOrders', async (req, res) => {
         const orderTime = moment(order.time, 'hh:mm a').subtract(5, 'hours');
         const timeDifference = currentTime.diff(orderTime, 'seconds');
 
+        console.log(timeDifference);
+
         if (timeDifference <= 60) {
           newUpcomingOrders = [...newUpcomingOrders, order];
         } else {
