@@ -1180,7 +1180,6 @@ router.post('/riderOngoingOrders', async (req, res) => {
     const { riderId, city } = req.body;
 
     const currentTime = moment().tz('Asia/Karachi');
-    console.log(currentTime);
 
     let [
       upcoming,
@@ -1229,29 +1228,29 @@ router.post('/riderOngoingOrders', async (req, res) => {
       });
     }
 
-    let filteredUpcomingOrders = [];
+    let newUpcomingOrders = [];
+    let oldUpcomingOrders = [];
 
     await Promise.all(
       upcoming.map(order => {
         const orderTime = moment(order.time, 'hh:mm a').subtract(5, 'hours');
-        console.log(orderTime);
-        const timeDifference = currentTime.diff(orderTime, 'minutes');
+        const timeDifference = currentTime.diff(orderTime, 'seconds');
 
-        console.log(timeDifference);
-
-        if (timeDifference < 60) {
-          filteredUpcomingOrders = [...filteredUpcomingOrders, order];
+        if (timeDifference <= 60) {
+          newUpcomingOrders = [...newUpcomingOrders, order];
+        } else {
+          oldUpcomingOrders = [...oldUpcomingOrders, order];
         }
       })
     );
 
     if (idleRiders > 0) {
-      if (status === 'idle' && filteredUpcomingOrders.length > 0) {
-        upcoming = filteredUpcomingOrders;
+      if (status === 'idle' && newUpcomingOrders.length > 0) {
+        upcoming = newUpcomingOrders;
       }
 
-      if (status === 'on delivery' && filteredUpcomingOrders.length > 0) {
-        upcoming = [];
+      if (status === 'on delivery' && newUpcomingOrders.length > 0) {
+        upcoming = oldUpcomingOrders;
       }
     }
 
