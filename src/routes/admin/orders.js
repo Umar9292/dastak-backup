@@ -1230,7 +1230,10 @@ router.post('/riderOngoingOrders', async (req, res) => {
 
     const filteredUpcomingOrders = upcoming.filter(order => {
       const orderTime = moment(order.time, 'hh:mm a');
+      console.log(orderTime);
       const timeDifference = currentTime.diff(orderTime, 'seconds');
+
+      console.log(timeDifference);
 
       if (timeDifference < 60) {
         return order;
