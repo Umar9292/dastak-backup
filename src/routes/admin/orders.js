@@ -565,6 +565,12 @@ router.post('/restaurantResponse', async (req, res) => {
       req.body.refundToRestaurant = false;
     }
 
+    if (status === 'Admin Accepted') {
+      req.body.acceptedTime = moment()
+        .tz('Asia/Karachi')
+        .format('hh:mm a');
+    }
+
     const order = await Orders.findByIdAndUpdate(orderId, {
       $set: req.body,
     });
@@ -1231,18 +1237,23 @@ router.post('/riderOngoingOrders', async (req, res) => {
     let newUpcomingOrders = [];
     let oldUpcomingOrders = [];
 
-    await Promise.all(
-      upcoming.map(order => {
-        const orderTime = moment(order.time, 'hh:mm a').subtract(5, 'hours');
-        const timeDifference = currentTime.diff(orderTime, 'seconds');
+    if (upcoming.length > 0) {
+      await Promise.all(
+        upcoming.map(order => {
+          const orderTime = moment(order.acceptedTime, 'hh:mm a').subtract(
+            5,
+            'hours'
+          );
+          const timeDifference = currentTime.diff(orderTime, 'seconds');
 
-        if (timeDifference <= 60) {
-          newUpcomingOrders = [...newUpcomingOrders, order];
-        } else {
-          oldUpcomingOrders = [...oldUpcomingOrders, order];
-        }
-      })
-    );
+          if (timeDifference <= 60) {
+            newUpcomingOrders = [...newUpcomingOrders, order];
+          } else {
+            oldUpcomingOrders = [...oldUpcomingOrders, order];
+          }
+        })
+      );
+    }
 
     if (idleRiders > 0) {
       if (status === 'idle' && newUpcomingOrders.length > 0) {
