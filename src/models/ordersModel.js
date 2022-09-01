@@ -51,6 +51,7 @@ const ordersModel = Schema(
     dateForSearching: Date,
     time: String,
     timeWhenDelivered: String,
+    acceptedTime: String,
     pickUpTime: String,
     products: Object,
     orderTotal: Number,
