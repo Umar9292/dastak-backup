@@ -755,7 +755,7 @@ router.get('/createRidersPassword', async (_req, res) => {
 
 router.post('/testAlgorithm', async (req, res) => {
   try {
-    const { startDate, endDate } = req.body;
+    const { startDate, endDate, count } = req.body;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -787,7 +787,7 @@ router.post('/testAlgorithm', async (req, res) => {
           .select('time date products name')
           .lean();
 
-        if (thisUsersOrders.length >= 10) {
+        if (thisUsersOrders.length >= count) {
           userCount += 1;
         }
       })
