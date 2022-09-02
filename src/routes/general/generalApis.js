@@ -755,7 +755,7 @@ router.get('/createRidersPassword', async (_req, res) => {
 
 router.post('/testAlgorithm', async (req, res) => {
   try {
-    const { startDate, endDate, count } = req.body;
+    const { startDate, endDate, thresholdAmount } = req.body;
 
     const start = moment(startDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
@@ -784,10 +784,15 @@ router.post('/testAlgorithm', async (req, res) => {
             $lte: end,
           },
         })
-          .select('time date products name')
+          .select('time date products name orderTotal')
           .lean();
 
-        if (thisUsersOrders.length >= count) {
+        const orderTotal = thisUsersOrders.reduce(
+          (a, b) => a + b.orderTotal,
+          0
+        );
+
+        if (orderTotal >= thresholdAmount) {
           userCount += 1;
         }
       })
