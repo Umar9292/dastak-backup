@@ -5,32 +5,71 @@ const Vouchers = require('../../models/vouchersModel');
 
 const router = Router();
 
+router.post('/getUserVouchers', async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const currentDate = moment().tz('Asia/Karachi');
+
+    let { vouchers } = await Vouchers.findOne({ userId }).select('vouchers');
+    if (!vouchers) {
+      return res.json({ status: '404' });
+    }
+
+    vouchers = vouchers.filter(voucher => {
+      const voucherExpiry = moment(voucher.validTill, 'DD:MM:YYYY').tz(
+        'Asia/Karachi'
+      );
+
+      if (!voucher.used && currentDate.isBefore(voucherExpiry)) {
+        return voucher;
+      }
+    });
+
+    return res.json({ status: '200', vouchers });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 router.post('/checkVoucher', async (req, res) => {
   try {
-    const { voucherCode } = req.body;
+    const { userId, voucherCode } = req.body;
 
-    const voucher = await Vouchers.findOne({ voucherCode });
-    if (!voucher) {
+    const user = await Vouchers.findOne(
+      {
+        userId,
+        vouchers: {
+          $elemMatch: {
+            voucherCode,
+            used: false,
+          },
+        },
+      },
+      {
+        'vouchers.$': 1,
+      }
+    ).lean();
+
+    if (!user) {
       return res.json({ status: '404', msg: 'Please enter a valid voucher.' });
     }
 
-    const currentDate = moment().tz('Asia/Karachi');
-    const voucherExpiry = moment(voucher.expiry, 'DD:MM:YYYY').tz(
-      'Asia/Karachi'
+    await Vouchers.updateOne(
+      {
+        'vouchers.voucherCode': voucherCode,
+      },
+      { $set: { 'vouchers.$.used': true } }
     );
 
-    if (voucher.used || currentDate.isAfter(voucherExpiry)) {
-      return res.json({
-        status: '404',
-        msg: 'Please enter a valid voucher.',
-      });
-    }
-
-    voucher.used = true;
-    await voucher.save();
-
-    return res.json({ status: '200', amount: voucher.amount });
+    return res.json({ status: '200', amount: user.vouchers[0].amount });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),

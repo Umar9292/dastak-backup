@@ -6,6 +6,7 @@ const vouchersModel = Schema(
     vouchers: [
       {
         name: String,
+        used: Boolean,
         amount: Number,
         validTill: String,
         voucherCode: String,
