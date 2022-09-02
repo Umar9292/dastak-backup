@@ -1,5 +1,5 @@
 const Router = require('express/lib/router');
-// const moment = require('moment-timezone');
+const moment = require('moment-timezone');
 // const { unlinkSync } = require('fs');
 // const { IncomingForm } = require('formidable');
 const { randomBytes } = require('crypto');
@@ -7,7 +7,7 @@ const { randomBytes } = require('crypto');
 
 const Users = require('../../models/userModel');
 const Products = require('../../models/productsModel');
-// const Orders = require('../../models/ordersModel');
+const Orders = require('../../models/ordersModel');
 // const Categories = require('../../models/categoriesModel');
 // const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
 
@@ -752,5 +752,55 @@ router.get('/createRidersPassword', async (_req, res) => {
     return res.json({ status: '404' });
   }
 }); */
+
+router.post('/testAlgorithm', async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    const users = await Orders.distinct('userId', {
+      status: 'Delivered',
+      dateForSearching: {
+        $gte: start,
+        $lte: end,
+      },
+    });
+
+    let userCount = 0;
+
+    await Promise.all(
+      users.map(async userId => {
+        const thisUsersOrders = await Orders.find({
+          status: 'Delivered',
+          userId,
+          dateForSearching: {
+            $gte: start,
+            $lte: end,
+          },
+        })
+          .select('time date products name')
+          .lean();
+
+        if (thisUsersOrders.length >= 10) {
+          userCount += 1;
+        }
+      })
+    );
+
+    return res.json({ userCount });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
 
 module.exports = router;
