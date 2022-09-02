@@ -2,13 +2,19 @@ const { Schema, model } = require('mongoose');
 
 const vouchersModel = Schema(
   {
-    voucherCode: String,
-    expiry: String,
-    amount: String,
-    used: Boolean,
+    userId: String,
+    vouchers: [
+      {
+        name: String,
+        amount: Number,
+        validTill: String,
+        voucherCode: String,
+      },
+    ],
   },
   {
     versionKey: false,
+    timestamps: true,
   }
 );
 
