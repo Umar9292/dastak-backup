@@ -1249,7 +1249,7 @@ router.post('/riderOngoingOrders', async (req, res) => {
       return res.json({
         status: '200',
         upcoming: [],
-        accepted: [],
+        accepted,
       });
     }
 
