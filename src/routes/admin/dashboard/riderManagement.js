@@ -3,6 +3,7 @@ const moment = require('moment-timezone');
 
 const Users = require('../../../models/userModel');
 const Orders = require('../../../models/ordersModel');
+const Zones = require('../../../models/zonesModel');
 const { notifyRiders } = require('../../../notificationHandler/handler');
 
 const router = Router();
@@ -79,7 +80,7 @@ router.post('/manageRiders', async (req, res) => {
   try {
     const { city } = req.body;
 
-    const [activeRiders, inactiveRiders] = await Promise.all([
+    const [activeRiders, inactiveRiders, { zones }] = await Promise.all([
       Users.find({ type: 'rider', status: { $ne: 'inactive' }, city })
         .sort({ available: -1 })
         .lean(),
@@ -87,9 +88,11 @@ router.post('/manageRiders', async (req, res) => {
       Users.find({ type: 'rider', status: 'inactive', city })
         .sort({ available: -1 })
         .lean(),
+
+      Zones.findOne({ city }).lean(),
     ]);
 
-    return res.json({ status: '200', activeRiders, inactiveRiders });
+    return res.json({ status: '200', activeRiders, inactiveRiders, zones });
   } catch (err) {
     return res.json({
       status: '404',
