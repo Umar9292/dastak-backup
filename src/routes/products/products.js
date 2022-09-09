@@ -728,7 +728,6 @@ router.post('/dastakDeals', async (req, res) => {
     const { lat, long, userId } = req.body;
 
     let dastakDeals = [];
-    let maxCountProducts;
 
     const restaurants = await Users.aggregate([
       {
@@ -769,7 +768,7 @@ router.post('/dastakDeals', async (req, res) => {
             ]);
 
             if (products.length > 0) {
-              maxCountProducts = products.filter(
+              const maxCountProducts = products.filter(
                 product => product.maxCount !== undefined
               );
 
