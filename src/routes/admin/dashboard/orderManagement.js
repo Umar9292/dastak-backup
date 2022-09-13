@@ -10,11 +10,37 @@ const router = Router();
 
 router.post('/allOrders', async (req, res) => {
   try {
-    const { city } = req.body;
+    const { city, adminType, zone } = req.body;
 
     const today = moment()
       .tz('Asia/Karachi')
       .format('DD-MM-YYYY');
+
+    let upcomingQuery;
+    let acceptedQuery;
+    let pickedQuery;
+    let rejectedQuery;
+    let totalOrdersQuery;
+
+    if (adminType === 'super admin') {
+      upcomingQuery = { status: 'Pending', city };
+      pickedQuery = { status: 'Rider Picked Up', city };
+      rejectedQuery = { status: 'Rejected', city, date: today };
+      totalOrdersQuery = { status: { $ne: 'Rejected' }, city, date: today };
+      acceptedQuery = {
+        status: { $in: ['Admin Accepted', 'Rider Accepted'] },
+        city,
+      };
+    } else {
+      upcomingQuery = { status: 'Pending', zone };
+      pickedQuery = { status: 'Rider Picked Up', zone };
+      rejectedQuery = { status: 'Rejected', zone, date: today };
+      totalOrdersQuery = { status: { $ne: 'Rejected' }, zone, date: today };
+      acceptedQuery = {
+        status: { $in: ['Admin Accepted', 'Rider Accepted'] },
+        zone,
+      };
+    }
 
     const [
       upcoming,
@@ -23,30 +49,23 @@ router.post('/allOrders', async (req, res) => {
       rejected,
       totalOrders,
     ] = await Promise.all([
-      Orders.find({ status: 'Pending', city })
+      Orders.find(upcomingQuery)
         .sort({ createdAt: -1 })
         .lean(),
 
-      Orders.find({
-        status: { $in: ['Admin Accepted', 'Rider Accepted'] },
-        city,
-      })
+      Orders.find(acceptedQuery)
         .sort({ createdAt: -1 })
         .lean(),
 
-      Orders.find({ status: 'Rider Picked Up', city })
+      Orders.find(pickedQuery)
         .sort({ createdAt: -1 })
         .lean(),
 
-      Orders.find({ status: 'Rejected', city, date: today })
+      Orders.find(rejectedQuery)
         .sort({ createdAt: -1 })
         .lean(),
 
-      Orders.countDocuments({
-        status: { $ne: 'Rejected' },
-        city,
-        date: today,
-      }).lean(),
+      Orders.countDocuments(totalOrdersQuery).lean(),
     ]);
 
     return res.json({

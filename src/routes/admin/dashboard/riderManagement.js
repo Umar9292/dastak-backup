@@ -78,19 +78,42 @@ router.post('/activeRiders', async (req, res) => {
 
 router.post('/manageRiders', async (req, res) => {
   try {
-    const { city } = req.body;
+    const { city, adminType, zone } = req.body;
 
-    const [activeRiders, inactiveRiders, { zones }] = await Promise.all([
-      Users.find({ type: 'rider', status: { $ne: 'inactive' }, city })
+    let activeRidersQuery;
+    let inactiveRidersQuery;
+
+    let zones = [];
+
+    if (adminType === 'super admin') {
+      activeRidersQuery = { type: 'rider', status: { $ne: 'inactive' }, city };
+      inactiveRidersQuery = { type: 'rider', status: 'inactive', city };
+    } else {
+      activeRidersQuery = { type: 'rider', status: { $ne: 'inactive' }, zone };
+      inactiveRidersQuery = { type: 'rider', status: 'inactive', zone };
+    }
+
+    const [
+      activeRiders,
+      inactiveRiders,
+      { zones: allZonesOfTheCity },
+    ] = await Promise.all([
+      Users.find(activeRidersQuery)
         .sort({ available: -1 })
         .lean(),
 
-      Users.find({ type: 'rider', status: 'inactive', city })
+      Users.find(inactiveRidersQuery)
         .sort({ available: -1 })
         .lean(),
 
       Zones.findOne({ city }).lean(),
     ]);
+
+    if (adminType === 'admin') {
+      zones.push(zone);
+    } else {
+      zones = allZonesOfTheCity;
+    }
 
     return res.json({ status: '200', activeRiders, inactiveRiders, zones });
   } catch (err) {
