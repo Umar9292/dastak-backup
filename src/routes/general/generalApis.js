@@ -812,8 +812,8 @@ router.post('/testAlgorithm', async (req, res) => {
 router.get('/payFastTest', async (_req, res) => {
   try {
     const body = {
-      MERCHANT_ID: '102',
-      SECURED_KEY: 'zWHjBp2AlttNu1sK',
+      MERCHANT_ID: process.env.PAYFAST_MERCHANT_ID,
+      SECURED_KEY: process.env.PAYFAST_SECURED_KEY,
       BASKET_ID: '1',
       TXNAMT: '300',
     };
@@ -830,9 +830,9 @@ router.get('/payFastTest', async (_req, res) => {
   }
 });
 
-router.get('/payFastCallback', async (req, res) => {
+router.post('/payFastCallback', async (req, res) => {
   try {
-    console.log(req.query);
+    console.log(req.body);
 
     res.redirect(process.env.CARD_SUCCESS_URL);
   } catch (err) {
