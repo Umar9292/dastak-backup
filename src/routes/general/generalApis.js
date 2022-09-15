@@ -809,13 +809,14 @@ router.post('/testAlgorithm', async (req, res) => {
   }
 });
 
-router.get('/payFastTest', async (_req, res) => {
+router.post('/payFastTest', async (req, res) => {
   try {
+    const { amount } = req.body;
     const body = {
       MERCHANT_ID: process.env.PAYFAST_MERCHANT_ID,
       SECURED_KEY: process.env.PAYFAST_SECURED_KEY,
-      BASKET_ID: '1',
-      TXNAMT: '50',
+      BASKET_ID: '1111',
+      TXNAMT: amount,
     };
 
     const { data } = await axios.post(
@@ -823,7 +824,7 @@ router.get('/payFastTest', async (_req, res) => {
       body
     );
 
-    res.json({ data });
+    res.json({ status: '200', token: data.ACCESS_TOKEN });
   } catch (err) {
     console.log(err);
     return res.json({ err });
@@ -834,7 +835,7 @@ router.post('/payFastCallback', async (req, res) => {
   try {
     console.log(req.body);
 
-    res.redirect(process.env.CARD_SUCCESS_URL);
+    res.status(200).send();
   } catch (err) {
     console.log(err);
     return res.json({ err });
