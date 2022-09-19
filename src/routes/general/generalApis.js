@@ -812,6 +812,7 @@ router.post('/testAlgorithm', async (req, res) => {
 router.post('/payFastTest', async (req, res) => {
   try {
     const { amount } = req.body;
+
     const body = {
       MERCHANT_ID: process.env.PAYFAST_MERCHANT_ID,
       SECURED_KEY: process.env.PAYFAST_SECURED_KEY,
