@@ -309,7 +309,7 @@ router.post('/ongoingOrders', async (req, res) => {
     const { martId } = req.body;
 
     const [upcoming, accepted] = await Promise.all([
-      Orders.find({ status: 'Pending', martId })
+      Orders.find({ status: 'Pending', martId, martName: { $ne: undefined } })
         .sort({ createdAt: -1 })
         .lean(),
 
