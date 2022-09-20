@@ -248,12 +248,15 @@ router.post('/deliveredOrders', async (req, res) => {
     let ourProfit = 0;
     let pickUpPercentage = 0;
     let dealPaymentForRestaurant = 0;
+    let netSale = 0;
 
     await Promise.all(
       deliveredOrders.map(async ({ products, orderType }) => {
         await Promise.all(
           products.map(async product => {
             const { net, count } = product;
+
+            netSale += net;
 
             if (orderType === 'Delivery' && product.actualPrice === undefined) {
               nonDealPayment += net;
@@ -293,6 +296,7 @@ router.post('/deliveredOrders', async (req, res) => {
       dealPayment: dealPaymentForRestaurant,
       nonDealPayment,
       totalToPay,
+      netSale,
     });
   } catch (err) {
     console.log(err);
