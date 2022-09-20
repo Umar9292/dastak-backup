@@ -154,6 +154,7 @@ router.post('/restaurantCollections', async (req, res) => {
         let dealPaymentToShowRestaurant = 0;
         let serviceChargePercentage = 0;
         let totalDiscount = 0;
+        let netSale = 0;
 
         await Promise.all(
           orders.map(async order => {
@@ -169,6 +170,8 @@ router.post('/restaurantCollections', async (req, res) => {
             await Promise.all(
               products.map(async product => {
                 const { net, count } = product;
+
+                netSale += net;
 
                 if (
                   orderType === 'Delivery' &&
@@ -251,6 +254,8 @@ router.post('/restaurantCollections', async (req, res) => {
         nonDealPayment = nonDealPayment - ourPercentage - pickUpPercentage;
 
         return {
+          bankCode: '61',
+          refNum: 'BASE LINE INTER BANK',
           martId,
           martName,
           orderCount: deliveryOrders.length,
@@ -259,6 +264,7 @@ router.post('/restaurantCollections', async (req, res) => {
           dealPayment: dealPaymentToShowRestaurant,
           nonDealPayment,
           totalToPay,
+          netSale,
           deliveryOrders,
           pickupOrders,
           phone: restaurant.jazzCashNumber
@@ -274,6 +280,22 @@ router.post('/restaurantCollections', async (req, res) => {
       (a, b) => a + b.totalOfDeliveryOrders,
       0
     );
+
+    const workbook = new Exceljs.Workbook();
+    const worksheet = workbook.addWorksheet(`${startDate} - ${endDate}`);
+
+    worksheet.columns = [
+      { header: 'BANK_CODE', key: 'bankCode', width: 15 },
+      { header: 'ACCOUNTNUMBER', key: 'phone', width: 15 },
+      { header: 'BENENAME', key: 'martName', width: 15 },
+      { header: 'CUSTOMERREFERENCENUMBER', key: 'refNum', width: 15 },
+      { header: 'TRANSAMOUNT', key: 'totalToPay', width: 15 },
+    ];
+
+    await Promise.all(data.map(doc => worksheet.addRow(doc)));
+
+    await workbook.xlsx.writeFile(`${startDate} - ${endDate}.xlsx`);
+    sendCollection(`${startDate} - ${endDate}.xlsx`);
 
     data = orderBy(data, ['totalToPay'], ['desc']);
 
