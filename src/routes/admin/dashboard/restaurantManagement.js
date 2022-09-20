@@ -159,6 +159,7 @@ router.post('/restaurantCollections', async (req, res) => {
         let dealPaymentToShowRestaurant = 0;
         let serviceChargePercentage = 0;
         let totalDiscount = 0;
+        let netSale = 0;
 
         await Promise.all(
           orders.map(async order => {
@@ -174,6 +175,8 @@ router.post('/restaurantCollections', async (req, res) => {
             await Promise.all(
               products.map(async product => {
                 const { net, count } = product;
+
+                netSale += net;
 
                 if (
                   orderType === 'Delivery' &&
@@ -266,6 +269,7 @@ router.post('/restaurantCollections', async (req, res) => {
           dealPayment: dealPaymentToShowRestaurant,
           nonDealPayment,
           totalToPay,
+          netSale,
           deliveryOrders,
           pickupOrders,
           phone: restaurant.jazzCashNumber
