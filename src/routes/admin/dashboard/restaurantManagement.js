@@ -286,7 +286,7 @@ router.post('/restaurantCollections', async (req, res) => {
       0
     );
 
-    const workbook = new Exceljs.Workbook();
+    /*  const workbook = new Exceljs.Workbook();
     const worksheet = workbook.addWorksheet(`${startDate} - ${endDate}`);
 
     worksheet.columns = [
@@ -300,7 +300,7 @@ router.post('/restaurantCollections', async (req, res) => {
     await Promise.all(data.map(doc => worksheet.addRow(doc)));
 
     await workbook.xlsx.writeFile(`${startDate} - ${endDate}.xlsx`);
-    sendCollection(`${startDate} - ${endDate}.xlsx`);
+    sendCollection(`${startDate} - ${endDate}.xlsx`); */
 
     data = orderBy(data, ['totalToPay'], ['desc']);
 
