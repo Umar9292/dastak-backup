@@ -8,6 +8,7 @@ const WalletHistory = require('../../models/walletHistory');
 
 const { getAddress } = require('../../geoCoder/getAddress');
 const { getDistance } = require('../../geoCoder/getDistance');
+const { checkTime } = require('../../checkTime/checkTime');
 const {
   calculateRiderFare,
 } = require('../../calculateRiderFare/calculateRiderFare');
@@ -44,6 +45,14 @@ router.post('/placeOrder', async (req, res) => {
       deliveryCharges,
       paymentType,
     } = params;
+
+    const restaurantIsOpen = await checkTime(martId);
+    if (!restaurantIsOpen) {
+      return res.json({
+        status: '404',
+        msg: 'Sorry, the restaurant got closed.',
+      });
+    }
 
     const date = moment()
       .tz('Asia/Karachi')
