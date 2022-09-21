@@ -1,6 +1,6 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
-const Exceljs = require('exceljs');
+// const Exceljs = require('exceljs');
 const { orderBy } = require('lodash');
 
 const Users = require('../../../models/userModel');
@@ -8,9 +8,9 @@ const Orders = require('../../../models/ordersModel');
 const Products = require('../../../models/productsModel');
 const PaymentHistory = require('../../../models/paymentHistoryModel');
 
-const {
+/* const {
   sendCollection,
-} = require('../../../emailHandler/sendCollections/sendCollections');
+} = require('../../../emailHandler/sendCollections/sendCollections'); */
 
 const router = Router();
 
