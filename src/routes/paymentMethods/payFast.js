@@ -123,6 +123,8 @@ router.post('/payFastCallback', async (req, res) => {
       'onlineOrder.transactionId': basket_id,
     });
 
+    console.log(order);
+
     const {
       martId,
       latitude: userLatitude,
