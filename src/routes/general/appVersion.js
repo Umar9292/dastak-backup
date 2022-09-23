@@ -81,7 +81,7 @@ router.post('/ridersCheckVersion', async (req, res) => {
   try {
     const { version } = req.body;
 
-    if (version === '1.6' || version === '1.7') {
+    if (version === '1.6' || version === '1.8') {
       return res.json({ status: '200' });
     }
 
