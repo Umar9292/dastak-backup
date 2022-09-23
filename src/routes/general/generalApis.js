@@ -828,6 +828,7 @@ router.post('/payFastTest', async (req, res) => {
     res.json({ status: '200', token: data.ACCESS_TOKEN });
   } catch (err) {
     console.log(err);
+
     return res.json({ err });
   }
 });

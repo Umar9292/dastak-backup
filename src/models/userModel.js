@@ -38,6 +38,7 @@ const userModel = Schema(
       type: Boolean,
       default: true,
     },
+    onlineOrder: Object,
     zone: String,
     device: Boolean,
     radius: Number,

@@ -10,6 +10,7 @@ const ordersModel = Schema(
       type: Array,
       default: [],
     },
+    issuerName: String,
     zone: String,
     distance: String,
     deviceData: Object,

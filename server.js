@@ -40,6 +40,7 @@ const ridersShiftRouter = require('./src/routes/rider/addShift');
 const riderSignupRouter = require('./src/routes/admin/dashboard/riderSignUp');
 const easyPaisaOtpRouter = require('./src/routes/paymentMethods/easyPaisaOtp');
 const riderStatusRouter = require('./src/routes/rider/riderStatus');
+const payFastRouter = require('./src/routes/paymentMethods/payFast');
 
 // const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -93,7 +94,8 @@ app.use(
   cardRouter,
   cardTopUpRouter,
   easyPaisaTopUpRouter,
-  easyPaisaOtpRouter
+  easyPaisaOtpRouter,
+  payFastRouter
 );
 app.use(
   '/user',
