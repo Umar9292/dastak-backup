@@ -125,8 +125,6 @@ router.post('/payFastCallback', async (req, res) => {
       .select('onlineOrder')
       .lean();
 
-    console.log(order);
-
     const {
       martId,
       latitude: userLatitude,
@@ -232,8 +230,7 @@ router.post('/payFastCallback', async (req, res) => {
 
     await user.save();
 
-    const orderProducts = JSON.parse(products);
-    const count = orderProducts.reduce((a, b) => a + b.count, 0);
+    const count = products.reduce((a, b) => a + b.count, 0);
 
     if (mart.email && mart.email !== '' && user.email.includes('@')) {
       notifyRestaurantByEmail(mart.email);
@@ -260,6 +257,8 @@ router.post('/payFastCallback', async (req, res) => {
         count
       );
     }
+
+    return res.status(200).send();
   }
 });
 
