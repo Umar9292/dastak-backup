@@ -9,6 +9,7 @@ const WalletHistory = require('../../models/walletHistory');
 
 const { getAddress } = require('../../geoCoder/getAddress');
 const { getDistance } = require('../../geoCoder/getDistance');
+const { checkTime } = require('../../checkTime/checkTime');
 const {
   notifyUser,
   notifyAdmin,
@@ -43,7 +44,15 @@ const router = Router();
 
 router.post('/v1/card', async (req, res) => {
   try {
-    const { orderTotal, onlineAmount, paymentType } = req.body;
+    const { orderTotal, onlineAmount, paymentType, martId } = req.body;
+
+    const restaurantIsOpen = await checkTime(martId);
+    if (!restaurantIsOpen) {
+      return res.json({
+        status: '404',
+        msg: 'Sorry, the restaurant got closed.',
+      });
+    }
 
     const transactionId = `A${moment()
       .tz('Asia/Karachi')
