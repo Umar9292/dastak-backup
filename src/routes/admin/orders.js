@@ -1,6 +1,6 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
-const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
+const moment = require('moment-timezone');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
