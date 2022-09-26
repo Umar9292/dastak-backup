@@ -33,14 +33,15 @@ const otpVerificationRouter = require('./src/routes/user/otpVerification');
 const uploadPrescription = require('./src/routes/stores/uploadPrescription');
 const deliveryChargesRouter = require('./src/routes/user/deliveryCharges');
 const vouchersRouter = require('./src/routes/user/vouchers');
-const cardRouter = require('./src/routes/paymentMethods/creditDebitCard');
+// const cardRouter = require('./src/routes/paymentMethods/creditDebitCard');
 const dastakWalletRouter = require('./src/routes/dastakWallet/dastakWallet');
-const cardTopUpRouter = require('./src/routes/dastakWallet/walletTopUp/cardTopUp');
+// const cardTopUpRouter = require('./src/routes/dastakWallet/walletTopUp/cardTopUp');
 const ridersShiftRouter = require('./src/routes/rider/addShift');
 const riderSignupRouter = require('./src/routes/admin/dashboard/riderSignUp');
 const easyPaisaOtpRouter = require('./src/routes/paymentMethods/easyPaisaOtp');
 const riderStatusRouter = require('./src/routes/rider/riderStatus');
 const payFastRouter = require('./src/routes/paymentMethods/payFast');
+const payFastTopupRouter = require('./src/routes/dastakWallet/walletTopUp/payFastTopup');
 
 // const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -91,11 +92,12 @@ app.use('/rider', ridersShiftRouter, riderStatusRouter);
 app.use(
   '/paymentMethod',
   easyPaisaRouter,
-  cardRouter,
-  cardTopUpRouter,
+  // cardRouter,
+  // cardTopUpRouter,
   easyPaisaTopUpRouter,
   easyPaisaOtpRouter,
-  payFastRouter
+  payFastRouter,
+  payFastTopupRouter
 );
 app.use(
   '/user',

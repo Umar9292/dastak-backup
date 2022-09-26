@@ -23,8 +23,6 @@ const {
   emailOrderDetailsToCustomer,
 } = require('../../emailHandler/customerEmail/customerEmail');
 
-// const { TOPUP_SUCCESSFUL } = process.env;
-
 router.post('/v2/getToken', async (req, res) => {
   try {
     const {
@@ -75,48 +73,33 @@ router.post('/payFastCallback', async (req, res) => {
 
   console.log(req.body);
 
-  //   const transactionType = O.substring(0, 2);
+  const transactionType = basket_id.substring(0, 3);
 
-  /*  if (transactionType === 'ATO' && TS === 'F') {
-    await Users.updateOne(
-      { 'topUp.transactionId': O },
-      { 'topUp.status': 'Failed' }
-    );
-
-    return res.redirect(TRANS_FAILED);
-  }
-
-  if (transactionType === 'ATO' && TS === 'P') {
-    const user = await Users.findOne({ 'topUp.transactionId': O }).select(
-      'wallet topUp'
-    );
+  if (transactionType === 'PFTO' && err_code === '000') {
+    const user = await Users.findOne({
+      'topUp.transactionId': basket_id,
+    }).select('wallet topUp');
 
     const { actualAmount } = user.topUp;
     user.wallet.amount += actualAmount;
     user.topUp.status = 'Successful';
-    await user.save();
 
     const topUp = {
       type: 'Top Up',
       amount: actualAmount,
-      transactionId: O,
+      transactionId: basket_id,
       userId: user._id,
-      topUpMethod: 'Credit/Debit Card',
+      topUpMethod: PaymentName,
+      issuerName: issuer_name,
       time: moment()
         .tz('Asia/karachi')
         .format('MM-DD-YYYY hh:mm a'),
     };
 
-    await new WalletHistory(topUp).save();
+    await Promise.all([new WalletHistory(topUp).save(), user.save()]);
 
-    return res.redirect(TOPUP_SUCCESSFUL_URL);
+    return res.status(200).send();
   }
-
-  if (TS === 'F') {
-    await Orders.deleteOne({ transactionId: O });
-
-    return res.redirect(CARD_FAILED_URL);
-  } */
 
   if (err_code === '000') {
     const { onlineOrder: order } = await Users.findOne({
@@ -260,6 +243,13 @@ router.post('/payFastCallback', async (req, res) => {
 
     return res.status(200).send();
   }
+
+  await Users.findOne(
+    { 'onlineOrder.transactionId': basket_id },
+    { $unset: { onlineOrder: '' } }
+  );
+
+  return res.status(404).send();
 });
 
 module.exports = router;

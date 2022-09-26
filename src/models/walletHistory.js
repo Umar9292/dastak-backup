@@ -7,6 +7,7 @@ const walletHistoryModel = Schema(
     time: String,
     userId: String,
     topUpMethod: String,
+    issuerName: String,
     easyPaisaPhone: String,
     transactionId: String,
     orderId: String,
