@@ -73,7 +73,7 @@ router.post('/payFastCallback', async (req, res) => {
 
   console.log(req.body);
 
-  const transactionType = basket_id.substring(0, 3);
+  const transactionType = basket_id.substring(0, 4);
 
   console.log(transactionType);
 
