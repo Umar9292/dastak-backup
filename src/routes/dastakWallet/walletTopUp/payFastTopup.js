@@ -7,7 +7,7 @@ const Users = require('../../../models/userModel');
 
 const router = Router();
 
-router.post('/v2/cardTopUp', async (req, res) => {
+router.post('/v2/payFastTopUp', async (req, res) => {
   try {
     const { userId, amount, actualAmount } = req.body;
 
@@ -36,7 +36,7 @@ router.post('/v2/cardTopUp', async (req, res) => {
       amount,
     };
 
-    await Users.findByIdAndUpdate(userId, { topUp });
+    await Users.updateOne({ _id: userId }, { topUp });
   } catch (err) {
     console.log(err);
     return res.json({

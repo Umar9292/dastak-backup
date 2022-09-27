@@ -75,6 +75,8 @@ router.post('/payFastCallback', async (req, res) => {
 
   const transactionType = basket_id.substring(0, 3);
 
+  console.log(transactionType);
+
   if (transactionType === 'PFTO' && err_code === '000') {
     const user = await Users.findOne({
       'topUp.transactionId': basket_id,
