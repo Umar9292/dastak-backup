@@ -12,6 +12,7 @@ const WalletHistory = require('../../models/walletHistory');
 const { getAddress } = require('../../geoCoder/getAddress');
 const { getDistance } = require('../../geoCoder/getDistance');
 const {
+  notifyUser,
   notifyAdmin,
   notifySuperAdmin,
 } = require('../../notificationHandler/handler');
@@ -75,12 +76,10 @@ router.post('/payFastCallback', async (req, res) => {
 
   const transactionType = basket_id.substring(0, 4);
 
-  console.log(transactionType);
-
   if (transactionType === 'PFTO' && err_code === '000') {
     const user = await Users.findOne({
       'topUp.transactionId': basket_id,
-    }).select('wallet topUp');
+    }).select('wallet topUp playerId phone');
 
     const { actualAmount } = user.topUp;
     user.wallet.amount += actualAmount;
@@ -98,7 +97,17 @@ router.post('/payFastCallback', async (req, res) => {
         .format('MM-DD-YYYY hh:mm a'),
     };
 
-    await Promise.all([new WalletHistory(topUp).save(), user.save()]);
+    const msg = `Dear Dastak user, amount of Rs. ${actualAmount} has been added to your dastk wallet. Your new dastak wallet balance is Rs. ${user.wallet.amount} `;
+
+    await Promise.all([
+      new WalletHistory(topUp).save(),
+      user.save(),
+      notifyUser(msg, user.playerId, { flag: 'topUp' }),
+      axios.get(
+        `${process.env.OTP_URL}&to=${92 +
+          user.phone.substring(1, 11)}&message=${msg}`
+      ),
+    ]);
 
     return res.status(200).send();
   }
