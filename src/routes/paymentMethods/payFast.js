@@ -97,7 +97,7 @@ router.post('/payFastCallback', async (req, res) => {
         .format('MM-DD-YYYY hh:mm a'),
     };
 
-    const msg = `Dear Dastak user, amount of Rs. ${actualAmount} has been added to your dastk wallet. Your new dastak wallet balance is Rs. ${user.wallet.amount} `;
+    const msg = `Dear Dastak user, amount of Rs. ${actualAmount} has been added to your dastk wallet. Your new dastak wallet balance is Rs. ${user.wallet.amount}. Happy ordering 😇`;
 
     await Promise.all([
       new WalletHistory(topUp).save(),
