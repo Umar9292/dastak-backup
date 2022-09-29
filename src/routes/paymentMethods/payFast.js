@@ -103,10 +103,10 @@ router.post('/payFastCallback', async (req, res) => {
       new WalletHistory(topUp).save(),
       user.save(),
       notifyUser(msg, user.playerId, { flag: 'topUp' }),
-      axios.get(
-        `${process.env.OTP_URL}&to=${92 +
-          user.phone.substring(1, 11)}&message=${msg}`
-      ),
+      // axios.get(
+      //   `${process.env.OTP_URL}&to=${92 +
+      //     user.phone.substring(1, 11)}&message=${msg}`
+      // ),
     ]);
 
     return res.status(200).send();
