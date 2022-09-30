@@ -169,6 +169,10 @@ router.get('/alfaCallback', async (req, res) => {
   if (TS === 'P') {
     const order = await Orders.findOne({ transactionId: O });
 
+    if (order.martName !== undefined) {
+      return res.redirect(CARD_SUCCESS_URL);
+    }
+
     const {
       martId,
       latitude: userLatitude,
