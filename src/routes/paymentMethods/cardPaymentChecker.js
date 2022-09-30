@@ -14,23 +14,22 @@ exports.cardPaymentChecker = async () => {
     status: 'Pending',
     paymentMethod: 'Debit/Credit Card',
     martName: undefined,
-    date: '30-09-2022',
+    date,
   })
     .select('transactionId')
     .lean();
 
-  console.log(cardPaymentOrders);
+  if (cardPaymentOrders.length > 0) {
+    cardPaymentOrders.map(async order => {
+      const { transactionId } = order;
 
-  cardPaymentOrders.map(async order => {
-    const { transactionId } = order;
+      let result = await axios.get(`${ALFA_IPN_URL}/${transactionId}`);
+      result = JSON.parse(result.data);
+      const { ResponseCode, TransactionStatus } = result;
 
-    let result = await axios.get(`${ALFA_IPN_URL}/${transactionId}`);
-    result = JSON.parse(result.data);
-    console.log(result);
-    const { ResponseCode, TransactionStatus } = result;
-
-    // if (ResponseCode === '00' && TransactionStatus === 'Paid') {
-    //   await axios.get(`${ALFA_RETURN_URL}?TS=P&O=${transactionId}`);
-    // }
-  });
+      if (ResponseCode === '00' && TransactionStatus === 'Paid') {
+        await axios.get(`${ALFA_RETURN_URL}?TS=P&O=${transactionId}`);
+      }
+    });
+  }
 };
