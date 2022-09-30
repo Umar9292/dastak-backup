@@ -7,6 +7,9 @@ const { connect } = require('mongoose');
 const { dbUrl } = require('./utils/dbUrls');
 // const { shiftEndChecker } = require('./src/routes/rider/shiftEndChecker');
 // const { shiftStartChecker } = require('./src/routes/rider/shiftStartChecker');
+const {
+  cardPaymentChecker,
+} = require('./src/routes/paymentMethods/cardPaymentChecker');
 
 if (cluster.isMaster) {
   connect(
@@ -25,6 +28,10 @@ if (cluster.isMaster) {
         //   shiftStartChecker();
         //   shiftEndChecker();
         // }, 10000);
+
+        setInterval(() => {
+          cardPaymentChecker();
+        }, 30000);
 
         console.log('Connected to database');
       }
