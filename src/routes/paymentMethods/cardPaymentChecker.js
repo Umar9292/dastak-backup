@@ -26,7 +26,7 @@ exports.cardPaymentChecker = async () => {
 
     let result = await axios.get(`${ALFA_IPN_URL}/${transactionId}`);
     result = JSON.parse(result.data);
-    console.log(result.data);
+    console.log(result);
     const { ResponseCode, TransactionStatus } = result;
 
     // if (ResponseCode === '00' && TransactionStatus === 'Paid') {
