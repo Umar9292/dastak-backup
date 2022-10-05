@@ -11,6 +11,7 @@ const ordersModel = Schema(
       default: [],
     },
     issuerName: String,
+    platformFee: Number,
     zone: String,
     distance: String,
     deviceData: Object,
