@@ -1,6 +1,7 @@
 const Router = require('express/lib/router');
 
 const Users = require('../../models/userModel');
+const PlatformFeeModel = require('../../models/platformFeeModel');
 
 const { getAddress } = require('../../geoCoder/getAddress');
 const {
@@ -20,13 +21,17 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
       userLongitude,
     } = req.body;
 
-    const [restaurant, user] = await Promise.all([
+    const [restaurant, user, { platformFee }] = await Promise.all([
       Users.findById(martId)
         .select('-password -__v')
         .lean(),
 
       Users.findById(userId)
         .select('-password -__v')
+        .lean(),
+
+      PlatformFeeModel.findOne({})
+        .select('platformFee')
         .lean(),
     ]);
 
@@ -61,6 +66,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
       status: '202',
       easyPaisa: true,
       card: true,
+      platformFee,
       restaurant,
       address,
     });
