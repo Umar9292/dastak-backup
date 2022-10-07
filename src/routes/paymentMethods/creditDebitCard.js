@@ -337,7 +337,7 @@ router.post('/v1/checkCardPaymentStatus', async (req, res) => {
     }
 
     res.json({ status: '404' });
-    await Orders.deleteOne({ transactionId });
+    // await Orders.deleteOne({ transactionId });
   } catch (err) {
     console.log(err);
     return res.json({
