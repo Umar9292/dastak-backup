@@ -369,7 +369,10 @@ router.post('/orderDetails', async (req, res) => {
 
 router.post('/specificUserOrders', async (req, res) => {
   try {
-    const orders = await Orders.find({ userId: req.body.userId })
+    const orders = await Orders.find({
+      userId: req.body.userId,
+      martName: { $ne: undefined },
+    })
       .sort({
         createdAt: -1,
       })
