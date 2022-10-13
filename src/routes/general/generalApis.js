@@ -1,6 +1,5 @@
 const Router = require('express/lib/router');
 const moment = require('moment-timezone');
-const axios = require('axios');
 // const { unlinkSync } = require('fs');
 // const { IncomingForm } = require('formidable');
 const { randomBytes } = require('crypto');
@@ -806,40 +805,6 @@ router.post('/testAlgorithm', async (req, res) => {
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
-  }
-});
-
-router.post('/payFastTest', async (req, res) => {
-  try {
-    const { amount } = req.body;
-
-    const body = {
-      MERCHANT_ID: process.env.PAYFAST_MERCHANT_ID,
-      SECURED_KEY: process.env.PAYFAST_SECURED_KEY,
-      BASKET_ID: '1111',
-      TXNAMT: amount,
-    };
-
-    const { data } = await axios.post(
-      'https://ipguat.apps.net.pk/Ecommerce/api/Transaction/GetAccessToken',
-      body
-    );
-
-    res.json({ status: '200', token: data.ACCESS_TOKEN });
-  } catch (err) {
-    console.log(err);
-    return res.json({ err });
-  }
-});
-
-router.post('/payFastCallback', async (req, res) => {
-  try {
-    console.log(req.body);
-
-    res.status(200).send();
-  } catch (err) {
-    console.log(err);
-    return res.json({ err });
   }
 });
 
