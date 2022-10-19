@@ -809,23 +809,4 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-router.post('/referralCode', async (_req, res) => {
-  try {
-    const users = await Users.find({ type: 'user' }).select('referral');
-
-    users.forEach(async user => {
-      user.referral = {
-        code: randomBytes(3).toString('hex'),
-        usedCount: 0,
-      };
-
-      user.save();
-    });
-
-    res.json({ status: '200' });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
 module.exports = router;
