@@ -809,12 +809,12 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-router.post('/refferalCode', async (_req, res) => {
+router.post('/referralCode', async (_req, res) => {
   try {
-    const users = await Users.find({ type: 'user' }).select('refferal');
+    const users = await Users.find({ type: 'user' }).select('referral');
 
     users.forEach(async user => {
-      user.refferalCode = {
+      user.referral = {
         code: randomBytes(3).toString('hex'),
         usedCount: 0,
       };
