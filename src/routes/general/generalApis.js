@@ -1,19 +1,20 @@
 const Router = require('express/lib/router');
-const moment = require('moment-timezone');
+const { randomBytes } = require('crypto');
+// const moment = require('moment-timezone');
+// const axios = require('axios');
 // const { unlinkSync } = require('fs');
 // const { IncomingForm } = require('formidable');
-const { randomBytes } = require('crypto');
 // const { uniqBy } = require('lodash');
 
 const Users = require('../../models/userModel');
-const Products = require('../../models/productsModel');
-const Orders = require('../../models/ordersModel');
+// const Products = require('../../models/productsModel');
+// const Orders = require('../../models/ordersModel');
 // const Categories = require('../../models/categoriesModel');
 // const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
 
 const router = Router();
 
-router.get('/changePrices', async (_req, res) => {
+/* router.get('/changePrices', async (_req, res) => {
   try {
     const products = await Products.find({
       martId: '62d67188252d83a0964ca631',
@@ -41,7 +42,7 @@ router.get('/changePrices', async (_req, res) => {
     });
   }
 });
-
+ */
 router.post('/closeRestaurants', async (req, res) => {
   try {
     const { searchFlag, updateFlag, city } = req.body;
@@ -753,7 +754,7 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-router.post('/testAlgorithm', async (req, res) => {
+/* router.post('/testAlgorithm', async (req, res) => {
   try {
     const { startDate, endDate, thresholdAmount } = req.body;
 
@@ -805,6 +806,25 @@ router.post('/testAlgorithm', async (req, res) => {
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
+  }
+}); */
+
+router.post('/refferalCode', async (_req, res) => {
+  try {
+    const users = await Users.find({ type: 'user' }).select('refferal');
+
+    users.forEach(async user => {
+      user.refferalCode = {
+        code: randomBytes(3).toString('hex'),
+        usedCount: 0,
+      };
+
+      user.save();
+    });
+
+    res.json({ status: '200' });
+  } catch (error) {
+    console.log(error);
   }
 });
 

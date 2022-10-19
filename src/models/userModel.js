@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const crypto = require('crypto');
 
 const GeoSchema = Schema({
   type: {
@@ -19,6 +20,17 @@ const userModel = Schema(
       amount: Number,
       actualAmount: Number,
       status: String,
+    },
+    referral: {
+      code: {
+        type: String,
+        unique: true,
+        default: crypto.randomBytes(3).toString('hex'),
+      },
+      usedCount: {
+        type: Number,
+        default: 0,
+      },
     },
     wallet: {
       amount: {

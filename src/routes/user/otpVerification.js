@@ -1,19 +1,33 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const Speakeasy = require('speakeasy');
-// const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
+const moment = require('moment-timezone');
+const crypto = require('crypto');
 const { hash, compare } = require('bcrypt');
 
 const Users = require('../../models/userModel');
 const Otp = require('../../models/otpModel');
-// const WalletHistory = require('../../models/walletHistory');
-const VoucherSignups = require('../../models/voucherSignupCount');
+const WalletHistory = require('../../models/walletHistory');
+// const VoucherSignups = require('../../models/voucherSignupCount');
 
 const router = Router();
 
 router.post('/signUpOtp', async (req, res) => {
   try {
-    const { phone } = req.body;
+    const { phone, referralCode } = req.body;
+
+    if (referralCode !== '') {
+      const refferal = await Users.findOne({ 'refferal.code': referralCode })
+        .select('refferal')
+        .lean();
+
+      if (!refferal) {
+        return res.json({
+          status: '404',
+          msg: 'The refferal code you entered is not correct.',
+        });
+      }
+    }
 
     const user = await Users.findOne({
       phone,
@@ -57,9 +71,15 @@ router.post('/signUpOtp', async (req, res) => {
 
 router.post('/verifySignUpOtp', async (req, res) => {
   try {
-    const { phone, otp, password } = req.body;
+    const { phone, otp, password, referralCode } = req.body;
 
-    const doc = await Otp.findOne({ phone, otp }).select('secret');
+    const [doc, referrer] = await Promise.all([
+      Otp.findOne({ phone, otp }).select('secret'),
+
+      Users.findOne({ 'referral.code': referralCode }).select(
+        'referral wallet'
+      ),
+    ]);
 
     if (!doc) {
       return res.json({
@@ -85,35 +105,58 @@ router.post('/verifySignUpOtp', async (req, res) => {
 
     req.body.verified = true;
     req.body.password = await hash(password, 10);
-    /* req.body.wallet = {
-      amount: 100,
+    req.body.wallet = {
+      amount: 50,
       isUsable: true,
-    }; */
-    const user = await new Users(req.body).save();
+    };
+    req.body.referral = {
+      code: crypto.randomBytes(3).toString('hex'),
+      usedCount: 0,
+    };
 
-    /* const history = {
-      type: 'Reward',
-      amount: 100,
+    const referrerWalletHistory = {
+      type: 'Referral Reward',
+      amount: 50,
+      userId: referrer._id,
+      time: moment()
+        .tz('Asia/karachi')
+        .format('DD-MM-YYYY hh:mm a'),
+    };
+
+    const [user] = await Promise.all([
+      new Users(req.body).save(),
+
+      new WalletHistory(referrerWalletHistory).save(),
+
+      Users.updateOne(
+        { _id: referrer._id },
+        { $inc: { 'wallet.amount': 50, 'referral.usedCount': 1 } }
+      ),
+    ]);
+
+    const history = {
+      type: 'Referral Reward',
+      amount: 50,
       userId: user._id,
       time: moment()
         .tz('Asia/karachi')
         .format('DD-MM-YYYY hh:mm a'),
     };
 
-    await new WalletHistory(history).save(); */
+    await new WalletHistory(history).save();
 
     res.json({
       status: '200',
       data: user,
-      showVoucher: false,
+      showVoucher: true,
       voucherMsg:
-        'You have been rewarded with Rs.100 in your Dastak Wallet. Enjoy and order your favorite food now.',
+        'You have been rewarded with Rs.50 in your Dastak Wallet. Enjoy and order your favorite food now.',
     });
 
-    await VoucherSignups.updateOne(
+    /* await VoucherSignups.updateOne(
       {},
       { $inc: { signupCount: 1, totalAmount: 100 } }
-    );
+    ); */
   } catch (err) {
     console.log(err);
     return res.json({
