@@ -11,11 +11,12 @@ router.post('/getUserVouchers', async (req, res) => {
 
     const currentDate = moment().tz('Asia/Karachi');
 
-    let { vouchers } = await Vouchers.findOne({ userId }).select('vouchers');
-    if (!vouchers) {
+    const user = await Vouchers.findOne({ userId }).lean();
+    if (!user) {
       return res.json({ status: '404' });
     }
 
+    let { vouchers } = user;
     vouchers = vouchers.filter(voucher => {
       const voucherExpiry = moment(voucher.validTill, 'DD:MM:YYYY').tz(
         'Asia/Karachi'
