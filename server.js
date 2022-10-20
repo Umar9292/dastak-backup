@@ -7,9 +7,6 @@ const { join } = require('path');
 // const { config } = require('cloudinary');
 const compression = require('compression');
 const { connect } = require('mongoose');
-const { createServer } = require('http');
-const socketIo = require('socket.io');
-const redis = require('socket.io-redis');
 
 const profileRouter = require('./src/routes/user/profle');
 const productsRouter = require('./src/routes/products/products');
@@ -33,12 +30,9 @@ const otpVerificationRouter = require('./src/routes/user/otpVerification');
 const uploadPrescription = require('./src/routes/stores/uploadPrescription');
 const deliveryChargesRouter = require('./src/routes/user/deliveryCharges');
 const vouchersRouter = require('./src/routes/user/vouchers');
-// const cardRouter = require('./src/routes/paymentMethods/creditDebitCard');
 const dastakWalletRouter = require('./src/routes/dastakWallet/dastakWallet');
-// const cardTopUpRouter = require('./src/routes/dastakWallet/walletTopUp/cardTopUp');
 const ridersShiftRouter = require('./src/routes/rider/addShift');
 const riderSignupRouter = require('./src/routes/admin/dashboard/riderSignUp');
-const easyPaisaOtpRouter = require('./src/routes/paymentMethods/easyPaisaOtp');
 const riderStatusRouter = require('./src/routes/rider/riderStatus');
 const payFastRouter = require('./src/routes/paymentMethods/payFast');
 const payFastTopupRouter = require('./src/routes/dastakWallet/walletTopUp/payFastTopup');
@@ -50,24 +44,6 @@ const { dbUrl } = require('./utils/dbUrls');
 const port = process.env.PORT || 8080;
 
 const app = express();
-
-const server = createServer(app);
-const io = socketIo(server, {
-  transports: ['websocket'],
-});
-// io.adapter(
-//   redis(process.env.REDIS_URL, { tls: { rejectUnauthorized: false } })
-// );
-io.adapter(redis(process.env.REDIS_URL));
-
-server.listen(port, () => console.log(`Listening on port ${port}\n`));
-
-exports.emitEPResponse = (event, data) => {
-  io.emit(event, data);
-};
-
-const easyPaisaRouter = require('./src/routes/paymentMethods/easyPaisa');
-const easyPaisaTopUpRouter = require('./src/routes/dastakWallet/walletTopUp/easyPaisaTopUp');
 
 app.disable('etag');
 app.disable('x-powered-by');
@@ -89,16 +65,7 @@ app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 app.use('/dastakWallet', dastakWalletRouter);
 app.use('/rider', ridersShiftRouter, riderStatusRouter);
-app.use(
-  '/paymentMethod',
-  easyPaisaRouter,
-  // cardRouter,
-  // cardTopUpRouter,
-  easyPaisaTopUpRouter,
-  easyPaisaOtpRouter,
-  payFastRouter,
-  payFastTopupRouter
-);
+app.use('/paymentMethod', payFastRouter, payFastTopupRouter);
 app.use(
   '/user',
   profileRouter,
@@ -139,6 +106,7 @@ connect(
       console.log(err);
     } else {
       console.log('Connected to database');
+      app.listen(port, () => console.log(`Listening on port ${port}\n`));
     }
   }
 );

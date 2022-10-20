@@ -1,48 +1,19 @@
 const Router = require('express/lib/router');
 const { randomBytes } = require('crypto');
-// const moment = require('moment-timezone');
-// const axios = require('axios');
-// const { unlinkSync } = require('fs');
-// const { IncomingForm } = require('formidable');
-// const { uniqBy } = require('lodash');
+/* const moment = require('moment-timezone');
+const axios = require('axios');
+const { unlinkSync } = require('fs');
+const { IncomingForm } = require('formidable');
+const { uniqBy } = require('lodash'); */
 
 const Users = require('../../models/userModel');
-// const Products = require('../../models/productsModel');
-// const Orders = require('../../models/ordersModel');
-// const Categories = require('../../models/categoriesModel');
-// const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
+/* const Products = require('../../models/productsModel');
+const Orders = require('../../models/ordersModel');
+const Categories = require('../../models/categoriesModel');
+const FlavoursAndDrinks = require('../../models/flavoursAndDrinks'); */
 
 const router = Router();
 
-/* router.get('/changePrices', async (_req, res) => {
-  try {
-    const products = await Products.find({
-      martId: '62d67188252d83a0964ca631',
-    });
-
-    await Promise.all(
-      products.map(product => {
-        // if (product.category !== 'Dastak Deals') {
-        let discountedPrice = ((20 / 100) * product.price).toFixed();
-        discountedPrice = Math.round(discountedPrice / 5) * 5;
-        product.price += +discountedPrice;
-        // product.discount = '0';
-        // product.actualPrice = product.discountedPrice;
-        return product.save();
-        // }
-      })
-    );
-
-    return res.json('done');
-  } catch (err) {
-    return res.json({
-      status: '404',
-      error: err.toString(),
-      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
-    });
-  }
-});
- */
 router.post('/closeRestaurants', async (req, res) => {
   try {
     const { searchFlag, updateFlag, city } = req.body;
@@ -88,6 +59,35 @@ router.get('/createRidersPassword', async (_req, res) => {
     });
   }
 });
+
+/* router.get('/changePrices', async (_req, res) => {
+  try {
+    const products = await Products.find({
+      martId: '62d67188252d83a0964ca631',
+    });
+
+    await Promise.all(
+      products.map(product => {
+        // if (product.category !== 'Dastak Deals') {
+        let discountedPrice = ((20 / 100) * product.price).toFixed();
+        discountedPrice = Math.round(discountedPrice / 5) * 5;
+        product.price += +discountedPrice;
+        // product.discount = '0';
+        // product.actualPrice = product.discountedPrice;
+        return product.save();
+        // }
+      })
+    );
+
+    return res.json('done');
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+}); */
 
 /* router.get('/test', async (_req, res) => {
   try {
