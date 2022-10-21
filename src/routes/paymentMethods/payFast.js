@@ -103,10 +103,10 @@ router.post('/payFastCallback', async (req, res) => {
       new WalletHistory(topUp).save(),
       user.save(),
       notifyUser(msg, user.playerId, { flag: 'topUp' }),
-      // axios.get(
-      //   `${process.env.OTP_URL}&to=${92 +
-      //     user.phone.substring(1, 11)}&message=${msg}`
-      // ),
+      axios.get(
+        `${process.env.OTP_URL}&to=${92 +
+          user.phone.substring(1, 11)}&message=${msg}`
+      ),
     ]);
 
     return res.status(200).send();
@@ -179,6 +179,7 @@ router.post('/payFastCallback', async (req, res) => {
     }).save();
 
     const adminMessage = `You have a new order.`;
+    const userMessage = `Dear customer your order has been placed.`;
     const info = `New Order for ${mart.name} placed by ${order.name}`;
 
     const { playerIds: restaurantPlayerIds } = mart;
@@ -199,6 +200,8 @@ router.post('/payFastCallback', async (req, res) => {
         .select('superAdminPlayerId')
         .lean(),
     ]);
+
+    notifyUser(userMessage, user.playerId, { flag: 'orderDelivered' });
 
     admins.forEach(admin => {
       notifySuperAdmin(info, adminMessage, admin.superAdminPlayerId, {
