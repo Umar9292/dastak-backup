@@ -5,6 +5,7 @@ const orderFares = Schema(
     city: String,
     deliveryCharges: Array,
     riderFares: Array,
+    platformFee: Number,
   },
   {
     versionKey: false,

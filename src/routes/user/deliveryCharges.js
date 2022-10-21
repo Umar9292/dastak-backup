@@ -1,7 +1,7 @@
 const Router = require('express/lib/router');
 
 const Users = require('../../models/userModel');
-const PlatformFeeModel = require('../../models/platformFeeModel');
+const FaresModel = require('../../models/faresModel');
 
 const { getAddress } = require('../../geoCoder/getAddress');
 const {
@@ -15,6 +15,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
     const {
       martId,
       userId,
+      city,
       martLatitude,
       martLongitude,
       userLatitude,
@@ -30,7 +31,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
         .select('-password -__v')
         .lean(),
 
-      PlatformFeeModel.findOne({})
+      FaresModel.findOne({ city })
         .select('platformFee')
         .lean(),
     ]);
@@ -54,8 +55,8 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
     if (userId !== undefined) {
       return res.json({
         status: '200',
-        easyPaisa: false,
         card: true,
+        platformFee,
         restaurant,
         address,
         user,
@@ -64,7 +65,6 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
 
     return res.json({
       status: '202',
-      easyPaisa: false,
       card: true,
       platformFee,
       restaurant,
