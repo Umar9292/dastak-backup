@@ -80,7 +80,7 @@ router.post('/calculateDeliveryCharges', async (req, res) => {
   }
 });
 
-router.post('v2/calculateDeliveryCharges', async (req, res) => {
+router.post('/v2/calculateDeliveryCharges', async (req, res) => {
   try {
     const {
       martId,
