@@ -1,6 +1,7 @@
 const Router = require('express/lib/router');
 
 const Users = require('../../models/userModel');
+const FaresModel = require('../../models/faresModel');
 
 const { getAddress } = require('../../geoCoder/getAddress');
 const {
