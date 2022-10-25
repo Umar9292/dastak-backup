@@ -17,7 +17,7 @@ router.post('/v1/getWallet', async (req, res) => {
         .lean(),
     ]);
 
-    return res.json({ status: '200', wallet, history, topUp: true });
+    return res.json({ status: '200', wallet, history, topUp: false });
   } catch (err) {
     return res.json({
       status: '404',
