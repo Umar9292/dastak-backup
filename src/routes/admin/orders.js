@@ -1362,8 +1362,11 @@ router.post('/changeOrderStatus', async (req, res) => {
       });
     }
 
-    /* if (status === 'Rider Picked Up') {
-      const { latitude, longitude, name } = await Users.findById(martId)
+    if (status === 'Rider Picked Up') {
+      const pickUpTime = moment(currentTime, 'hh:mm').format('hh:mm a');
+      req.body.pickUpTime = pickUpTime;
+
+      /* const { latitude, longitude, name } = await Users.findById(martId)
         .select('latitude longitude name')
         .lean();
 
@@ -1385,11 +1388,8 @@ router.post('/changeOrderStatus', async (req, res) => {
           status: '404',
           msg: 'Kindly go near the restaurant.',
         });
-      }
-    } */
-
-    const pickUpTime = moment(currentTime, 'hh:mm').format('hh:mm a');
-    req.body.pickUpTime = pickUpTime;
+      } */
+    }
 
     const order = await Orders.findByIdAndUpdate(
       orderId,
