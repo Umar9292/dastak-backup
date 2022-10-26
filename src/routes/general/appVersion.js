@@ -14,7 +14,7 @@ router.post('/checkVersion', async (req, res) => {
 
     if (
       (platform === 'ios' && version === '2.0.5') ||
-      (platform === 'ios' && version === '2.1.0')
+      (platform === 'ios' && version === '2.2.0')
     ) {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
@@ -35,7 +35,7 @@ router.post('/checkVersion', async (req, res) => {
 
     if (
       (platform === 'android' && version === '2.0.4') ||
-      (platform === 'android' && version === '2.1.0')
+      (platform === 'android' && version === '2.2.0')
     ) {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
