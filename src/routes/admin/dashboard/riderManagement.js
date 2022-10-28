@@ -117,6 +117,7 @@ router.post('/manageRiders', async (req, res) => {
 
     return res.json({ status: '200', activeRiders, inactiveRiders, zones });
   } catch (err) {
+    console.log(err);
     return res.json({
       status: '404',
       error: err.toString(),
