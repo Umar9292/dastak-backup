@@ -13,7 +13,10 @@ router.post('/getUserVouchers', async (req, res) => {
 
     const user = await Vouchers.findOne({ userId }).lean();
     if (!user) {
-      return res.json({ status: '404' });
+      return res.json({
+        status: '404',
+        msg: 'Dear Dastak user you dont have any vouchers yet.',
+      });
     }
 
     let { vouchers } = user;
