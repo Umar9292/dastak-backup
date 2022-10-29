@@ -17,8 +17,8 @@ router.post('/signUpOtp', async (req, res) => {
     const { phone, referralCode } = req.body;
 
     if (referralCode !== '') {
-      const refferal = await Users.findOne({ 'refferal.code': referralCode })
-        .select('refferal')
+      const refferal = await Users.findOne({ 'referral.code': referralCode })
+        .select('referral')
         .lean();
 
       if (!refferal) {
