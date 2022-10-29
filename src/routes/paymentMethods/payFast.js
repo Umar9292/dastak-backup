@@ -199,7 +199,13 @@ router.post('/payFastCallback', async (req, res) => {
         .lean(),
     ]);
 
-    notifyUser(userMessage, user.playerId, { flag: 'orderDelivered' });
+    await notifyUser(userMessage, user.playerId, { flag: 'orderDelivered' });
+
+    const msg = `Dear Dastak user, your order has been received. Please wait while the restaurant accepts your order.`;
+    await axios.get(
+      `${process.env.OTP_URL}&to=${92 +
+        user.phone.substring(1, 11)}&message=${msg}`
+    );
 
     admins.forEach(admin => {
       notifySuperAdmin(info, adminMessage, admin.superAdminPlayerId, {
