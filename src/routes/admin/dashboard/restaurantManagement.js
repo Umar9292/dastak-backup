@@ -285,12 +285,8 @@ router.post('/restaurantCollections', async (req, res) => {
       })
     );
 
-    console.log(totalOfPlatformFee);
-
     const totalProfit =
       data.reduce((a, b) => a + b.ourProfit, 0) + totalOfPlatformFee;
-
-    console.log(totalProfit);
 
     const amountToPay = data.reduce((a, b) => a + b.totalToPay, 0);
     const totalCollection = data.reduce(
@@ -663,12 +659,8 @@ router.post('/expensesTillNow', async (req, res) => {
       })
     );
 
-    console.log(totalOfPlatformFee);
-
     const totalProfit =
       data.reduce((a, b) => a + b.ourProfit, 0) + totalOfPlatformFee;
-
-    console.log(totalProfit);
 
     const paidToRiders = data.reduce((a, b) => a + b.ridersFare, 0);
     const paidToRestaurants = data.reduce((a, b) => a + b.totalPaid, 0);
