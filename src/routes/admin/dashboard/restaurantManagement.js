@@ -116,6 +116,8 @@ router.post('/restaurantCollections', async (req, res) => {
       city,
     });
 
+    let totalOfPlatformFee = 0;
+
     let data = await Promise.all(
       restaurants.map(async martId => {
         const [orders, restaurant] = await Promise.all([
@@ -132,7 +134,7 @@ router.post('/restaurantCollections', async (req, res) => {
             },
           })
             .select(
-              'riderFare deliveryCharges martName products paymentType paymentMethod onlineAmount orderType orderTotal orderNum date time discount'
+              'riderFare deliveryCharges martName products paymentType paymentMethod onlineAmount orderType orderTotal orderNum date time discount platformFee'
             )
             .sort({ createdAt: -1 })
             .lean(),
@@ -230,6 +232,10 @@ router.post('/restaurantCollections', async (req, res) => {
                 serviceChargePercentage = ((4 / 100) * orderTotal).toFixed();
               }
             }
+
+            if (order.platformFee !== undefined) {
+              totalOfPlatformFee += order.platformFee;
+            }
           })
         );
 
@@ -279,7 +285,9 @@ router.post('/restaurantCollections', async (req, res) => {
       })
     );
 
-    const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
+    const totalProfit =
+      data.reduce((a, b) => a + b.ourProfit, 0) + totalOfPlatformFee;
+
     const amountToPay = data.reduce((a, b) => a + b.totalToPay, 0);
     const totalCollection = data.reduce(
       (a, b) => a + b.totalOfDeliveryOrders,
@@ -489,6 +497,8 @@ router.post('/expensesTillNow', async (req, res) => {
     let end = moment().tz('Asia/Karachi');
     let start = moment(end).subtract(30, 'days');
 
+    let totalOfPlatformFee = 0;
+
     if (startDate !== '' && endDate !== '') {
       start = startDate;
       end = endDate;
@@ -526,7 +536,7 @@ router.post('/expensesTillNow', async (req, res) => {
             dateForSearching: { $gte: start, $lte: end },
           })
             .select(
-              'riderFare deliveryCharges discount paymentType paymentMethod onlineAmount martName products orderType orderTotal'
+              'riderFare deliveryCharges discount paymentType paymentMethod onlineAmount martName products orderType orderTotal platformFee'
             )
             .sort({ createdAt: -1 })
             .lean(),
@@ -608,6 +618,10 @@ router.post('/expensesTillNow', async (req, res) => {
                 serviceChargePercentage = ((4 / 100) * orderTotal).toFixed();
               }
             }
+
+            if (order.platformFee !== undefined) {
+              totalOfPlatformFee += order.platformFee;
+            }
           })
         );
 
@@ -645,7 +659,9 @@ router.post('/expensesTillNow', async (req, res) => {
       })
     );
 
-    const totalProfit = data.reduce((a, b) => a + b.ourProfit, 0);
+    const totalProfit =
+      data.reduce((a, b) => a + b.ourProfit, 0) + totalOfPlatformFee;
+
     const paidToRiders = data.reduce((a, b) => a + b.ridersFare, 0);
     const paidToRestaurants = data.reduce((a, b) => a + b.totalPaid, 0);
 
