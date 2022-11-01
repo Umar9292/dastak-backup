@@ -134,7 +134,7 @@ router.post('/restaurantCollections', async (req, res) => {
             },
           })
             .select(
-              'riderFare deliveryCharges martName products paymentType paymentMethod onlineAmount orderType orderTotal orderNum date time discount'
+              'riderFare deliveryCharges martName products paymentType paymentMethod onlineAmount orderType orderTotal orderNum date time discount platformFee'
             )
             .sort({ createdAt: -1 })
             .lean(),
@@ -540,7 +540,7 @@ router.post('/expensesTillNow', async (req, res) => {
             dateForSearching: { $gte: start, $lte: end },
           })
             .select(
-              'riderFare deliveryCharges discount paymentType paymentMethod onlineAmount martName products orderType orderTotal'
+              'riderFare deliveryCharges discount paymentType paymentMethod onlineAmount martName products orderType orderTotal platformFee'
             )
             .sort({ createdAt: -1 })
             .lean(),
