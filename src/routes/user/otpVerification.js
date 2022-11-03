@@ -74,7 +74,9 @@ router.post('/verifySignUpOtp', async (req, res) => {
   try {
     const { phone, otp, password, referralCode } = req.body;
 
-    const doc = Otp.findOne({ phone, otp }).select('secret');
+    const doc = await Otp.findOne({ phone, otp })
+      .select('secret')
+      .lean();
 
     if (!doc) {
       return res.json({
