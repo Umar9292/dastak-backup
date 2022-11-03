@@ -8,6 +8,7 @@ const { hash, compare } = require('bcrypt');
 const Users = require('../../models/userModel');
 const Otp = require('../../models/otpModel');
 const WalletHistory = require('../../models/walletHistory');
+const { notifyUser } = require('../../notificationHandler/handler');
 // const VoucherSignups = require('../../models/voucherSignupCount');
 
 const router = Router();
@@ -73,13 +74,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
   try {
     const { phone, otp, password, referralCode } = req.body;
 
-    const [doc, referrer] = await Promise.all([
-      Otp.findOne({ phone, otp }).select('secret'),
-
-      Users.findOne({ 'referral.code': referralCode }).select(
-        'referral wallet'
-      ),
-    ]);
+    const doc = Otp.findOne({ phone, otp }).select('secret');
 
     if (!doc) {
       return res.json({
@@ -114,25 +109,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
       usedCount: 0,
     };
 
-    const referrerWalletHistory = {
-      type: 'Referral Reward',
-      amount: 50,
-      userId: referrer._id,
-      time: moment()
-        .tz('Asia/karachi')
-        .format('DD-MM-YYYY hh:mm a'),
-    };
-
-    const [user] = await Promise.all([
-      new Users(req.body).save(),
-
-      new WalletHistory(referrerWalletHistory).save(),
-
-      Users.updateOne(
-        { _id: referrer._id },
-        { $inc: { 'wallet.amount': 50, 'referral.usedCount': 1 } }
-      ),
-    ]);
+    const user = await new Users(req.body).save();
 
     const history = {
       type: 'Referral Reward',
@@ -152,6 +129,35 @@ router.post('/verifySignUpOtp', async (req, res) => {
       voucherMsg:
         'You have been rewarded with Rs.50 in your Dastak Wallet. Enjoy and order your favorite food now.',
     });
+
+    if (referralCode !== '') {
+      const msg =
+        'Dear Dastak user you have been rewarded with Rs.50 in your Dastak Wallet as a referral code bonus. Enjoy and order your favorite food now.';
+
+      const referrer = Users.findOne({ 'referral.code': referralCode }).select(
+        'referral wallet playerId'
+      );
+
+      const referrerWalletHistory = {
+        type: 'Referral Reward',
+        amount: 50,
+        userId: referrer._id,
+        time: moment()
+          .tz('Asia/karachi')
+          .format('DD-MM-YYYY hh:mm a'),
+      };
+
+      await Promise.all([
+        new WalletHistory(referrerWalletHistory).save(),
+
+        Users.updateOne(
+          { _id: referrer._id },
+          { $inc: { 'wallet.amount': 50, 'referral.usedCount': 1 } }
+        ),
+
+        notifyUser(msg, referrer.playerId, {}),
+      ]);
+    }
 
     /* await VoucherSignups.updateOne(
       {},
