@@ -103,7 +103,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
     req.body.verified = true;
     req.body.password = await hash(password, 10);
     req.body.wallet = {
-      amount: 50,
+      amount: referralCode !== '' ? 50 : 0,
       isUsable: true,
     };
     req.body.referral = {
