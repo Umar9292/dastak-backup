@@ -92,6 +92,7 @@ router.post('/placeOrder', async (req, res) => {
       paymentMethod: orderType === 'PickUp' ? 'COD' : req.body.paymentMethod,
       products: await JSON.parse(products),
       distance: `${distance} km`,
+      zone: mart.zone,
       city: mart.city,
       martId: mart._id,
       martName: mart.name,
