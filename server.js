@@ -36,6 +36,7 @@ const riderSignupRouter = require('./src/routes/admin/dashboard/riderSignUp');
 const riderStatusRouter = require('./src/routes/rider/riderStatus');
 const payFastRouter = require('./src/routes/paymentMethods/payFast');
 const payFastTopupRouter = require('./src/routes/dastakWallet/walletTopUp/payFastTopup');
+const cityContactDetailsRouter = require('./src/routes/rider/contactDetails');
 
 // const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -64,8 +65,13 @@ app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 app.use('/dastakWallet', dastakWalletRouter);
-app.use('/rider', ridersShiftRouter, riderStatusRouter);
 app.use('/paymentMethod', payFastRouter, payFastTopupRouter);
+app.use(
+  '/rider',
+  ridersShiftRouter,
+  riderStatusRouter,
+  cityContactDetailsRouter
+);
 app.use(
   '/user',
   profileRouter,
