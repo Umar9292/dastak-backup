@@ -65,6 +65,12 @@ app.use('/app', appVersionRouter);
 app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 app.use('/dastakWallet', dastakWalletRouter);
+app.use(
+  '/rider',
+  ridersShiftRouter,
+  riderStatusRouter,
+  cityContactDetailsRouter
+);
 app.use('/paymentMethod', payFastRouter, payFastTopupRouter);
 app.use(
   '/rider',
