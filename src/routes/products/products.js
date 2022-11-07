@@ -330,9 +330,9 @@ router.post('/allCategories', async (req, res) => {
 
 router.post('/addProduct', async (req, res) => {
   try {
-    const { productName, martId } = req.body;
+    const { productName, martId, quantity } = req.body;
 
-    const product = await Products.findOne({ martId, productName });
+    const product = await Products.findOne({ martId, productName, quantity });
     if (product) {
       return res.json({
         status: '404',
