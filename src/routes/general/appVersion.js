@@ -64,7 +64,8 @@ router.post('/vendorCheckVersion', async (req, res) => {
       version === '1.3' ||
       version === '1.7' ||
       version === '1.8' ||
-      version === '1.9'
+      version === '1.9' ||
+      version === '2.0'
     ) {
       return res.json({ status: '200' });
     }
