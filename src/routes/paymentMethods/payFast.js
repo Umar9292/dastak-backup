@@ -111,6 +111,14 @@ router.post('/payFastCallback', async (req, res) => {
   }
 
   if (err_code === '000') {
+    const orderIsThere = await Orders.findOne({ transactionId: basket_id })
+      .select('transactionId')
+      .lean();
+
+    if (orderIsThere) {
+      return res.status(200).send();
+    }
+
     const { onlineOrder: order } = await Users.findOne({
       'onlineOrder.transactionId': basket_id,
     })
