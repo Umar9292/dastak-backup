@@ -136,9 +136,11 @@ router.post('/verifySignUpOtp', async (req, res) => {
       const msg =
         'Dear Dastak user you have been rewarded with Rs.50 in your Dastak Wallet as a referral code bonus. Enjoy and order your favorite food now.';
 
-      const referrer = Users.findOne({ 'referral.code': referralCode }).select(
-        'referral wallet playerId'
-      );
+      const referrer = await Users.findOne({
+        'referral.code': referralCode,
+      })
+        .select('playerId')
+        .lean();
 
       const referrerWalletHistory = {
         type: 'Referral Reward',
