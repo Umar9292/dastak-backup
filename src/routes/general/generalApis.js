@@ -1,5 +1,6 @@
 const Router = require('express/lib/router');
 const { randomBytes } = require('crypto');
+const Exceljs = require('exceljs');
 /* const moment = require('moment-timezone');
 const axios = require('axios');
 const { unlinkSync } = require('fs');
@@ -11,6 +12,10 @@ const Users = require('../../models/userModel');
 const Orders = require('../../models/ordersModel');
 const Categories = require('../../models/categoriesModel');
 const FlavoursAndDrinks = require('../../models/flavoursAndDrinks'); */
+
+const {
+  sendCollection,
+} = require('../../emailHandler/sendCollections/sendCollections');
 
 const router = Router();
 
@@ -51,6 +56,40 @@ router.get('/createRidersPassword', async (_req, res) => {
     );
 
     return res.json({ riders });
+  } catch (err) {
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/test', async (req, res) => {
+  try {
+    const riders = await Users.find({
+      type: 'rider',
+      status: { $ne: 'inactive' },
+    });
+
+    const workbook = new Exceljs.Workbook();
+    const worksheet = workbook.addWorksheet(`Active Riders`);
+
+    worksheet.columns = [
+      { header: 'Name', key: 'name', width: 15 },
+      { header: 'Phone', key: 'phone', width: 15 },
+      { header: 'Alt Phone', key: 'altPhone', width: 15 },
+      { header: 'Address', key: 'riderAddress', width: 15 },
+      { header: 'Pending Collection', key: 'pendingCollection', width: 15 },
+      { header: 'Unpaid Collection', key: 'unpaidCollection', width: 15 },
+    ];
+
+    await Promise.all(riders.map(doc => worksheet.addRow(doc)));
+
+    await workbook.xlsx.writeFile(`Active Riders.xlsx`);
+    sendCollection(`Active Riders.xlsx`);
+
+    return res.json({ status: '200', msg: 'done' });
   } catch (err) {
     return res.json({
       status: '404',
