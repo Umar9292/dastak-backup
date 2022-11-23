@@ -36,36 +36,24 @@ router.get('/v1/dashboard', async (req, res) => {
       totalRiders,
     ] = await Promise.all([
       Orders.find({
-        $or: [
-          { status: 'Delivered' },
-          { status: 'Rejected', refundToRestaurant: true },
-        ],
+        status: { $ne: 'Rejected' },
         dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
-      }),
+      }).lean(),
 
       Orders.distinct('date', {
-        $or: [
-          { status: 'Delivered' },
-          { status: 'Rejected', refundToRestaurant: true },
-        ],
+        status: { $ne: 'Rejected' },
         dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
       }),
 
       Orders.find({
-        $or: [
-          { status: 'Delivered' },
-          { status: 'Rejected', refundToRestaurant: true },
-        ],
+        status: { $ne: 'Rejected' },
         dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
-      }),
+      }).lean(),
 
       Orders.find({
-        $or: [
-          { status: 'Delivered' },
-          { status: 'Rejected', refundToRestaurant: true },
-        ],
+        status: { $ne: 'Rejected' },
         dateForSearching: { $gte: yearlyStartDate, $lte: endDate },
-      }),
+      }).lean(),
 
       Users.countDocuments({ shopType: 'restaurant', status: 'active' }),
 
@@ -81,10 +69,7 @@ router.get('/v1/dashboard', async (req, res) => {
 
         const orders = await Orders.find({
           date,
-          $or: [
-            { status: 'Delivered' },
-            { status: 'Rejected', refundToRestaurant: true },
-          ],
+          status: { $ne: 'Rejected' },
         }).lean();
 
         await Promise.all(
