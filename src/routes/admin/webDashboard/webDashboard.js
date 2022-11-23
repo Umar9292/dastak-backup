@@ -137,8 +137,6 @@ router.get('/v1/dashboard', async (req, res) => {
             const serviceChargesDifference =
               +serviceCharges - +PFServiceChargePercentage;
 
-            console.log(date, ourPercentage);
-
             ourProfit +=
               ourPercentage +
               serviceChargesDifference +
