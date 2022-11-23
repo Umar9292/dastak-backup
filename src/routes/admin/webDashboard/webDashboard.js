@@ -28,6 +28,7 @@ router.get('/v1/dashboard', async (req, res) => {
 
     const [
       weeklyOrders,
+      weeklyOrderDates,
       monthlyOrders,
       yearlyOrders,
       totalRestaurants,
@@ -35,23 +36,34 @@ router.get('/v1/dashboard', async (req, res) => {
       totalRiders,
     ] = await Promise.all([
       Orders.find({
-        status: {
-          $ne: 'Rejected',
-        },
+        $or: [
+          { status: 'Delivered' },
+          { status: 'Rejected', refundToRestaurant: true },
+        ],
+        dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
+      }),
+
+      Orders.distinct('date', {
+        $or: [
+          { status: 'Delivered' },
+          { status: 'Rejected', refundToRestaurant: true },
+        ],
         dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
       }),
 
       Orders.find({
-        status: {
-          $ne: 'Rejected',
-        },
+        $or: [
+          { status: 'Delivered' },
+          { status: 'Rejected', refundToRestaurant: true },
+        ],
         dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
       }),
 
       Orders.find({
-        status: {
-          $ne: 'Rejected',
-        },
+        $or: [
+          { status: 'Delivered' },
+          { status: 'Rejected', refundToRestaurant: true },
+        ],
         dateForSearching: { $gte: yearlyStartDate, $lte: endDate },
       }),
 
@@ -59,8 +71,107 @@ router.get('/v1/dashboard', async (req, res) => {
 
       Orders.distinct('userId', { status: { $ne: 'Rejected' } }),
 
-      Users.countDocuments({ type: 'rider', status: { $ne: 'Rejected' } }),
+      Users.countDocuments({ type: 'rider', status: { $ne: 'inactive' } }),
     ]);
+
+    const weeklyOrderProfit = await Promise.all(
+      weeklyOrderDates.map(async date => {
+        let ourProfit = 0;
+        let PFServiceChargePercentage = 0;
+
+        const orders = await Orders.find({
+          date,
+          $or: [
+            { status: 'Delivered' },
+            { status: 'Rejected', refundToRestaurant: true },
+          ],
+        }).lean();
+
+        await Promise.all(
+          orders.map(async order => {
+            const {
+              products,
+              orderType,
+              paymentType,
+              discount,
+              orderTotal,
+              platformFee,
+              serviceCharges,
+              deliveryCharges,
+              riderFare,
+            } = order;
+
+            let nonDealPayment = 0;
+
+            const { percentage } = await Users.findById(order.martId)
+              .select('percentage')
+              .lean();
+
+            await Promise.all(
+              products.map(async product => {
+                const { net, count } = product;
+
+                if (
+                  orderType === 'Delivery' &&
+                  product.actualPrice === undefined
+                ) {
+                  nonDealPayment += net;
+                }
+
+                if (
+                  product.actualPrice === undefined &&
+                  orderType === 'PickUp'
+                ) {
+                  const ourPercentage = +((percentage / 100) * net).toFixed();
+                  ourProfit += ourPercentage;
+                }
+
+                if (product.actualPrice !== undefined) {
+                  const priceDifference = net - product.actualPrice * count;
+                  ourProfit += priceDifference;
+                }
+              })
+            );
+
+            if (paymentType === 'split') {
+              PFServiceChargePercentage = (
+                (3.39 / 100) *
+                order.onlineAmount
+              ).toFixed();
+            }
+
+            if (paymentType === 'online') {
+              PFServiceChargePercentage = ((3.39 / 100) * orderTotal).toFixed();
+            }
+
+            const ourPercentage = +(
+              (percentage / 100) *
+              nonDealPayment
+            ).toFixed();
+
+            const serviceChargesDifference =
+              +serviceCharges - +PFServiceChargePercentage;
+
+            console.log(date, ourPercentage);
+
+            ourProfit +=
+              ourPercentage +
+              serviceChargesDifference +
+              +deliveryCharges +
+              platformFee -
+              riderFare -
+              +discount;
+          })
+        );
+
+        return {
+          day: moment(date, 'DD-MM-YYYY')
+            .tz('Asia/Karachi')
+            .format('dddd'),
+          ourProfit,
+        };
+      })
+    );
 
     const ordersData = [
       {
@@ -86,9 +197,6 @@ router.get('/v1/dashboard', async (req, res) => {
       },
     ];
 
-    const weeklyAvgOrderAmount =
-      weeklyOrders.reduce((a, b) => a + b.orderTotal, 0) / 7;
-
     const usersData = [
       {
         id: 1,
@@ -110,11 +218,15 @@ router.get('/v1/dashboard', async (req, res) => {
       },
     ];
 
+    const weeklyAvgOrderAmount =
+      weeklyOrders.reduce((a, b) => a + b.orderTotal, 0) / 7;
+
     return res.json({
+      weeklyOrderProfit,
       status: '200',
       ordersData,
-      weeklyAvgOrderAmount,
       usersData,
+      weeklyAvgOrderAmount,
       totalRestaurants,
     });
   } catch (err) {
