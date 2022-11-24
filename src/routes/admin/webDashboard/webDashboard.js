@@ -65,7 +65,6 @@ router.get('/v1/dashboard', async (req, res) => {
     const weeklyOrderProfit = await Promise.all(
       weeklyOrderDates.map(async date => {
         let ourProfit = 0;
-        let PFServiceChargePercentage = 0;
 
         const orders = await Orders.find({
           date,
@@ -74,19 +73,10 @@ router.get('/v1/dashboard', async (req, res) => {
 
         await Promise.all(
           orders.map(async order => {
-            const {
-              products,
-              orderType,
-              paymentType,
-              discount,
-              orderTotal,
-              platformFee,
-              serviceCharges,
-              deliveryCharges,
-              riderFare,
-            } = order;
+            const { products, orderType, paymentType, discount } = order;
 
             let nonDealPayment = 0;
+            let PFServiceChargePercentage = 0;
 
             const { percentage } = await Users.findById(order.martId)
               .select('percentage')
@@ -118,15 +108,15 @@ router.get('/v1/dashboard', async (req, res) => {
               })
             );
 
-            if (paymentType === 'split') {
+            let serviceChargesDifference = 0;
+            if (paymentType === 'split' || paymentType === 'online') {
               PFServiceChargePercentage = (
                 (3.39 / 100) *
                 order.onlineAmount
               ).toFixed();
-            }
 
-            if (paymentType === 'online') {
-              PFServiceChargePercentage = ((3.39 / 100) * orderTotal).toFixed();
+              serviceChargesDifference =
+                +order.serviceCharges - +PFServiceChargePercentage;
             }
 
             const ourPercentage = +(
@@ -134,8 +124,15 @@ router.get('/v1/dashboard', async (req, res) => {
               nonDealPayment
             ).toFixed();
 
-            const serviceChargesDifference =
-              +serviceCharges - +PFServiceChargePercentage;
+            let deliveryCharges = 0;
+            let platformFee = 0;
+            let riderFare = 0;
+
+            if (orderType === 'Delivery') {
+              deliveryCharges = order.deliveryCharges;
+              platformFee = order.platformFee;
+              riderFare = order.riderFare;
+            }
 
             ourProfit +=
               ourPercentage +
@@ -202,11 +199,11 @@ router.get('/v1/dashboard', async (req, res) => {
     ];
 
     const weeklyAvgOrderAmount =
-      weeklyOrders.reduce((a, b) => a + b.orderTotal, 0) / 7;
+      weeklyOrders.reduce((a, b) => a + b.orderTotal, 0) / weeklyOrders.length;
 
     return res.json({
-      weeklyOrderProfit,
       status: '200',
+      weeklyOrderProfit,
       ordersData,
       usersData,
       weeklyAvgOrderAmount,
