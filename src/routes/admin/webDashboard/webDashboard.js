@@ -57,7 +57,7 @@ router.get('/v1/dashboard', async (req, res) => {
 
       Users.countDocuments({ shopType: 'restaurant', status: 'active' }),
 
-      Orders.distinct('userId', { status: { $ne: 'Rejected' } }),
+      Users.countDocuments({ type: 'user', status: 'active' }),
 
       Users.countDocuments({ type: 'rider', status: { $ne: 'inactive' } }),
     ]);
