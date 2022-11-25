@@ -633,8 +633,6 @@ router.post('/expensesTillNow', async (req, res) => {
 
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
 
-        console.log(serviceChargesDifference);
-
         ourProfit +=
           ourPercentage +
           +serviceChargesDifference +

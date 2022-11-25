@@ -195,7 +195,7 @@ router.get('/v1/dashboard', async (req, res) => {
       {
         id: 1,
         title: 'No. of  customers',
-        number: totalCustomers.length,
+        number: totalCustomers,
         type: 'customer',
       },
       {
@@ -207,7 +207,7 @@ router.get('/v1/dashboard', async (req, res) => {
       {
         id: 3,
         title: 'No. of satisfied customers',
-        number: totalCustomers.length,
+        number: totalCustomers,
         type: 'customer',
       },
     ];
