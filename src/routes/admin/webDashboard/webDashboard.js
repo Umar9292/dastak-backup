@@ -66,6 +66,8 @@ router.get('/v1/dashboard', async (req, res) => {
       weeklyOrderDates.map(async date => {
         let ourProfit = 0;
 
+        console.log(ourProfit);
+
         const orders = await Orders.find({
           date,
           status: { $ne: 'Rejected' },
@@ -153,7 +155,7 @@ router.get('/v1/dashboard', async (req, res) => {
                 .tz('Asia/Karachi')
                 .format('dddd') === 'Friday'
             ) {
-              console.log(date, ourProfit);
+              console.log(date, ourProfit, order._id);
             }
 
             ourProfit +=
