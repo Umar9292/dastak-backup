@@ -210,17 +210,24 @@ router.post('/restaurantCollections', async (req, res) => {
                 (2.83 / 100) *
                 order.onlineAmount
               ).toFixed();
+
+              serviceChargesDifference +=
+                +order.serviceCharges - +PFServiceChargePercentage;
             }
 
-            if (paymentMethod !== 'Card' && paymentMethod !== 'COD') {
+            if (
+              paymentMethod !== 'Card' &&
+              paymentMethod !== 'COD' &&
+              paymentMethod !== 'Dastak Wallet'
+            ) {
               PFServiceChargePercentage = (
                 (1.92 / 100) *
                 order.onlineAmount
               ).toFixed();
-            }
 
-            serviceChargesDifference +=
-              +order.serviceCharges - +PFServiceChargePercentage;
+              serviceChargesDifference +=
+                +order.serviceCharges - +PFServiceChargePercentage;
+            }
 
             if (order.platformFee !== undefined) {
               totalOfPlatformFee += order.platformFee;
@@ -586,17 +593,24 @@ router.post('/expensesTillNow', async (req, res) => {
                 (2.83 / 100) *
                 order.onlineAmount
               ).toFixed();
+
+              serviceChargesDifference =
+                +order.serviceCharges - +PFServiceChargePercentage;
             }
 
-            if (paymentMethod !== 'Card' && paymentMethod !== 'COD') {
+            if (
+              paymentMethod !== 'Card' &&
+              paymentMethod !== 'COD' &&
+              paymentMethod !== 'Dastak Wallet'
+            ) {
               PFServiceChargePercentage = (
                 (1.92 / 100) *
                 order.onlineAmount
               ).toFixed();
-            }
 
-            serviceChargesDifference =
-              +order.serviceCharges - +PFServiceChargePercentage;
+              serviceChargesDifference =
+                +order.serviceCharges - +PFServiceChargePercentage;
+            }
 
             if (order.platformFee !== undefined) {
               totalOfPlatformFee += order.platformFee;

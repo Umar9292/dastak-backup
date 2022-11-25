@@ -45,7 +45,7 @@ router.get('/v1/dashboard', async (req, res) => {
         dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
       }),
 
-      Orders.find({
+      /*  Orders.find({
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
       }).lean(),
@@ -53,7 +53,7 @@ router.get('/v1/dashboard', async (req, res) => {
       Orders.find({
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: yearlyStartDate, $lte: endDate },
-      }).lean(),
+      }).lean(), */
 
       Users.countDocuments({ shopType: 'restaurant', status: 'active' }),
 
@@ -114,17 +114,24 @@ router.get('/v1/dashboard', async (req, res) => {
                 (2.83 / 100) *
                 order.onlineAmount
               ).toFixed();
+
+              serviceChargesDifference =
+                +order.serviceCharges - +PFServiceChargePercentage;
             }
 
-            if (paymentMethod !== 'Card' && paymentMethod !== 'COD') {
+            if (
+              paymentMethod !== 'Card' &&
+              paymentMethod !== 'COD' &&
+              paymentMethod !== 'Dastak Wallet'
+            ) {
               PFServiceChargePercentage = (
                 (1.92 / 100) *
                 order.onlineAmount
               ).toFixed();
-            }
 
-            serviceChargesDifference =
-              +order.serviceCharges - +PFServiceChargePercentage;
+              serviceChargesDifference =
+                +order.serviceCharges - +PFServiceChargePercentage;
+            }
 
             const ourPercentage = +(
               (percentage / 100) *
