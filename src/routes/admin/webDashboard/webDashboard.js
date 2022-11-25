@@ -45,15 +45,15 @@ router.get('/v1/dashboard', async (req, res) => {
         dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
       }),
 
-      // Orders.find({
-      //   status: { $ne: 'Rejected' },
-      //   dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
-      // }).lean(),
+      Orders.find({
+        status: { $ne: 'Rejected' },
+        dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
+      }).lean(),
 
-      // Orders.find({
-      //   status: { $ne: 'Rejected' },
-      //   dateForSearching: { $gte: yearlyStartDate, $lte: endDate },
-      // }).lean(),
+      Orders.find({
+        status: { $ne: 'Rejected' },
+        dateForSearching: { $gte: yearlyStartDate, $lte: endDate },
+      }).lean(),
 
       Users.countDocuments({ shopType: 'restaurant', status: 'active' }),
 
