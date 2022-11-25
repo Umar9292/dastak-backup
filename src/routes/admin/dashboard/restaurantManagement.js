@@ -134,7 +134,7 @@ router.post('/restaurantCollections', async (req, res) => {
             },
           })
             .select(
-              'riderFare deliveryCharges martName products paymentType paymentMethod onlineAmount orderType orderTotal orderNum date time discount platformFee'
+              'riderFare deliveryCharges martName products paymentType paymentMethod onlineAmount orderType orderTotal orderNum date time discount platformFee serviceCharges'
             )
             .sort({ createdAt: -1 })
             .lean(),
@@ -532,7 +532,7 @@ router.post('/expensesTillNow', async (req, res) => {
             dateForSearching: { $gte: start, $lte: end },
           })
             .select(
-              'riderFare deliveryCharges discount paymentType paymentMethod onlineAmount martName products orderType orderTotal platformFee'
+              'riderFare deliveryCharges discount paymentType paymentMethod onlineAmount martName products orderType orderTotal platformFee serviceCharges'
             )
             .sort({ createdAt: -1 })
             .lean(),
@@ -547,7 +547,6 @@ router.post('/expensesTillNow', async (req, res) => {
         let ourProfit = 0;
         let PFServiceChargePercentage = 0;
         let serviceChargesDifference = 0;
-
         let totalDiscount = 0;
 
         await Promise.all(
@@ -594,7 +593,7 @@ router.post('/expensesTillNow', async (req, res) => {
                 order.onlineAmount
               ).toFixed();
 
-              serviceChargesDifference =
+              serviceChargesDifference +=
                 +order.serviceCharges - +PFServiceChargePercentage;
             }
 
@@ -608,7 +607,7 @@ router.post('/expensesTillNow', async (req, res) => {
                 order.onlineAmount
               ).toFixed();
 
-              serviceChargesDifference =
+              serviceChargesDifference +=
                 +order.serviceCharges - +PFServiceChargePercentage;
             }
 
@@ -633,6 +632,8 @@ router.post('/expensesTillNow', async (req, res) => {
           dealPayment + (nonDealPayment - ourPercentage - ourProfit);
 
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
+
+        console.log(serviceChargesDifference);
 
         ourProfit +=
           ourPercentage +
