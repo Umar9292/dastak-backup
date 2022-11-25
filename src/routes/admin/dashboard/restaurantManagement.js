@@ -159,20 +159,14 @@ router.post('/restaurantCollections', async (req, res) => {
         let ourProfit = 0;
         let pickUpPercentage = 0;
         let dealPaymentToShowRestaurant = 0;
-        let serviceChargePercentage = 0;
+        let PFServiceChargePercentage = 0;
+        let serviceChargesDifference = 0;
         let totalDiscount = 0;
         let netSale = 0;
 
         await Promise.all(
           orders.map(async order => {
-            const {
-              products,
-              orderType,
-              paymentType,
-              paymentMethod,
-              orderTotal,
-              discount,
-            } = order;
+            const { products, orderType, paymentMethod, discount } = order;
 
             await Promise.all(
               products.map(async product => {
@@ -211,27 +205,22 @@ router.post('/restaurantCollections', async (req, res) => {
 
             totalDiscount += +discount;
 
-            if (paymentMethod === 'Debit/Credit Card') {
-              if (paymentType === 'split' || paymentType === 'online') {
-                serviceChargePercentage = (
-                  (2.75 / 100) *
-                  order.onlineAmount
-                ).toFixed();
-              } else {
-                serviceChargePercentage = ((2.75 / 100) * orderTotal).toFixed();
-              }
+            if (paymentMethod === 'Card') {
+              PFServiceChargePercentage = (
+                (2.83 / 100) *
+                order.onlineAmount
+              ).toFixed();
             }
 
-            if (paymentMethod === 'Easypaisa') {
-              if (paymentType === 'split' || paymentType === 'online') {
-                serviceChargePercentage = (
-                  (4 / 100) *
-                  order.onlineAmount
-                ).toFixed();
-              } else {
-                serviceChargePercentage = ((4 / 100) * orderTotal).toFixed();
-              }
+            if (paymentMethod !== 'Card' && paymentMethod !== 'COD') {
+              PFServiceChargePercentage = (
+                (1.92 / 100) *
+                order.onlineAmount
+              ).toFixed();
             }
+
+            serviceChargesDifference +=
+              +order.serviceCharges - +PFServiceChargePercentage;
 
             if (order.platformFee !== undefined) {
               totalOfPlatformFee += order.platformFee;
@@ -259,7 +248,7 @@ router.post('/restaurantCollections', async (req, res) => {
           ourPercentage +
           deliveryCharges +
           pickUpPercentage +
-          +serviceChargePercentage -
+          +serviceChargesDifference -
           totalDiscount;
 
         nonDealPayment = nonDealPayment - ourPercentage - pickUpPercentage;
@@ -549,19 +538,14 @@ router.post('/expensesTillNow', async (req, res) => {
         let dealPayment = 0;
         let nonDealPayment = 0;
         let ourProfit = 0;
-        let serviceChargePercentage = 0;
+        let PFServiceChargePercentage = 0;
+        let serviceChargesDifference = 0;
+
         let totalDiscount = 0;
 
         await Promise.all(
           orders.map(async order => {
-            const {
-              products,
-              orderType,
-              paymentType,
-              paymentMethod,
-              discount,
-              orderTotal,
-            } = order;
+            const { products, orderType, paymentMethod, discount } = order;
 
             await Promise.all(
               products.map(async product => {
@@ -597,27 +581,22 @@ router.post('/expensesTillNow', async (req, res) => {
 
             totalDiscount += +discount;
 
-            if (paymentMethod === 'Debit/Credit Card') {
-              if (paymentType === 'split' || paymentType === 'online') {
-                serviceChargePercentage = (
-                  (2.75 / 100) *
-                  order.onlineAmount
-                ).toFixed();
-              } else {
-                serviceChargePercentage = ((2.75 / 100) * orderTotal).toFixed();
-              }
+            if (paymentMethod === 'Card') {
+              PFServiceChargePercentage = (
+                (2.83 / 100) *
+                order.onlineAmount
+              ).toFixed();
             }
 
-            if (paymentMethod === 'Easypaisa') {
-              if (paymentType === 'split' || paymentType === 'online') {
-                serviceChargePercentage = (
-                  (4 / 100) *
-                  order.onlineAmount
-                ).toFixed();
-              } else {
-                serviceChargePercentage = ((4 / 100) * orderTotal).toFixed();
-              }
+            if (paymentMethod !== 'Card' && paymentMethod !== 'COD') {
+              PFServiceChargePercentage = (
+                (1.92 / 100) *
+                order.onlineAmount
+              ).toFixed();
             }
+
+            serviceChargesDifference =
+              +order.serviceCharges - +PFServiceChargePercentage;
 
             if (order.platformFee !== undefined) {
               totalOfPlatformFee += order.platformFee;
@@ -643,7 +622,7 @@ router.post('/expensesTillNow', async (req, res) => {
 
         ourProfit +=
           ourPercentage +
-          +serviceChargePercentage +
+          +serviceChargesDifference +
           deliveryCharges -
           ridersFare -
           totalDiscount;
