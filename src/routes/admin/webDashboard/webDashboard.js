@@ -45,15 +45,15 @@ router.get('/v1/dashboard', async (req, res) => {
         dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
       }),
 
-      Orders.find({
-        status: { $ne: 'Rejected' },
-        dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
-      }).lean(),
+      // Orders.find({
+      //   status: { $ne: 'Rejected' },
+      //   dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
+      // }).lean(),
 
-      Orders.find({
-        status: { $ne: 'Rejected' },
-        dateForSearching: { $gte: yearlyStartDate, $lte: endDate },
-      }).lean(),
+      // Orders.find({
+      //   status: { $ne: 'Rejected' },
+      //   dateForSearching: { $gte: yearlyStartDate, $lte: endDate },
+      // }).lean(),
 
       Users.countDocuments({ shopType: 'restaurant', status: 'active' }),
 
@@ -146,6 +146,14 @@ router.get('/v1/dashboard', async (req, res) => {
               deliveryCharges = order.deliveryCharges;
               platformFee = order.platformFee;
               riderFare = order.riderFare;
+            }
+
+            if (
+              moment(date, 'DD-MM-YYYY')
+                .tz('Asia/Karachi')
+                .format('dddd') === 'Friday'
+            ) {
+              console.log(date, ourProfit);
             }
 
             ourProfit +=
