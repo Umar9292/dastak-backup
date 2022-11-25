@@ -73,7 +73,7 @@ router.get('/v1/dashboard', async (req, res) => {
 
         await Promise.all(
           orders.map(async order => {
-            const { products, orderType, paymentType, discount } = order;
+            const { products, orderType, paymentMethod, discount } = order;
 
             let nonDealPayment = 0;
             let PFServiceChargePercentage = 0;
@@ -109,15 +109,22 @@ router.get('/v1/dashboard', async (req, res) => {
             );
 
             let serviceChargesDifference = 0;
-            if (paymentType === 'split' || paymentType === 'online') {
+            if (paymentMethod === 'Card') {
               PFServiceChargePercentage = (
-                (3.39 / 100) *
+                (2.83 / 100) *
                 order.onlineAmount
               ).toFixed();
-
-              serviceChargesDifference =
-                +order.serviceCharges - +PFServiceChargePercentage;
             }
+
+            if (paymentMethod !== 'Card' && paymentMethod !== 'COD') {
+              PFServiceChargePercentage = (
+                (1.92 / 100) *
+                order.onlineAmount
+              ).toFixed();
+            }
+
+            serviceChargesDifference =
+              +order.serviceCharges - +PFServiceChargePercentage;
 
             const ourPercentage = +(
               (percentage / 100) *
