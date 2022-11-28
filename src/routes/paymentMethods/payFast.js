@@ -69,19 +69,31 @@ router.post('/v2/getToken', async (req, res) => {
   }
 });
 
-router.post('/payFastCallback', async (req, res) => {
-  const { err_code, basket_id, issuer_name, PaymentName } = req.body;
+router.get('/payFastCallback', async (req, res) => {
+  const { err_code, basket_id, issuer_name, PaymentName } = req.query;
 
   const transactionType = basket_id.substring(0, 4);
 
   if (transactionType === 'PFTO' && err_code === '000') {
-    const user = await Users.findOne({
-      'topUp.transactionId': basket_id,
-    }).select('wallet topUp playerId phone');
+    const user = await Users.findOne(
+      {
+        topUp: {
+          $elemMatch: {
+            transactionId: basket_id,
+          },
+        },
+      },
+      {
+        'topUp.$': 1,
+        playerId: 1,
+        phone: 1,
+        wallet: 1,
+      }
+    );
 
-    const { actualAmount } = user.topUp;
-    user.wallet.amount += actualAmount;
-    user.topUp.status = 'Successful';
+    const { actualAmount } = user.topUp[0];
+    user.wallet.amount += +actualAmount;
+    user.topUp[0].status = 'Successful';
 
     const topUp = {
       type: 'Top Up',
@@ -99,11 +111,14 @@ router.post('/payFastCallback', async (req, res) => {
 
     await Promise.all([
       new WalletHistory(topUp).save(),
-      user.save(),
+      Users.findByIdAndUpdate(user._id, {
+        wallet: user.wallet,
+        topUp: user.topUp,
+      }),
       notifyUser(msg, user.playerId, { flag: 'topUp' }),
       axios.get(
         `${process.env.OTP_URL}&to=${92 +
-          user.phone.substring(1, 11)}&message=${msg}`
+          user.phone.substring(1, 8)}&message=${msg}`
       ),
     ]);
 

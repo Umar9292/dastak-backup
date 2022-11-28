@@ -24,6 +24,8 @@ router.post('/v2/payFastTopUp', async (req, res) => {
 
     const { data } = await axios.post(process.env.PAYFAST_TOKEN_URL, body);
 
+    console.log(data);
+
     res.json({
       status: '200',
       transactionId,
@@ -36,7 +38,7 @@ router.post('/v2/payFastTopUp', async (req, res) => {
       amount,
     };
 
-    await Users.updateOne({ _id: userId }, { topUp });
+    await Users.updateOne({ _id: userId }, { $push: { topUp } });
   } catch (err) {
     console.log(err);
     return res.json({

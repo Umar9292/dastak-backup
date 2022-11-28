@@ -15,12 +15,7 @@ const GeoSchema = Schema({
 const userModel = Schema(
   {
     verified: Boolean,
-    topUp: {
-      transactionId: String,
-      amount: Number,
-      actualAmount: Number,
-      status: String,
-    },
+    topUp: Array,
     referral: {
       code: {
         type: String,
