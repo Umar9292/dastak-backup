@@ -24,8 +24,6 @@ router.post('/v2/payFastTopUp', async (req, res) => {
 
     const { data } = await axios.post(process.env.PAYFAST_TOKEN_URL, body);
 
-    console.log(data);
-
     res.json({
       status: '200',
       transactionId,
