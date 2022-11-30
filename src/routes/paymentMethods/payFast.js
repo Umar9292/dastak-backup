@@ -69,8 +69,8 @@ router.post('/v2/getToken', async (req, res) => {
   }
 });
 
-router.get('/payFastCallback', async (req, res) => {
-  const { err_code, basket_id, issuer_name, PaymentName } = req.query;
+router.post('/payFastCallback', async (req, res) => {
+  const { err_code, basket_id, issuer_name, PaymentName } = req.body;
 
   const transactionType = basket_id.substring(0, 4);
 
