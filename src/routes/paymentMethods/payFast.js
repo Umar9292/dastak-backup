@@ -69,12 +69,15 @@ router.post('/v2/getToken', async (req, res) => {
   }
 });
 
-router.get('/payFastCallback', async (req, res) => {
-  const { err_code, basket_id, issuer_name, PaymentName } = req.query;
+router.post('/payFastCallback', async (req, res) => {
+  const { err_code, basket_id, issuer_name, PaymentName } = req.body;
+
+  console.log(req.body);
 
   const transactionType = basket_id.substring(0, 4);
 
   if (transactionType === 'PFTO' && err_code === '000') {
+    console.log('Top up');
     const user = await Users.findOne(
       {
         topUp: {
@@ -126,6 +129,7 @@ router.get('/payFastCallback', async (req, res) => {
   }
 
   if (err_code === '000') {
+    console.log('Payment');
     const orderIsThere = await Orders.findOne({ transactionId: basket_id })
       .select('transactionId')
       .lean();
