@@ -134,7 +134,7 @@ router.post('/payFastCallback', async (req, res) => {
       return res.status(200).send();
     }
 
-    const order = await Users.findOne(
+    const { onlineOrder: order } = await Users.findOne(
       {
         onlineOrder: {
           $elemMatch: {
@@ -155,7 +155,7 @@ router.post('/payFastCallback', async (req, res) => {
       orderTotal,
       paymentType,
       walletAmount,
-    } = order;
+    } = order[0];
 
     const date = moment()
       .tz('Asia/Karachi')

@@ -848,10 +848,4 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
-router.post('/test', async (req, res) => {
-  await Users.updateMany({ type: 'user' }, { onlineOrder: [] });
-
-  res.json('done');
-});
-
 module.exports = router;
