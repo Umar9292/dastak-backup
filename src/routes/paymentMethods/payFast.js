@@ -56,7 +56,7 @@ router.post('/v2/getToken', async (req, res) => {
     const [{ data }] = await Promise.all([
       axios.post(process.env.PAYFAST_TOKEN_URL, body),
 
-      Users.findByIdAndUpdate(userId, { onlineOrder: req.body }),
+      Users.findByIdAndUpdate(userId, { $push: { onlineOrder: req.body } }),
     ]);
 
     res.json({ status: '200', token: data.ACCESS_TOKEN, transactionId });
@@ -134,11 +134,18 @@ router.post('/payFastCallback', async (req, res) => {
       return res.status(200).send();
     }
 
-    const { onlineOrder: order } = await Users.findOne({
-      'onlineOrder.transactionId': basket_id,
-    })
-      .select('onlineOrder')
-      .lean();
+    const order = await Users.findOne(
+      {
+        onlineOrder: {
+          $elemMatch: {
+            transactionId: basket_id,
+          },
+        },
+      },
+      {
+        'onlineOrder.$': 1,
+      }
+    );
 
     const {
       martId,

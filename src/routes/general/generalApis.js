@@ -13,10 +13,10 @@ const Orders = require('../../models/ordersModel');
 const Categories = require('../../models/categoriesModel');
 const FlavoursAndDrinks = require('../../models/flavoursAndDrinks'); */
 
-const {
+/* const {
   sendCollection,
 } = require('../../emailHandler/sendCollections/sendCollections');
-
+ */
 const router = Router();
 
 router.post('/closeRestaurants', async (req, res) => {
@@ -65,7 +65,7 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 });
 
-router.post('/test', async (req, res) => {
+/* router.post('/test', async (req, res) => {
   try {
     const riders = await Users.find({
       type: 'rider',
@@ -97,7 +97,7 @@ router.post('/test', async (req, res) => {
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
     });
   }
-});
+}); */
 
 /* router.get('/changePrices', async (_req, res) => {
   try {
@@ -847,5 +847,11 @@ router.post('/test', async (req, res) => {
     });
   }
 }); */
+
+router.post('/test', async (req, res) => {
+  await Users.updateMany({ type: 'user' }, { onlineOrder: [] });
+
+  res.json('done');
+});
 
 module.exports = router;

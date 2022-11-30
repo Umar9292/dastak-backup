@@ -45,7 +45,7 @@ const userModel = Schema(
       type: Boolean,
       default: true,
     },
-    onlineOrder: Object,
+    onlineOrder: Array,
     zone: String,
     device: Boolean,
     radius: Number,
