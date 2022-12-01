@@ -10,6 +10,7 @@ const ordersModel = Schema(
       type: Array,
       default: [],
     },
+    profit: Number,
     issuerName: String,
     platformFee: Number,
     zone: String,

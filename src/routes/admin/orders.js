@@ -1426,7 +1426,6 @@ router.post('/changeOrderStatus', async (req, res) => {
     if (status === 'Delivered') {
       const timeWhenDelivered = moment(currentTime, 'hh:mm').format('hh:mm a');
       order.timeWhenDelivered = timeWhenDelivered;
-      await order.save();
 
       if (order.orderType === 'Delivery') {
         const query = {
@@ -1457,6 +1456,84 @@ router.post('/changeOrderStatus', async (req, res) => {
 
       const message = `Order# ${order.orderNum} has been delivered by ${order.riderName}`;
       orderStatusEmail(message);
+
+      const { products, orderType, paymentMethod, discount } = order;
+
+      let ourProfit = 0;
+      let nonDealPayment = 0;
+      let PFServiceChargePercentage = 0;
+
+      const { percentage } = await Users.findById(order.martId)
+        .select('percentage')
+        .lean();
+
+      await Promise.all(
+        products.map(async product => {
+          const { net, count } = product;
+
+          if (orderType === 'Delivery' && product.actualPrice === undefined) {
+            nonDealPayment += net;
+          }
+
+          if (product.actualPrice === undefined && orderType === 'PickUp') {
+            const ourPercentage = +((percentage / 100) * net).toFixed();
+            ourProfit += ourPercentage;
+          }
+
+          if (product.actualPrice !== undefined) {
+            const priceDifference = net - product.actualPrice * count;
+            ourProfit += priceDifference;
+          }
+        })
+      );
+
+      let serviceChargesDifference = 0;
+      if (paymentMethod === 'Card') {
+        PFServiceChargePercentage = (
+          (2.83 / 100) *
+          order.onlineAmount
+        ).toFixed();
+
+        serviceChargesDifference =
+          +order.serviceCharges - +PFServiceChargePercentage;
+      }
+
+      if (
+        paymentMethod !== 'Card' &&
+        paymentMethod !== 'COD' &&
+        paymentMethod !== 'Dastak Wallet'
+      ) {
+        PFServiceChargePercentage = (
+          (1.92 / 100) *
+          order.onlineAmount
+        ).toFixed();
+
+        serviceChargesDifference =
+          +order.serviceCharges - +PFServiceChargePercentage;
+      }
+
+      const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
+
+      let deliveryCharges = 0;
+      let platformFee = 0;
+      let riderFare = 0;
+
+      if (orderType === 'Delivery') {
+        deliveryCharges = order.deliveryCharges;
+        platformFee = order.platformFee;
+        riderFare = order.riderFare;
+      }
+
+      ourProfit +=
+        ourPercentage +
+        serviceChargesDifference +
+        +deliveryCharges +
+        platformFee -
+        riderFare -
+        +discount;
+
+      order.profit = ourProfit;
+      await order.save();
 
       return res.json({
         status: '202',

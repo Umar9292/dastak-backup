@@ -64,113 +64,16 @@ router.get('/v1/dashboard', async (req, res) => {
 
     const weeklyOrderProfit = await Promise.all(
       weeklyOrderDates.map(async date => {
-        let ourProfit = 0;
-
-        const orders = await Orders.find({
-          date,
-          status: { $ne: 'Rejected' },
-        }).lean();
-
-        await Promise.all(
-          orders.map(async order => {
-            const { products, orderType, paymentMethod, discount } = order;
-
-            let nonDealPayment = 0;
-            let PFServiceChargePercentage = 0;
-
-            const { percentage } = await Users.findById(order.martId)
-              .select('percentage')
-              .lean();
-
-            await Promise.all(
-              products.map(async product => {
-                const { net, count } = product;
-
-                if (
-                  orderType === 'Delivery' &&
-                  product.actualPrice === undefined
-                ) {
-                  nonDealPayment += net;
-                }
-
-                if (
-                  product.actualPrice === undefined &&
-                  orderType === 'PickUp'
-                ) {
-                  const ourPercentage = +((percentage / 100) * net).toFixed();
-                  ourProfit += ourPercentage;
-                }
-
-                if (product.actualPrice !== undefined) {
-                  const priceDifference = net - product.actualPrice * count;
-                  ourProfit += priceDifference;
-                }
-              })
-            );
-
-            let serviceChargesDifference = 0;
-            if (paymentMethod === 'Card') {
-              PFServiceChargePercentage = (
-                (2.83 / 100) *
-                order.onlineAmount
-              ).toFixed();
-
-              serviceChargesDifference =
-                +order.serviceCharges - +PFServiceChargePercentage;
-            }
-
-            if (
-              paymentMethod !== 'Card' &&
-              paymentMethod !== 'COD' &&
-              paymentMethod !== 'Dastak Wallet'
-            ) {
-              PFServiceChargePercentage = (
-                (1.92 / 100) *
-                order.onlineAmount
-              ).toFixed();
-
-              serviceChargesDifference =
-                +order.serviceCharges - +PFServiceChargePercentage;
-            }
-
-            const ourPercentage = +(
-              (percentage / 100) *
-              nonDealPayment
-            ).toFixed();
-
-            let deliveryCharges = 0;
-            let platformFee = 0;
-            let riderFare = 0;
-
-            if (orderType === 'Delivery') {
-              deliveryCharges = order.deliveryCharges;
-              platformFee = order.platformFee;
-              riderFare = order.riderFare;
-            }
-
-            if (
-              moment(date, 'DD-MM-YYYY')
-                .tz('Asia/Karachi')
-                .format('dddd') === 'Friday'
-            ) {
-              console.log(date, ourProfit, order._id);
-            }
-
-            ourProfit +=
-              ourPercentage +
-              serviceChargesDifference +
-              +deliveryCharges +
-              platformFee -
-              riderFare -
-              +discount;
-          })
-        );
+        const result = await Orders.aggregate([
+          { $match: { date, status: { $ne: 'Rejected' } } },
+          { $group: { _id: '$status', ourProfit: { $sum: '$profit' } } },
+        ]);
 
         return {
           day: moment(date, 'DD-MM-YYYY')
             .tz('Asia/Karachi')
             .format('dddd'),
-          ourProfit,
+          ourProfit: result[0].ourProfit,
         };
       })
     );
