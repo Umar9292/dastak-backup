@@ -293,10 +293,10 @@ router.post('/payFastCallback', async (req, res) => {
       return res.status(200).send();
     }
 
-    await Users.findOne(
-      { 'onlineOrder.transactionId': basket_id },
-      { $unset: { onlineOrder: '' } }
-    );
+    // await Users.findOne(
+    //   { 'onlineOrder.transactionId': basket_id },
+    //   { $unset: { onlineOrder: '' } }
+    // );
 
     return res.status(404).send();
   } catch (err) {
