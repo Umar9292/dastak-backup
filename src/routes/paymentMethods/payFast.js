@@ -73,8 +73,6 @@ router.post('/payFastCallback', async (req, res) => {
   try {
     const { err_code, basket_id, issuer_name, PaymentName } = req.body;
 
-    console.log(req.body);
-
     const transactionType = basket_id.substring(0, 4);
 
     if (transactionType === 'PFTO' && err_code === '000') {
@@ -295,10 +293,10 @@ router.post('/payFastCallback', async (req, res) => {
       return res.status(200).send();
     }
 
-    await Users.findOne(
-      { 'onlineOrder.transactionId': basket_id },
-      { $unset: { onlineOrder: '' } }
-    );
+    // await Users.findOne(
+    //   { 'onlineOrder.transactionId': basket_id },
+    //   { $unset: { onlineOrder: '' } }
+    // );
 
     return res.status(404).send();
   } catch (err) {
