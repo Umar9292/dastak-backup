@@ -109,6 +109,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
     req.body.referral = {
       code: crypto.randomBytes(3).toString('hex'),
       usedCount: 0,
+      referrer: referralCode,
     };
 
     const user = await new Users(req.body).save();
@@ -132,7 +133,11 @@ router.post('/verifySignUpOtp', async (req, res) => {
         'You have been rewarded with Rs.50 in your Dastak Wallet. Enjoy and order your favorite food now.',
     });
 
-    if (referralCode !== '') {
+    const userHasDeletedAccount = await Users.findOne({ phone, deleted: true })
+      .select('deleted')
+      .lean();
+
+    if (referralCode !== '' && !userHasDeletedAccount) {
       const msg =
         'Dear Dastak user you have been rewarded with Rs.50 in your Dastak Wallet as a referral code bonus. Enjoy and order your favorite food now.';
 

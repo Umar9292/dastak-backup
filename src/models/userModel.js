@@ -26,6 +26,7 @@ const userModel = Schema(
         type: Number,
         default: 0,
       },
+      referrer: String,
     },
     wallet: {
       amount: {
