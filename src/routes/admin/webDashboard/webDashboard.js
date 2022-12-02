@@ -65,7 +65,13 @@ router.get('/v1/dashboard', async (req, res) => {
     const weeklyOrderProfit = await Promise.all(
       weeklyOrderDates.map(async date => {
         const result = await Orders.aggregate([
-          { $match: { date, status: { $ne: 'Rejected' } } },
+          {
+            $match: {
+              date,
+              profit: { $ne: undefined },
+              status: { $ne: 'Rejected' },
+            },
+          },
           { $group: { _id: '$status', ourProfit: { $sum: '$profit' } } },
         ]);
 
