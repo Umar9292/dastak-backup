@@ -849,14 +849,14 @@ router.get('/createRidersPassword', async (_req, res) => {
 }); */
 
 router.post('/test', async (req, res) => {
-  const { startDate, endDate } = req.body;
+  let { startDate, endDate } = req.body;
 
-  // startDate = moment(startDate, 'DD-MM-YYYY')
-  //   .tz('Asia/Karachi')
-  //   .toISOString();
-  // endDate = moment(endDate, 'DD-MM-YYYY')
-  //   .tz('Asia/Karachi')
-  //   .toISOString();
+  startDate = moment(startDate, 'DD-MM-YYYY')
+    .tz('Asia/Karachi')
+    .toISOString();
+  endDate = moment(endDate, 'DD-MM-YYYY')
+    .tz('Asia/Karachi')
+    .toISOString();
 
   console.log(new Date(startDate), new Date(endDate));
 
