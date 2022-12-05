@@ -860,7 +860,7 @@ router.post('/test', async (req, res) => {
 
   console.log(new Date(startDate), new Date(endDate));
 
-  const result = await Orders.aggregate([
+  /*  const result = await Orders.aggregate([
     {
       $match: {
         paymentType: { $ne: 'COD' },
@@ -872,8 +872,21 @@ router.post('/test', async (req, res) => {
     },
     { $group: { _id: '$paymentType', total: { $sum: '$orderTotal' } } },
   ]);
+ */
 
-  res.json({ result });
+  const result = await Orders.find({
+    paymentType: { $ne: 'COD' },
+    dateForSearching: {
+      $gte: startDate,
+      $lte: endDate,
+    },
+  })
+    .select('orderTotal')
+    .lean();
+
+  const total = result.reduce((a, b) => a + b.orderTotal, 0);
+
+  res.json({ total });
 });
 
 module.exports = router;
