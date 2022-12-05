@@ -849,23 +849,28 @@ router.get('/createRidersPassword', async (_req, res) => {
 }); */
 
 router.post('/test', async (req, res) => {
-  let { startDate, endDate } = req.body;
+  const { startDate, endDate } = req.body;
 
-  startDate = moment(startDate, 'DD-MM-YYYY')
-    .tz('Asia/Karachi')
-    .toISOString();
-  endDate = moment(endDate, 'DD-MM-YYYY')
-    .tz('Asia/Karachi')
-    .toISOString();
+  // startDate = moment(startDate, 'DD-MM-YYYY')
+  //   .tz('Asia/Karachi')
+  //   .toISOString();
+  // endDate = moment(endDate, 'DD-MM-YYYY')
+  //   .tz('Asia/Karachi')
+  //   .toISOString();
+
+  console.log(new Date(startDate), new Date(endDate));
 
   const result = await Orders.aggregate([
     {
       $match: {
-        paymentMethod: { $ne: 'COD' },
-        dateForSearching: { $gte: startDate, $lte: endDate },
+        paymentType: { $ne: 'COD' },
+        dateForSearching: {
+          $gte: new Date(startDate),
+          $lte: new Date(endDate),
+        },
       },
     },
-    { $group: { _id: '$paymentMethod', total: { $sum: '$orderTotal' } } },
+    { $group: { _id: '$paymentType', total: { $sum: '$orderTotal' } } },
   ]);
 
   res.json({ result });

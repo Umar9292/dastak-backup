@@ -38,7 +38,8 @@ const payFastRouter = require('./src/routes/paymentMethods/payFast');
 const payFastTopupRouter = require('./src/routes/dastakWallet/walletTopUp/payFastTopup');
 const cityContactDetailsRouter = require('./src/routes/rider/contactDetails');
 const webDashboardRouter = require('./src/routes/admin/webDashboard/webDashboard');
-const RiderWalletHistoryRouter = require('./src/routes/admin/dashboard/riderManagement');
+const saveRiderWalletHistoryRouter = require('./src/routes/admin/dashboard/riderManagement');
+const getRiderWalletHistoryRouter = require('./src/routes/rider/riderWalletHistory');
 
 // const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -73,7 +74,8 @@ app.use(
   '/rider',
   ridersShiftRouter,
   riderStatusRouter,
-  cityContactDetailsRouter
+  cityContactDetailsRouter,
+  getRiderWalletHistoryRouter
 );
 app.use(
   '/rider',
@@ -106,7 +108,7 @@ app.use(
   adminSignInRouter,
   adminAutorizationRouter,
   riderSignupRouter,
-  RiderWalletHistoryRouter
+  saveRiderWalletHistoryRouter
 );
 
 connect(

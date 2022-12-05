@@ -377,20 +377,4 @@ router.post('/v1/saveRiderWalletHistory', async (req, res) => {
   }
 });
 
-router.post('/v1/getRiderWalletHistory', async (req, res) => {
-  try {
-    const { riderId } = req.body;
-
-    const history = await RiderWalletHistory.find({ riderId });
-
-    return res.json({ status: '200', history });
-  } catch (err) {
-    console.log(err);
-    return res.json({
-      status: '404',
-      msg: 'Looks like an error occurred on our side. Kindly try again',
-    });
-  }
-});
-
 module.exports = router;
