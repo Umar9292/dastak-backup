@@ -346,6 +346,7 @@ router.post('/paidToOwners', async (req, res) => {
           paidAmount,
           orderCount,
         };
+
         await Promise.all([
           new PaymentHistory(history).save(),
 
