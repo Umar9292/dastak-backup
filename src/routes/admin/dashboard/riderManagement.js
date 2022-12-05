@@ -4,6 +4,7 @@ const moment = require('moment-timezone');
 const Users = require('../../../models/userModel');
 const Orders = require('../../../models/ordersModel');
 const Zones = require('../../../models/zonesModel');
+const RiderWalletHistory = require('../../../models/riderWalletHistory');
 const { notifyRiders } = require('../../../notificationHandler/handler');
 
 const router = Router();
@@ -358,6 +359,36 @@ router.post('/paidToRiders', async (req, res) => {
       status: '404',
       error: err.toString(),
       msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
+router.post('/v1/saveRiderWalletHistory', async (req, res) => {
+  try {
+    await new RiderWalletHistory(req.body).save();
+
+    return res.json({ status: '200', msg: 'History successfully saved.' });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      msg: 'Looks like an error occurred on our side. Kindly try again',
+    });
+  }
+});
+
+router.post('/v1/getRiderWalletHistory', async (req, res) => {
+  try {
+    const { riderId } = req.body;
+
+    const history = await RiderWalletHistory.find({ riderId });
+
+    return res.json({ status: '200', history });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      msg: 'Looks like an error occurred on our side. Kindly try again',
     });
   }
 });

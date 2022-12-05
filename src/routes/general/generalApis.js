@@ -1,17 +1,17 @@
 const Router = require('express/lib/router');
 const { randomBytes } = require('crypto');
 // const Exceljs = require('exceljs');
-/* const moment = require('moment-timezone');
-const axios = require('axios');
+const moment = require('moment-timezone');
+/* const axios = require('axios');
 const { unlinkSync } = require('fs');
 const { IncomingForm } = require('formidable');
 const { uniqBy } = require('lodash'); */
 
 const Users = require('../../models/userModel');
-/* const Products = require('../../models/productsModel');
+// const Products = require('../../models/productsModel');
 const Orders = require('../../models/ordersModel');
-const Categories = require('../../models/categoriesModel');
-const FlavoursAndDrinks = require('../../models/flavoursAndDrinks'); */
+// const Categories = require('../../models/categoriesModel');
+// const FlavoursAndDrinks = require('../../models/flavoursAndDrinks');
 
 /* const {
   sendCollection,
@@ -847,5 +847,28 @@ router.get('/createRidersPassword', async (_req, res) => {
     });
   }
 }); */
+
+router.post('/test', async (req, res) => {
+  let { startDate, endDate } = req.body;
+
+  startDate = moment(startDate, 'DD-MM-YYYY')
+    .tz('Asia/Karachi')
+    .toISOString();
+  endDate = moment(endDate, 'DD-MM-YYYY')
+    .tz('Asia/Karachi')
+    .toISOString();
+
+  const result = await Orders.aggregate([
+    {
+      $match: {
+        paymentMethod: { $ne: 'COD' },
+        dateForSearching: { $gte: startDate, $lte: endDate },
+      },
+    },
+    { $group: { _id: '$paymentMethod', total: { $sum: '$orderTotal' } } },
+  ]);
+
+  res.json({ result });
+});
 
 module.exports = router;
