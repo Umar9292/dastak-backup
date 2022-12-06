@@ -75,12 +75,14 @@ router.get('/v1/dashboard', async (req, res) => {
           { $group: { _id: '$status', ourProfit: { $sum: '$profit' } } },
         ]);
 
-        return {
-          day: moment(date, 'DD-MM-YYYY')
-            .tz('Asia/Karachi')
-            .format('dddd'),
-          ourProfit: result[0].ourProfit,
-        };
+        if (result.length > 0) {
+          return {
+            day: moment(date, 'DD-MM-YYYY')
+              .tz('Asia/Karachi')
+              .format('dddd'),
+            ourProfit: result[0].ourProfit,
+          };
+        }
       })
     );
 
