@@ -8,7 +8,9 @@ router.post('/v1/getRiderWalletHistory', async (req, res) => {
   try {
     const { riderId } = req.body;
 
-    const history = await RiderWalletHistory.find({ riderId });
+    const history = await RiderWalletHistory.find({ riderId }).sort({
+      createdAt: -1,
+    });
 
     return res.json({ status: '200', history });
   } catch (err) {

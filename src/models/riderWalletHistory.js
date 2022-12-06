@@ -7,6 +7,7 @@ const riderWalletHistory = Schema(
     amount: Number,
     riderId: String,
     admin: String,
+    orderCount: String,
   },
   {
     timestamps: true,

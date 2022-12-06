@@ -494,7 +494,9 @@ router.post('/expensesTillNow', async (req, res) => {
     let end = moment().tz('Asia/Karachi');
     let start = moment(end).subtract(30, 'days');
 
+    let totalSale = 0;
     let totalOfPlatformFee = 0;
+    let totalOrders = 0;
 
     if (startDate !== '' && endDate !== '') {
       start = startDate;
@@ -542,6 +544,8 @@ router.post('/expensesTillNow', async (req, res) => {
             .select('name percentage')
             .lean(),
         ]);
+
+        totalOrders += orders.length;
 
         let dealPayment = 0;
         let nonDealPayment = 0;
@@ -634,6 +638,8 @@ router.post('/expensesTillNow', async (req, res) => {
 
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
 
+        totalSale += orders.reduce((a, b) => a + b.orderTotal, 0);
+
         ourProfit +=
           ourPercentage +
           +serviceChargesDifference +
@@ -657,12 +663,16 @@ router.post('/expensesTillNow', async (req, res) => {
 
     const paidToRiders = data.reduce((a, b) => a + b.ridersFare, 0);
     const paidToRestaurants = data.reduce((a, b) => a + b.totalPaid, 0);
+    const avgOrderAmount = totalSale / totalOrders;
 
     data = orderBy(data, ['ourProfit'], ['desc']);
 
     return res.json({
       status: '200',
       data,
+      avgOrderAmount,
+      totalOrders,
+      totalSale,
       totalProfit,
       paidToRiders,
       paidToRestaurants,

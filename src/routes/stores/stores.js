@@ -9,7 +9,7 @@ const {
 
 const router = Router();
 
-router.post('/allStores', async (req, res) => {
+router.post('/v1/allStores', async (req, res) => {
   try {
     const { lat, long, employee } = req.body;
 
@@ -34,19 +34,19 @@ router.post('/allStores', async (req, res) => {
         $geoNear: {
           near: { type: 'Point', coordinates: [long, lat] },
           distanceField: 'dist',
-          maxDistance: employee === true ? 20000 : 3500,
+          maxDistance: employee === true ? 20000 : 6000,
           query: {
             available: true,
             type: 'admin',
             status: 'active',
-            shopType: { $in: ['store', 'pharmacy'] },
+            shopType: 'store',
           },
           spherical: true,
         },
       },
     ]);
 
-    allStores = await openRestaurants(allStores);
+    allStores = await openRestaurants(lat, long, allStores);
 
     return res.json({
       status: '200',
