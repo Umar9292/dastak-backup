@@ -142,6 +142,7 @@ router.get('/v1/dashboard', async (req, res) => {
 
     return res.json({
       status: '200',
+      weeklyOrders,
       weeklyOrderProfit,
       weeklyOrders,
       monthlyOrders,
