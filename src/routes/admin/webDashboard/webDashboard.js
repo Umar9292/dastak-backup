@@ -45,7 +45,7 @@ router.get('/v1/dashboard', async (req, res) => {
         dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
       }),
 
-      Orders.find({
+      Orders.countDocuments({
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
       }).lean(),
@@ -98,7 +98,7 @@ router.get('/v1/dashboard', async (req, res) => {
         id: '2',
         ordersType: 'month',
         typeTitle: 'No of orders in last month',
-        totalOrders: monthlyOrders.length,
+        totalOrders: monthlyOrders,
         surgeDetail: '5% higher then last week ',
       },
       {
@@ -137,7 +137,6 @@ router.get('/v1/dashboard', async (req, res) => {
     return res.json({
       status: '200',
       weeklyOrders,
-      monthlyOrders,
       weeklyOrderProfit,
       ordersData,
       usersData,
