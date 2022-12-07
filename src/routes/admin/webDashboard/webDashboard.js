@@ -47,14 +47,14 @@ router.get('/v1/dashboard', async (req, res) => {
         dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
       }),
 
-      Orders.find({
+      Orders.countDocuments({
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
       })
         .select('date time orderType orderTotal status')
         .lean(),
 
-      Orders.find({
+      Orders.countDocuments({
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: yearlyStartDate, $lte: endDate },
       })
@@ -104,14 +104,14 @@ router.get('/v1/dashboard', async (req, res) => {
         id: '2',
         ordersType: 'month',
         typeTitle: 'No of orders in last month',
-        totalOrders: monthlyOrders.length,
+        totalOrders: monthlyOrders,
         surgeDetail: '5% higher then last week ',
       },
       {
         id: '3',
         ordersType: 'year',
         typeTitle: 'No of orders in last year',
-        totalOrders: yearlyOrders.length,
+        totalOrders: yearlyOrders,
         surgeDetail: '10% higher then last week ',
       },
     ];
