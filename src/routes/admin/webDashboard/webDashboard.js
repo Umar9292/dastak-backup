@@ -38,7 +38,9 @@ router.get('/v1/dashboard', async (req, res) => {
       Orders.find({
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
-      }).lean(),
+      })
+        .select('date time orderType orderTotal status')
+        .lean(),
 
       Orders.distinct('date', {
         status: { $ne: 'Rejected' },
@@ -48,12 +50,16 @@ router.get('/v1/dashboard', async (req, res) => {
       Orders.find({
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
-      }).lean(),
+      })
+        .select('date time orderType orderTotal status')
+        .lean(),
 
       Orders.find({
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: yearlyStartDate, $lte: endDate },
-      }).lean(),
+      })
+        .select('date time orderType orderTotal status')
+        .lean(),
 
       Users.countDocuments({ shopType: 'restaurant', status: 'active' }),
 
@@ -137,6 +143,9 @@ router.get('/v1/dashboard', async (req, res) => {
     return res.json({
       status: '200',
       weeklyOrderProfit,
+      weeklyOrders,
+      monthlyOrders,
+      yearlyOrders,
       ordersData,
       usersData,
       weeklyAvgOrderAmount,
