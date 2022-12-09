@@ -5,6 +5,11 @@ const otpModel = Schema(
     phone: String,
     secret: String,
     otp: String,
+    expireAt: {
+      type: Date,
+      default: Date.now,
+      index: { expires: '1m' },
+    },
   },
   {
     versionKey: false,

@@ -13,7 +13,7 @@ const { notifyUser } = require('../../notificationHandler/handler');
 
 const router = Router();
 
-/* router.post('/signUpOtp', async (req, res) => {
+router.post('/signUpOtp', async (req, res) => {
   try {
     const { phone, referralCode } = req.body;
 
@@ -28,6 +28,18 @@ const router = Router();
           msg: 'The refferal code you entered is not correct.',
         });
       }
+    }
+
+    const otpAlreadyThere = await Otp.findOne({ phone })
+      .select('phone')
+      .lean();
+
+    if (otpAlreadyThere) {
+      return res.json({
+        status: '404',
+        msg:
+          'An otp is already your way. Kindly try sending another one after 1 minute if the previous dont arrrive.',
+      });
     }
 
     const user = await Users.findOne({
@@ -69,7 +81,7 @@ const router = Router();
     });
   }
 });
- */
+
 router.post('/verifySignUpOtp', async (req, res) => {
   try {
     const { phone, otp, password, referralCode } = req.body;
