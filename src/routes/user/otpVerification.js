@@ -30,18 +30,6 @@ router.post('/signUpOtp', async (req, res) => {
       }
     }
 
-    const otpAlreadyThere = await Otp.findOne({ phone })
-      .select('phone')
-      .lean();
-
-    if (otpAlreadyThere) {
-      return res.json({
-        status: '404',
-        msg:
-          'An otp is already your way. Kindly try sending another one after 1 minute if the previous dont arrrive.',
-      });
-    }
-
     const user = await Users.findOne({
       phone,
       verified: true,
@@ -56,6 +44,18 @@ router.post('/signUpOtp', async (req, res) => {
         status: '404',
         msg:
           'The phone number you entered is aleady associated with another account',
+      });
+    }
+
+    const otpAlreadyThere = await Otp.findOne({ phone })
+      .select('phone')
+      .lean();
+
+    if (otpAlreadyThere) {
+      return res.json({
+        status: '404',
+        msg:
+          'An otp is already your way. Kindly try sending another one after 1 minute if the previous dont arrrive.',
       });
     }
 
