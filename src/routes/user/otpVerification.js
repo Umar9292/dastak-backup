@@ -13,7 +13,7 @@ const { notifyUser } = require('../../notificationHandler/handler');
 
 const router = Router();
 
-router.post('/signUpOtp', async (req, res) => {
+/* router.post('/signUpOtp', async (req, res) => {
   try {
     const { phone, referralCode } = req.body;
 
@@ -69,7 +69,7 @@ router.post('/signUpOtp', async (req, res) => {
     });
   }
 });
-
+ */
 router.post('/verifySignUpOtp', async (req, res) => {
   try {
     const { phone, otp, password, referralCode } = req.body;
