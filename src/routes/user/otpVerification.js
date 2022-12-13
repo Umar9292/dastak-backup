@@ -140,7 +140,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
     res.json({
       status: '200',
       data: user,
-      showVoucher: true,
+      showVoucher: false,
       voucherMsg:
         'You have been rewarded with Rs.50 in your Dastak Wallet. Enjoy and order your favorite food now.',
     });
