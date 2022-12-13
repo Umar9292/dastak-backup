@@ -1,14 +1,14 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const Speakeasy = require('speakeasy');
-const moment = require('moment-timezone');
+// const moment = require('moment-timezone');
 const crypto = require('crypto');
 const { hash, compare } = require('bcrypt');
 
 const Users = require('../../models/userModel');
 const Otp = require('../../models/otpModel');
-const WalletHistory = require('../../models/walletHistory');
-const { notifyUser } = require('../../notificationHandler/handler');
+// const WalletHistory = require('../../models/walletHistory');
+// const { notifyUser } = require('../../notificationHandler/handler');
 // const VoucherSignups = require('../../models/voucherSignupCount');
 
 const router = Router();
@@ -114,10 +114,10 @@ router.post('/verifySignUpOtp', async (req, res) => {
 
     req.body.verified = true;
     req.body.password = await hash(password, 10);
-    req.body.wallet = {
-      amount: referralCode !== '' ? 50 : 0,
-      isUsable: true,
-    };
+    // req.body.wallet = {
+    //   amount: referralCode !== '' ? 50 : 0,
+    //   isUsable: true,
+    // };
     req.body.referral = {
       code: crypto.randomBytes(3).toString('hex'),
       usedCount: 0,
@@ -126,7 +126,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
 
     const user = await new Users(req.body).save();
 
-    const history = {
+    /* const history = {
       type: 'Referral Reward',
       amount: 50,
       userId: user._id,
@@ -135,7 +135,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
         .format('DD-MM-YYYY hh:mm a'),
     };
 
-    await new WalletHistory(history).save();
+    await new WalletHistory(history).save(); */
 
     res.json({
       status: '200',
@@ -145,7 +145,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
         'You have been rewarded with Rs.50 in your Dastak Wallet. Enjoy and order your favorite food now.',
     });
 
-    const userHasDeletedAccount = await Users.findOne({ phone, deleted: true })
+    /* const userHasDeletedAccount = await Users.findOne({ phone, deleted: true })
       .select('deleted')
       .lean();
 
@@ -178,7 +178,7 @@ router.post('/verifySignUpOtp', async (req, res) => {
 
         notifyUser(msg, referrer.playerId, {}),
       ]);
-    }
+    } */
 
     /* await VoucherSignups.updateOne(
       {},
