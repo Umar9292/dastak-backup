@@ -40,6 +40,7 @@ const cityContactDetailsRouter = require('./src/routes/rider/contactDetails');
 const webDashboardRouter = require('./src/routes/admin/webDashboard/webDashboard');
 const saveRiderWalletHistoryRouter = require('./src/routes/admin/dashboard/riderManagement');
 const getRiderWalletHistoryRouter = require('./src/routes/rider/riderWalletHistory');
+const referralStatusRouter = require('./src/routes/user/referral');
 
 // const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -78,14 +79,9 @@ app.use(
   getRiderWalletHistoryRouter
 );
 app.use(
-  '/rider',
-  ridersShiftRouter,
-  riderStatusRouter,
-  cityContactDetailsRouter
-);
-app.use(
   '/user',
   profileRouter,
+  referralStatusRouter,
   usersReviewRouter,
   otpVerificationRouter,
   deliveryChargesRouter,
