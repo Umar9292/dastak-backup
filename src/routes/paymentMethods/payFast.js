@@ -290,13 +290,10 @@ router.post('/payFastCallback', async (req, res) => {
         );
       }
 
+      await Users.findByIdAndUpdate(order[0].userId, { onlineOrder: [] });
+
       return res.status(200).send();
     }
-
-    // await Users.findOne(
-    //   { 'onlineOrder.transactionId': basket_id },
-    //   { $unset: { onlineOrder: '' } }
-    // );
 
     return res.status(404).send();
   } catch (err) {
