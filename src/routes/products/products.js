@@ -304,6 +304,29 @@ router.post('/allProducts', async (req, res) => {
   }
 });
 
+router.post('/addCategory', async (req, res) => {
+  try {
+    const { martId, name, startTime, endTime } = req.body;
+
+    await Categories.updateOne(
+      { martId },
+      { $push: { categories: { name, startTime, endTime } } }
+    );
+
+    return res.json({
+      status: '200',
+      msg: 'Category added.',
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      msg: 'Looks like an error occurred on our side. Kindly try again',
+      error: err.toString(),
+    });
+  }
+});
+
 router.post('/allCategories', async (req, res) => {
   try {
     const { martId } = req.body;
