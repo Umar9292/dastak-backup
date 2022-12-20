@@ -306,8 +306,6 @@ router.post('/addCategory', async (req, res) => {
   try {
     const { martId, name, startTime, endTime } = req.body;
 
-    console.log(req.body);
-
     await Categories.updateOne(
       { martId },
       { $push: { categories: { name, startTime, endTime } } }
