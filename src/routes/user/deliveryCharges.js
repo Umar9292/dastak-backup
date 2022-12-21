@@ -36,15 +36,18 @@ router.post('/v2/calculateDeliveryCharges', async (req, res) => {
         .lean(),
     ]);
 
-    const deliveryCharges = await calculateDeliveryCharges(
-      restaurant.city,
-      userLatitude,
-      userLongitude,
-      martLatitude,
-      martLongitude
-    );
+    if (restaurant.shopType === 'restaurant') {
+      const deliveryCharges = await calculateDeliveryCharges(
+        restaurant.city,
+        userLatitude,
+        userLongitude,
+        martLatitude,
+        martLongitude
+      );
 
-    restaurant.deliveryCharges = deliveryCharges;
+      restaurant.deliveryCharges = deliveryCharges;
+    }
+
     restaurant.password = null;
 
     let { address } = req.body;
