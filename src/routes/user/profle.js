@@ -62,7 +62,10 @@ router.post('/editRiderCollection', async (req, res) => {
         modifier,
         date,
         time: formatedTime,
-        pendingCollection,
+        pendingCollection:
+          pendingCollection !== undefined
+            ? pendingCollection
+            : user.pendingCollection,
         unpaidCollection,
       };
 
