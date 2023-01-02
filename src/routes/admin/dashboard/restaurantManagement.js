@@ -144,7 +144,7 @@ router.post('/restaurantCollections', async (req, res) => {
             .lean(),
         ]);
 
-        const { name: martName, percentage } = restaurant;
+        const { name: martName, percentage, accountTitle } = restaurant;
 
         const deliveryOrders = orders.filter(
           ({ orderType }) => orderType === 'Delivery'
@@ -274,6 +274,7 @@ router.post('/restaurantCollections', async (req, res) => {
           netSale,
           deliveryOrders,
           pickupOrders,
+          accountTitle,
           phone: restaurant.jazzCashNumber
             ? restaurant.jazzCashNumber
             : 'No Number Given',
