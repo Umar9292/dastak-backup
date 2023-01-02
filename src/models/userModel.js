@@ -46,6 +46,10 @@ const userModel = Schema(
       type: Boolean,
       default: true,
     },
+    accountTitle: {
+      type: String,
+      default: '',
+    },
     onlineOrder: Array,
     zone: String,
     device: Boolean,
