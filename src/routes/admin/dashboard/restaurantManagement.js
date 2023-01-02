@@ -140,7 +140,7 @@ router.post('/restaurantCollections', async (req, res) => {
             .lean(),
 
           Users.findById(martId)
-            .select('name phone jazzCashNumber percentage acountTitle')
+            .select('name phone jazzCashNumber percentage accountTitle')
             .lean(),
         ]);
 
