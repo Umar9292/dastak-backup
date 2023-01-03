@@ -41,6 +41,7 @@ const webDashboardRouter = require('./src/routes/admin/webDashboard/webDashboard
 const saveRiderWalletHistoryRouter = require('./src/routes/admin/dashboard/riderManagement');
 const getRiderWalletHistoryRouter = require('./src/routes/rider/riderWalletHistory');
 const referralStatusRouter = require('./src/routes/user/referral');
+const sliderRouter = require('./src/routes/user/slider');
 
 // const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -80,6 +81,7 @@ app.use(
 );
 app.use(
   '/user',
+  sliderRouter,
   profileRouter,
   referralStatusRouter,
   usersReviewRouter,
