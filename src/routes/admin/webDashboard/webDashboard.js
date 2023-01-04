@@ -26,7 +26,7 @@ router.get('/v1/dashboard', async (req, res) => {
       .tz('Asia/Karachi')
       .toISOString();
 
-    console.log(new Date(weeklyStartDate));
+    console.log(weeklyStartDate);
 
     const [
       weeklyOrders,
