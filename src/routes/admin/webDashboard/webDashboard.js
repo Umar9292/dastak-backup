@@ -15,18 +15,22 @@ router.get('/v1/dashboard', async (req, res) => {
 
     endDate = moment(endDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
+      .add(5, 'hours')
       .toISOString();
     weeklyStartDate = moment(weeklyStartDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
+      .add(5, 'hours')
       .toISOString();
     monthlyStartDate = moment(monthlyStartDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
+      .add(5, 'hours')
       .toISOString();
     yearlyStartDate = moment(yearlyStartDate, 'DD-MM-YYYY')
       .tz('Asia/Karachi')
+      .add(5, 'hours')
       .toISOString();
 
-    console.log(weeklyStartDate);
+    console.log(new Date(weeklyStartDate));
 
     const [
       weeklyOrders,
@@ -49,8 +53,8 @@ router.get('/v1/dashboard', async (req, res) => {
           $match: {
             status: { $ne: 'Rejected' },
             dateForSearching: {
-              $gte: new Date(weeklyStartDate),
-              $lte: new Date(endDate),
+              $gte: weeklyStartDate,
+              $lte: endDate,
             },
           },
         },
