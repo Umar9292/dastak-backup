@@ -42,10 +42,19 @@ router.get('/v1/dashboard', async (req, res) => {
         .select('date time orderType orderTotal status')
         .lean(),
 
-      Orders.distinct('date', {
-        status: { $ne: 'Rejected' },
-        dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
-      }),
+      Orders.aggregate([
+        {
+          $match: {
+            status: { $ne: 'Rejected' },
+            dateForSearching: {
+              $gte: new Date(weeklyStartDate),
+              $lte: new Date(endDate),
+            },
+          },
+        },
+        { $group: { _id: '$date', key: { $last: '$dateForSearching' } } },
+        { $sort: { key: 1 } },
+      ]),
 
       Orders.countDocuments({
         status: { $ne: 'Rejected' },
@@ -69,7 +78,7 @@ router.get('/v1/dashboard', async (req, res) => {
     ]);
 
     const weeklyOrderProfit = await Promise.all(
-      weeklyOrderDates.map(async date => {
+      weeklyOrderDates.map(async ({ _id: date }) => {
         const result = await Orders.aggregate([
           {
             $match: {

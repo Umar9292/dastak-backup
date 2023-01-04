@@ -639,7 +639,7 @@ router.post('/expensesTillNow', async (req, res) => {
 
         const ridersFare = deliveryOrders.reduce((a, b) => a + b.riderFare, 0);
 
-        totalSale += orders.reduce((a, b) => a + b.orderTotal, 0);
+        totalSale += deliveryOrders.reduce((a, b) => a + b.orderTotal, 0);
 
         ourProfit +=
           ourPercentage +
