@@ -42,10 +42,19 @@ router.get('/v1/dashboard', async (req, res) => {
         .select('date time orderType orderTotal status')
         .lean(),
 
-      Orders.distinct('date', {
-        status: { $ne: 'Rejected' },
-        dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
-      }),
+      Orders.aggregate([
+        {
+          $match: {
+            status: { $ne: 'Rejected' },
+            dateForSearching: {
+              $gte: new Date(weeklyStartDate),
+              $lte: new Date(endDate),
+            },
+          },
+        },
+        { $group: { _id: '$date', key: { $last: '$dateForSearching' } } },
+        { $sort: { key: 1 } },
+      ]),
 
       Orders.countDocuments({
         status: { $ne: 'Rejected' },
@@ -68,28 +77,29 @@ router.get('/v1/dashboard', async (req, res) => {
       Users.countDocuments({ type: 'rider', status: { $ne: 'inactive' } }),
     ]);
 
-    const weeklyOrderProfit = [];
-    for (const date of weeklyOrderDates) {
-      const result = await Orders.aggregate([
-        {
-          $match: {
-            date,
-            profit: { $ne: undefined },
-            status: { $ne: 'Rejected' },
+    const weeklyOrderProfit = await Promise.all(
+      weeklyOrderDates.map(async ({ _id: date }) => {
+        const result = await Orders.aggregate([
+          {
+            $match: {
+              date,
+              profit: { $ne: undefined },
+              status: { $ne: 'Rejected' },
+            },
           },
-        },
-        { $group: { _id: '$status', ourProfit: { $sum: '$profit' } } },
-      ]);
+          { $group: { _id: '$status', ourProfit: { $sum: '$profit' } } },
+        ]);
 
-      if (result.length > 0) {
-        weeklyOrderProfit.push({
-          day: moment(date, 'DD-MM-YYYY')
-            .tz('Asia/Karachi')
-            .format('dddd'),
-          ourProfit: result[0].ourProfit,
-        });
-      }
-    }
+        if (result.length > 0) {
+          return {
+            day: moment(date, 'DD-MM-YYYY')
+              .tz('Asia/Karachi')
+              .format('dddd'),
+            ourProfit: result[0].ourProfit,
+          };
+        }
+      })
+    );
 
     const ordersData = [
       {
