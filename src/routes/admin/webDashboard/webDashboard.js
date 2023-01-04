@@ -30,8 +30,6 @@ router.get('/v1/dashboard', async (req, res) => {
       .add(5, 'hours')
       .toISOString();
 
-    console.log(new Date(weeklyStartDate));
-
     const [
       weeklyOrders,
       weeklyOrderDates,
@@ -53,8 +51,8 @@ router.get('/v1/dashboard', async (req, res) => {
           $match: {
             status: { $ne: 'Rejected' },
             dateForSearching: {
-              $gte: weeklyStartDate,
-              $lte: endDate,
+              $gte: new Date(weeklyStartDate),
+              $lte: new Date(endDate),
             },
           },
         },
