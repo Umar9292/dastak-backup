@@ -68,29 +68,28 @@ router.get('/v1/dashboard', async (req, res) => {
       Users.countDocuments({ type: 'rider', status: { $ne: 'inactive' } }),
     ]);
 
-    const weeklyOrderProfit = await Promise.all(
-      weeklyOrderDates.map(async date => {
-        const result = await Orders.aggregate([
-          {
-            $match: {
-              date,
-              profit: { $ne: undefined },
-              status: { $ne: 'Rejected' },
-            },
+    const weeklyOrderProfit = [];
+    for (const date of weeklyOrderDates) {
+      const result = await Orders.aggregate([
+        {
+          $match: {
+            date,
+            profit: { $ne: undefined },
+            status: { $ne: 'Rejected' },
           },
-          { $group: { _id: '$status', ourProfit: { $sum: '$profit' } } },
-        ]);
+        },
+        { $group: { _id: '$status', ourProfit: { $sum: '$profit' } } },
+      ]);
 
-        if (result.length > 0) {
-          return {
-            day: moment(date, 'DD-MM-YYYY')
-              .tz('Asia/Karachi')
-              .format('dddd'),
-            ourProfit: result[0].ourProfit,
-          };
-        }
-      })
-    );
+      if (result.length > 0) {
+        weeklyOrderProfit.push({
+          day: moment(date, 'DD-MM-YYYY')
+            .tz('Asia/Karachi')
+            .format('dddd'),
+          ourProfit: result[0].ourProfit,
+        });
+      }
+    }
 
     const ordersData = [
       {
