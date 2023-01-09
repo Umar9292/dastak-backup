@@ -41,6 +41,7 @@ const webDashboardRouter = require('./src/routes/admin/webDashboard/webDashboard
 const saveRiderWalletHistoryRouter = require('./src/routes/admin/dashboard/riderManagement');
 const getRiderWalletHistoryRouter = require('./src/routes/rider/riderWalletHistory');
 const referralStatusRouter = require('./src/routes/user/referral');
+const cityZonesRouter = require('./src/routes/admin/webDashboard/zones');
 
 // const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -70,7 +71,7 @@ app.use('/general', playerIdRouter, generalApisRouter);
 app.use('/products', productsRouter, productImageRouter);
 app.use('/dastakWallet', dastakWalletRouter);
 app.use('/paymentMethod', payFastRouter, payFastTopupRouter);
-app.use('/web', webDashboardRouter);
+app.use('/web', webDashboardRouter, cityZonesRouter);
 app.use(
   '/rider',
   ridersShiftRouter,
