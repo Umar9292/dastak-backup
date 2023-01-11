@@ -6,7 +6,11 @@ const Users = require('../../../models/userModel');
 
 router.post('/riderSignUp', async (req, res) => {
   try {
-    const { phone } = req.body;
+    const { phone, city } = req.body;
+
+    if (city === 'Sargodha') {
+      req.body.fareType = 'Salary';
+    }
 
     const user = await Users.findOne({ phone, type: 'rider' });
     if (user) {
