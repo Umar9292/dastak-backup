@@ -9,7 +9,7 @@ router.post('/riderSignUp', async (req, res) => {
     const { phone, city } = req.body;
 
     if (city === 'Sargodha') {
-      req.body.fareType = 'Salary';
+      req.body.fareType = 'salary';
     }
 
     const user = await Users.findOne({ phone, type: 'rider' });
