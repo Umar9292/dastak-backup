@@ -2,6 +2,7 @@ const Router = require('express/lib/router');
 const moment = require('moment-timezone/builds/moment-timezone-with-data-2012-2022');
 
 const Vouchers = require('../../models/vouchersModel');
+const RandomVouchers = require('../../models/randomVouchers');
 
 const router = Router();
 
@@ -61,7 +62,22 @@ router.post('/checkVoucher', async (req, res) => {
     ).lean();
 
     if (!user) {
-      return res.json({ status: '404', msg: 'Please enter a valid voucher.' });
+      const randomVoucher = await RandomVouchers.findOne({
+        voucherCode,
+        used: false,
+      });
+
+      if (!randomVoucher) {
+        return res.json({
+          status: '404',
+          msg: 'Please enter a valid voucher.',
+        });
+      }
+
+      randomVoucher.used = true;
+      await randomVoucher.save();
+
+      return res.json({ status: '200', amount: randomVoucher.amount });
     }
 
     await Vouchers.updateOne(
