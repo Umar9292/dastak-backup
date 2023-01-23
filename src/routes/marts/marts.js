@@ -262,7 +262,7 @@ router.post('/allRestaurants', async (req, res) => {
             distanceField: 'dist',
             maxDistance: 6000,
             query: {
-              available: true,
+              // available: true,
               pickup: true,
               status: 'active',
               shopType: 'restaurant',
