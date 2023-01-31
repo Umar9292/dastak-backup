@@ -44,7 +44,7 @@ router.post('/getUserVouchers', async (req, res) => {
 
 router.post('/checkVoucher', async (req, res) => {
   try {
-    const { userId, voucherCode } = req.body;
+    const { userId, voucherCode, totalAmount } = req.body;
 
     const user = await Vouchers.findOne(
       {
@@ -74,18 +74,27 @@ router.post('/checkVoucher', async (req, res) => {
         });
       }
 
+      const { minimumAmount } = randomVoucher;
+      if (totalAmount < minimumAmount) {
+        return res.json({
+          status: '404',
+          msg: `Order amount must be greater than ${minimumAmount}`,
+        });
+      }
+
       randomVoucher.used = true;
       await randomVoucher.save();
 
       return res.json({ status: '200', amount: randomVoucher.amount });
     }
 
-    await Vouchers.updateOne(
-      {
-        'vouchers.voucherCode': voucherCode,
-      },
-      { $set: { 'vouchers.$.used': true } }
-    );
+    const { minimumAmount } = user.vouchers[0];
+    if (totalAmount < minimumAmount) {
+      return res.json({
+        status: '404',
+        msg: `Order amount must be greater than Rs: ${minimumAmount}`,
+      });
+    }
 
     return res.json({ status: '200', amount: user.vouchers[0].amount });
   } catch (err) {

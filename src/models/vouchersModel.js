@@ -9,6 +9,7 @@ const vouchersModel = Schema(
         used: Boolean,
         amount: Number,
         validTill: String,
+        miniumAmount: Number,
         voucherCode: String,
       },
     ],
