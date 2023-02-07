@@ -318,6 +318,60 @@ router.post('/deliveredOrders', async (req, res) => {
   }
 });
 
+router.post('/orderHistory', async (req, res) => {
+  try {
+    let { martId, startDate, endDate } = req.body;
+
+    startDate = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    endDate = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    const deliveredOrdersQuery = {
+      $or: [
+        { status: 'Delivered', paid: true },
+        { status: 'Rejected', refundToRestaurant: true, paid: true },
+      ],
+      martId,
+      dateForSearching: { $gte: startDate, $lte: endDate },
+    };
+
+    const deliveredOrders = await Orders.find(deliveredOrdersQuery)
+      .sort({
+        createdAt: -1,
+      })
+      .lean();
+
+    let netSale = 0;
+
+    await Promise.all(
+      deliveredOrders.map(async ({ products }) => {
+        await Promise.all(
+          products.map(async product => {
+            const { net } = product;
+            netSale += net;
+          })
+        );
+      })
+    );
+
+    return res.json({
+      status: '200',
+      deliveredOrders,
+      netSale,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 router.post('/ongoingOrders', async (req, res) => {
   try {
     const { martId } = req.body;
