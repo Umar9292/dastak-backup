@@ -150,6 +150,13 @@ router.post('/reAssignRider', async (req, res) => {
       $push: { actions },
     });
 
+    if (riderId === currentlyAssignedRidersId) {
+      return res.json({
+        status: '404',
+        msg: 'You cannot assign the same rider',
+      });
+    }
+
     const [
       currentRidersOrders,
       { orderCount: currentRidersOrderCount },
