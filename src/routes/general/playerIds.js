@@ -3,6 +3,7 @@ const Router = require('express/lib/router');
 const Users = require('../../models/userModel');
 const UniqueUsers = require('../../models/uniqueUsersModel');
 const Orders = require('../../models/ordersModel');
+const Slider = require('../../models/sliderModel');
 
 const router = Router();
 
@@ -94,11 +95,18 @@ router.post('/userPlayerId', async (req, res) => {
     const user = await Users.findById(userId);
     const { type } = user;
 
-    const orders = await Orders.find({
-      userId: user._id,
-      orderType: 'Delivery',
-      $and: [{ status: { $ne: 'Delivered' } }, { status: { $ne: 'Rejected' } }],
-    });
+    const [orders, { slides }] = await Promise.all([
+      await Orders.find({
+        userId: user._id,
+        orderType: 'Delivery',
+        $and: [
+          { status: { $ne: 'Delivered' } },
+          { status: { $ne: 'Rejected' } },
+        ],
+      }),
+
+      Slider.findOne({}).lean(),
+    ]);
 
     if (type === 'admin') {
       return res.json({ status: '200', data: user, orders });
@@ -118,6 +126,8 @@ router.post('/userPlayerId', async (req, res) => {
     res.json({
       status: '200',
       data: user,
+      showSlides: true,
+      slides,
       orders,
     });
 
