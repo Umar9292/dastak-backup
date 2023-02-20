@@ -96,6 +96,13 @@ router.post('/checkVoucher', async (req, res) => {
       });
     }
 
+    await Vouchers.updateOne(
+      {
+        'vouchers.voucherCode': voucherCode,
+      },
+      { $set: { 'vouchers.$.used': true } }
+    );
+
     return res.json({ status: '200', amount: user.vouchers[0].amount });
   } catch (err) {
     console.log(err);
