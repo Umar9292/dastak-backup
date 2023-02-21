@@ -11,19 +11,21 @@ router.post('/createVoucher', async (req, res) => {
   try {
     const { userId } = req.body;
 
-    const [{ playerId, name }] = await Promise.all([
-      Users.findById(userId)
-        .select('playerId name')
-        .lean(),
+    const usersVouchers = await Vouchers.findOne({ userId });
+    if (!usersVouchers) {
+      await new Vouchers({ userId, vouchers: req.body }).save();
+    } else {
+      await Vouchers.updateOne({ userId }, { $push: { vouchers: req.body } });
+    }
 
-      Vouchers.updateOne({ userId }, { $push: { vouchers: req.body } }),
-    ]);
+    res.json({ status: '200', msg: 'Voucher is successfully created' });
 
-    const msg = `Congratulations ${name}! As an extra-special thank you for being a loyal customer, here’s Rs ${req.bod.amount} voucher from us. Use it towards any of your order.`;
+    const { playerId, name } = await Users.findById(userId)
+      .select('playerId name')
+      .lean();
 
+    const msg = `Congratulations ${name}! As an extra-special thank you for being a loyal customer, here’s Rs ${req.body.amount} voucher from us. Use it towards any of your order.`;
     notifyUser(msg, playerId, { flag: 'voucher' });
-
-    return res.json({ status: '200', msg: 'Voucher is successfully created' });
   } catch (err) {
     console.log(err);
     return res.json({
