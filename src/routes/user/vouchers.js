@@ -26,7 +26,7 @@ router.post('/getUserVouchers', async (req, res) => {
         'Asia/Karachi'
       );
 
-      if (!voucher.used && currentDate.isBefore(voucherExpiry)) {
+      if (!voucher.used && currentDate.isSameOrBefore(voucherExpiry)) {
         return voucher;
       }
     });
