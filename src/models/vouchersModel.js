@@ -12,7 +12,7 @@ const vouchersModel = Schema(
         },
         amount: Number,
         validTill: String,
-        miniumAmount: Number,
+        minimumAmount: Number,
         voucherCode: String,
       },
     ],
