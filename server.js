@@ -43,6 +43,7 @@ const getRiderWalletHistoryRouter = require('./src/routes/rider/riderWalletHisto
 const referralStatusRouter = require('./src/routes/user/referral');
 const sliderRouter = require('./src/routes/user/slider');
 const cityZonesRouter = require('./src/routes/admin/webDashboard/zones');
+const createVoucherRouter = require('./src/routes/admin/dashboard/createVoucher');
 
 // const Users = require('./src/models/userModel');
 const { dbUrl } = require('./utils/dbUrls');
@@ -99,6 +100,7 @@ app.use(
 );
 app.use(
   '/admin',
+  createVoucherRouter,
   playerIdRouter,
   ordersManagementRouter,
   ridersManagementRouter,

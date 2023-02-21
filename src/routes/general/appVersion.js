@@ -35,7 +35,7 @@ router.post('/checkVersion', async (req, res) => {
 
     if (
       (platform === 'android' && version === '3.0.0') ||
-      (platform === 'android' && version === '3.0.1')
+      (platform === 'android' && version === '3.0.2')
     ) {
       return res.json({ status: '200', url, cities, showCategories: 'false' });
     }
