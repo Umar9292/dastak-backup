@@ -27,6 +27,7 @@ const {
   notifyAdmin,
   notifyRiders,
   notifySuperAdmin,
+  notifyWeb,
 } = require('../../notificationHandler/handler');
 
 const router = Router();
@@ -118,6 +119,7 @@ router.post('/placeOrder', async (req, res) => {
 
     const adminMessage = `You have a new order from ${mart.city}`;
     const info = `New Order for ${params.martName} placed by ${order.name}`;
+    const webMsg = `New Order for ${params.martName} ${mart.city}`;
 
     const { playerIds: restaurantPlayerIds } = mart;
     restaurantPlayerIds.forEach(async playerId => {
@@ -136,6 +138,8 @@ router.post('/placeOrder', async (req, res) => {
     await axios.get(
       `${process.env.SMS_URL}&mobile=${mart.phone}&message=${msg}`
     ); */
+
+    notifyWeb(webMsg);
 
     const [user, admins] = await Promise.all([
       Users.findById(userId).select('-password -__v'),

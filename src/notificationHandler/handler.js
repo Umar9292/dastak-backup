@@ -1,9 +1,11 @@
 const { Notification } = require('onesignal-node');
+const { Notification: WebNotification } = require('@onesignal/node-onesignal');
 const {
   oneSignalUserClient,
   oneSignalVendorClient,
   oneSignalRiderClient,
   oneSignalAdminClient,
+  webClient,
 } = require('../../utils/onSignalConfig');
 
 exports.notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
@@ -76,4 +78,13 @@ exports.notifyRiders = async (riderName, msg, whomToSend, toBeSentData) => {
   });
 
   await oneSignalRiderClient.sendNotification(notification);
+};
+
+exports.notifyWeb = async msg => {
+  const notification = new WebNotification();
+  notification.app_id = process.env.ONE_SIGNAL_WEB_APP_ID;
+  notification.included_segments = ['Subscribed Users'];
+  notification.contents = { en: msg };
+
+  await webClient.createNotification(notification);
 };
