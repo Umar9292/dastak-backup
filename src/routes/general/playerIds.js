@@ -93,7 +93,15 @@ router.post('/userPlayerId', async (req, res) => {
     const { userId, playerId } = req.body;
 
     const user = await Users.findById(userId);
-    const { type } = user;
+    const { type, status } = user;
+
+    if (status === 'inactive') {
+      return res.json({
+        status: '404',
+        msg:
+          'Your account has temporarily been blocked. Kindly contact support@dastak.store for more details.',
+      });
+    }
 
     const [orders, { slides }] = await Promise.all([
       await Orders.find({
