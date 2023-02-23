@@ -126,11 +126,24 @@ router.post('/updateOrder', async (req, res) => {
   try {
     const { orderId, actions } = req.body;
 
-    const { actions: currentActions } = await Orders.findById(orderId)
-      .select('actions')
+    const { actions: currentActions, martId } = await Orders.findById(orderId)
+      .select('actions martId')
       .lean();
 
     req.body.actions = [...currentActions, actions];
+
+    if (martId !== req.body.martId) {
+      const today = moment()
+        .tz('Asia/Karachi')
+        .format('DD-MM-YYYY');
+
+      const newRestaurantsOrderCount = await Orders.countDocuments({
+        martId,
+        today,
+      });
+
+      req.body.orderNum = newRestaurantsOrderCount + 1;
+    }
 
     await Orders.findByIdAndUpdate(orderId, { $set: req.body });
 
