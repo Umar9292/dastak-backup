@@ -127,7 +127,7 @@ router.post('/updateOrder', async (req, res) => {
     const { orderId, actions } = req.body;
 
     const { actions: currentActions, martId } = await Orders.findById(orderId)
-      .select('actions')
+      .select('actions martId')
       .lean();
 
     req.body.actions = [...currentActions, actions];
