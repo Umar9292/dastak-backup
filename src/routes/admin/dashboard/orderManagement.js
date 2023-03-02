@@ -139,7 +139,7 @@ router.post('/updateOrder', async (req, res) => {
 
       const newRestaurantsOrderCount = await Orders.countDocuments({
         martId: req.body.martId,
-        today,
+        date: today,
       });
 
       req.body.orderNum = newRestaurantsOrderCount + 1;

@@ -50,6 +50,10 @@ const userModel = Schema(
       type: String,
       default: '',
     },
+    enableTesting: {
+      type: Boolean,
+      default: true,
+    },
     onlineOrder: Array,
     zone: String,
     device: Boolean,
