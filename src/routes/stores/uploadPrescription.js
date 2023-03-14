@@ -50,7 +50,7 @@ router.post('/uploadPrescription', (req, res) => {
           .select('playerIds city')
           .lean(),
 
-        Orders.countDocuments({ martId: orderData.martId, date }),
+        Orders.countDocuments({ martId: orderData.martId }),
       ]);
 
       if (orderData.address === 'Current Location') {
