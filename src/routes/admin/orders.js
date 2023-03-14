@@ -68,7 +68,7 @@ router.post('/placeOrder', async (req, res) => {
         .select('employee')
         .lean(),
 
-      Orders.countDocuments({ martId, date }),
+      Orders.countDocuments({ martId }),
     ]);
 
     const orderTime = moment().tz('Asia/karachi');

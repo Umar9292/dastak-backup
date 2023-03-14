@@ -133,13 +133,8 @@ router.post('/updateOrder', async (req, res) => {
     req.body.actions = [...currentActions, actions];
 
     if (martId !== req.body.martId) {
-      const today = moment()
-        .tz('Asia/Karachi')
-        .format('DD-MM-YYYY');
-
       const newRestaurantsOrderCount = await Orders.countDocuments({
         martId: req.body.martId,
-        date: today,
       });
 
       req.body.orderNum = newRestaurantsOrderCount + 1;

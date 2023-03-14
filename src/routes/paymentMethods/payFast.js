@@ -167,7 +167,7 @@ router.post('/payFastCallback', async (req, res) => {
           .select('-password -__v')
           .lean(),
 
-        Orders.countDocuments({ martId, date }),
+        Orders.countDocuments({ martId }),
       ]);
 
       const orderTime = moment().tz('Asia/karachi');
