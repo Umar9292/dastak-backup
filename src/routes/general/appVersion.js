@@ -102,9 +102,19 @@ router.post('/vendorCheckVersion', async (req, res) => {
 
 router.post('/ridersCheckVersion', async (req, res) => {
   try {
-    const { version } = req.body;
+    const { version, platform } = req.body;
 
-    if (version === '2.0' || version === '3.0') {
+    if (
+      (platform === 'ios' && version === '2.0') ||
+      (platform === 'ios' && version === '3.0')
+    ) {
+      return res.json({ status: '200' });
+    }
+
+    if (
+      (platform === 'android' && version === '3.0') ||
+      (platform === 'android' && version === '3.1')
+    ) {
       return res.json({ status: '200' });
     }
 

@@ -132,7 +132,7 @@ router.post('/updateOrder', async (req, res) => {
 
     req.body.actions = [...currentActions, actions];
 
-    if (martId !== req.body.martId) {
+    if (req.body.martId !== undefined && martId !== req.body.martId) {
       const newRestaurantsOrderCount = await Orders.countDocuments({
         martId: req.body.martId,
       });
