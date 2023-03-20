@@ -5,7 +5,7 @@ const randomVouchersModel = Schema(
     name: String,
     used: Boolean,
     amount: Number,
-    miniumAmount: Number,
+    minimumAmount: Number,
     validTill: String,
     voucherCode: String,
   },
