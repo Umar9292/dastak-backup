@@ -342,28 +342,64 @@ router.post('/orderHistory', async (req, res) => {
       dateForSearching: { $gte: startDate, $lte: endDate },
     };
 
-    const deliveredOrders = await Orders.find(deliveredOrdersQuery)
-      .sort({
-        createdAt: -1,
-      })
-      .lean();
+    const [{ percentage }, deliveredOrders] = await Promise.all([
+      Users.findById(martId)
+        .select('percentage')
+        .lean(),
+
+      Orders.find(deliveredOrdersQuery)
+        .sort({
+          createdAt: -1,
+        })
+        .lean(),
+    ]);
 
     let netSale = 0;
+    let dealPayment = 0;
+    let nonDealPayment = 0;
+    let ourProfit = 0;
+    let pickUpPercentage = 0;
 
     await Promise.all(
-      deliveredOrders.map(async ({ products }) => {
+      deliveredOrders.map(async ({ products, orderType }) => {
         await Promise.all(
           products.map(async product => {
-            const { net } = product;
+            const { net, count } = product;
             netSale += net;
+
+            if (orderType === 'Delivery' && product.actualPrice === undefined) {
+              nonDealPayment += net;
+            }
+
+            if (product.actualPrice === undefined && orderType === 'PickUp') {
+              const ourPercentage = +((percentage / 100) * net).toFixed();
+              pickUpPercentage += ourPercentage;
+            }
+
+            if (product.actualPrice !== undefined) {
+              const priceDifference = net - product.actualPrice * count;
+
+              if (orderType === 'PickUp') {
+                ourProfit += priceDifference;
+              } else {
+                dealPayment += product.net;
+                ourProfit += priceDifference;
+              }
+            }
           })
         );
       })
     );
 
+    const ourPercentage = +((percentage / 100) * nonDealPayment).toFixed();
+    const totalToPay =
+      dealPayment +
+      (nonDealPayment - ourPercentage - ourProfit - pickUpPercentage);
+
     return res.json({
       status: '200',
       deliveredOrders,
+      totalToPay,
       netSale,
     });
   } catch (err) {
