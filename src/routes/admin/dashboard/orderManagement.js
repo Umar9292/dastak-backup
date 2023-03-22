@@ -204,4 +204,21 @@ router.post('/reOpenOrder', async (req, res) => {
   }
 });
 
+router.post('/deleteOrder', async (req, res) => {
+  try {
+    const { orderId } = req.body;
+
+    await Orders.deleteOne({ orderId });
+
+    return res.json({ status: '200', msg: 'Order deleted.' });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 module.exports = router;
