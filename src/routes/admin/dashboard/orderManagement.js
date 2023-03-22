@@ -208,7 +208,7 @@ router.post('/deleteOrder', async (req, res) => {
   try {
     const { orderId } = req.body;
 
-    await Orders.deleteOne({ orderId });
+    await Orders.deleteOne({ _id: orderId });
 
     return res.json({ status: '200', msg: 'Order deleted.' });
   } catch (err) {
