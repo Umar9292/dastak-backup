@@ -136,8 +136,9 @@ router.post('/reAssignRider', async (req, res) => {
       playerId: newRidersPlayerId,
       status: newRidersStatus,
       orderCount: newRidersOrderCount,
+      tillNoonFare: newRidersFare,
     } = await Users.findById(riderId)
-      .select('name playerId status orderCount')
+      .select('name playerId status orderCount tillNoonFare')
       .lean();
 
     const {
@@ -147,6 +148,7 @@ router.post('/reAssignRider', async (req, res) => {
       riderId,
       riderName,
       riderPhone,
+      riderFare: newRidersFare,
       $push: { actions },
     });
 
