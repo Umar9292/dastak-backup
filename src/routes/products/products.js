@@ -179,19 +179,32 @@ router.post('/allProducts', async (req, res) => {
             .tz('Asia/Karachi')
             .subtract(5, 'hours');
 
+          const startTimeHour = moment(startTime).format('H');
+          const endTimeHour = moment(endTime).format('H');
+
           const openingTimeOffSet = moment(startTime).format('a');
           const closingTimeOffSet = moment(endTime).format('a');
 
           if (
             (openingTimeOffSet === 'pm' && closingTimeOffSet === 'am') ||
-            (openingTimeOffSet === 'am' && closingTimeOffSet === 'am')
+            (openingTimeOffSet === 'am' &&
+              closingTimeOffSet === 'am' &&
+              endTimeHour <= startTimeHour)
           ) {
             endTime = moment(endTime).add(1, 'days');
           }
 
           if (
-            currentTime.isSameOrAfter(startTime.toISOString()) &&
-            currentTime.isBefore(endTime.toISOString())
+            openingTimeOffSet === 'am' &&
+            closingTimeOffSet === 'am' &&
+            endTimeHour <= startTimeHour
+          ) {
+            endTime = moment(endTime).add(1, 'days');
+          }
+
+          if (
+            currentTime.isSameOrAfter(startTime) &&
+            currentTime.isBefore(endTime)
           ) {
             filteredCategories = [...filteredCategories, name];
           }
