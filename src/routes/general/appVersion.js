@@ -116,7 +116,8 @@ router.post('/ridersCheckVersion', async (req, res) => {
 
     if (
       (platform === 'android' && version === '3.0') ||
-      (platform === 'android' && version === '3.1')
+      (platform === 'android' && version === '3.1') ||
+      (platform === 'android' && version === '3.2')
     ) {
       return res.json({ status: '200' });
     }
