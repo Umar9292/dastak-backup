@@ -1,10 +1,12 @@
 const Router = require('express/lib/router');
 const axios = require('axios');
 const moment = require('moment-timezone');
+const crypto = require('crypto');
 
 const Orders = require('../../models/ordersModel');
 const Users = require('../../models/userModel');
 const WalletHistory = require('../../models/walletHistory');
+const Vouchers = require('../../models/vouchersModel');
 
 const { getAddress } = require('../../geoCoder/getAddress');
 const { getDistance } = require('../../geoCoder/getDistance');
@@ -1527,6 +1529,44 @@ router.post('/changeOrderStatus', async (req, res) => {
           status: { $in: ['Rider Accepted', 'Rider Picked Up'] },
         };
 
+        if (order.orderTotal >= 2000) {
+          const newVoucher = {
+            name: 'Gift Voucher',
+            amount: 200,
+            used: false,
+            validTill: moment(currentTime)
+              .add(30, 'days')
+              .format('DD-MM-YYYY'),
+            voucherCode: crypto.randomBytes(3).toString('hex'),
+            minimumAmount: 500,
+          };
+
+          const [usersVouchers, { playerId }] = await Promise.all([
+            Vouchers.findOne({
+              userId: order.userId,
+            }).lean(),
+
+            Users.findById(order.userId)
+              .select('playerId')
+              .lean(),
+          ]);
+
+          if (!usersVouchers) {
+            await new Vouchers({
+              userId: order.userId,
+              vouchers: [newVoucher],
+            }).save();
+          } else {
+            await Vouchers.updateOne(
+              { userId: order.userId },
+              { $push: { vouchers: newVoucher } }
+            );
+          }
+
+          const msg = `Congratulations ${order.name}! As an extra-special thank you for being a loyal customer, here’s Rs 200 voucher from us. Use it towards any of your order.`;
+          notifyUser(msg, playerId, { flag: 'voucher' });
+        }
+
         const [riderOrders, rider] = await Promise.all([
           Orders.countDocuments(query),
           Users.findById(order.riderId),
@@ -1651,15 +1691,11 @@ router.post('/changeOrderStatus', async (req, res) => {
     ); */
 
     if (user.type === 'admin') {
-      const { playerIds } = await Users.findById(order.userId);
-
-      playerIds.forEach(async playerId => {
+      user.playerIds.forEach(async playerId => {
         notifyUser(pickUpMsg, playerId, { flag: 'orderPickedUp' });
       });
     } else {
-      const { playerId } = await Users.findById(order.userId);
-
-      notifyUser(pickUpMsg, playerId, { flag: 'orderPickedUp' });
+      notifyUser(pickUpMsg, user.playerId, { flag: 'orderPickedUp' });
     }
 
     const message = `Order# ${order.orderNum} has been picked up by ${order.riderName}`;
