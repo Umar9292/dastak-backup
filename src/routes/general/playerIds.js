@@ -93,7 +93,7 @@ router.post('/userPlayerId', async (req, res) => {
     const { userId, playerId } = req.body;
 
     const user = await Users.findById(userId);
-    const { type, status } = user;
+    const { type, status, city } = user;
 
     if (status === 'inactive') {
       return res.json({
@@ -113,7 +113,7 @@ router.post('/userPlayerId', async (req, res) => {
         ],
       }),
 
-      Slider.findOne({}).lean(),
+      Slider.findOne({ city }).lean(),
     ]);
 
     if (type === 'admin') {
