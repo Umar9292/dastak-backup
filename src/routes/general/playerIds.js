@@ -121,9 +121,13 @@ router.post('/userPlayerId', async (req, res) => {
       });
     }
 
-    let slides = [];
+    let slides;
     if (user.city !== undefined) {
-      slides = await Slider.findOne({ city: user.city }).lean();
+      const { slides: cityDeals } = await Slider.findOne({ city: user.city })
+        .select('slides')
+        .lean();
+
+      slides = cityDeals;
     }
 
     user.playerId = playerId;
