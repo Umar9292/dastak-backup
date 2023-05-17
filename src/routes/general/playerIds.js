@@ -135,7 +135,7 @@ router.post('/userPlayerId', async (req, res) => {
       status: '200',
       data: user,
       showSlides: true,
-      slides: !slides ? [] : slides,
+      slides,
       orders,
     });
 
