@@ -93,7 +93,7 @@ router.post('/userPlayerId', async (req, res) => {
     const { userId, playerId } = req.body;
 
     const user = await Users.findById(userId);
-    const { type, status, city } = user;
+    const { type, status } = user;
 
     if (status === 'inactive') {
       return res.json({
@@ -103,18 +103,11 @@ router.post('/userPlayerId', async (req, res) => {
       });
     }
 
-    const [orders, { slides }] = await Promise.all([
-      await Orders.find({
-        userId: user._id,
-        orderType: 'Delivery',
-        $and: [
-          { status: { $ne: 'Delivered' } },
-          { status: { $ne: 'Rejected' } },
-        ],
-      }),
-
-      Slider.findOne({ city }).lean(),
-    ]);
+    const orders = await Orders.find({
+      userId: user._id,
+      orderType: 'Delivery',
+      $and: [{ status: { $ne: 'Delivered' } }, { status: { $ne: 'Rejected' } }],
+    });
 
     if (type === 'admin') {
       return res.json({ status: '200', data: user, orders });
@@ -126,6 +119,11 @@ router.post('/userPlayerId', async (req, res) => {
         msg:
           'You have been logged out from this device, because you logged in on another device. If that was not you, please log in again and reset your Password.',
       });
+    }
+
+    let slides = [];
+    if (user.city !== undefined) {
+      slides = await Slider.findOne({ city: user.city }).lean();
     }
 
     user.playerId = playerId;
