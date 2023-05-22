@@ -16,6 +16,7 @@ const userModel = Schema(
   {
     verified: Boolean,
     topUp: Array,
+    adminCities: Array,
     referral: {
       code: {
         type: String,
