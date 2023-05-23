@@ -6,8 +6,10 @@ const Users = require('../../../models/userModel');
 
 const router = Router();
 
-router.get('/v1/dashboard', async (req, res) => {
+router.post('/v1/dashboard', async (req, res) => {
   try {
+    const { city } = req.body;
+
     let endDate = moment().tz('Asia/Karachi');
     let weeklyStartDate = moment(endDate).subtract(7, 'days');
     let monthlyStartDate = moment(endDate).subtract(30, 'days');
@@ -40,6 +42,7 @@ router.get('/v1/dashboard', async (req, res) => {
       totalRiders,
     ] = await Promise.all([
       Orders.find({
+        city,
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: weeklyStartDate, $lte: endDate },
       })
@@ -49,6 +52,7 @@ router.get('/v1/dashboard', async (req, res) => {
       Orders.aggregate([
         {
           $match: {
+            city,
             status: { $ne: 'Rejected' },
             dateForSearching: {
               $gte: new Date(weeklyStartDate),
@@ -61,6 +65,7 @@ router.get('/v1/dashboard', async (req, res) => {
       ]),
 
       Orders.countDocuments({
+        city,
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: monthlyStartDate, $lte: endDate },
       })
@@ -68,17 +73,22 @@ router.get('/v1/dashboard', async (req, res) => {
         .lean(),
 
       Orders.countDocuments({
+        city,
         status: { $ne: 'Rejected' },
         dateForSearching: { $gte: yearlyStartDate, $lte: endDate },
       })
         .select('date time orderType orderTotal status')
         .lean(),
 
-      Users.countDocuments({ shopType: 'restaurant', status: 'active' }),
+      Users.countDocuments({ city, shopType: 'restaurant', status: 'active' }),
 
-      Users.countDocuments({ type: 'user', status: 'active' }),
+      Users.countDocuments({ city, type: 'user', status: 'active' }),
 
-      Users.countDocuments({ type: 'rider', status: { $ne: 'inactive' } }),
+      Users.countDocuments({
+        city,
+        type: 'rider',
+        status: { $ne: 'inactive' },
+      }),
     ]);
 
     const weeklyOrderProfit = await Promise.all(
@@ -86,6 +96,7 @@ router.get('/v1/dashboard', async (req, res) => {
         const result = await Orders.aggregate([
           {
             $match: {
+              city,
               date,
               profit: { $ne: undefined },
               status: { $ne: 'Rejected' },
@@ -171,5 +182,4 @@ router.get('/v1/dashboard', async (req, res) => {
     });
   }
 });
-
 module.exports = router;
