@@ -82,7 +82,7 @@ router.post('/v1/dashboard', async (req, res) => {
 
       Users.countDocuments({ city, shopType: 'restaurant', status: 'active' }),
 
-      Users.countDocuments({ city, type: 'user', status: 'active' }),
+      Users.countDocuments({ type: 'user', status: 'active' }),
 
       Users.countDocuments({
         city,
