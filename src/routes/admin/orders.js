@@ -863,11 +863,11 @@ router.post('/restaurantResponse', async (req, res) => {
         msg: 'Order successfully accepted',
       });
 
-      await axios.get(
+      /*  await axios.get(
         `${process.env.OTP_URL}&to=${otpPhone}&message=${encodeURIComponent(
           msg
         )}`
-      );
+      ); */
 
       const adminMessage = `The order number ${orderNum} has been Accepted by ${shop.name}`;
       orderStatusEmail(adminMessage);
