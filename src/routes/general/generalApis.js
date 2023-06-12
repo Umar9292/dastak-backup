@@ -366,6 +366,52 @@ router.get('/createRidersPassword', async (_req, res) => {
   }
 }); */
 
+router.post('/singleDealCount', async (req, res) => {
+  try {
+    const { martId, startDate, endDate, dealName } = req.body;
+
+    const start = moment(startDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+    const end = moment(endDate, 'DD-MM-YYYY')
+      .tz('Asia/Karachi')
+      .toISOString();
+
+    let dealCount = 0;
+
+    const deliveryOrders = await Orders.find({
+      martId,
+      status: 'Delivered',
+      orderType: 'Delivery',
+      dateForSearching: { $gte: start, $lte: end },
+    })
+      .select('products')
+      .lean();
+
+    await Promise.all(
+      deliveryOrders.map(async ({ products }) => {
+        await Promise.all(
+          products.map(async ({ productName, count }) => {
+            if (productName.includes(dealName)) {
+              console.log(dealName, count);
+              dealCount += count;
+            }
+          })
+        );
+      })
+    );
+
+    return res.json({ dealCount });
+  } catch (err) {
+    console.log(err);
+    return res.json({
+      status: '404',
+      error: err.toString(),
+      msg: `Looks like something went wrong on our side. Sorry for the inconvenience.`,
+    });
+  }
+});
+
 /* router.post('/unpayRestaurant', async (req, res) => {
   try {
     const { martId, startDate, endDate } = req.body;
