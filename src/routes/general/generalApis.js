@@ -393,7 +393,6 @@ router.post('/singleDealCount', async (req, res) => {
         await Promise.all(
           products.map(async ({ productName, count }) => {
             if (productName.includes(dealName)) {
-              console.log(dealName, count);
               dealCount += count;
             }
           })
