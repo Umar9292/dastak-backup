@@ -382,7 +382,7 @@ router.post('/singleDealCount', async (req, res) => {
     const deliveryOrders = await Orders.find({
       martId,
       status: 'Delivered',
-      orderType: 'Delivery',
+      // orderType: 'Delivery',
       dateForSearching: { $gte: start, $lte: end },
     })
       .select('products')
