@@ -30,7 +30,7 @@ const {
   notifyRiders,
   notifySuperAdmin,
   notifyWebDashboard,
-  notifyRestaurantWebPortal,
+  // notifyRestaurantWebPortal,
 } = require('../../notificationHandler/handler');
 
 const router = Router();
@@ -143,7 +143,7 @@ router.post('/placeOrder', async (req, res) => {
     ); */
 
     notifyWebDashboard(webMsg);
-    notifyRestaurantWebPortal(webMsg);
+    // notifyRestaurantWebPortal(webMsg);
 
     const [user, admins] = await Promise.all([
       Users.findById(userId).select('-password -__v'),
