@@ -4,6 +4,34 @@ const {
   DefaultApi,
 } = require('@onesignal/node-onesignal');
 
+const dashboard_web_app_key_provider = {
+  getToken() {
+    return process.env.ONE_SIGNAL_WEB_REST_API_KEY;
+  },
+};
+
+const webDashboardConfiguration = createConfiguration({
+  authMethods: {
+    app_key: {
+      tokenProvider: dashboard_web_app_key_provider,
+    },
+  },
+});
+
+const restaurant_web_app_key_provider = {
+  getToken() {
+    return process.env.ONE_SIGNAL_RESTAURANT_WEB_REST_API_KEY;
+  },
+};
+
+const restaurantPortalConfiguration = createConfiguration({
+  authMethods: {
+    app_key: {
+      tokenProvider: restaurant_web_app_key_provider,
+    },
+  },
+});
+
 exports.oneSignalUserClient = new Client({
   userAuthKey: process.env.ONE_SIGNAL_USER_AUTH_KEY,
 
@@ -40,18 +68,6 @@ exports.oneSignalRiderClient = new Client({
   },
 });
 
-const app_key_provider = {
-  getToken() {
-    return process.env.ONE_SIGNAL_WEB_REST_API_KEY;
-  },
-};
+exports.webDasboardClient = new DefaultApi(webDashboardConfiguration);
 
-const webConfiguration = createConfiguration({
-  authMethods: {
-    app_key: {
-      tokenProvider: app_key_provider,
-    },
-  },
-});
-
-exports.webClient = new DefaultApi(webConfiguration);
+exports.restaurantPortalClient = new DefaultApi(restaurantPortalConfiguration);

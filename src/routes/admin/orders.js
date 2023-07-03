@@ -29,7 +29,8 @@ const {
   notifyAdmin,
   notifyRiders,
   notifySuperAdmin,
-  notifyWeb,
+  notifyWebDashboard,
+  notifyRestaurantWebPortal,
 } = require('../../notificationHandler/handler');
 
 const router = Router();
@@ -141,7 +142,8 @@ router.post('/placeOrder', async (req, res) => {
       `${process.env.SMS_URL}&mobile=${mart.phone}&message=${msg}`
     ); */
 
-    notifyWeb(webMsg);
+    notifyWebDashboard(webMsg);
+    notifyRestaurantWebPortal(webMsg);
 
     const [user, admins] = await Promise.all([
       Users.findById(userId).select('-password -__v'),
