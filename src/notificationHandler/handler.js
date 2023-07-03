@@ -80,9 +80,18 @@ exports.notifyRiders = async (riderName, msg, whomToSend, toBeSentData) => {
   await oneSignalRiderClient.sendNotification(notification);
 };
 
-exports.notifyWeb = async msg => {
+exports.notifyWebDashboard = async msg => {
   const notification = new WebNotification();
   notification.app_id = process.env.ONE_SIGNAL_WEB_APP_ID;
+  notification.included_segments = ['Subscribed Users'];
+  notification.contents = { en: msg };
+
+  await webClient.createNotification(notification);
+};
+
+exports.notifyRestaurantWebPortal = async msg => {
+  const notification = new WebNotification();
+  notification.app_id = process.env.ONE_SIGNAL_RESTAURANT_WEB_APP_ID;
   notification.included_segments = ['Subscribed Users'];
   notification.contents = { en: msg };
 
