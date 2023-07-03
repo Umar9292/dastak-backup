@@ -5,7 +5,8 @@ const {
   oneSignalVendorClient,
   oneSignalRiderClient,
   oneSignalAdminClient,
-  webClient,
+  webDasboardClient,
+  restaurantPortalClient,
 } = require('../../utils/onSignalConfig');
 
 exports.notifyAdmin = async (info, msg, whomToSend, toBeSentData) => {
@@ -86,7 +87,7 @@ exports.notifyWebDashboard = async msg => {
   notification.included_segments = ['Subscribed Users'];
   notification.contents = { en: msg };
 
-  await webClient.createNotification(notification);
+  await webDasboardClient.createNotification(notification);
 };
 
 exports.notifyRestaurantWebPortal = async msg => {
@@ -95,5 +96,5 @@ exports.notifyRestaurantWebPortal = async msg => {
   notification.included_segments = ['Subscribed Users'];
   notification.contents = { en: msg };
 
-  await webClient.createNotification(notification);
+  await restaurantPortalClient.createNotification(notification);
 };
