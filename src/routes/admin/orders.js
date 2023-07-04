@@ -30,7 +30,7 @@ const {
   notifyRiders,
   notifySuperAdmin,
   notifyWebDashboard,
-  // notifyRestaurantWebPortal,
+  notifyRestaurantWebPortal,
 } = require('../../notificationHandler/handler');
 
 const router = Router();
@@ -124,7 +124,7 @@ router.post('/placeOrder', async (req, res) => {
     const info = `New Order for ${params.martName} placed by ${order.name}`;
     const webMsg = `New Order for ${params.martName} ${mart.city}`;
 
-    const { playerIds: restaurantPlayerIds } = mart;
+    const { playerIds: restaurantPlayerIds, webPlayerIds } = mart;
     restaurantPlayerIds.forEach(async playerId => {
       notifyAdmin(info, adminMessage, playerId, {
         flag: 'adminReceived',
@@ -143,7 +143,7 @@ router.post('/placeOrder', async (req, res) => {
     ); */
 
     notifyWebDashboard(webMsg);
-    // notifyRestaurantWebPortal(webMsg);
+    notifyRestaurantWebPortal(webMsg, webPlayerIds);
 
     const [user, admins] = await Promise.all([
       Users.findById(userId).select('-password -__v'),
