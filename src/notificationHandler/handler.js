@@ -93,7 +93,7 @@ exports.notifyWebDashboard = async msg => {
 exports.notifyRestaurantWebPortal = async msg => {
   const notification = new WebNotification();
   notification.app_id = process.env.ONE_SIGNAL_RESTAURANT_WEB_APP_ID;
-  notification.included_segments = ['Subscribed Users'];
+  notification.include_player_ids = ['8de02193-5eb6-454e-905c-04f4a485afba'];
   notification.contents = { en: msg };
 
   await restaurantPortalClient.createNotification(notification);

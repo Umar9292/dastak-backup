@@ -139,6 +139,7 @@ const userModel = Schema(
     openingTime: String,
     closingTime: String,
     playerIds: Array,
+    webPlayerIds: Array,
     discount: String,
     martAddress: String,
     latitude: String,
